@@ -1,0 +1,13 @@
+debug/mainwindow.o
+debug/databasemanager.o
+debug/service.o
+debug/servicedialog.o
+debug/servicewidget.o
+debug/dashboardwidget.o
+debug/design.o
+debug/main.o
+debug/qrc_resources.o
+debug/moc_mainwindow.o
+debug/moc_servicedialog.o
+debug/moc_servicewidget.o
+debug/moc_dashboardwidget.o
