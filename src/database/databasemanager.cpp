@@ -5,6 +5,7 @@
 
 DatabaseManager &DatabaseManager::instance() { static DatabaseManager manager; return manager; }
 bool DatabaseManager::initialize(const QString &path) {
+    m_lastInsertedId = 0;
     if (m_db.isValid()) m_db.close();
     else m_db = QSqlDatabase::addDatabase("QSQLITE", "aniworld-services");
     m_db.setDatabaseName(path);
@@ -55,6 +56,7 @@ bool DatabaseManager::save(const Service &s, bool update) {
     if(update) query.addBindValue(s.id);
     if(!query.exec()) { m_error=query.lastError().text(); return false; }
     if(update && query.numRowsAffected()!=1) { m_error="Ce service n'existe plus."; return false; }
+    if (!update) m_lastInsertedId = query.lastInsertId().toInt();
     m_error.clear(); return true;
 }
 bool DatabaseManager::addService(const Service &s) { return save(s,false); }

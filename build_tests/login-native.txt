@@ -1,0 +1,8 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+PASS   : ServiceTests::loginSessionAndSavedServices()
+PASS   : ServiceTests::loginRecoveryAndTransitions()
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 4 passed, 0 failed, 0 skipped, 0 blacklisted, 1612ms
+********* Finished testing of ServiceTests *********

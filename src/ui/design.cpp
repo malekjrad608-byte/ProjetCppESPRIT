@@ -1,4 +1,6 @@
 #include "design.h"
+#include "../widgets/animatedbutton.h"
+#include "../widgets/animatedpanel.h"
 #include <QApplication>
 #include <QFile>
 #include <QPainter>
@@ -16,12 +18,12 @@ QLabel *label(const QString &text, const char *role, QWidget *parent) {
 QPushButton *button(const QString &text, const QString &iconName, const char *role) {
     QString displayText=text;
     displayText.replace("&","&&");
-    auto *result=new QPushButton(displayText);
+    auto *result=new AnimatedButton(displayText);
     if(!iconName.isEmpty()) result->setIcon(icon(iconName,role && QString(role)=="primary"?QColor("white"):QColor("#58796A")));
     result->setIconSize(QSize(17,17)); if(role) result->setProperty("role",role);
     result->setCursor(Qt::PointingHandCursor); return result;
 }
-QFrame *card(const char *name) { auto *f=new QFrame; f->setProperty("role","card"); if(name) f->setObjectName(name); return f; }
+QFrame *card(const char *name) { QFrame *f=name?new QFrame:new AnimatedPanel; f->setProperty("role","card"); if(name) f->setObjectName(name); return f; }
 QIcon icon(const QString &name, const QColor &color) {
     QPixmap pix(48,48); pix.fill(Qt::transparent);
     QPainter p(&pix); p.setRenderHint(QPainter::Antialiasing); p.scale(2,2);
@@ -30,12 +32,20 @@ QIcon icon(const QString &name, const QColor &color) {
     else if(name=="plus") { p.drawLine(12,5,12,19); p.drawLine(5,12,19,12); }
     else if(name=="search") { p.drawEllipse(QRectF(4,4,11,11)); p.drawLine(14,14,20,20); }
     else if(name=="arrow") { p.drawLine(4,12,20,12); p.drawLine(15,7,20,12); p.drawLine(15,17,20,12); }
+    else if(name=="logout") {
+        p.drawPolyline(QPolygonF{QPointF(10,3),QPointF(4,3),QPointF(4,21),QPointF(10,21)});
+        p.drawLine(9,12,21,12); p.drawLine(17,8,21,12); p.drawLine(21,12,17,16);
+    }
     else if(name=="check") { p.drawEllipse(QRectF(3,3,18,18)); p.drawLine(7,12,10,15); p.drawLine(10,15,17,8); }
     else if(name=="clock") { p.drawEllipse(QRectF(3,3,18,18)); p.drawLine(12,7,12,12); p.drawLine(12,12,16,14); }
     else if(name=="calendar") { p.drawRoundedRect(QRectF(3,5,18,16),2,2); p.drawLine(3,10,21,10); p.drawLine(8,3,8,7); p.drawLine(16,3,16,7); p.drawPoint(8,14); p.drawPoint(12,14); p.drawPoint(16,14); }
     else if(name=="users") { p.drawEllipse(QRectF(5,3,7,7)); p.drawArc(QRectF(2,12,14,12),0,180*16); p.drawArc(QRectF(12,5,6,6),-90*16,180*16); p.drawArc(QRectF(13,13,9,9),0,90*16); }
     else if(name=="heart") { QPainterPath a; a.moveTo(12,20); a.cubicTo(9,17,2,12,3,7); a.cubicTo(4,2,10,3,12,7); a.cubicTo(14,3,20,2,21,7); a.cubicTo(22,12,15,17,12,20); p.drawPath(a); }
     else if(name=="paw") { p.drawEllipse(QRectF(7,12,11,8)); p.drawEllipse(QRectF(3,7,4,5)); p.drawEllipse(QRectF(8,2,4,6)); p.drawEllipse(QRectF(14,2,4,6)); p.drawEllipse(QRectF(19,7,3,5)); }
+    else if(name=="motion") { p.drawLine(3,6,8,6); p.drawLine(2,12,6,12); p.drawLine(3,18,8,18); p.drawPolygon(QPolygonF{QPointF(10,4),QPointF(21,12),QPointF(10,20)}); }
+    else if(name=="drop") { QPainterPath a; a.moveTo(12,2); a.cubicTo(8,8,4,11,4,15); a.cubicTo(4,24,20,24,20,15); a.cubicTo(20,11,16,8,12,2); p.drawPath(a); p.drawArc(QRectF(8,12,8,7),190*16,90*16); }
+    else if(name=="home") { p.drawPolyline(QPolygonF{QPointF(2,11),QPointF(12,3),QPointF(22,11)}); p.drawPolyline(QPolygonF{QPointF(5,10),QPointF(5,21),QPointF(19,21),QPointF(19,10)}); p.drawRect(QRectF(10,14,4,7)); }
+    else if(name=="star") { p.drawPolygon(QPolygonF{QPointF(12,2),QPointF(15,8),QPointF(22,9),QPointF(17,14),QPointF(18,21),QPointF(12,18),QPointF(6,21),QPointF(7,14),QPointF(2,9),QPointF(9,8)}); }
     else if(name=="edit") { p.drawLine(5,16,16,5); p.drawLine(8,19,19,8); p.drawLine(16,5,19,8); p.drawLine(5,16,4,20); p.drawLine(4,20,8,19); p.drawLine(14,20,21,20); }
     else if(name=="trash") { p.drawLine(4,6,20,6); p.drawLine(9,3,15,3); p.drawLine(7,6,8,21); p.drawLine(8,21,16,21); p.drawLine(16,21,17,6); p.drawLine(10,10,10,17); p.drawLine(14,10,14,17); }
     else if(name=="export") { p.drawLine(12,3,12,15); p.drawLine(8,11,12,15); p.drawLine(12,15,16,11); p.drawPolyline(QPolygonF{QPointF(4,15),QPointF(4,21),QPointF(20,21),QPointF(20,15)}); }
@@ -78,7 +88,7 @@ void setupTable(QTableWidget *table,const QStringList &headers) {
 void applyTheme() {
     qApp->setStyle("Fusion"); QFile file(":/theme.qss");
     if(file.open(QIODevice::ReadOnly)) qApp->setStyleSheet(QString::fromUtf8(file.readAll()));
-    QPalette p; p.setColor(QPalette::Window,QColor("#F5F6F2")); p.setColor(QPalette::Base,Qt::white);
+    QPalette p; p.setColor(QPalette::Window,QColor("#F3F7F8")); p.setColor(QPalette::Base,Qt::white);
     p.setColor(QPalette::Text,QColor("#243D3D")); p.setColor(QPalette::WindowText,QColor("#243D3D"));
     p.setColor(QPalette::Highlight,QColor("#D5E7DC")); p.setColor(QPalette::HighlightedText,QColor("#234D3A")); qApp->setPalette(p);
 }

@@ -1,27 +1,47 @@
 #include "dashboardwidget.h"
 #include "../database/databasemanager.h"
 #include "../ui/design.h"
+#include "../ui/motion.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QPainter>
+#include <QVariantAnimation>
+#include <QTimer>
+#include <QtMath>
+#include <QEvent>
 #include <algorithm>
 
 namespace {
 class Mascot : public QWidget {
 public:
-    explicit Mascot(QWidget *parent=nullptr):QWidget(parent) { setFixedSize(214,146); }
+    explicit Mascot(QWidget *parent=nullptr):QWidget(parent),m_logo(Design::brand("logo",QSize(246,246))),m_motion(new QVariantAnimation(this)) {
+        setFixedSize(214,146); m_motion->setDuration(1000);
+        m_motion->setStartValue(0.0); m_motion->setEndValue(1.0);
+        connect(m_motion,&QVariantAnimation::valueChanged,this,[this](const QVariant &v) { m_phase=v.toReal(); update(); });
+        connect(&Motion::instance(),&Motion::changed,this,[this](bool enabled) { if(!enabled) { m_motion->stop(); m_phase=1; update(); } });
+    }
 protected:
+    bool event(QEvent *event) override {
+        if((event->type()==QEvent::Show || event->type()==QEvent::Enter) && Motion::instance().enabled()) { m_motion->stop(); m_motion->start(); }
+        if(event->type()==QEvent::Hide) { m_motion->stop(); m_phase=1; }
+        return QWidget::event(event);
+    }
     void paintEvent(QPaintEvent *) override {
-        QPainter p(this); p.setRenderHint(QPainter::Antialiasing); p.setPen(Qt::NoPen); p.scale(0.92,0.92);
-        p.setBrush(QColor("#D0E3D6")); p.drawEllipse(QRectF(46,-12,178,178));
-        p.setBrush(QColor("#EAF4E8")); p.drawEllipse(QRectF(65,6,141,141));
-        const QPixmap cat=Design::brand("logo",QSize(142,142)); p.drawPixmap(67,8,cat);
+        QPainter p(this); p.setRenderHint(QPainter::Antialiasing); p.setRenderHint(QPainter::SmoothPixmapTransform); p.setPen(Qt::NoPen); p.scale(0.92,0.92);
+        p.setBrush(QColor("#CEE2E7")); p.drawEllipse(QRectF(46,-12,178,178));
+        p.setBrush(Qt::white); p.drawEllipse(QRectF(65,6,141,141));
+        p.drawPixmap(QRect(74,15,123,123),m_logo);
+        p.translate(0,-4*qSin(m_phase*2*M_PI));
         p.setBrush(QColor("#F9E5BF")); p.drawEllipse(QRectF(26,100,37,37));
         Design::icon("heart",QColor("#A48142")).paint(&p,QRect(34,109,21,21));
         Design::icon("paw",QColor("#7DA189")).paint(&p,QRect(214,15,15,15));
         p.setBrush(QColor("#B0CCB3")); p.drawEllipse(QRectF(35,30,6,6));
     }
+private:
+    QPixmap m_logo;
+    QVariantAnimation *m_motion;
+    qreal m_phase=1;
 };
 }
 DashboardWidget::DashboardWidget(QWidget *parent):QWidget(parent) {
@@ -32,7 +52,7 @@ DashboardWidget::DashboardWidget(QWidget *parent):QWidget(parent) {
     auto *add=Design::button("Nouveau service","plus","primary"); add->setObjectName("dashboardAdd"); heading->addWidget(add); connect(add,&QPushButton::clicked,this,&DashboardWidget::createRequested); root->addLayout(heading);
     auto *hero=Design::card("hero"); auto *heroLayout=new QHBoxLayout(hero); heroLayout->setContentsMargins(26,12,20,12);
     auto *heroText=new QVBoxLayout; heroText->setSpacing(7); heroText->addWidget(Design::label("CHAQUE ATTENTION COMPTE","eyebrow"));
-    auto *headline=Design::label("De petits soins.\nDe grands moments de bonheur."); headline->setStyleSheet("font-size:25px;font-weight:650;color:#245443;"); headline->setWordWrap(true); heroText->addWidget(headline);
+    auto *headline=Design::label("De petits soins.\nDe grands moments de bonheur."); headline->setStyleSheet("font-size:25px;font-weight:650;color:#285F6D;"); headline->setWordWrap(true); heroText->addWidget(headline);
     auto *sub=Design::label("Tous vos services, réunis pour leur bien-être.","muted"); sub->setWordWrap(true); heroText->addWidget(sub); heroLayout->addLayout(heroText,1); heroLayout->addWidget(new Mascot); root->addWidget(hero);
     auto *stats=new QHBoxLayout; stats->setSpacing(14);
     const QStringList names={"Total des services","Services planifiés","En cours","Services terminés"};
@@ -43,7 +63,7 @@ DashboardWidget::DashboardWidget(QWidget *parent):QWidget(parent) {
         auto *card=Design::card(); auto *layout=new QVBoxLayout(card); layout->setContentsMargins(17,11,17,11); layout->setSpacing(4);
         auto *first=new QHBoxLayout; auto *title=Design::label(names[i],"muted"); title->setWordWrap(true); first->addWidget(title,1);
         auto *symbol=Design::label(""); symbol->setPixmap(Design::icon(symbols[i]).pixmap(18,18)); symbol->setAlignment(Qt::AlignCenter); symbol->setFixedSize(30,30); symbol->setStyleSheet("background:"+colors[i]+";border-radius:9px;"); first->addWidget(symbol); layout->addLayout(first);
-        auto *value=Design::label("0"); value->setObjectName("stat"+QString::number(i)); value->setStyleSheet("font-size:29px;font-weight:650;color:#264C3E;"); layout->addWidget(value); m_values.append(value);
+        auto *value=Design::label("0"); value->setObjectName("stat"+QString::number(i)); value->setStyleSheet("font-size:29px;font-weight:650;color:#285F6D;"); layout->addWidget(value); m_values.append(value);
         layout->addWidget(Design::label(hints[i],"muted")); stats->addWidget(card,1);
     }
     root->addLayout(stats);
@@ -82,9 +102,9 @@ void DashboardWidget::refresh() {
         if(s.dateTime.date()==QDate::currentDate()) today.append(s);
     }
     const QList<int> values={int(services.size()),planned,active,done};
-    for(int i=0;i<values.size();++i) m_values[i]->setText(QString::number(values[i]));
+    for(int i=0;i<values.size();++i) Motion::countTo(m_values[i],values[i]);
     const auto categories=Design::categories();
-    for(int i=0;i<categories.size();++i) { const int n=counts.value(categories[i]); m_categoryCounts[i]->setText(QString::number(n)); m_bars[i]->setValue(services.isEmpty()?0:100*n/services.size()); }
+    for(int i=0;i<categories.size();++i) { const int n=counts.value(categories[i]); m_categoryCounts[i]->setText(QString::number(n)); Motion::progressTo(m_bars[i],services.isEmpty()?0:100*n/services.size()); }
     std::sort(today.begin(),today.end(),[](const Service &a,const Service &b){return a.dateTime<b.dateTime;});
     m_table->setRowCount(today.size());
     for(int i=0;i<today.size();++i) {
@@ -94,4 +114,17 @@ void DashboardWidget::refresh() {
     m_table->setVisible(!today.isEmpty()); m_empty->setVisible(today.isEmpty());
     m_todayCount->setText(QString("%1 prestation%2 prévue%2 aujourd'hui").arg(today.size()).arg(today.size()==1?"":"s"));
     m_completion->setText(done?QString("%1 soin%2 terminé%2.\nAutant d'attentions qui comptent.").arg(done).arg(done==1?"":"s"):"Chaque soin fait\nla différence.");
+}
+void DashboardWidget::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+    QTimer::singleShot(0,this,[this] {
+        if(!isVisible()) return;
+        for(auto *label:m_values) Motion::countTo(label,label->property("motionTarget").toInt(),true);
+        for(auto *bar:m_bars) Motion::progressTo(bar,bar->property("motionTarget").toInt(),true);
+    });
+}
+void DashboardWidget::hideEvent(QHideEvent *event) {
+    QWidget::hideEvent(event);
+    for(auto *label:m_values) Motion::countTo(label,label->property("motionTarget").toInt());
+    for(auto *bar:m_bars) Motion::progressTo(bar,bar->property("motionTarget").toInt());
 }
