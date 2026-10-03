@@ -1,0 +1,10 @@
+debug/main.o
+debug/mainwindow.o
+debug/employe.o
+debug/gestionemployes.o
+debug/loginwindow.o
+debug/loginvisuals.o
+debug/qrc_resources.o
+debug/moc_mainwindow.o
+debug/moc_gestionemployes.o
+debug/moc_loginwindow.o
