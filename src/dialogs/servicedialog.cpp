@@ -1,12 +1,16 @@
 #include "servicedialog.h"
 #include "../ui/design.h"
+#include "../ui/motion.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QStyle>
 
 ServiceDialog::ServiceDialog(QWidget *parent):QDialog(parent) { setup(Service{},false,false); }
-ServiceDialog::ServiceDialog(const Service &service,bool readOnly,QWidget *parent):QDialog(parent) { setup(service,true,readOnly); }
+ServiceDialog::ServiceDialog(const Service &service,bool readOnly,QWidget *parent):QDialog(parent) { setup(service,service.id>0,readOnly); }
+void ServiceDialog::showEvent(QShowEvent *event) {
+    QDialog::showEvent(event); Motion::reveal(this,QColor("#F3F7F8"),180);
+}
 void ServiceDialog::setup(const Service &s,bool editing,bool readOnly) {
     m_id=s.id; setObjectName("serviceDialog"); setMinimumWidth(570); setModal(true);
     const QString title=readOnly?"Détails du service":editing?"Modifier le service":"Nouveau service"; setWindowTitle("ANIWORLD — "+title);
@@ -42,8 +46,8 @@ void ServiceDialog::setup(const Service &s,bool editing,bool readOnly) {
 void ServiceDialog::validateAndAccept() {
     const bool valid=!m_name->text().trimmed().isEmpty();
     m_name->setProperty("invalid",!valid); m_name->style()->unpolish(m_name); m_name->style()->polish(m_name);
-    if(!valid) { m_error->setText("Donnez un nom au service pour continuer."); m_error->show(); m_name->setFocus(); return; }
-    if(m_description->toPlainText().size()>5000) { m_error->setText("La description doit contenir au maximum 5 000 caractères."); m_error->show(); m_description->setFocus(); return; }
+    if(!valid) { m_error->setText("Donnez un nom au service pour continuer."); m_error->show(); m_name->setFocus(); Motion::reveal(m_error,QColor("#F3F7F8")); return; }
+    if(m_description->toPlainText().size()>5000) { m_error->setText("La description doit contenir au maximum 5 000 caractères."); m_error->show(); m_description->setFocus(); Motion::reveal(m_error,QColor("#F3F7F8")); return; }
     accept();
 }
 Service ServiceDialog::getService() const {

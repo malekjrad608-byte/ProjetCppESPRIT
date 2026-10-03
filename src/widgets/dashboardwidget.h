@@ -10,6 +10,9 @@ public:
     explicit DashboardWidget(QWidget *parent=nullptr);
 public slots:
     void refresh();
+protected:
+    void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 signals:
     void createRequested();
     void servicesRequested();

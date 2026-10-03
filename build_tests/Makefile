@@ -381,6 +381,7 @@ Makefile: ../tests/service_tests.pro C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmak
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/qt_config.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmake.conf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/exclusive_builds.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/toolchain.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/default_pre.prf \
@@ -413,7 +414,6 @@ Makefile: ../tests/service_tests.pro C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmak
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Sql.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Test.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Core.prl \
-		.qmake.stash \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/build_pass.prf \
 		../resources/resources.qrc
 	$(QMAKE) -o Makefile ..\tests\service_tests.pro "CONFIG+=release"
@@ -728,6 +728,7 @@ C:/Qt/6.7.3/mingw_64/mkspecs/features/qt_functions.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/qt_config.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmake.conf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/exclusive_builds.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/toolchain.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/default_pre.prf:
@@ -760,7 +761,6 @@ C:/Qt/6.7.3/mingw_64/lib/Qt6Gui.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Sql.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Test.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Core.prl:
-.qmake.stash:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/build_pass.prf:
 ../resources/resources.qrc:
 qmake: FORCE

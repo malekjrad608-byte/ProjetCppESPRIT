@@ -3,13 +3,13 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QLocale>
-#include "mainwindow.h"
+#include "appcontroller.h"
 #include "database/databasemanager.h"
 #include "ui/design.h"
 
 int main(int argc,char *argv[]) {
     QApplication app(argc,argv);
-    app.setApplicationName("ANIWORLD"); app.setOrganizationName("ANIWORLD"); app.setApplicationVersion("2.0.0");
+    app.setApplicationName("ANIWORLD"); app.setOrganizationName("ANIWORLD"); app.setApplicationVersion("2.4.1");
     app.setFont(QFont("Segoe UI",10));
     QLocale::setDefault(QLocale(QLocale::French,QLocale::Tunisia));
     Design::applyTheme();
@@ -23,6 +23,6 @@ int main(int argc,char *argv[]) {
     if(!db.initialize(demo?":memory:":directory+"/services.sqlite") || (demo && !db.addExamples())) {
         QMessageBox::critical(nullptr,"Stockage indisponible","Impossible d'ouvrir les services.\n"+db.lastError()); return 1;
     }
-    MainWindow window(demo); window.show();
+    AppController controller(demo); controller.start();
     return app.exec();
 }

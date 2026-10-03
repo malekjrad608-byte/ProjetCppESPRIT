@@ -15,6 +15,8 @@ public:
     explicit ServiceDialog(QWidget *parent=nullptr);
     ServiceDialog(const Service &service,bool readOnly,QWidget *parent=nullptr);
     Service getService() const;
+protected:
+    void showEvent(QShowEvent *event) override;
 private:
     void setup(const Service &service,bool editing,bool readOnly);
     void validateAndAccept();

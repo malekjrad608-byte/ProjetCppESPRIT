@@ -11,6 +11,7 @@ public:
     bool isConnected() const { return m_db.isOpen(); }
     QString lastError() const { return m_error; }
     QString storagePath() const { return m_db.databaseName(); }
+    int lastInsertedId() const { return m_lastInsertedId; }
     QList<Service> getAllServices();
     bool addService(const Service &service);
     bool updateService(const Service &service);
@@ -21,4 +22,5 @@ private:
     bool save(const Service &service, bool update);
     QSqlDatabase m_db;
     QString m_error;
+    int m_lastInsertedId = 0;
 };
