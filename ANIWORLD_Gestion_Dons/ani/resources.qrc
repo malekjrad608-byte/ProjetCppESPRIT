@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/assets">
+        <file alias="logo_aniworld_transparent.png">assets/logo_aniworld_transparent.png</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file alias="pet_logo.png">assets/pet_logo.png</file>
+        <file alias="check.svg">assets/check.svg</file>
+    </qresource>
+</RCC>

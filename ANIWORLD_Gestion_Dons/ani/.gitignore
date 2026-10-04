@@ -1,0 +1,16 @@
+# Qt / qmake build output
+build*/
+*.o
+*.obj
+*.exe
+Makefile*
+*.user*
+.qmake.stash
+
+# Qt Creator local settings
+*.creator.user
+
+# Generated UI headers
+ui_*.h
+moc_*.cpp
+qrc_*.cpp
