@@ -1,0 +1,55 @@
+id;nom;type;capacite;occupation;etat;extra
+101;Consultation 1;Consultation;1;0;Libre;Généraliste
+102;Consultation 2;Consultation;1;0;Libre;Généraliste
+103;Consultation 3;Consultation;1;1;Occupée;Dentiste
+104;Consultation 4;Consultation;1;0;Libre;Ophtalmo
+105;Consultation 5;Consultation;1;0;Libre;Généraliste
+201;Bloc A;Chirurgie;1;0;Libre;Aseptique
+202;Bloc B;Chirurgie;1;0;Libre;Standard
+301;Spa & Bain 1;Toilettage;2;0;Libre;Hydro-massage
+302;Spa & Bain 2;Toilettage;2;0;Libre;Classique
+401;Pension principale;Pension;20;0;Libre;Mixte
+501;Grande salle d'adoption;Adoption;20;0;Libre;Exposition adoption
+601;Chambre de stockage;Storage;10;0;Libre;Médicaments et matériel
+---CAGES_PENSION---
+1;libre;;;;
+2;libre;;;;
+3;libre;;;;
+4;libre;;;;
+5;libre;;;;
+6;libre;;;;
+7;libre;;;;
+8;libre;;;;
+9;libre;;;;
+10;libre;;;;
+11;libre;;;;
+12;libre;;;;
+13;libre;;;;
+14;libre;;;;
+15;libre;;;;
+16;libre;;;;
+17;libre;;;;
+18;libre;;;;
+19;libre;;;;
+20;libre;;;;
+---CAGES_ADOPTION---
+1;libre;;;;
+2;libre;;;;
+3;libre;;;;
+4;libre;;;;
+5;libre;;;;
+6;libre;;;;
+7;libre;;;;
+8;libre;;;;
+9;libre;;;;
+10;libre;;;;
+11;libre;;;;
+12;libre;;;;
+13;libre;;;;
+14;libre;;;;
+15;libre;;;;
+16;libre;;;;
+17;libre;;;;
+18;libre;;;;
+19;libre;;;;
+20;libre;;;;
