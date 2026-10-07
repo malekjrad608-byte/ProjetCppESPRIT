@@ -1,0 +1,1333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DonationWindow</class>
+ <widget class="QMainWindow" name="DonationWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1440</width>
+    <height>900</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1180</width>
+    <height>760</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>ANIWORLD — Gestion des Dons</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">
+QMainWindow{background:#F4F7F8;}
+QWidget{font-family:'Segoe UI';color:#263B42;}
+QFrame#sidebar{background:#FFFFFF;border-right:1px solid #DCE6E9;}
+QLabel#brandName{color:#225A64;font-size:12pt;font-weight:700;}
+QLabel#brandSub{color:#728288;font-size:7pt;}
+QLabel#navTitle{color:#7C8D92;font-size:7.5pt;font-weight:700;}
+QPushButton#btnDashboard,QPushButton#navServices,QPushButton#navEmployees,QPushButton#navStock,QPushButton#navLocaux,QPushButton#navMedical{background:transparent;color:#4D6269;border:0;border-radius:7px;text-align:left;padding:8px 6px;min-height:18px;font-size:8.5pt;}
+QPushButton#btnDashboard:hover,QPushButton#navServices:hover,QPushButton#navEmployees:hover,QPushButton#navStock:hover,QPushButton#navLocaux:hover,QPushButton#navMedical:hover{background:#F4F7F8;color:#225A64;}
+QPushButton#navDonations{background:#E4F0F3;color:#225A64;border:0;border-radius:7px;text-align:left;padding:8px 6px;font-weight:700;font-size:8.5pt;}
+QLabel#sideWarning{color:#728288;font-size:8pt;}
+QLabel#breadcrumb{color:#819197;font-size:9pt;}
+QLabel#pageTitle{color:#225A64;font-size:22pt;font-weight:700;}
+QLabel#pageSubtitle{color:#728288;font-size:9pt;}
+QLabel#roleLabel{color:#5E747C;font-size:9pt;}
+QLabel#modeBadge{background:#E6F3EC;color:#397A5C;border-radius:7px;padding:7px 12px;font-weight:600;}
+QPushButton#btnStatistics,QPushButton#btnExportCsv,QPushButton#btnExportPdf,QPushButton#btnReset{background:#FFFFFF;color:#225A64;border:1px solid #D6E2E5;border-radius:7px;padding:7px 11px;min-height:20px;}
+QPushButton#btnStatistics:hover,QPushButton#btnExportCsv:hover,QPushButton#btnExportPdf:hover,QPushButton#btnReset:hover{background:#E4F0F3;}
+QPushButton#btnNew{background:#3B8795;color:#FFFFFF;border:0;border-radius:7px;padding:9px 16px;font-weight:700;min-height:22px;}
+QPushButton#btnNew:hover{background:#2F7482;}
+QFrame#statCard,QFrame#statCard2,QFrame#statCard3,QFrame#filtersPanel,QFrame#cardsPanel,QFrame#detailPanel{background:#FFFFFF;border:1px solid #DDE7E9;border-radius:9px;}
+QFrame#statCard{background:#EAF7EF;border:1px solid #D7EBDD;}
+QFrame#statCard2{background:#F0ECFA;border:1px solid #E1D8F3;}
+QFrame#statCard3{background:#EAF4F8;border:1px solid #D6E7EE;}
+QLabel#statCaption,QLabel#statCaption2,QLabel#statCaption3{color:#718187;font-size:9pt;}
+QLabel#statCaption{color:#4D7B61;}
+QLabel#statCaption2{color:#76639A;}
+QLabel#statCaption3{color:#4D7785;}
+QLabel#statTotal,QLabel#statDonors,QLabel#statAverage{color:#2D7655;font-size:15pt;font-weight:700;}
+QLabel#statDonors{color:#705A9A;}
+QLabel#statAverage{color:#397F8D;}
+QLineEdit#editSearch,QComboBox#comboStatus,QComboBox#comboType,QComboBox#comboSort{background:#FFFFFF;color:#263B42;border:1px solid #D6E2E5;border-radius:6px;padding:6px 9px;min-height:26px;}
+QLineEdit#editSearch:focus,QComboBox#comboStatus:focus,QComboBox#comboType:focus,QComboBox#comboSort:focus{border:1px solid #397F8D;}
+QLabel#countShown{color:#7B8D93;font-size:9pt;}
+QScrollArea#cardsScroll{background:#FFFFFF;border:0;}
+QWidget#cardsContent{background:#FFFFFF;}
+QLabel#detailKicker{color:#7B8C92;font-size:9pt;font-weight:700;letter-spacing:1px;}
+QLabel#detailId{color:#225A64;font-size:17pt;font-weight:700;}
+QLabel#detailStatus{background:#FFF0D6;color:#A16D1B;border-radius:6px;padding:6px 10px;font-weight:600;}
+QLabel#recurringBadge{background:#E6F3EC;color:#397A5C;border-radius:6px;padding:6px 10px;font-weight:600;}
+QLabel#anomalyBadge{background:#FBE9E7;color:#AE5751;border-radius:6px;padding:6px 10px;font-weight:600;}
+QLabel#detailLabel,QLabel#detailLabel2,QLabel#detailLabel3,QLabel#detailLabel4,QLabel#detailLabel5,QLabel#detailLabel6{color:#728288;font-size:8.5pt;font-weight:600;}
+QLineEdit#detailDonor,QLineEdit#detailAmount,QLineEdit#detailDate,QLineEdit#detailPayment,QLineEdit#detailType,QLineEdit#detailCampaign{background:#F9FBFC;color:#263B42;border:1px solid #DCE6E9;border-radius:6px;padding:5px 9px;font-weight:600;min-height:32px;max-height:32px;}
+QLabel#footerInfo{color:#8A989D;font-size:8pt;}
+QPushButton#btnRecurring,QPushButton#btnAnomalies,QPushButton#btnConsult,QPushButton#btnEdit,QPushButton#btnArchive,QPushButton#btnDelete{background:#FFFFFF;color:#347786;border:1px solid #D7E2E5;border-radius:6px;padding:7px 10px;min-height:20px;}
+QPushButton#btnRecurring:hover,QPushButton#btnAnomalies:hover,QPushButton#btnConsult:hover,QPushButton#btnEdit:hover,QPushButton#btnArchive:hover{background:#E4F0F3;border-color:#B9D5DC;}
+QPushButton#btnDelete{color:#AE5751;border-color:#E3C4C1;}
+QPushButton#btnDelete:hover{background:#FBE9E7;}
+QGridLayout{margin:0;}
+QScrollBar:vertical{width:7px;background:#F4F7F8;}
+QScrollBar::handle:vertical{background:#C8D9D4;border-radius:3px;min-height:28px;}
+QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical{height:0;}
+  </string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="outerLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QFrame" name="sidebar">
+      <property name="minimumSize">
+       <size>
+        <width>150</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>150</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <layout class="QVBoxLayout" name="sidebarLayout">
+       <property name="spacing">
+        <number>8</number>
+       </property>
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>14</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
+        <number>12</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" name="brandLayout">
+         <property name="spacing">
+          <number>8</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="brandLogo">
+           <property name="minimumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::ContextMenuPolicy::PreventContextMenu</enum>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="resources.qrc">:/assets/logo_aniworld_transparent.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="brandTextLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="brandName">
+             <property name="text">
+              <string>ANIWORLD</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="brandSub">
+             <property name="text">
+              <string>Les Compagnons</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="sidebarTopGap">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Policy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="navTitle">
+         <property name="text">
+          <string>NAVIGATION</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnDashboard">
+         <property name="text">
+          <string>Tableau de bord</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="navServices">
+         <property name="text">
+          <string>Services</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="navEmployees">
+         <property name="text">
+          <string>Employés</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="navStock">
+         <property name="text">
+          <string>Stock</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="navLocaux">
+         <property name="text">
+          <string>Locaux</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="navMedical">
+         <property name="text">
+          <string>Dossiers médicaux</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="navDonations">
+         <property name="text">
+          <string>Dons</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="sidebarBottomGap">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Policy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="sideWarning">
+         <property name="text">
+          <string>Une attention à chaque contribution.</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="footerInfo">
+         <property name="text">
+          <string>ANIWORLD · Gestion des Dons</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="mainLayout">
+      <property name="spacing">
+       <number>10</number>
+      </property>
+      <property name="leftMargin">
+       <number>18</number>
+      </property>
+      <property name="topMargin">
+       <number>14</number>
+      </property>
+      <property name="rightMargin">
+       <number>18</number>
+      </property>
+      <property name="bottomMargin">
+       <number>10</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="topMetaLayout">
+        <property name="spacing">
+         <number>8</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="breadcrumb">
+          <property name="text">
+           <string>Gestion  /  Dons</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="metaSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Policy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="modeBadge">
+          <property name="text">
+           <string>Maquette · données fictives</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="roleLabel">
+          <property name="text">
+           <string>Responsable du centre</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="titleLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="headerLayout">
+          <property name="spacing">
+           <number>2</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="pageTitle">
+            <property name="text">
+             <string>Gestion des Dons</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="pageSubtitle">
+            <property name="text">
+             <string>Donateurs, contributions et suivi des dons</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="titleSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Policy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnStatistics">
+          <property name="text">
+           <string>Statistiques</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnNew">
+          <property name="text">
+           <string>+ Nouveau don</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="statsLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QFrame" name="statCard">
+          <property name="minimumSize">
+           <size>
+            <width>240</width>
+            <height>88</height>
+           </size>
+          </property>
+          <layout class="QVBoxLayout" name="statLayout1">
+           <property name="spacing">
+            <number>3</number>
+           </property>
+           <property name="leftMargin">
+            <number>16</number>
+           </property>
+           <property name="topMargin">
+            <number>12</number>
+           </property>
+           <property name="rightMargin">
+            <number>16</number>
+           </property>
+           <property name="bottomMargin">
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="statCaption">
+             <property name="text">
+              <string>Montant confirmé</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="statTotal">
+             <property name="text">
+              <string>0.000 TND</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="statCard2">
+          <property name="minimumSize">
+           <size>
+            <width>180</width>
+            <height>88</height>
+           </size>
+          </property>
+          <layout class="QVBoxLayout" name="statLayout2">
+           <property name="spacing">
+            <number>3</number>
+           </property>
+           <property name="leftMargin">
+            <number>16</number>
+           </property>
+           <property name="topMargin">
+            <number>12</number>
+           </property>
+           <property name="rightMargin">
+            <number>16</number>
+           </property>
+           <property name="bottomMargin">
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="statCaption2">
+             <property name="text">
+              <string>Dons confirmés</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="statDonors">
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="statCard3">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>88</height>
+           </size>
+          </property>
+          <layout class="QVBoxLayout" name="statLayout3">
+           <property name="spacing">
+            <number>3</number>
+           </property>
+           <property name="leftMargin">
+            <number>16</number>
+           </property>
+           <property name="topMargin">
+            <number>12</number>
+           </property>
+           <property name="rightMargin">
+            <number>16</number>
+           </property>
+           <property name="bottomMargin">
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="statCaption3">
+             <property name="text">
+              <string>Don moyen</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="statAverage">
+             <property name="text">
+              <string>0.000 TND</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="statsSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Policy::Expanding</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QFrame" name="filtersPanel">
+        <layout class="QVBoxLayout" name="filtersLayout">
+         <property name="spacing">
+          <number>8</number>
+         </property>
+         <property name="leftMargin">
+          <number>10</number>
+         </property>
+         <property name="topMargin">
+          <number>10</number>
+         </property>
+         <property name="rightMargin">
+          <number>10</number>
+         </property>
+         <property name="bottomMargin">
+          <number>10</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="filterTop">
+           <property name="spacing">
+            <number>8</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="editSearch">
+             <property name="placeholderText">
+              <string>Rechercher un donateur, un ID ou une campagne...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboStatus">
+             <item>
+              <property name="text">
+               <string>Tous les statuts</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Confirmé</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>En attente</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>À vérifier</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Archivé</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnExportCsv">
+             <property name="text">
+              <string>Exporter CSV</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnExportPdf">
+             <property name="text">
+              <string>Exporter PDF</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="filterBottom">
+           <property name="spacing">
+            <number>8</number>
+           </property>
+           <item>
+            <widget class="QComboBox" name="comboType">
+             <item>
+              <property name="text">
+               <string>Tous les types</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ponctuel</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Récurrent</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Campagne</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboSort">
+             <item>
+              <property name="text">
+               <string>Plus récentes</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Date ancienne → récente</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Montant décroissant</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Donateur A → Z</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnReset">
+             <property name="text">
+              <string>Réinitialiser</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="filterSpacer">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Policy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="countShown">
+             <property name="text">
+              <string>0 don(s) affiché(s)</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="contentRow">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QFrame" name="cardsPanel">
+          <property name="minimumSize">
+           <size>
+            <width>400</width>
+            <height>430</height>
+           </size>
+          </property>
+          <layout class="QVBoxLayout" name="cardsPanelLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>10</number>
+           </property>
+           <property name="topMargin">
+            <number>10</number>
+           </property>
+           <property name="rightMargin">
+            <number>10</number>
+           </property>
+           <property name="bottomMargin">
+            <number>10</number>
+           </property>
+           <item>
+            <widget class="QScrollArea" name="cardsScroll">
+             <property name="frameShape">
+              <enum>QFrame::Shape::NoFrame</enum>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="cardsContent">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>598</width>
+                <height>497</height>
+               </rect>
+              </property>
+              <layout class="QGridLayout" name="cardsGrid">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <property name="spacing">
+                <number>10</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QPushButton" name="card0">
+                 <property name="minimumSize">
+                  <size>
+                   <width>280</width>
+                   <height>112</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>DON-001   Ahmed Ben Ali
+02/10/2026 · Ponctuel
+150.000 TND
+Confirmé</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QPushButton" name="card1">
+                 <property name="minimumSize">
+                  <size>
+                   <width>280</width>
+                   <height>112</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>DON-002   Société Nour
+28/09/2026 · Campagne
+500.000 TND
+Confirmé</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="card2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>280</width>
+                   <height>112</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>DON-003   Sami H.
+25/09/2026 · Ponctuel
+75.000 TND
+Confirmé</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QPushButton" name="card3">
+                 <property name="minimumSize">
+                  <size>
+                   <width>280</width>
+                   <height>112</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>DON-004   Nour B.
+21/09/2026 · Récurrent
+100.000 TND
+Confirmé</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QPushButton" name="card4">
+                 <property name="minimumSize">
+                  <size>
+                   <width>280</width>
+                   <height>112</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>DON-005   Sara Gharbi
+18/09/2026 · Ponctuel
+250.000 TND
+En attente</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QPushButton" name="card5">
+                 <property name="minimumSize">
+                  <size>
+                   <width>280</width>
+                   <height>112</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>DON-006   Clinique El Amal
+14/09/2026 · Campagne
+1200.000 TND
+Confirmé</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QPushButton" name="card6">
+                 <property name="minimumSize">
+                  <size>
+                   <width>280</width>
+                   <height>112</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>DON-007   Mohamed Ali
+10/09/2026 · Ponctuel
+5000.000 TND
+À vérifier</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QPushButton" name="card7">
+                 <property name="minimumSize">
+                  <size>
+                   <width>280</width>
+                   <height>112</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>DON-008   Mohamed A. Ali
+09/09/2026 · Ponctuel
+80.000 TND
+Confirmé</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="detailPanel">
+          <property name="minimumSize">
+           <size>
+            <width>350</width>
+            <height>430</height>
+           </size>
+          </property>
+          <layout class="QVBoxLayout" name="detailPanelLayout">
+           <property name="spacing">
+            <number>8</number>
+           </property>
+           <property name="leftMargin">
+            <number>16</number>
+           </property>
+           <property name="topMargin">
+            <number>14</number>
+           </property>
+           <property name="rightMargin">
+            <number>16</number>
+           </property>
+           <property name="bottomMargin">
+            <number>14</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="detailKicker">
+             <property name="text">
+              <string>DON SÉLECTIONNÉ</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="detailId">
+             <property name="text">
+              <string>DON-001</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="badgeRow">
+             <property name="spacing">
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="detailStatus">
+               <property name="text">
+                <string>Confirmé</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="recurringBadge">
+               <property name="visible">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Récurrent</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="anomalyBadge">
+               <property name="visible">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>À vérifier</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="badgeSpacer">
+               <property name="orientation">
+                <enum>Qt::Orientation::Horizontal</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Policy::Expanding</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QFrame" name="detailDataFrame">
+             <property name="styleSheet">
+              <string notr="true">QFrame#detailDataFrame{background:#FFFFFF;border:0;}</string>
+             </property>
+             <layout class="QVBoxLayout" name="detailDataLayout">
+              <property name="spacing">
+               <number>6</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <layout class="QHBoxLayout" name="detailRow1">
+                <property name="spacing">
+                 <number>10</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="detailLabel">
+                  <property name="minimumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Donateur</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="detailDonor">
+                  <property name="text">
+                   <string>Ahmed Ben Ali</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="detailRow2">
+                <property name="spacing">
+                 <number>10</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="detailLabel2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Montant</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="detailAmount">
+                  <property name="text">
+                   <string>150.000 TND</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="detailRow3">
+                <property name="spacing">
+                 <number>10</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="detailLabel3">
+                  <property name="minimumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Date</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="detailDate">
+                  <property name="text">
+                   <string>02/10/2026</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="detailRow4">
+                <property name="spacing">
+                 <number>10</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="detailLabel4">
+                  <property name="minimumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Mode</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="detailPayment">
+                  <property name="text">
+                   <string>Carte bancaire</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="detailRow5">
+                <property name="spacing">
+                 <number>10</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="detailLabel5">
+                  <property name="minimumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Type</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="detailType">
+                  <property name="text">
+                   <string>Ponctuel</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="detailRow6">
+                <property name="spacing">
+                 <number>10</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="detailLabel6">
+                  <property name="minimumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>32</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Campagne</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="detailCampaign">
+                  <property name="text">
+                   <string>Soutien aux animaux</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="actionTop">
+             <property name="spacing">
+              <number>7</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="btnRecurring">
+               <property name="text">
+                <string>Dons récurrents</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnAnomalies">
+               <property name="text">
+                <string>Anomalies</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="actionRow1">
+             <property name="spacing">
+              <number>7</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="btnConsult">
+               <property name="text">
+                <string>Consulter</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnEdit">
+               <property name="text">
+                <string>Modifier</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="actionRow2">
+             <property name="spacing">
+              <number>7</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="btnArchive">
+               <property name="text">
+                <string>Archiver</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnDelete">
+               <property name="text">
+                <string>Supprimer</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
