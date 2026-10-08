@@ -552,9 +552,12 @@ void LoginWindow::handleLogin()
         return;
     }
 
-    // Two login profiles: each account opens its integrated module.
+    // Five login profiles: each account opens its own module.
     // Employés : LINDA / LINDA123
     // Locaux   : EMNA / EMNA123
+    // Services : admin / admin123
+    // Stock    : SOFIEN / SOF123
+    // Dossiers : rawand.k / rawand123
     QString role;
     if (user.compare(QStringLiteral("LINDA"), Qt::CaseInsensitive) == 0 &&
         pass == QStringLiteral("LINDA123")) {
@@ -562,6 +565,15 @@ void LoginWindow::handleLogin()
     } else if (user.compare(QStringLiteral("EMNA"), Qt::CaseInsensitive) == 0 &&
                pass == QStringLiteral("EMNA123")) {
         role = QStringLiteral("locaux");
+    } else if (user == QStringLiteral("admin") &&
+               pass == QStringLiteral("admin123")) {
+        role = QStringLiteral("services");
+    } else if (user.compare(QStringLiteral("SOFIEN"), Qt::CaseInsensitive) == 0 &&
+               pass == QStringLiteral("SOF123")) {
+        role = QStringLiteral("stock");
+    } else if (user.compare(QStringLiteral("rawand.k"), Qt::CaseInsensitive) == 0 &&
+               pass == QStringLiteral("rawand123")) {
+        role = QStringLiteral("dossiers");
     } else {
         showMessage("Invalid username or password. Please try again.", true);
         return;

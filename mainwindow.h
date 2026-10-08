@@ -2,120 +2,57 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QVector>
-#include "medicalrecord.h"
+#include <QPushButton>
+#include <QStackedWidget>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
+#include <QEasingCurve>
 
-namespace Ui {
-class MainWindow;
-}
-
-class QPushButton;
-class QLineEdit;
-class QComboBox;
 class QLabel;
-class QWidget;
-class QFrame;
-class QScrollArea;
-class QProgressBar;
-class QStackedWidget;
-class RecordCard;
+class DashboardWidget;
+class ServiceWidget;
+class StockWidget;
+class DossiersPage;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow() override;
-
-protected:
-    void resizeEvent(QResizeEvent *event) override;
-    bool eventFilter(QObject *watched, QEvent *event) override;
+    MainWindow(QWidget *parent = nullptr);
+    void showModuleForRole(const QString &role);
 
 private slots:
-    void onNavigationClicked(const QString &name);
-    void onAddRecordClicked();
-    void onViewRecordClicked();
-    void onEditRecordClicked();
-    void onDeleteRecordClicked();
-    void onToggleVaccinationClicked();
-    void onRefreshClicked();
-    void onFilterChanged();
-    void onResetFiltersClicked();
-    void onShowStatisticsClicked();
-    void onExportCsvClicked();
-    void onCardClicked(const QString &recordId);
+    void afficherEmployes();
+    void afficherTableauDeBord();
+    void afficherServices();
+    void afficherStock();
+    void afficherLocaux();
+    void afficherDossiers();
 
 private:
-    Ui::MainWindow *ui = nullptr;
+    QFrame *creerTopBar();
+    QFrame *creerSidebar();
+    QPushButton *creerBoutonMenu(const QString &icone, const QString &texte);
+    QWidget *creerPageEmployes();
+    QWidget *creerPagePlaceholder(const QString &titre, const QString &icone,
+                                  const QString &description);
+    void fadeInPage(QWidget *page);
 
-    // UI construction (layout itself lives in mainwindow.ui)
-    void setupUI();
-    void loadStylesheet();
-    void loadStaticData();
+    QStackedWidget *m_stack;
+    QLabel *m_breadcrumb;
+    QPushButton *m_btnEmployes;
+    QPushButton *m_btnTableau;
+    QPushButton *m_btnServices;
+    QPushButton *m_btnStock;
+    QPushButton *m_btnLocaux;
+    QPushButton *m_btnDossiers;
 
-    // Data / view
-    void refreshView();
-    void rebuildCards();
-    void relayoutCards();
-    void layoutUi();
-    void layoutDetailPanel();
-    void updateChips();
-    void updateDetailPanel();
-    void updateGlobalPanel();
-    void applyFiltersAndSort();
-    int indexOfRecord(const QString &recordId) const;
-
-    // Actions on a record id
-    void viewRecord(const QString &recordId);
-    void editRecord(const QString &recordId);
-    void deleteRecord(const QString &recordId);
-
-    static QString nextRecordNumber(const QVector<MedicalRecord> &records);
-
-    // Sidebar
-    QVector<QPushButton *> m_navButtons;
-
-    // Header chips
-    QLabel *m_chipTotal = nullptr;
-    QLabel *m_chipConsultations = nullptr;
-    QLabel *m_chipUpToDate = nullptr;
-    QLabel *m_chipToRenew = nullptr;
-
-    // Toolbar
-    QLineEdit *m_searchEdit = nullptr;
-    QComboBox *m_filterSpecies = nullptr;
-    QComboBox *m_filterVaccination = nullptr;
-    QComboBox *m_sortCombo = nullptr;
-
-    // Cards grid
-    QScrollArea *m_scroll = nullptr;
-    QWidget *m_cardsContainer = nullptr;
-    QLabel *m_emptyLabel = nullptr;
-    QVector<RecordCard *> m_cards;
-
-    // Detail panel
-    QLabel *m_detailPlaceholder = nullptr;
-    QWidget *m_detailContent = nullptr;
-    QLabel *m_detailTitle = nullptr;
-    QLabel *m_detailPill = nullptr;
-    QLabel *m_detailLine1 = nullptr;
-    QLabel *m_detailLine2 = nullptr;
-    QLabel *m_detailLine3 = nullptr;
-    QPushButton *m_btnView = nullptr;
-    QPushButton *m_btnToggle = nullptr;
-    QPushButton *m_btnEdit = nullptr;
-    QPushButton *m_btnDelete = nullptr;
-
-    // Global panel
-    QLabel *m_globalValue = nullptr;
-    QProgressBar *m_globalBar = nullptr;
-    QLabel *m_globalText = nullptr;
-
-    // Data
-    QVector<MedicalRecord> m_records;
-    QVector<MedicalRecord> m_filteredRecords;
-    QString m_selectedId;
+    QWidget *m_logoWidget;
+    QPropertyAnimation *m_logoAnimation;
+    DashboardWidget *m_dashboard = nullptr;
+    ServiceWidget *m_services = nullptr;
+    StockWidget *m_stock = nullptr;
+    DossiersPage *m_dossiers = nullptr;
 };
 
-#endif // MAINWINDOW_H
+#endif

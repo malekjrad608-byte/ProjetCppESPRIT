@@ -1,0 +1,1010 @@
+/* ANIWORLD - Gestion du centre
+   Palette (couleurs plus claires et modernes) :
+   - Fond général        #F5F7FA      - Cartes           #FFFFFF  (bordure #E8ECF0)
+   - Bleu pétrole        #5BA3B8      - Titres           #3D7A8E
+   - Texte               #2C3E50      - Texte secondaire #7F8C8D
+   - Sélection (nav)     #E8F4F8      - Sélection carte  #FFF8E7 / #F4C430
+   - Vert (ok)           #E8F5E9 / #27AE60
+   - Lavande (info)      #E8EAF6 / #5C6BC0
+   - Orange (alerte)     #FFF3E0 / #F39C12
+   - Rouge brique        #E74C3C
+*/
+
+* {
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+}
+
+QWidget { background-color: transparent; }
+QMainWindow { background-color: #F5F7FA; }
+#mainContent { background-color: #F5F7FA; }
+
+/* ==================== SIDEBAR ==================== */
+#sidebar {
+    background-color: #FFFFFF;
+    border-right: 1px solid #E8ECF0;
+}
+#logoIcon {
+    background-color: #E8F4F8;
+    border: 2px solid #5BA3B8;
+    border-radius: 28px;
+}
+#brandName { font-size: 22px; font-weight: 700; color: #2C3E50; }
+#brandTag  { font-size: 9px; font-weight: 600; color: #95A5A6; }
+
+#sectionCard {
+    background-color: #F8FAFB;
+    border: 1px solid #E8ECF0;
+    border-radius: 12px;
+}
+#sectionTitle { font-size: 15px; font-weight: 700; color: #2C3E50; background: transparent; }
+#sectionSub   { font-size: 12px; color: #7F8C8D; background: transparent; }
+
+#navLabel {
+    font-size: 11px;
+    font-weight: 700;
+    color: #7F8C8D;
+    padding-left: 6px;
+}
+
+#navButton, #navDashboard, #navAnimals, #navServices, #navMedical {
+    background-color: transparent;
+    color: #2C3E50;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 400;
+}
+#navButton:hover, #navDashboard:hover, #navAnimals:hover, #navServices:hover, #navMedical:hover {
+    background-color: #F8FAFB;
+    color: #3D7A8E;
+}
+#navButton[active="true"], #navDashboard:checked, #navAnimals:checked, #navServices:checked, #navMedical:checked {
+    background-color: #E8F4F8;
+    font-weight: 700;
+    color: #3D7A8E;
+}
+
+#sloganLabel { font-size: 12px; font-weight: 700; color: #2C3E50; padding-left: 4px; }
+#sloganSub   { font-size: 12px; font-weight: 400; color: #7F8C8D; padding-left: 4px; }
+
+/* ==================== TOP BAR ==================== */
+#topBar {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E8ECF0;
+}
+#crumb        { font-size: 14px; font-weight: 400; color: #7F8C8D; }
+#crumbCurrent { font-size: 14px; font-weight: 600; color: #2C3E50; }
+
+#demoBadge {
+    background-color: #E8F4F8;
+    border: 1px solid #D0E8F0;
+    border-radius: 10px;
+    color: #3D7A8E;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 14px 16px;
+}
+#topButton {
+    background-color: #FFFFFF;
+    color: #2C3E50;
+    border: 1px solid #E8ECF0;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-size: 14px;
+    font-weight: 500;
+}
+#topButton:hover {
+    background-color: #F8FAFB;
+    border-color: #5BA3B8;
+}
+#topButton::menu-indicator { image: none; width: 0px; }
+#roleLabel { font-size: 14px; font-weight: 400; color: #7F8C8D; }
+
+QMenu {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE6EA;
+    border-radius: 8px;
+    padding: 6px;
+}
+QMenu::item { padding: 8px 26px; border-radius: 6px; color: #1F3A44; }
+QMenu::item:selected { background-color: #DCE9EF; }
+QMenu::separator { height: 1px; background: #E0E9ED; margin: 6px 4px; }
+
+/* ==================== PAGE HEADER ==================== */
+#pageTitle    { font-size: 32px; font-weight: 700; color: #3D7A8E; }
+#pageSubtitle { font-size: 14px; font-weight: 400; color: #7F8C8D; }
+#footerText   { font-size: 12px; font-weight: 400; color: #7F8C8D; }
+
+#chip {
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+}
+#chip[tone="ok"]   { background-color: #E8F5E9; color: #27AE60; }
+#chip[tone="ok"]:hover { background-color: #D4EFDF; }
+#chip[tone="info"] { background-color: #E8EAF6; color: #5C6BC0; }
+#chip[tone="info"]:hover { background-color: #D4D8F0; }
+#chip[tone="warn"] { background-color: #FFF3E0; color: #F39C12; }
+#chip[tone="warn"]:hover { background-color: #FFE0B2; }
+
+/* ==================== DASHBOARD STATS CARDS ==================== */
+#statCard {
+    background-color: #FFFFFF;
+    border: 1px solid #E0E9ED;
+    border-radius: 14px;
+}
+#statCard:hover {
+    border-color: #C9DDE4;
+    background-color: #FAFCFD;
+}
+#statCard:checked, #statCard:selected {
+    background-color: #FFF6E6;
+    border: 2px solid #F0B45A;
+}
+
+/* ==================== DASHBOARD HERO CARD ==================== */
+#hero {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:1,stop:0 #E3F1F4,stop:0.65 #EEF6F6,stop:1 #FBF1DE);
+    border: 1px solid #D6E6EB;
+    border-radius: 16px;
+}
+#hero:hover {
+    border-color: #C9DDE4;
+}
+
+/* ==================== DASHBOARD OTHER CARDS ==================== */
+#careCard {
+    background: #FFF1DA;
+    border: 1px solid #F1DFC0;
+    border-radius: 14px;
+}
+#careCard:hover {
+    border-color: #E8CFA0;
+}
+
+#sectionCard {
+    background-color: #F1F6F8;
+    border: 1px solid #DCE6EA;
+    border-radius: 12px;
+}
+#sectionCard:hover {
+    border-color: #C9DDE4;
+}
+
+/* ==================== BUTTONS ==================== */
+#primaryButton {
+    background-color: #4A8496;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 22px;
+    font-size: 14px;
+    font-weight: 500;
+}
+#primaryButton:hover { background-color: #3F7788; }
+#primaryButton:pressed { background-color: #356A7A; }
+#primaryButton[big="true"] { padding: 15px 28px; }
+
+#outlineButton, #secondaryButton {
+    background-color: #FFFFFF;
+    color: #1F3A44;
+    border: 1px solid #DCE6EA;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 500;
+}
+#outlineButton:hover, #secondaryButton:hover {
+    background-color: #F1F6F8;
+    border-color: #4A8496;
+}
+
+#dangerOutlineButton, #dangerButton {
+    background-color: #FFFFFF;
+    color: #AE5751;
+    border: 1px solid #E6C3C0;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 500;
+}
+#dangerOutlineButton:hover, #dangerButton:hover { background-color: #FBF1F0; }
+
+#linkButton {
+    background: transparent;
+    border: none;
+    color: #4A8496;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 4px;
+}
+#linkButton:hover { color: #2C6F82; text-decoration: underline; }
+
+/* ==================== SERVICE CARD ==================== */
+ServiceCard {
+    background-color: #FFFFFF;
+    border: 1px solid #E0E9ED;
+    border-radius: 14px;
+}
+ServiceCard:hover {
+    border-color: #C9DDE4;
+}
+ServiceCard:checked, ServiceCard:selected {
+    background-color: #FFF6E6;
+    border: 2px solid #F0B45A;
+}
+
+/* ==================== SPECIFIC BUTTONS ==================== */
+#addAnimal, #editAnimal, #deleteAnimal, #navDashboard, #navAnimals {
+    border-radius: 8px;
+    padding: 10px 16px;
+}
+#addAnimal:hover, #editAnimal:hover {
+    background-color: #3F7788;
+    border-color: #3F7788;
+}
+#deleteAnimal:hover {
+    background-color: #FBF1F0;
+    border-color: #E6C3C0;
+}
+
+#dashboardAdd, #motionToggle, #logoutButton {
+    border-radius: 8px;
+}
+#dashboardAdd:hover {
+    background-color: #3F7788;
+}
+#motionToggle:hover {
+    background-color: #F1F6F8;
+}
+#logoutButton:hover {
+    background-color: #FBF1F0;
+    color: #AE5751;
+}
+
+/* ==================== TOOLBAR ==================== */
+#searchEdit, #medicalSearch {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE6EA;
+    border-radius: 10px;
+    padding: 12px 14px 12px 6px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1F3A44;
+}
+#searchEdit:hover, #medicalSearch:hover {
+    border-color: #C9DDE4;
+}
+#searchEdit:focus, #medicalSearch:focus { border: 1px solid #4A8496; }
+
+#filterCombo {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE6EA;
+    border-radius: 10px;
+    padding: 12px 10px 12px 14px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #1F3A44;
+}
+#filterCombo:hover, #speciesFilter:hover, #sortCombo:hover { border-color: #C9DDE4; }
+#filterCombo::drop-down { border: none; background: transparent; width: 28px; subcontrol-origin: padding; subcontrol-position: center right; }
+#filterCombo::down-arrow { image: url(:/icons/chevron.svg); width: 12px; height: 12px; border: none; background: transparent; }
+#filterCombo QAbstractItemView {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE6EA;
+    selection-background-color: #DCE9EF;
+    selection-color: #1F3A44;
+    outline: none;
+}
+
+/* ==================== RECORD CARDS ==================== */
+#cardsScroll, #cardsContainer { background: transparent; }
+
+#recordCard {
+    background-color: #FFFFFF;
+    border: 1px solid #E0E9ED;
+    border-radius: 14px;
+}
+#recordCard:hover {
+    border-color: #C9DDE4;
+    background-color: #FAFCFD;
+}
+#recordCard[selected="true"], #recordCard:checked, #recordCard:selected {
+    background-color: #FFF6E6;
+    border: 2px solid #F0B45A;
+}
+
+#cardGlyph  { background: transparent; }
+#recordTitle { font-size: 18px; font-weight: 700; color: #1F3A44; background: transparent; }
+#recordSub   { font-size: 14px; font-weight: 400; color: #6B7F88; background: transparent; }
+#recordMeta  { font-size: 14px; font-weight: 400; color: #5A6E77; background: transparent; }
+
+#cardBadge {
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+#cardBadge[tone="ok"]   { background-color: #DDEEE3; color: #2F6B4A; }
+#cardBadge[tone="warn"] { background-color: #FCE4CC; color: #B4641B; }
+
+#statusPill {
+    border-radius: 8px;
+    padding: 4px 14px;
+    font-size: 13px;
+    font-weight: 500;
+}
+#statusPill[tone="ok"]   { background-color: #DDEEE3; color: #2F6B4A; }
+#statusPill[tone="warn"] { background-color: #FCE4CC; color: #B4641B; }
+
+#emptyLabel { color: #6B7F88; font-size: 14px; font-weight: 400; padding: 60px; }
+
+/* ==================== RIGHT PANEL ==================== */
+#panelCard {
+    background-color: #FFFFFF;
+    border: 1px solid #E0E9ED;
+    border-radius: 14px;
+}
+#panelCard:hover {
+    border-color: #C9DDE4;
+    background-color: #FAFCFD;
+}
+#eyebrow       { font-size: 12px; font-weight: 700; color: #6B7F88; background: transparent; }
+#panelTitle    { font-size: 26px; font-weight: 700; color: #2C6F82; background: transparent; }
+#panelSubTitle { font-size: 18px; font-weight: 700; color: #1F3A44; background: transparent; }
+#panelMeta     { font-size: 13px; font-weight: 400; color: #5A6E77; background: transparent; }
+#placeholderText { font-size: 13px; font-weight: 400; color: #6B7F88; background: transparent; }
+#bigValue      { font-size: 28px; font-weight: 700; color: #1F3A44; background: transparent; }
+
+#globalBar {
+    background-color: #E8EEF0;
+    border: none;
+    border-radius: 5px;
+}
+#globalBar:hover {
+    background-color: #E0E8EB;
+}
+#globalBar::chunk { background-color: #4A8496; border-radius: 5px; }
+
+
+/* ==================== DIALOGS ==================== */
+QDialog {
+    background-color: #EEF4F6;
+}
+
+#dialogCard {
+    background-color: #FFFFFF;
+    border: 2px solid #E0E9ED;
+    border-radius: 12px;
+    padding: 22px;
+}
+
+#dialogCard:hover {
+    border-color: #C9DDE4;
+}
+
+#cardTitle {
+    font-size: 17px;
+    font-weight: bold;
+    color: #2C6F82;
+    margin-bottom: 18px;
+    padding-bottom: 11px;
+    border-bottom: 2px solid #E0E9ED;
+}
+
+QLabel {
+    color: #1F3A44;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+QLineEdit {
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    padding: 9px 13px;
+    background-color: #FFFFFF;
+    color: #1F3A44;
+    font-size: 13px;
+}
+
+QLineEdit:focus {
+    border: 2px solid #4A8496;
+}
+
+QLineEdit:hover {
+    border-color: #C9DDE4;
+}
+
+QLineEdit:disabled {
+    background-color: #E0E9ED;
+    color: #8B9EAB;
+}
+
+QTextEdit {
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    padding: 9px 13px;
+    background-color: #FFFFFF;
+    color: #1F3A44;
+    font-size: 13px;
+}
+
+QTextEdit:focus {
+    border: 2px solid #4A8496;
+}
+
+QTextEdit:hover {
+    border-color: #C9DDE4;
+}
+
+QComboBox {
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    padding: 9px 13px;
+    background-color: #FFFFFF;
+    color: #1F3A44;
+    font-size: 13px;
+}
+
+QComboBox:hover {
+    border-color: #4A8496;
+    background-color: #FAFCFD;
+}
+
+QComboBox::drop-down {
+    border: none;
+    background: transparent;
+    width: 28px;
+}
+
+QComboBox::down-arrow {
+    image: url(:/icons/chevron.svg);
+    width: 12px;
+    height: 12px;
+    border: none;
+    background: transparent;
+}
+
+QComboBox QAbstractItemView {
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    selection-background-color: #4A8496;
+    selection-color: #FFFFFF;
+}
+
+QSpinBox, QDoubleSpinBox {
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    padding: 9px 13px;
+    background-color: #FFFFFF;
+    color: #1F3A44;
+    font-size: 13px;
+}
+
+QSpinBox:focus, QDoubleSpinBox:focus {
+    border: 2px solid #4A8496;
+}
+
+QSpinBox:hover, QDoubleSpinBox:hover {
+    border-color: #C9DDE4;
+}
+
+QSpinBox::up-button, QDoubleSpinBox::up-button {
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 22px;
+    border: none;
+    background-color: #EEF4F6;
+}
+
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width: 22px;
+    border: none;
+    background-color: #EEF4F6;
+}
+
+QDateEdit {
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    padding: 9px 13px;
+    background-color: #FFFFFF;
+    color: #1F3A44;
+    font-size: 13px;
+}
+
+QDateEdit:focus {
+    border: 2px solid #4A8496;
+}
+
+QDateEdit:hover {
+    border-color: #C9DDE4;
+}
+
+QDateEdit::drop-down {
+    border: none;
+    width: 22px;
+}
+
+QDateEdit QCalendarWidget QTableView {
+    background-color: #FFFFFF;
+    selection-background-color: #4A8496;
+    selection-color: #FFFFFF;
+}
+
+/* ==================== DETAIL VALUES ==================== */
+#detailValue {
+    color: #1F3A44;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ==================== HISTORY TABLE ==================== */
+#animalsTable, #medicalRecordsTable, #vaccinationsTable {
+    background-color: #FFFFFF;
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    selection-background-color: #E0E9ED;
+    selection-color: #1F3A44;
+    gridline-color: #EEF4F6;
+}
+
+#animalsTable::item, #medicalRecordsTable::item, #vaccinationsTable::item {
+    padding: 9px;
+    border: none;
+}
+
+#animalsTable::item:hover, #medicalRecordsTable::item:hover, #vaccinationsTable::item:hover {
+    background-color: #F5F8FA;
+}
+
+#animalsTable::item:selected, #medicalRecordsTable::item:selected, #vaccinationsTable::item:selected {
+    background-color: #E0E9ED;
+    color: #1F3A44;
+}
+
+#viewBtn {
+    background-color: #4A8496;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+#viewBtn:hover {
+    background-color: #3F7788;
+}
+
+#viewBtn:pressed {
+    background-color: #356A7A;
+}
+
+/* ==================== HISTORY TABLE ==================== */
+#historyTable {
+    background-color: #FFFFFF;
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    selection-background-color: #E0E9ED;
+    selection-color: #1F3A44;
+    gridline-color: #EEF4F6;
+}
+
+#historyTable QHeaderView::section {
+    background-color: #EEF4F6;
+    color: #1F3A44;
+    padding: 11px 9px;
+    border: none;
+    border-right: 2px solid #E0E9ED;
+    border-bottom: 2px solid #E0E9ED;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+#historyTable::item {
+    padding: 9px;
+    border: none;
+}
+
+#historyTable::item:hover {
+    background-color: #F5F8FA;
+}
+
+#historyTable::item:selected {
+    background-color: #E0E9ED;
+    color: #1F3A44;
+}
+
+/* ==================== SCROLLBARS ==================== */
+QScrollBar:vertical {
+    background-color: #E0E9ED;
+    width: 10px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #4A8496;
+    border-radius: 5px;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #4A9AAA;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar:horizontal {
+    background-color: #E0E9ED;
+    height: 10px;
+    border-radius: 5px;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: #4A8496;
+    border-radius: 5px;
+    min-width: 20px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: #4A9AAA;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
+}
+
+/* ==================== ANIMATED BUTTONS ==================== */
+AnimatedButton {
+    background-color: #FFFFFF;
+    border: 1px solid #DCE6EA;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 500;
+}
+AnimatedButton:hover {
+    background-color: #F1F6F8;
+    border-color: #4A8496;
+}
+
+/* ==================== ANIMATED PANEL ==================== */
+AnimatedPanel {
+    background-color: #FFFFFF;
+    border: 1px solid #E0E9ED;
+    border-radius: 14px;
+}
+AnimatedPanel:hover {
+    border-color: #C9DDE4;
+    background-color: #FAFCFD;
+}
+AnimatedPanel:checked, AnimatedPanel:selected {
+    background-color: #FFF6E6;
+    border: 2px solid #F0B45A;
+}
+
+/* ==================== ANIMATED LOGO ==================== */
+AnimatedLogo {
+    background-color: transparent;
+}
+AnimatedLogo:hover {
+    opacity: 0.8;
+}
+
+/* ==================== MESSAGE BOX ==================== */
+QMessageBox {
+    background-color: #FFFFFF;
+}
+
+QMessageBox QLabel {
+    color: #1F3A44;
+    font-size: 14px;
+}
+
+QMessageBox QPushButton {
+    background-color: #2C6F82;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 22px;
+    font-weight: 600;
+    font-size: 13px;
+    min-width: 90px;
+}
+
+QMessageBox QPushButton:hover {
+    background-color: #4A8496;
+}
+
+/* ==================== LOGIN DIALOG ==================== */
+#medicalAccessDialog {
+    background-color: #EEF4F6;
+}
+
+#signInButton {
+    background-color: #4A8496;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 22px;
+    font-size: 14px;
+    font-weight: 500;
+}
+#signInButton:hover {
+    background-color: #3F7788;
+}
+
+#medicalUserId {
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    padding: 9px 13px;
+    background-color: #FFFFFF;
+    color: #1F3A44;
+    font-size: 13px;
+}
+#medicalUserId:focus {
+    border: 2px solid #4A8496;
+}
+#medicalUserId:hover {
+    border-color: #C9DDE4;
+}
+
+/* ==================== ANIMAL DIALOG ==================== */
+#animalDialog {
+    background-color: #EEF4F6;
+}
+
+#animalName, #animalSpecies, #animalBreed, #animalOwner, #animalBirthDate, #animalNotes {
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    padding: 9px 13px;
+    background-color: #FFFFFF;
+    color: #1F3A44;
+    font-size: 13px;
+}
+#animalName:focus, #animalSpecies:focus, #animalBreed:focus, #animalOwner:focus, #animalBirthDate:focus, #animalNotes:focus {
+    border: 2px solid #4A8496;
+}
+#animalName:hover, #animalSpecies:hover, #animalBreed:hover, #animalOwner:hover, #animalBirthDate:hover, #animalNotes:hover {
+    border-color: #C9DDE4;
+}
+
+/* ==================== VACCINATION DIALOG ==================== */
+#vaccinationDialog {
+    background-color: #EEF4F6;
+}
+
+#vaccineName, #vaccineType, #vaccineVeterinarian, #administeredDate, #nextDueDate, #batchNumber, #vaccineNotes {
+    border: 2px solid #E0E9ED;
+    border-radius: 8px;
+    padding: 9px 13px;
+    background-color: #FFFFFF;
+    color: #1F3A44;
+    font-size: 13px;
+}
+#vaccineName:focus, #vaccineType:focus, #vaccineVeterinarian:focus, #administeredDate:focus, #nextDueDate:focus, #batchNumber:focus, #vaccineNotes:focus {
+    border: 2px solid #4A8496;
+}
+#vaccineName:hover, #vaccineType:hover, #vaccineVeterinarian:hover, #administeredDate:hover, #nextDueDate:hover, #batchNumber:hover, #vaccineNotes:hover {
+    border-color: #C9DDE4;
+}
+
+/* ==================== REFERENCE UI POLISH ==================== */
+#sidebar {
+    background: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #FFFFFF,stop:1 #F7FBFC);
+    border-right: 1px solid #DDE8EC;
+}
+#logoIcon {
+    background: #EAF5F8;
+    border: 1px solid #CFE4EA;
+    border-radius: 18px;
+    padding: 5px;
+}
+#brandName { color: #285F6D; font-size: 22px; font-weight: 750; }
+#brandTag { color: #78929B; font-size: 10px; font-weight: 600; }
+
+#navButton, #navDashboard, #navAnimals, #navServices, #navMedical {
+    min-height: 42px;
+    border-radius: 12px;
+    padding: 9px 14px;
+    color: #3A5058;
+    background: transparent;
+    border: 1px solid transparent;
+    font-size: 14px;
+}
+#navButton:hover, #navDashboard:hover, #navAnimals:hover, #navServices:hover, #navMedical:hover {
+    background: #EAF5F8;
+    color: #2E7284;
+    border-color: #D4E9EE;
+}
+#navButton[active="true"], #navDashboard:checked, #navAnimals:checked, #navServices:checked, #navMedical:checked {
+    background: #DDEFF3;
+    color: #276A7B;
+    font-weight: 700;
+    border-color: #C7E2E8;
+}
+
+#primaryButton, #outlineButton, #secondaryButton, #dangerOutlineButton, #btnStatsTop {
+    min-height: 42px;
+}
+#primaryButton {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #3F8B9D,stop:1 #5AA9B8);
+    border-radius: 11px;
+    padding: 11px 20px;
+}
+#primaryButton:hover {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #347C8D,stop:1 #4D9CAD);
+    border: 1px solid #2F7383;
+}
+#primaryButton:pressed { padding-top: 13px; }
+#outlineButton, #secondaryButton {
+    background: #FFFFFF;
+    border: 1px solid #C9DDE4;
+    border-radius: 11px;
+}
+#outlineButton:hover, #secondaryButton:hover, #btnStatsTop:hover {
+    background: #EAF5F8;
+    border-color: #72AEBB;
+    color: #286D7E;
+}
+#dangerOutlineButton:hover {
+    background: #FFF1EF;
+    border-color: #D98A82;
+}
+
+#recordCard {
+    background: #FFFFFF;
+    border: 1px solid #DDE8EC;
+    border-radius: 16px;
+}
+#recordCard:hover {
+    background: #F9FCFD;
+    border: 2px solid #73AEBB;
+}
+#recordCard[selected="true"] {
+    background: #F4FBFC;
+    border: 2px solid #4D95A5;
+}
+#cardBadge, #statusPill { border-radius: 10px; }
+
+#panelCard {
+    background: #FFFFFF;
+    border: 1px solid #DDE8EC;
+    border-radius: 16px;
+}
+#panelCard:hover { border-color: #7CB4BF; }
+
+#filterCombo, QComboBox, #searchEdit {
+    border-radius: 11px;
+}
+#filterCombo:hover, QComboBox:hover, #searchEdit:hover {
+    border-color: #6FA8B5;
+    background: #FCFEFF;
+}
+
+/* Statistics popup matching the reference: cards + bars + clear action button. */
+#statisticsDialog { background: #F4F8F9; }
+#statisticsTitle { color: #285F6D; font-size: 32px; font-weight: 750; background: transparent; }
+#statisticsSubtitle { color: #7B9098; font-size: 13px; font-weight: 400; background: transparent; }
+#statisticsLogo { background: #E7F2F5; border-radius: 18px; padding: 5px; }
+#statisticsMetric, #statisticsPanel {
+    background: #FFFFFF;
+    border: 1px solid #DCE8EC;
+    border-radius: 14px;
+}
+#statisticsMetric:hover, #statisticsPanel:hover { border-color: #72AEBB; background: #FCFEFF; }
+#statisticsMetricCaption { color: #82959D; font-size: 10px; font-weight: 700; background: transparent; }
+#statisticsMetricValue { color: #2E7284; font-size: 26px; font-weight: 750; background: transparent; }
+#statisticsSectionTitle { color: #2F5662; font-size: 16px; font-weight: 700; background: transparent; }
+#statisticsRowLabel { color: #5E737C; font-size: 13px; font-weight: 500; background: transparent; }
+#statisticsCount { color: #2E7284; font-size: 13px; font-weight: 700; background: transparent; min-width: 22px; }
+#statisticsBar, #statisticsVaccBar {
+    background: #E8EFF1;
+    border: none;
+    border-radius: 7px;
+    min-height: 12px;
+    max-height: 12px;
+}
+#statisticsBar::chunk { background: #55A0AF; border-radius: 7px; }
+#statisticsVaccBar { min-height: 22px; max-height: 22px; }
+#statisticsVaccBar::chunk { background: #57A56E; border-radius: 8px; }
+#statisticsClose {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #3F8B9D,stop:1 #5AA9B8);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 26px;
+    font-weight: 700;
+    min-width: 110px;
+}
+#statisticsClose:hover { background: #347C8D; }
+
+
+/* ==================== DETAIL ACTIONS / HOVER ==================== */
+#actionViewButton, #actionToggleButton, #actionEditButton, #actionDeleteButton {
+    min-height: 34px;
+    max-height: 34px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 7px;
+    padding: 5px 10px;
+}
+#actionViewButton {
+    background: qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #3F8B9D,stop:1 #5AA9B8);
+    color: white;
+    border: 1px solid #3B8496;
+}
+#actionViewButton:hover {
+    background: #F4C430;
+    border-color: #D8A900;
+    color: #263238;
+}
+#actionViewButton:pressed { background: #D8A900; color: white; }
+
+#actionToggleButton {
+    background: #FFFFFF;
+    color: #3A5D68;
+    border: 1px solid #DCE7EC;
+}
+#actionToggleButton:hover {
+    background: #F0F6F8;
+    border-color: #93BAC5;
+}
+#actionToggleButton:pressed { background: #DCEBF0; color: #3A5D68; }
+
+#actionEditButton {
+    background: #FFFFFF;
+    color: #3A5D68;
+    border: 1px solid #DCE7EC;
+}
+#actionEditButton:hover {
+    background: #F4C430;
+    border-color: #D8A900;
+    color: #263238;
+}
+#actionEditButton:pressed { background: #D8A900; color: white; }
+
+#actionDeleteButton {
+    background: #FFF8F5;
+    color: #C96A62;
+    border: 1px solid #EACFCB;
+}
+#actionDeleteButton:hover {
+    background: #FBE6DF;
+    border-color: #D9A7A0;
+    color: #AE5751;
+}
+#actionDeleteButton:pressed { background: #FBE6DF; color: #AE5751; }
+
+#recordCard:hover {
+    background: #FFFDF2;
+    border: 2px solid #F4C430;
+}
+#selectedCard:hover {
+    border-color: #F4C430;
+}
+
+/* Brand/logo: keep the logo visibly beside the application name. */
+#logoIcon {
+    background: #EAF5F8;
+    border: 1px solid #CFE4EA;
+    border-radius: 16px;
+    padding: 0px;
+}
+#logoIcon:hover {
+    background: #FFF8D8;
+    border-color: #F4C430;
+}
+#brandName { margin-left: 2px; }
+
+/* Page intégrée dans ANIWORLD2 */
+#DossiersPage { background-color: #F5F7FA; }

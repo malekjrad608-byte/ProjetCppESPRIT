@@ -1,0 +1,636 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui version="4.0">
+  <class>DossiersPage</class>
+  <widget class="QWidget" name="DossiersPage">
+    <property name="geometry">
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>1100</width>
+        <height>800</height>
+      </rect>
+    </property>
+    <widget class="QWidget" name="pageArea">
+      <property name="geometry">
+        <rect>
+          <x>34</x>
+          <y>96</y>
+          <width>1042</width>
+          <height>752</height>
+        </rect>
+      </property>
+      <widget class="QWidget" name="recordsPage">
+        <property name="geometry">
+          <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>656</width>
+            <height>752</height>
+          </rect>
+        </property>
+        <widget class="QLabel" name="pageTitle">
+          <property name="geometry">
+            <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>436</width>
+              <height>44</height>
+            </rect>
+          </property>
+          <property name="text">
+            <string>Dossiers médicaux</string>
+          </property>
+        </widget>
+        <widget class="QLabel" name="pageSubtitle">
+          <property name="geometry">
+            <rect>
+              <x>0</x>
+              <y>50</y>
+              <width>656</width>
+              <height>20</height>
+            </rect>
+          </property>
+          <property name="text">
+            <string>Suivi de santé, consultations et vaccinations des animaux</string>
+          </property>
+        </widget>
+        <widget class="QPushButton" name="btnAdd">
+          <property name="geometry">
+            <rect>
+              <x>446</x>
+              <y>0</y>
+              <width>210</width>
+              <height>49</height>
+            </rect>
+          </property>
+          <property name="text">
+            <string>+ Ajouter un dossier</string>
+          </property>
+          <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="big" stdset="0">
+            <bool>true</bool>
+          </property>
+        </widget>
+        <widget class="QLabel" name="chipTotal">
+          <property name="geometry">
+            <rect>
+              <x>0</x>
+              <y>90</y>
+              <width>130</width>
+              <height>39</height>
+            </rect>
+          </property>
+          <property name="text">
+            <string />
+          </property>
+          <property name="alignment">
+            <set>Qt::AlignCenter</set>
+          </property>
+          <property name="tone" stdset="0">
+            <string>ok</string>
+          </property>
+        </widget>
+        <widget class="QLabel" name="chipConsultations">
+          <property name="geometry">
+            <rect>
+              <x>140</x>
+              <y>90</y>
+              <width>160</width>
+              <height>39</height>
+            </rect>
+          </property>
+          <property name="text">
+            <string />
+          </property>
+          <property name="alignment">
+            <set>Qt::AlignCenter</set>
+          </property>
+          <property name="tone" stdset="0">
+            <string>info</string>
+          </property>
+        </widget>
+        <widget class="QLabel" name="chipUpToDate">
+          <property name="geometry">
+            <rect>
+              <x>310</x>
+              <y>90</y>
+              <width>110</width>
+              <height>39</height>
+            </rect>
+          </property>
+          <property name="text">
+            <string />
+          </property>
+          <property name="alignment">
+            <set>Qt::AlignCenter</set>
+          </property>
+          <property name="tone" stdset="0">
+            <string>ok</string>
+          </property>
+        </widget>
+        <widget class="QLabel" name="chipToRenew">
+          <property name="geometry">
+            <rect>
+              <x>430</x>
+              <y>90</y>
+              <width>150</width>
+              <height>39</height>
+            </rect>
+          </property>
+          <property name="text">
+            <string />
+          </property>
+          <property name="alignment">
+            <set>Qt::AlignCenter</set>
+          </property>
+          <property name="tone" stdset="0">
+            <string>warn</string>
+          </property>
+        </widget>
+        <widget class="QPushButton" name="btnStatsTop">
+          <property name="geometry">
+            <rect>
+              <x>526</x>
+              <y>90</y>
+              <width>130</width>
+              <height>45</height>
+            </rect>
+          </property>
+          <property name="text">
+            <string>Statistiques</string>
+          </property>
+          <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+        </widget>
+        <widget class="QLineEdit" name="searchEdit">
+          <property name="geometry">
+            <rect>
+              <x>0</x>
+              <y>147</y>
+              <width>514</width>
+              <height>45</height>
+            </rect>
+          </property>
+          <property name="placeholderText">
+            <string>Rechercher un dossier…</string>
+          </property>
+          <property name="clearButtonEnabled">
+            <bool>true</bool>
+          </property>
+        </widget>
+        <widget class="QComboBox" name="filterSpecies">
+          <property name="geometry">
+            <rect>
+              <x>0</x>
+              <y>202</y>
+              <width>175</width>
+              <height>45</height>
+            </rect>
+          </property>
+          <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <item>
+            <property name="text">
+              <string>Toutes espèces</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Chien</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Chat</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Lapin</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Oiseau</string>
+            </property>
+          </item>
+        </widget>
+        <widget class="QComboBox" name="filterVaccination">
+          <property name="geometry">
+            <rect>
+              <x>187</x>
+              <y>202</y>
+              <width>160</width>
+              <height>45</height>
+            </rect>
+          </property>
+          <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <item>
+            <property name="text">
+              <string>Tous statuts</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>À jour</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>À renouveler</string>
+            </property>
+          </item>
+        </widget>
+        <widget class="QComboBox" name="sortCombo">
+          <property name="geometry">
+            <rect>
+              <x>359</x>
+              <y>202</y>
+              <width>170</width>
+              <height>45</height>
+            </rect>
+          </property>
+          <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <item>
+            <property name="text">
+              <string>Tri par défaut</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Nom (A–Z)</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Date récente</string>
+            </property>
+          </item>
+          <item>
+            <property name="text">
+              <string>Propriétaire</string>
+            </property>
+          </item>
+        </widget>
+        <widget class="QPushButton" name="btnReset">
+          <property name="geometry">
+            <rect>
+              <x>541</x>
+              <y>207</y>
+              <width>110</width>
+              <height>34</height>
+            </rect>
+          </property>
+          <property name="text">
+            <string>Réinitialiser</string>
+          </property>
+          <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+        </widget>
+        <widget class="QScrollArea" name="cardsScroll">
+          <property name="geometry">
+            <rect>
+              <x>0</x>
+              <y>263</y>
+              <width>656</width>
+              <height>489</height>
+            </rect>
+          </property>
+          <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="widgetResizable">
+            <bool>false</bool>
+          </property>
+          <widget class="QWidget" name="cardsContainer">
+            <property name="geometry">
+              <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>646</width>
+                <height>489</height>
+              </rect>
+            </property>
+            <widget class="QLabel" name="emptyLabel">
+              <property name="geometry">
+                <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>646</width>
+                  <height>160</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string>Aucun dossier médical ne correspond à votre recherche.</string>
+              </property>
+              <property name="alignment">
+                <set>Qt::AlignCenter</set>
+              </property>
+            </widget>
+          </widget>
+        </widget>
+      </widget>
+      <widget class="QWidget" name="detailPanel">
+        <property name="geometry">
+          <rect>
+            <x>682</x>
+            <y>0</y>
+            <width>360</width>
+            <height>658</height>
+          </rect>
+        </property>
+        <widget class="QFrame" name="selectedCard">
+          <property name="geometry">
+            <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>360</width>
+              <height>434</height>
+            </rect>
+          </property>
+          <widget class="QLabel" name="eyebrow">
+            <property name="geometry">
+              <rect>
+                <x>22</x>
+                <y>20</y>
+                <width>316</width>
+                <height>16</height>
+              </rect>
+            </property>
+            <property name="text">
+              <string>DOSSIER SÉLECTIONNÉ</string>
+            </property>
+          </widget>
+          <widget class="QLabel" name="placeholderText">
+            <property name="geometry">
+              <rect>
+                <x>22</x>
+                <y>44</y>
+                <width>316</width>
+                <height>60</height>
+              </rect>
+            </property>
+            <property name="text">
+              <string>Sélectionnez un dossier dans la liste pour afficher ses informations et actions.</string>
+            </property>
+            <property name="wordWrap">
+              <bool>true</bool>
+            </property>
+            <property name="visible">
+              <bool>false</bool>
+            </property>
+          </widget>
+          <widget class="QWidget" name="detailContent">
+            <property name="geometry">
+              <rect>
+                <x>22</x>
+                <y>44</y>
+                <width>316</width>
+                <height>390</height>
+              </rect>
+            </property>
+            <widget class="QLabel" name="panelTitle">
+              <property name="geometry">
+                <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>316</width>
+                  <height>36</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string />
+              </property>
+            </widget>
+            <widget class="QLabel" name="statusPill">
+              <property name="geometry">
+                <rect>
+                  <x>0</x>
+                  <y>44</y>
+                  <width>120</width>
+                  <height>28</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string />
+              </property>
+            </widget>
+            <widget class="QLabel" name="detailLine1">
+              <property name="geometry">
+                <rect>
+                  <x>0</x>
+                  <y>78</y>
+                  <width>316</width>
+                  <height>20</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string />
+              </property>
+              <property name="wordWrap">
+                <bool>true</bool>
+              </property>
+            </widget>
+            <widget class="QLabel" name="detailLine2">
+              <property name="geometry">
+                <rect>
+                  <x>0</x>
+                  <y>102</y>
+                  <width>316</width>
+                  <height>36</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string />
+              </property>
+              <property name="wordWrap">
+                <bool>true</bool>
+              </property>
+            </widget>
+            <widget class="QLabel" name="detailLine3">
+              <property name="geometry">
+                <rect>
+                  <x>0</x>
+                  <y>142</y>
+                  <width>316</width>
+                  <height>56</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string />
+              </property>
+              <property name="wordWrap">
+                <bool>true</bool>
+              </property>
+            </widget>
+            <widget class="QPushButton" name="btnView">
+              <property name="geometry">
+                <rect>
+                  <x>0</x>
+                  <y>208</y>
+                  <width>316</width>
+                  <height>36</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string>Consulter le dossier</string>
+              </property>
+              <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+            </widget>
+            <widget class="QPushButton" name="btnToggle">
+              <property name="geometry">
+                <rect>
+                  <x>0</x>
+                  <y>253</y>
+                  <width>153</width>
+                  <height>36</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string>Vaccin à renouveler</string>
+              </property>
+              <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+            </widget>
+            <widget class="QPushButton" name="btnEdit">
+              <property name="geometry">
+                <rect>
+                  <x>162</x>
+                  <y>253</y>
+                  <width>154</width>
+                  <height>36</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string>Modifier</string>
+              </property>
+              <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+            </widget>
+            <widget class="QPushButton" name="btnDelete">
+              <property name="geometry">
+                <rect>
+                  <x>0</x>
+                  <y>298</y>
+                  <width>316</width>
+                  <height>36</height>
+                </rect>
+              </property>
+              <property name="text">
+                <string>Supprimer le dossier</string>
+              </property>
+              <property name="cursor">
+                <cursorShape>PointingHandCursor</cursorShape>
+              </property>
+            </widget>
+          </widget>
+        </widget>
+        <widget class="QFrame" name="globalCard">
+          <property name="geometry">
+            <rect>
+              <x>0</x>
+              <y>488</y>
+              <width>360</width>
+              <height>215</height>
+            </rect>
+          </property>
+          <widget class="QLabel" name="panelSubTitle">
+            <property name="geometry">
+              <rect>
+                <x>22</x>
+                <y>20</y>
+                <width>316</width>
+                <height>26</height>
+              </rect>
+            </property>
+            <property name="text">
+              <string>Suivi vaccinal global</string>
+            </property>
+          </widget>
+          <widget class="QLabel" name="bigValue">
+            <property name="geometry">
+              <rect>
+                <x>22</x>
+                <y>54</y>
+                <width>316</width>
+                <height>38</height>
+              </rect>
+            </property>
+            <property name="text">
+              <string>0 %</string>
+            </property>
+          </widget>
+          <widget class="QProgressBar" name="globalBar">
+            <property name="geometry">
+              <rect>
+                <x>22</x>
+                <y>100</y>
+                <width>316</width>
+                <height>10</height>
+              </rect>
+            </property>
+            <property name="minimum">
+              <number>0</number>
+            </property>
+            <property name="maximum">
+              <number>100</number>
+            </property>
+            <property name="value">
+              <number>0</number>
+            </property>
+            <property name="textVisible">
+              <bool>false</bool>
+            </property>
+          </widget>
+          <widget class="QLabel" name="globalText">
+            <property name="geometry">
+              <rect>
+                <x>22</x>
+                <y>118</y>
+                <width>316</width>
+                <height>20</height>
+              </rect>
+            </property>
+            <property name="text">
+              <string />
+            </property>
+          </widget>
+          <widget class="QPushButton" name="btnStatsPanel">
+            <property name="geometry">
+              <rect>
+                <x>22</x>
+                <y>148</y>
+                <width>316</width>
+                <height>45</height>
+              </rect>
+            </property>
+            <property name="text">
+              <string>Voir les statistiques</string>
+            </property>
+            <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+            </property>
+          </widget>
+        </widget>
+      </widget>
+    </widget>
+  </widget>
+  <resources />
+  <connections />
+</ui>
