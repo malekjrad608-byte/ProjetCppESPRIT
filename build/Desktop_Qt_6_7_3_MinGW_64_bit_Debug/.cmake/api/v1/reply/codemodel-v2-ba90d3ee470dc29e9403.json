@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-87ed0785c0837c4b8dd7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "ANIWORLD",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ANIWORLD::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ANIWORLD-Debug-08aafa8b058a72ecced7.json",
+					"name" : "ANIWORLD",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ANIWORLD_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ANIWORLD_autogen-Debug-ec24d6c10661710efd49.json",
+					"name" : "ANIWORLD_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ANIWORLD_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ANIWORLD_autogen_timestamp_deps-Debug-5d782909c4b1e54cff3e.json",
+					"name" : "ANIWORLD_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug",
+		"source" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

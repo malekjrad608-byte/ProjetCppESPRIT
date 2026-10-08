@@ -1,0 +1,369 @@
+#include "loginvisuals.h"
+#include "../ui/design.h"
+#include "../ui/motion.h"
+
+#include <QEnterEvent>
+#include <QLabel>
+#include <QPainter>
+#include <QPainterPath>
+#include <QShowEvent>
+#include <QVBoxLayout>
+#include <QtMath>
+#include <QEvent>
+
+namespace {
+constexpr qreal FullCircle = 6.28318530718;
+
+// Paint only a decorative cover over the incoming login form. The real
+// windows keep full opacity, so no previous Services pixels can bleed through.
+class LogoutTransition : public QWidget
+{
+public:
+    explicit LogoutTransition(QWidget *target) : QWidget(target), m_icon(Design::icon("logout",QColor("#397E89")))
+    {
+        setObjectName("logoutTransition");
+        setAttribute(Qt::WA_TransparentForMouseEvents);
+        setFocusPolicy(Qt::NoFocus);
+        setGeometry(target->rect());
+        target->installEventFilter(this);
+        m_animation.setObjectName("logoutMotion");
+        m_animation.setParent(this);
+        m_animation.setDuration(620);
+        m_animation.setStartValue(0.0); m_animation.setEndValue(1.0);
+        connect(&m_animation,&QVariantAnimation::valueChanged,this,[this](const QVariant &value) {
+            m_progress=value.toReal(); update();
+        });
+        connect(&m_animation,&QVariantAnimation::finished,this,[this] { dismiss(); });
+        connect(&Motion::instance(),&Motion::changed,this,[this](bool enabled) { if(!enabled) dismiss(); });
+        show(); raise(); m_animation.start();
+    }
+protected:
+    bool eventFilter(QObject *,QEvent *event) override {
+        if(event->type()==QEvent::Resize) setGeometry(parentWidget()->rect());
+        if(event->type()==QEvent::Hide) dismiss();
+        return false;
+    }
+    void paintEvent(QPaintEvent *) override {
+        QPainter p(this); p.setRenderHint(QPainter::Antialiasing);
+        const qreal fade=qBound(0.0,(m_progress-.35)/.65,1.0);
+        p.setOpacity(1-fade);
+        p.fillRect(rect(),QColor("#FFFDF9"));
+        const qreal ease=1-qPow(1-m_progress,3);
+        const QPointF center(width()/2.0,height()/2.0-55-12*ease);
+        const qreal radius=39+5*ease;
+        p.setPen(Qt::NoPen); p.setBrush(QColor("#E6F2EF"));
+        p.drawEllipse(center,radius,radius);
+        p.setPen(QPen(QColor("#EBA43B"),2.5,Qt::SolidLine,Qt::RoundCap));
+        p.setBrush(Qt::NoBrush);
+        p.drawArc(QRectF(center.x()-51,center.y()-51,102,102),90*16,qRound(-360*16*ease));
+        m_icon.paint(&p,QRect(qRound(center.x()-21+5*ease),qRound(center.y()-22),44,44));
+        QFont heading=font(); heading.setPixelSize(27); heading.setWeight(QFont::DemiBold); p.setFont(heading);
+        p.setPen(QColor("#2B6973"));
+        p.drawText(QRectF(16,center.y()+65,width()-32,42),Qt::AlignCenter,QStringLiteral("À bientôt !"));
+        QFont caption=font(); caption.setPixelSize(13); p.setFont(caption); p.setPen(QColor("#73868A"));
+        p.drawText(QRectF(16,center.y()+109,width()-32,30),Qt::AlignCenter,QStringLiteral("Vous êtes déconnecté."));
+    }
+private:
+    void dismiss() { m_animation.stop(); hide(); deleteLater(); }
+    QIcon m_icon;
+    QVariantAnimation m_animation;
+    qreal m_progress=0;
+};
+
+class LogoArtwork : public QWidget
+{
+public:
+    explicit LogoArtwork(QWidget *parent = nullptr)
+        : QWidget(parent), m_logo(":/brand/pet_login_logo.png")
+    {
+        setFixedWidth(286);
+        setMinimumHeight(180);
+        setMaximumHeight(256);
+        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        setAccessibleName("Smart Pet Care cat and dog logo");
+    }
+
+    void setPhase(qreal phase)
+    {
+        m_phase = phase;
+        update();
+    }
+
+protected:
+    void paintEvent(QPaintEvent *) override
+    {
+        QPainter p(this);
+        p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+        const QPointF center(width() / 2.0, height() / 2.0);
+        p.translate(center);
+        const qreal scale = qMin(width() / 286.0, height() / 256.0);
+        p.scale(scale, scale);
+
+        // The outer rings move; the original logo stays still and readable.
+        p.setBrush(Qt::NoBrush);
+        p.setPen(QPen(QColor(255, 255, 255, 24), 1));
+        p.drawEllipse(QPointF(0, 0), 123, 123);
+        p.setPen(QPen(QColor(255, 255, 255, 14), 1));
+        p.drawEllipse(QPointF(0, 0), 112, 112);
+
+        p.setPen(Qt::NoPen);
+        p.setBrush(QColor(9, 31, 37, 35));
+        p.drawEllipse(QPointF(0, 8), 102, 102);
+        p.setBrush(Qt::white);
+        p.drawEllipse(QPointF(0, 0), 101, 101);
+
+        // Fit the complete supplied artwork inside the badge without cropping it.
+        p.save();
+        QPainterPath badge;
+        badge.addEllipse(QPointF(0, 0), 101, 101);
+        p.setClipPath(badge);
+        QSizeF logoSize = m_logo.size();
+        logoSize.scale(190, 190, Qt::KeepAspectRatio);
+        p.drawPixmap(QRectF(-logoSize.width() / 2, -logoSize.height() / 2,
+                           logoSize.width(), logoSize.height()), m_logo, m_logo.rect());
+        p.restore();
+
+        const qreal angle = m_phase - 0.9;
+        const QPointF dot(qCos(angle) * 123, qSin(angle) * 123);
+        p.setBrush(QColor("#EBA43B"));
+        p.drawEllipse(dot, 5.5, 5.5);
+        p.setBrush(QColor("#9DCBC8"));
+        p.drawEllipse(QPointF(qCos(angle + 3.1) * 112, qSin(angle + 3.1) * 112), 3.5, 3.5);
+
+        p.translate(85, 74 + qSin(m_phase) * 4);
+        p.setBrush(QColor("#EBA43B"));
+        p.drawRoundedRect(QRectF(-24, -24, 48, 48), 16, 16);
+        p.setPen(QPen(QColor("#263E43"), 3, Qt::SolidLine, Qt::RoundCap));
+        p.drawLine(QPointF(-8, 0), QPointF(8, 0));
+        p.drawLine(QPointF(0, -8), QPointF(0, 8));
+    }
+
+private:
+    QPixmap m_logo;
+    qreal m_phase{0.0};
+};
+
+QLabel *brandLabel(const QString &text, const char *name)
+{
+    auto *label = new QLabel(text);
+    label->setObjectName(name);
+    label->setAlignment(Qt::AlignCenter);
+    label->setWordWrap(true);
+    return label;
+}
+
+void drawPaw(QPainter &p, const QPointF &position, qreal angle)
+{
+    p.save();
+    p.translate(position);
+    p.rotate(angle);
+    p.setPen(Qt::NoPen);
+    p.setBrush(QColor(185, 225, 222, 20));
+    p.drawEllipse(QRectF(-9, -1, 18, 15));
+    p.drawEllipse(QRectF(-15, -11, 7, 10));
+    p.drawEllipse(QRectF(-6, -17, 7, 11));
+    p.drawEllipse(QRectF(3, -16, 7, 11));
+    p.drawEllipse(QRectF(11, -9, 7, 10));
+    p.restore();
+}
+}
+
+void playLogoutTransition(QWidget *target)
+{
+    for(auto *old:target->findChildren<QWidget *>("logoutTransition",Qt::FindDirectChildrenOnly)) delete old;
+    if(Motion::instance().enabled() && target->isVisible()) new LogoutTransition(target);
+}
+
+BrandPanel::BrandPanel(QWidget *parent) : QWidget(parent)
+{
+    setObjectName("brandPanel");
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    auto *layout = new QVBoxLayout(this);
+    layout->setContentsMargins(30, 34, 30, 30);
+    layout->setSpacing(0);
+
+    layout->addWidget(brandLabel("SMART PET CARE", "brandName"));
+    layout->addSpacing(6);
+    layout->addWidget(brandLabel("C E N T E R   M A N A G E M E N T", "brandTag"));
+    layout->addStretch(2);
+
+    auto *artwork = new LogoArtwork;
+    layout->addWidget(artwork, 0, Qt::AlignHCenter);
+    layout->addSpacing(18);
+    layout->addWidget(brandLabel("A little care.\nA happier life.", "brandHeadline"));
+    layout->addSpacing(16);
+    layout->addWidget(brandLabel("More time for the paws you love.\nOne place for everything else.", "brandDesc"));
+    layout->addStretch(2);
+    layout->addSpacing(24);
+
+    auto *footer = brandLabel("Appointments  /  Patients  /  Your team", "brandFooter");
+    layout->addWidget(footer);
+
+    m_animation.setStartValue(0.0);
+    m_animation.setEndValue(FullCircle);
+    m_animation.setDuration(28000);
+    m_animation.setLoopCount(-1);
+    connect(&m_animation, &QVariantAnimation::valueChanged, this,
+            [this, artwork](const QVariant &value) {
+        m_phase = value.toReal();
+        if (!window()->isMinimized()) {
+            artwork->setPhase(m_phase);
+            update();
+        }
+    });
+}
+
+void BrandPanel::setMotionEnabled(bool enabled)
+{
+    m_motionEnabled = enabled;
+    if (enabled && isVisible()) {
+        if (m_animation.state() == QAbstractAnimation::Paused)
+            m_animation.resume();
+        else if (m_animation.state() == QAbstractAnimation::Stopped)
+            m_animation.start();
+    } else if (m_animation.state() == QAbstractAnimation::Running) {
+        m_animation.pause();
+    }
+}
+
+void BrandPanel::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    setMotionEnabled(m_motionEnabled);
+}
+
+void BrandPanel::hideEvent(QHideEvent *event)
+{
+    if (m_animation.state() == QAbstractAnimation::Running)
+        m_animation.pause();
+    QWidget::hideEvent(event);
+}
+
+void BrandPanel::paintEvent(QPaintEvent *)
+{
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing);
+    QPainterPath clip;
+    clip.setFillRule(Qt::WindingFill);
+    clip.addRoundedRect(QRectF(rect()), 24, 24);
+    clip.addRect(QRectF(width() - 24, 0, 24, height()));
+    p.setClipPath(clip.simplified());
+
+    QLinearGradient background(0, 0, width(), height());
+    background.setColorAt(0, QColor("#243C43"));
+    background.setColorAt(1, QColor("#387D85"));
+    p.fillRect(rect(), background);
+
+    const QPointF glowCenter(width() * 0.3, height() * 0.42);
+    QRadialGradient glow(glowCenter, width() * 0.85);
+    glow.setColorAt(0, QColor(113, 191, 184, 34));
+    glow.setColorAt(1, QColor(113, 191, 184, 0));
+    p.fillRect(rect(), glow);
+
+    p.setBrush(Qt::NoBrush);
+    p.setPen(QPen(QColor(190, 231, 225, 16), 1));
+    for (int i = 0; i < 3; ++i) {
+        const qreal radius = 170 + i * 25;
+        p.drawEllipse(QPointF(width() + 50, -35), radius, radius);
+        p.drawEllipse(QPointF(-80, height() + 45), radius + 20, radius + 20);
+    }
+    drawPaw(p, QPointF(48, height() * 0.31 + qSin(m_phase) * 7), -25);
+    drawPaw(p, QPointF(width() - 43, height() * 0.65 + qCos(m_phase) * 6), 23);
+}
+
+LoginActionButton::LoginActionButton(const QString &text, QWidget *parent)
+    : QPushButton(text, parent)
+{
+    setObjectName("primaryBtn");
+    setCursor(Qt::PointingHandCursor);
+    setMinimumHeight(52);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_hoverAnimation.setDuration(180);
+    m_hoverAnimation.setEasingCurve(QEasingCurve::OutCubic);
+    connect(&m_hoverAnimation, &QVariantAnimation::valueChanged, this,
+            [this](const QVariant &value) { m_highlight = value.toReal(); update(); });
+}
+
+void LoginActionButton::setMotionEnabled(bool enabled)
+{
+    m_motionEnabled = enabled;
+    if (!enabled) {
+        m_hoverAnimation.stop();
+        m_highlight = underMouse() || hasFocus() ? 1.0 : 0.0;
+        update();
+    }
+}
+
+void LoginActionButton::animateHighlight(bool highlighted)
+{
+    m_hoverAnimation.stop();
+    if (!m_motionEnabled) {
+        m_highlight = highlighted ? 1.0 : 0.0;
+        update();
+        return;
+    }
+    m_hoverAnimation.setStartValue(m_highlight);
+    m_hoverAnimation.setEndValue(highlighted ? 1.0 : 0.0);
+    m_hoverAnimation.start();
+}
+
+void LoginActionButton::enterEvent(QEnterEvent *event)
+{
+    animateHighlight(true);
+    QPushButton::enterEvent(event);
+}
+
+void LoginActionButton::leaveEvent(QEvent *event)
+{
+    animateHighlight(hasFocus());
+    QPushButton::leaveEvent(event);
+}
+
+void LoginActionButton::focusInEvent(QFocusEvent *event)
+{
+    animateHighlight(true);
+    QPushButton::focusInEvent(event);
+}
+
+void LoginActionButton::focusOutEvent(QFocusEvent *event)
+{
+    animateHighlight(underMouse());
+    QPushButton::focusOutEvent(event);
+}
+
+void LoginActionButton::paintEvent(QPaintEvent *)
+{
+    QPainter p(this);
+    p.setRenderHint(QPainter::Antialiasing);
+    const QRectF buttonRect = QRectF(rect()).adjusted(1, 1, -1, -1);
+    QLinearGradient fill(buttonRect.topLeft(), buttonRect.topRight());
+    QColor start("#397E89");
+    QColor end("#2A626C");
+    start = start.lighter(100 + qRound(m_highlight * 12));
+    end = end.lighter(100 + qRound(m_highlight * 12));
+    if (isDown()) { start = QColor("#234D55"); end = start; }
+    if (!isEnabled()) { start = QColor("#B7CACB"); end = start; }
+    fill.setColorAt(0, start);
+    fill.setColorAt(1, end);
+    p.setPen(Qt::NoPen);
+    p.setBrush(fill);
+    p.drawRoundedRect(buttonRect, 12, 12);
+    if (hasFocus()) {
+        p.setPen(QPen(QColor("#EBA43B"), 2));
+        p.setBrush(Qt::NoBrush);
+        p.drawRoundedRect(buttonRect.adjusted(3, 3, -3, -3), 9, 9);
+    }
+    QFont buttonFont = font();
+    buttonFont.setPixelSize(14);
+    buttonFont.setWeight(QFont::DemiBold);
+    p.setFont(buttonFont);
+    p.setPen(Qt::white);
+    p.drawText(buttonRect.adjusted(24, 0, -40, 0), Qt::AlignCenter, text());
+
+    const qreal x = width() - 29 + m_highlight * 3;
+    const qreal y = height() / 2.0;
+    p.setPen(QPen(Qt::white, 1.7, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    p.drawLine(QPointF(x - 8, y), QPointF(x + 3, y));
+    p.drawLine(QPointF(x - 1, y - 4), QPointF(x + 3, y));
+    p.drawLine(QPointF(x - 1, y + 4), QPointF(x + 3, y));
+}
