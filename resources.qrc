@@ -1,11 +1,19 @@
 <RCC>
     <qresource prefix="/">
-        <file>style.qss</file>
-        <file>logo.png</file>
-        <file>arrow.svg</file>
-    </qresource>
-    <qresource prefix="/images">
-        <file alias="logo.png">logo.png</file>
-        <file alias="check.svg">login_assets/check.svg</file>
+        <file alias="styles/style.qss">styles/style.qss</file>
+        <file alias="icons/dashboard.svg">assets/icons/dashboard.svg</file>
+        <file alias="icons/services.svg">assets/icons/services.svg</file>
+        <file alias="icons/employees.svg">assets/icons/employees.svg</file>
+        <file alias="icons/stock.svg">assets/icons/stock.svg</file>
+        <file alias="icons/premises.svg">assets/icons/premises.svg</file>
+        <file alias="icons/records.svg">assets/icons/records.svg</file>
+        <file alias="icons/search.svg">assets/icons/search.svg</file>
+        <file alias="icons/search_grey.svg">assets/icons/search_grey.svg</file>
+        <file alias="icons/paw.svg">assets/icons/paw.svg</file>
+        <file alias="icons/chevron.svg">assets/icons/chevron.svg</file>
+        <file alias="login_logo_final.png">assets/login_logo_final.png</file>
+        <file alias="images/logo.png">assets/logo.png</file>
+        <file alias="assets/logo.png">assets/logo.png</file>
+        <file alias="images/check.svg">assets/check.svg</file>
     </qresource>
 </RCC>

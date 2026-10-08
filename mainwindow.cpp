@@ -1,440 +1,832 @@
-#include "loginvisuals.h"
 #include "mainwindow.h"
-#include "gestionemployes.h"
-#include "gestionlocaux.h"
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include "src/ui/motion.h"
+#include "ui_mainwindow.h"
+#include "recordcard.h"
+#include "medicalrecorddialog.h"
+#include "medicalrecorddetailsdialog.h"
+
+#include <QPushButton>
 #include <QLabel>
-#include <QFrame>
-#include <QPixmap>
-#include <QMenu>
-#include <QAction>
+#include <QLineEdit>
+#include <QComboBox>
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QGraphicsOpacityEffect>
-#include <QPropertyAnimation>
-#include <QEasingCurve>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QProgressBar>
+#include <QMenu>
+#include <QAction>
+#include <QApplication>
+#include <QFile>
+#include <QTextStream>
+#include <QStringConverter>
+#include <QDate>
+#include <QLocale>
+#include <QMap>
+#include <QIcon>
+#include <QPixmap>
+#include <QStyle>
+#include <QtGlobal>
+#include <QEvent>
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QProgressBar>
 #include <QTimer>
+#include <QGraphicsDropShadowEffect>
+#include <algorithm>
 
-// ==================== Constructeur ====================
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
-{
-    setWindowTitle("ANIWORLD — Gestion du centre");
-    resize(1400, 900);
-
-    QWidget *central = new QWidget;
-    setCentralWidget(central);
-
-    QHBoxLayout *main = new QHBoxLayout(central);
-    main->setContentsMargins(0, 0, 0, 0);
-    main->setSpacing(0);
-
-    main->addWidget(creerSidebar());
-
-    QWidget *zone = new QWidget;
-    QVBoxLayout *zoneLayout = new QVBoxLayout(zone);
-    zoneLayout->setContentsMargins(0, 0, 0, 0);
-    zoneLayout->setSpacing(0);
-
-    zoneLayout->addWidget(creerTopBar());
-
-    m_stack = new QStackedWidget;
-    m_stack->addWidget(creerPageEmployes());                                    // 0
-    m_stack->addWidget(creerPagePlaceholder("Tableau de bord", "📊",
-                                            "Vue d'ensemble du centre de soins"));                 // 1
-    m_stack->addWidget(creerPagePlaceholder("Services", "🐾",
-                                            "Gestion des services du centre"));                     // 2
-    m_stack->addWidget(creerPagePlaceholder("Stock", "📦",
-                                            "Gestion des stocks et fournitures"));                  // 3
-    m_stack->addWidget(new GestionLocaux);                                      // 4
-    m_stack->addWidget(creerPagePlaceholder("Dossiers médicaux", "📋",
-                                            "Historique clinique et suivi des animaux"));         // 5
-    zoneLayout->addWidget(m_stack, 1);
-    main->addWidget(zone, 1);
+namespace {
+const int kCardMinWidth = 330;
+const int kGridSpacing = 16;
+const int kCardHeight = 186;
+const int kPanelWidth = 360;
+const int kPanelGap = 26;
 }
 
-void MainWindow::showModuleForRole(const QString &role)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
-    if (role == QStringLiteral("locaux")) {
-        afficherLocaux();
-    } else if (role == QStringLiteral("services")) {
-        afficherServices();
-    } else if (role == QStringLiteral("stock")) {
-        afficherStock();
-    } else {
-        afficherEmployes();
+    ui->setupUi(this);      // builds everything described in mainwindow.ui
+
+    loadStaticData();
+    setupUI();              // wires the widgets from the .ui to the logic
+    loadStylesheet();
+    refreshView();
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+// ---------------------------------------------------------------- UI setup
+
+void MainWindow::setupUI()
+{
+    // --- Style ids -------------------------------------------------------
+    // In the .ui every widget has a unique name (needed by Qt Designer).
+    // The QSS file styles several widgets with the same "#id", so we give
+    // those widgets their style id here.
+    auto styleId = [](std::initializer_list<QWidget *> widgets, const char *id) {
+        for (QWidget *w : widgets)
+            w->setObjectName(QString::fromLatin1(id));
+    };
+    styleId({ui->btnNavDashboard, ui->btnNavServices, ui->btnNavEmployees,
+             ui->btnNavStock, ui->btnNavPremises, ui->btnNavRecords}, "navButton");
+    styleId({ui->crumbGestion, ui->crumbSep}, "crumb");
+    styleId({ui->chipTotal, ui->chipConsultations, ui->chipUpToDate, ui->chipToRenew}, "chip");
+    styleId({ui->footerLeft, ui->footerDate}, "footerText");
+    styleId({ui->btnAdd, ui->btnView}, "primaryButton");
+    styleId({ui->btnStatsTop, ui->btnStatsPanel}, "outlineButton");
+    styleId({ui->btnToggle}, "actionToggleButton");
+    styleId({ui->btnEdit}, "actionEditButton");
+    styleId({ui->btnDelete}, "actionDeleteButton");
+    ui->btnView->setObjectName("actionViewButton");
+    styleId({ui->btnReset}, "linkButton");
+    styleId({ui->btnFile}, "topButton");
+    styleId({ui->selectedCard, ui->globalCard}, "panelCard");
+    styleId({ui->detailLine1, ui->detailLine2, ui->detailLine3, ui->globalText}, "panelMeta");
+    styleId({ui->filterSpecies, ui->filterVaccination, ui->sortCombo}, "filterCombo");
+
+    // --- Sidebar ---------------------------------------------------------
+    // Logo: uses :/assets/logo.png when present, paw glyph otherwise
+    QPixmap logoPix(":/images/logo.png");
+    if (!logoPix.isNull())
+        ui->logoIcon->setPixmap(logoPix.scaled(52, 52, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    else
+        ui->logoIcon->setPixmap(QPixmap(":/icons/paw.svg").scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+    m_navButtons = { ui->btnNavDashboard, ui->btnNavServices, ui->btnNavEmployees,
+                     ui->btnNavStock, ui->btnNavPremises, ui->btnNavRecords };
+    for (QPushButton *btn : std::as_const(m_navButtons)) {
+        const QString label = btn->text();
+        connect(btn, &QPushButton::clicked, this, [this, label]() { onNavigationClicked(label); });
+    }
+
+    // --- Top bar ---------------------------------------------------------
+    auto *menu = new QMenu(ui->btnFile);
+    menu->addAction("Actualiser", this, &MainWindow::onRefreshClicked);
+    menu->addAction("Exporter en CSV…", this, &MainWindow::onExportCsvClicked);
+    menu->addSeparator();
+    menu->addAction("Quitter", this, &QWidget::close);
+    ui->btnFile->setMenu(menu);
+
+    // --- Footer ----------------------------------------------------------
+    ui->footerDate->setText(QLocale(QLocale::French).toString(QDate::currentDate(), "d MMMM yyyy"));
+
+    // --- Records page: header & toolbar ----------------------------------
+    connect(ui->btnAdd, &QPushButton::clicked, this, &MainWindow::onAddRecordClicked);
+    connect(ui->btnStatsTop, &QPushButton::clicked, this, &MainWindow::onShowStatisticsClicked);
+
+    m_chipTotal = ui->chipTotal;
+    m_chipConsultations = ui->chipConsultations;
+    m_chipUpToDate = ui->chipUpToDate;
+    m_chipToRenew = ui->chipToRenew;
+
+    m_searchEdit = ui->searchEdit;
+    m_searchEdit->addAction(QIcon(":/icons/search_grey.svg"), QLineEdit::LeadingPosition);
+    m_filterSpecies = ui->filterSpecies;
+    m_filterVaccination = ui->filterVaccination;
+    m_sortCombo = ui->sortCombo;
+
+    connect(m_searchEdit, &QLineEdit::textChanged, this, &MainWindow::onFilterChanged);
+    for (QComboBox *c : {m_filterSpecies, m_filterVaccination, m_sortCombo})
+        connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::onFilterChanged);
+    connect(ui->btnReset, &QPushButton::clicked, this, &MainWindow::onResetFiltersClicked);
+
+    // --- Cards area (cards are created and positioned in code) ------------
+    m_scroll = ui->cardsScroll;
+    m_scroll->viewport()->installEventFilter(this);
+    m_cardsContainer = ui->cardsContainer;
+    m_emptyLabel = ui->emptyLabel;
+    m_emptyLabel->hide();
+
+    // --- Detail panel ----------------------------------------------------
+    m_detailPlaceholder = ui->placeholderText;
+    m_detailContent = ui->detailContent;
+    m_detailTitle = ui->panelTitle;
+    m_detailPill = ui->statusPill;
+    m_detailLine1 = ui->detailLine1;
+    m_detailLine2 = ui->detailLine2;
+    m_detailLine3 = ui->detailLine3;
+    m_btnView = ui->btnView;
+    m_btnToggle = ui->btnToggle;
+    m_btnEdit = ui->btnEdit;
+    m_btnDelete = ui->btnDelete;
+
+    connect(m_btnView, &QPushButton::clicked, this, &MainWindow::onViewRecordClicked);
+    connect(m_btnToggle, &QPushButton::clicked, this, &MainWindow::onToggleVaccinationClicked);
+    connect(m_btnEdit, &QPushButton::clicked, this, &MainWindow::onEditRecordClicked);
+    connect(m_btnDelete, &QPushButton::clicked, this, &MainWindow::onDeleteRecordClicked);
+
+    // --- Global vaccination card ------------------------------------------
+    m_globalValue = ui->bigValue;
+    m_globalBar = ui->globalBar;
+    m_globalText = ui->globalText;
+    connect(ui->btnStatsPanel, &QPushButton::clicked, this, &MainWindow::onShowStatisticsClicked);
+}
+
+void MainWindow::loadStylesheet()
+{
+    QFile file(":/styles/style.qss");
+    if (file.open(QIODevice::ReadOnly))
+        qApp->setStyleSheet(QString::fromUtf8(file.readAll()));
+}
+
+// ---------------------------------------------------------------- Data
+
+void MainWindow::loadStaticData()
+{
+    auto add = [this](const QString &animalId, const QString &name, const QString &species,
+                      const QString &breed, int age, const QString &sex, const QString &owner,
+                      const QString &recordId, const QDate &date, const QString &reason,
+                      const QString &diagnosis, const QString &treatment,
+                      const QString &vaccinations, const QString &allergies, double weight,
+                      const QString &observations, const QString &vaccStatus) {
+        AnimalInfo a;
+        a.animalId = animalId; a.name = name; a.species = species; a.breed = breed;
+        a.age = age; a.sex = sex; a.owner = owner;
+        MedicalInfo m;
+        m.recordId = recordId; m.consultationDate = date; m.reason = reason;
+        m.diagnosis = diagnosis; m.treatment = treatment; m.vaccinations = vaccinations;
+        m.allergies = allergies; m.weight = weight; m.observations = observations;
+        m.vaccinationStatus = vaccStatus;
+        m_records.append(MedicalRecord(a, m));
+    };
+
+    add("ANI-001", "Max", "Chien", "Golden Retriever", 5, "Mâle", "Jean Dupont",
+        "MED-001", QDate(2026, 9, 12),
+        "Visite de routine", "Animal en bonne santé",
+        "Aucun traitement nécessaire",
+        "Rage, Parvovirose, Distemper", "Aucune connue", 32.5,
+        "Excellent état général. Poids stable.",
+        "À jour");
+    add("ANI-002", "Luna", "Chat", "Siamois", 3, "Femelle", "Marie Martin",
+        "MED-002", QDate(2026, 9, 10),
+        "Perte d'appétit", "Gastrite légère",
+        "Médicament anti-acide, régime alimentaire doux",
+        "Rage, Typhus, Coryza", "Poisson", 4.2,
+        "Amélioration observée après 48h de traitement.",
+        "À jour");
+    add("ANI-003", "Rocky", "Chien", "Bulldog", 7, "Mâle", "Pierre Bernard",
+        "MED-003", QDate(2026, 9, 8),
+        "Boiterie patte arrière", "Arthrose débutante",
+        "Anti-inflammatoires, suppléments articulaires",
+        "Rage, Parvovirose", "Aucune connue", 28.0,
+        "Surveillance recommandée. Exercice modéré.",
+        "À renouveler");
+    add("ANI-004", "Mimi", "Chat", "Européen", 2, "Femelle", "Sophie Petit",
+        "MED-004", QDate(2026, 9, 5),
+        "Vaccination annuelle", "Examen préventif",
+        "Vaccination Rage, Typhus, Coryza",
+        "Rage, Typhus, Coryza", "Aucune connue", 3.8,
+        "Vaccination effectuée sans réaction.",
+        "À jour");
+    add("ANI-005", "Bella", "Lapin", "Lop", 4, "Femelle", "Lucas Dubois",
+        "MED-005", QDate(2026, 9, 3),
+        "Problèmes dentaires", "Malocclusion dentaire",
+        "Lime dentaire, régime alimentaire riche en fibres",
+        "Myxomatose", "Aucune connue", 2.1,
+        "Suivi dentaire recommandé tous les 3 mois.",
+        "À renouveler");
+    add("ANI-006", "Simba", "Chat", "Maine Coon", 6, "Mâle", "Emma Laurent",
+        "MED-006", QDate(2026, 8, 28),
+        "Toux persistante", "Asthme félin",
+        "Corticoïdes inhalés, environnement sans poussière",
+        "Rage, Typhus, Coryza", "Acariens", 7.5,
+        "Condition stable sous traitement.",
+        "À jour");
+    add("ANI-007", "Toby", "Chien", "Labrador", 8, "Mâle", "Thomas Moreau",
+        "MED-007", QDate(2026, 8, 25),
+        "Examen de routine", "Surpoids modéré",
+        "Régime hypocalorique, exercice quotidien",
+        "Rage, Parvovirose, Distemper", "Aucune connue", 42.0,
+        "Perte de poids recommandée (objectif: 35kg).",
+        "À jour");
+    add("ANI-008", "Coco", "Oiseau", "Perroquet", 12, "Femelle", "Chloe Roux",
+        "MED-008", QDate(2026, 8, 20),
+        "Plumes anormales", "Carence en vitamines",
+        "Suppléments vitaminiques, alimentation variée",
+        "Aucune requise", "Aucune connue", 0.45,
+        "Plumes en amélioration après 2 semaines de traitement.",
+        "À jour");
+}
+
+int MainWindow::indexOfRecord(const QString &recordId) const
+{
+    for (int i = 0; i < m_records.size(); ++i)
+        if (m_records[i].medical.recordId == recordId)
+            return i;
+    return -1;
+}
+
+void MainWindow::applyFiltersAndSort()
+{
+    const QString text = m_searchEdit->text().trimmed().toLower();
+    const QString species = m_filterSpecies->currentIndex() == 0 ? QString() : m_filterSpecies->currentText();
+    const QString vacc = m_filterVaccination->currentIndex() == 0 ? QString() : m_filterVaccination->currentText();
+
+    m_filteredRecords.clear();
+    for (const auto &r : m_records) {
+        if (!text.isEmpty()) {
+            const bool hit = r.medical.recordId.toLower().contains(text)
+                || r.animal.animalId.toLower().contains(text)
+                || r.animal.name.toLower().contains(text)
+                || r.animal.species.toLower().contains(text)
+                || r.animal.breed.toLower().contains(text)
+                || r.animal.owner.toLower().contains(text)
+                || r.medical.diagnosis.toLower().contains(text);
+            if (!hit)
+                continue;
+        }
+        if (!species.isEmpty() && r.animal.species != species)
+            continue;
+        if (!vacc.isEmpty() && r.medical.vaccinationStatus != vacc)
+            continue;
+        m_filteredRecords.append(r);
+    }
+
+    switch (m_sortCombo->currentIndex()) {
+    case 1:
+        std::sort(m_filteredRecords.begin(), m_filteredRecords.end(),
+                  [](const MedicalRecord &a, const MedicalRecord &b) {
+                      return a.animal.name.localeAwareCompare(b.animal.name) < 0; });
+        break;
+    case 2:
+        std::sort(m_filteredRecords.begin(), m_filteredRecords.end(),
+                  [](const MedicalRecord &a, const MedicalRecord &b) {
+                      return a.medical.consultationDate > b.medical.consultationDate; });
+        break;
+    case 3:
+        std::sort(m_filteredRecords.begin(), m_filteredRecords.end(),
+                  [](const MedicalRecord &a, const MedicalRecord &b) {
+                      return a.animal.owner.localeAwareCompare(b.animal.owner) < 0; });
+        break;
+    default:
+        break;
     }
 }
 
-// ==================== TOP BAR ====================
-QFrame *MainWindow::creerTopBar()
+// ---------------------------------------------------------------- View refresh
+
+void MainWindow::refreshView()
 {
-    QFrame *bar = new QFrame;
-    bar->setObjectName("topBar");
-    bar->setFixedHeight(70);
+    applyFiltersAndSort();
 
-    QHBoxLayout *layout = new QHBoxLayout(bar);
-    layout->setContentsMargins(30, 0, 30, 0);
-    layout->setSpacing(15);
+    // Keep the selection only if it is still visible
+    bool stillVisible = false;
+    for (const auto &r : m_filteredRecords)
+        if (r.medical.recordId == m_selectedId) { stillVisible = true; break; }
+    if (!stillVisible)
+        m_selectedId.clear();
 
-    m_breadcrumb = new QLabel("Gestion   /   <b>Employés</b>");
-    m_breadcrumb->setObjectName("breadcrumb");
-    m_breadcrumb->setTextFormat(Qt::RichText);
-    layout->addWidget(m_breadcrumb);
+    rebuildCards();
+    updateChips();
+    updateDetailPanel();
+    updateGlobalPanel();
+    layoutUi();
+}
 
-    layout->addStretch();
+void MainWindow::rebuildCards()
+{
+    for (RecordCard *c : m_cards)
+        c->deleteLater();
+    m_cards.clear();
 
-    QPushButton *btnDemo = new QPushButton("Données de démonstration");
-    btnDemo->setObjectName("btnDemo");
-    btnDemo->setMinimumHeight(40);
-    btnDemo->setCursor(Qt::PointingHandCursor);
-    layout->addWidget(btnDemo);
+    for (const auto &r : m_filteredRecords) {
+        auto *card = new RecordCard(r, m_cardsContainer);
+        connect(card, &RecordCard::clicked, this, &MainWindow::onCardClicked);
+        connect(card, &RecordCard::doubleClicked, this, [this](const QString &id) { viewRecord(id); });
+        card->setSelected(r.medical.recordId == m_selectedId);
+        m_cards.append(card);
+    }
+    m_emptyLabel->setVisible(m_cards.isEmpty());
+    relayoutCards();
+}
 
-    QPushButton *btnFichier = new QPushButton("Fichier");
-    btnFichier->setObjectName("btnFichier");
-    btnFichier->setMinimumHeight(40);
-    btnFichier->setMinimumWidth(120);
-    btnFichier->setCursor(Qt::PointingHandCursor);
+// Cards are placed by hand (no layout): as many columns as fit in the viewport.
+void MainWindow::relayoutCards()
+{
+    const int viewW = m_scroll->viewport()->width();
+    const int available = viewW - 10;
+    const int cols = qMax(1, (available + kGridSpacing) / (kCardMinWidth + kGridSpacing));
+    const int cardW = qMax(100, (available - (cols - 1) * kGridSpacing) / cols);
+    const int rows = (m_cards.size() + cols - 1) / cols;
 
-    QMenu *menuFichier = new QMenu(this);
-    menuFichier->setStyleSheet(
-        "QMenu {"
-        "  background-color: #FFFFFF;"
-        "  border: 2px solid #D7E9ED;"
-        "  border-radius: 12px;"
-        "  padding: 8px;"
-        "}"
-        "QMenu::item {"
-        "  padding: 12px 28px 12px 18px;"
-        "  border-radius: 8px;"
-        "  font-size: 13px;"
-        "  color: #1E3A42;"
-        "  font-weight: 600;"
-        "}"
-        "QMenu::item:selected {"
-        "  background-color: #EEF7FA;"
-        "  color: #1E5A68;"
-        "}"
-        "QMenu::separator {"
-        "  height: 1px;"
-        "  background-color: #D7E9ED;"
-        "  margin: 6px 10px;"
-        "}"
-        );
+    for (int i = 0; i < m_cards.size(); ++i) {
+        const int row = i / cols, col = i % cols;
+        m_cards[i]->setGeometry(col * (cardW + kGridSpacing), row * (kCardHeight + kGridSpacing),
+                                cardW, kCardHeight);
+        m_cards[i]->show();
+    }
 
-    QAction *actEnregistrer = menuFichier->addAction("💾   Enregistrer");
-    connect(actEnregistrer, &QAction::triggered, this, [this]() {
-        QMessageBox::information(this, "Enregistrer",
-                                 "✅ Les modifications ont été enregistrées.\n\n"
-                                 "Les modules Services et Employés utilisent leurs stockages locaux.");
+    const int contentH = m_cards.isEmpty() ? 160 : rows * (kCardHeight + kGridSpacing) - kGridSpacing;
+    m_cardsContainer->setGeometry(0, 0, viewW, contentH);
+    m_emptyLabel->setGeometry(0, 0, viewW, 160);
+}
+
+// Positions every block of the window by hand (the .ui has no layouts).
+void MainWindow::layoutUi()
+{
+    if (!ui || !m_scroll)
+        return;
+
+    const int W = width(), H = height();
+    const int sidebarW = 290, topH = 68, footerH = 38;
+    const int mainW = W - sidebarW;
+
+    // Sidebar (slogan stays glued to the bottom)
+    ui->sidebar->setGeometry(0, 0, sidebarW, H);
+    ui->sloganSub->setGeometry(18, H - 22 - 18, 254, 18);
+    ui->sloganLabel->setGeometry(18, H - 22 - 18 - 4 - 18, 254, 18);
+
+    // Main area
+    ui->mainContent->setGeometry(sidebarW, 0, mainW, H);
+
+    // Top bar (right-aligned group)
+    ui->topBar->setGeometry(0, 0, mainW, topH);
+    ui->roleLabel->setGeometry(mainW - 26 - 170, 22, 170, 24);
+    ui->btnFile->setGeometry(mainW - 26 - 170 - 14 - 120, 11, 120, 45);
+    ui->demoBadge->setGeometry(ui->btnFile->x() - 14 - 210, 10, 210, 48);
+
+    // Footer
+    ui->pageFooter->setGeometry(0, H - footerH, mainW, footerH);
+    ui->footerDate->setGeometry(mainW - 34 - 160, 8, 160, 16);
+
+    // Page area = records (left) + detail panel (right)
+    const int pageTop = topH + 28;
+    const int pageW = mainW - 68;
+    const int pageH = qMax(200, H - footerH - 14 - pageTop);
+    ui->pageArea->setGeometry(34, pageTop, pageW, pageH);
+
+    const int LW = pageW - kPanelWidth - kPanelGap;   // records column width
+    ui->recordsPage->setGeometry(0, 0, LW, pageH);
+
+    ui->pageTitle->setGeometry(0, 0, qMax(100, LW - 220), 44);
+    ui->pageSubtitle->setGeometry(0, 50, LW, 20);
+    ui->btnAdd->setGeometry(LW - 210, 0, 210, 49);
+
+    // Chips: width follows the text
+    int x = 0;
+    for (QLabel *chip : {ui->chipTotal, ui->chipConsultations, ui->chipUpToDate, ui->chipToRenew}) {
+        const int cw = qMax(chip->sizeHint().width(),
+                            chip->fontMetrics().horizontalAdvance(chip->text()) + 36) + 8;
+        chip->setGeometry(x, 90, cw, 39);
+        x += cw + 10;
+    }
+    // Toolbar: the Statistics button stays on the SAME ROW as the summary chips,
+    // like the original layout. The search field remains on the row below.
+    // This avoids pushing Statistics too far down into the filters area.
+    const int statsW = 130;
+    const int statsY = 90;
+    ui->btnStatsTop->setGeometry(LW - statsW, statsY, statsW, 45);
+
+    // Search gets the complete row below the chips/statistics.
+    const int ty = 147;
+    ui->searchEdit->setGeometry(0, ty, LW, 45);
+
+    // Filters stay on a separate row, so every control has enough breathing room.
+    const int y2 = ty + 45 + 10;
+    ui->filterSpecies->setGeometry(0, y2, 175, 45);
+    ui->filterVaccination->setGeometry(187, y2, 160, 45);
+    ui->sortCombo->setGeometry(359, y2, 170, 45);
+    ui->btnReset->setGeometry(qMax(0, LW - 110), y2 + 5, 110, 34);
+    const int toolbarBottom = y2 + 45;
+
+    const int scrollTop = toolbarBottom + 16;
+    ui->cardsScroll->setGeometry(0, scrollTop, LW, qMax(100, pageH - scrollTop));
+    relayoutCards();
+
+    // Detail panel
+    layoutDetailPanel();
+    ui->detailPanel->move(LW + kPanelGap, 0);
+}
+
+void MainWindow::layoutDetailPanel()
+{
+    const bool has = indexOfRecord(m_selectedId) >= 0;
+
+    if (has) {
+        m_detailPill->adjustSize();
+        m_detailPill->setGeometry(0, 44, m_detailPill->width() + 8, 28);
+
+        // Compact action layout matching the reference: one primary button,
+        // two small buttons side-by-side, then one danger button.
+        const int actionX = 0;
+        const int actionW = 316;
+        const int actionH = 36;
+        const int actionGap = 9;
+        const int halfW = (actionW - actionGap) / 2;
+        const int actionY = 208;
+
+        // Clean, reference-style action layout:
+        // 1) full-width primary button
+        // 2) two separated half-width buttons
+        // 3) full-width danger button
+        // Every row has a real gap so the buttons never touch/overlap.
+        ui->btnView->setGeometry(actionX, actionY, actionW, actionH);
+        ui->btnToggle->setGeometry(actionX, actionY + actionH + actionGap, halfW, actionH);
+        ui->btnEdit->setGeometry(actionX + halfW + actionGap, actionY + actionH + actionGap, halfW, actionH);
+        ui->btnDelete->setGeometry(actionX, actionY + 2 * (actionH + actionGap), actionW, actionH);
+
+        // Give the action block enough room; do not clip the last button.
+        ui->detailContent->setGeometry(22, 44, 316, 390);
+    }
+    const int cardH = has ? 434 : 126;
+    ui->selectedCard->setGeometry(0, 0, kPanelWidth, cardH);
+    ui->globalCard->setGeometry(0, cardH + 18, kPanelWidth, 215);
+    ui->detailPanel->resize(kPanelWidth, cardH + 18 + 215);
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+    layoutUi();
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (m_scroll && watched == m_scroll->viewport() && event->type() == QEvent::Resize)
+        relayoutCards();
+    return QMainWindow::eventFilter(watched, event);
+}
+
+void MainWindow::updateChips()
+{
+    int upToDate = 0, toRenew = 0;
+    for (const auto &r : m_records) {
+        if (r.medical.vaccinationStatus == "À jour") ++upToDate;
+        else if (r.medical.vaccinationStatus == "À renouveler") ++toRenew;
+    }
+    const int total = m_records.size();
+    m_chipTotal->setText(QString("%1 %2").arg(total).arg(total > 1 ? "dossiers" : "dossier"));
+    m_chipConsultations->setText(QString("%1 %2").arg(total).arg(total > 1 ? "consultations" : "consultation"));
+    m_chipUpToDate->setText(QString("%1 à jour").arg(upToDate));
+    m_chipToRenew->setText(QString("%1 à renouveler").arg(toRenew));
+}
+
+void MainWindow::updateDetailPanel()
+{
+    const int idx = indexOfRecord(m_selectedId);
+    const bool has = idx >= 0;
+    m_detailPlaceholder->setVisible(!has);
+    m_detailContent->setVisible(has);
+    if (!has)
+        return;
+
+    const MedicalRecord &r = m_records[idx];
+    const bool upToDate = r.medical.vaccinationStatus == "À jour";
+
+    m_detailTitle->setText(r.animal.name);
+    m_detailPill->setText(r.medical.vaccinationStatus);
+    m_detailPill->setProperty("tone", upToDate ? "ok" : "warn");
+    m_detailPill->style()->unpolish(m_detailPill);
+    m_detailPill->style()->polish(m_detailPill);
+
+    m_detailLine1->setText(QString("%1 · %2 · %3")
+        .arg(r.animal.species, r.animal.breed, r.animal.animalId));
+    m_detailLine2->setText(QString("Dossier %1 · Âge : %2 an%3 · Sexe : %4")
+        .arg(r.medical.recordId).arg(r.animal.age).arg(r.animal.age > 1 ? "s" : "", r.animal.sex));
+    m_detailLine3->setText(QString("Propriétaire : %1\nMotif : %2").arg(r.animal.owner, r.medical.reason));
+    m_btnToggle->setText(upToDate ? "Vaccin à renouveler" : "Marquer à jour");
+}
+
+void MainWindow::updateGlobalPanel()
+{
+    int upToDate = 0;
+    for (const auto &r : m_records)
+        if (r.medical.vaccinationStatus == "À jour") ++upToDate;
+    const int total = m_records.size();
+    const int pct = total ? qRound(100.0 * upToDate / total) : 0;
+    m_globalValue->setText(QString("%1 %").arg(pct));
+    m_globalBar->setValue(pct);
+    m_globalText->setText(QString("%1 dossier%2 à jour sur %3").arg(upToDate).arg(upToDate > 1 ? "s" : "").arg(total));
+}
+
+// ---------------------------------------------------------------- Actions
+
+QString MainWindow::nextRecordNumber(const QVector<MedicalRecord> &records)
+{
+    int maxNum = 0;
+    for (const auto &r : records)
+        maxNum = qMax(maxNum, r.medical.recordId.section('-', 1).toInt());
+    return QString("MED-%1").arg(maxNum + 1, 3, 10, QChar('0'));
+}
+
+void MainWindow::viewRecord(const QString &recordId)
+{
+    const int idx = indexOfRecord(recordId);
+    if (idx < 0)
+        return;
+    MedicalRecordDetailsDialog dialog(this);
+    dialog.setMedicalRecord(m_records[idx]);
+    dialog.exec();
+}
+
+void MainWindow::editRecord(const QString &recordId)
+{
+    const int idx = indexOfRecord(recordId);
+    if (idx < 0)
+        return;
+    MedicalRecordDialog dialog(this);
+    dialog.setMedicalRecord(m_records[idx]);
+    if (dialog.exec() == QDialog::Accepted) {
+        m_records[idx] = dialog.getMedicalRecord();
+        m_selectedId = m_records[idx].medical.recordId;
+        refreshView();
+    }
+}
+
+void MainWindow::deleteRecord(const QString &recordId)
+{
+    const int idx = indexOfRecord(recordId);
+    if (idx < 0)
+        return;
+    const auto reply = QMessageBox::question(this, "Confirmation",
+        QString("Êtes-vous sûr de vouloir supprimer le dossier de %1 ?").arg(m_records[idx].animal.name),
+        QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        m_records.removeAt(idx);
+        m_selectedId.clear();
+        refreshView();
+    }
+}
+
+void MainWindow::onNavigationClicked(const QString &name)
+{
+    if (name == "Dossiers médicaux")
+        return; // already here
+    QMessageBox::information(this, "Navigation", QString("%1 - Non implémenté").arg(name));
+}
+
+void MainWindow::onAddRecordClicked()
+{
+    MedicalRecordDialog dialog(this);
+    if (dialog.exec() == QDialog::Accepted) {
+        MedicalRecord rec = dialog.getMedicalRecord();
+        if (rec.medical.recordId.trimmed().isEmpty() || indexOfRecord(rec.medical.recordId) >= 0)
+            rec.medical.recordId = nextRecordNumber(m_records);
+        m_records.append(rec);
+        m_selectedId = rec.medical.recordId;
+        refreshView();
+    }
+}
+
+void MainWindow::onViewRecordClicked()   { viewRecord(m_selectedId); }
+void MainWindow::onEditRecordClicked()   { editRecord(m_selectedId); }
+void MainWindow::onDeleteRecordClicked() { deleteRecord(m_selectedId); }
+
+void MainWindow::onToggleVaccinationClicked()
+{
+    const int idx = indexOfRecord(m_selectedId);
+    if (idx < 0)
+        return;
+    QString &status = m_records[idx].medical.vaccinationStatus;
+    status = (status == "À jour") ? "À renouveler" : "À jour";
+    refreshView();
+}
+
+void MainWindow::onRefreshClicked()
+{
+    refreshView();
+}
+
+void MainWindow::onFilterChanged()
+{
+    refreshView();
+}
+
+void MainWindow::onResetFiltersClicked()
+{
+    const QSignalBlocker b1(m_searchEdit), b2(m_filterSpecies), b3(m_filterVaccination), b4(m_sortCombo);
+    m_searchEdit->clear();
+    m_filterSpecies->setCurrentIndex(0);
+    m_filterVaccination->setCurrentIndex(0);
+    m_sortCombo->setCurrentIndex(0);
+    refreshView();
+}
+
+void MainWindow::onCardClicked(const QString &recordId)
+{
+    m_selectedId = recordId;
+    for (RecordCard *c : m_cards)
+        c->setSelected(c->recordId() == recordId);
+    updateDetailPanel();
+    layoutDetailPanel();
+}
+
+void MainWindow::onShowStatisticsClicked()
+{
+    QMap<QString, int> bySpecies;
+    int upToDate = 0, toRenew = 0;
+    for (const auto &r : m_records) {
+        ++bySpecies[r.animal.species];
+        if (r.medical.vaccinationStatus == "À jour") ++upToDate;
+        else ++toRenew;
+    }
+
+    // A real statistics interface (instead of a QMessageBox): cards, progress
+    // bars and a compact breakdown. It deliberately keeps the main
+    // Medecaldosss window untouched, as requested.
+    QDialog dialog(this);
+    dialog.setObjectName("statisticsDialog");
+    dialog.setWindowTitle("Medecaldosss — Statistiques");
+    dialog.setMinimumSize(720, 560);
+    dialog.resize(820, 620);
+
+    auto *root = new QVBoxLayout(&dialog);
+    root->setContentsMargins(30, 26, 30, 26);
+    root->setSpacing(18);
+
+    auto *heading = new QHBoxLayout;
+    auto *titleBox = new QVBoxLayout;
+    titleBox->setSpacing(4);
+    auto *title = new QLabel("Statistiques");
+    title->setObjectName("statisticsTitle");
+    auto *subtitle = new QLabel("Vue globale de vos dossiers médicaux et vaccinations");
+    subtitle->setObjectName("statisticsSubtitle");
+    titleBox->addWidget(title);
+    titleBox->addWidget(subtitle);
+    heading->addLayout(titleBox);
+    heading->addStretch();
+
+    auto *logo = new QLabel;
+    QPixmap logoPix(":/assets/logo.png");
+    if (!logoPix.isNull())
+        logo->setPixmap(logoPix.scaled(52, 52, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    logo->setObjectName("statisticsLogo");
+    heading->addWidget(logo);
+    root->addLayout(heading);
+
+    auto *totals = new QHBoxLayout;
+    totals->setSpacing(14);
+    auto addMetric = [&](const QString &caption, const QString &value, const QString &tone) {
+        auto *card = new QFrame;
+        card->setObjectName("statisticsMetric");
+        card->setProperty("tone", tone);
+        auto *box = new QVBoxLayout(card);
+        box->setContentsMargins(17, 14, 17, 14);
+        box->setSpacing(5);
+        auto *c = new QLabel(caption.toUpper());
+        c->setObjectName("statisticsMetricCaption");
+        auto *v = new QLabel(value);
+        v->setObjectName("statisticsMetricValue");
+        box->addWidget(c);
+        box->addWidget(v);
+        totals->addWidget(card, 1);
+        return v;
+    };
+    addMetric("Dossiers", QString::number(m_records.size()), "blue");
+    addMetric("Vaccins à jour", QString::number(upToDate), "green");
+    addMetric("À renouveler", QString::number(toRenew), "orange");
+    root->addLayout(totals);
+
+    auto *content = new QHBoxLayout;
+    content->setSpacing(16);
+
+    auto *speciesCard = new QFrame;
+    speciesCard->setObjectName("statisticsPanel");
+    auto *speciesLayout = new QVBoxLayout(speciesCard);
+    speciesLayout->setContentsMargins(20, 18, 20, 18);
+    speciesLayout->setSpacing(12);
+    auto *speciesTitle = new QLabel("Répartition par espèce");
+    speciesTitle->setObjectName("statisticsSectionTitle");
+    speciesLayout->addWidget(speciesTitle);
+
+    QList<QPair<QProgressBar *, int>> speciesBars;
+    int maxSpecies = 1;
+    for (auto it = bySpecies.cbegin(); it != bySpecies.cend(); ++it)
+        maxSpecies = qMax(maxSpecies, it.value());
+    for (auto it = bySpecies.cbegin(); it != bySpecies.cend(); ++it) {
+        auto *line = new QHBoxLayout;
+        auto *name = new QLabel(it.key());
+        name->setObjectName("statisticsRowLabel");
+        name->setMinimumWidth(90);
+        auto *bar = new QProgressBar;
+        bar->setRange(0, maxSpecies);
+        bar->setValue(0);
+        bar->setTextVisible(false);
+        bar->setObjectName("statisticsBar");
+        auto *count = new QLabel(QString::number(it.value()));
+        count->setObjectName("statisticsCount");
+        line->addWidget(name);
+        line->addWidget(bar, 1);
+        line->addWidget(count);
+        speciesLayout->addLayout(line);
+        speciesBars.append({bar, it.value()});
+    }
+    if (bySpecies.isEmpty())
+        speciesLayout->addWidget(new QLabel("Aucun dossier disponible."));
+    content->addWidget(speciesCard, 3);
+
+    auto *vaccCard = new QFrame;
+    vaccCard->setObjectName("statisticsPanel");
+    auto *vaccLayout = new QVBoxLayout(vaccCard);
+    vaccLayout->setContentsMargins(20, 18, 20, 18);
+    vaccLayout->setSpacing(12);
+    auto *vaccTitle = new QLabel("État des vaccinations");
+    vaccTitle->setObjectName("statisticsSectionTitle");
+    vaccLayout->addWidget(vaccTitle);
+    auto *vaccBar = new QProgressBar;
+    const int total = m_records.size();
+    const int percent = total ? qRound(100.0 * upToDate / total) : 0;
+    vaccBar->setRange(0, 100);
+    vaccBar->setValue(0);
+    vaccBar->setFormat("%p%");
+    vaccBar->setObjectName("statisticsVaccBar");
+    vaccLayout->addWidget(vaccBar);
+    auto *vaccText = new QLabel(QString("%1 sur %2 dossiers sont à jour").arg(upToDate).arg(total));
+    vaccText->setObjectName("statisticsRowLabel");
+    vaccLayout->addWidget(vaccText);
+    vaccLayout->addStretch();
+    content->addWidget(vaccCard, 2);
+    root->addLayout(content, 1);
+
+    auto *actions = new QHBoxLayout;
+    actions->addStretch();
+    auto *close = new QPushButton("Fermer");
+    close->setObjectName("statisticsClose");
+    close->setCursor(Qt::PointingHandCursor);
+    actions->addWidget(close);
+    root->addLayout(actions);
+    connect(close, &QPushButton::clicked, &dialog, &QDialog::accept);
+
+    // Gentle entrance + animated bars, like the reference interface.
+    QTimer::singleShot(0, &dialog, [&dialog, speciesBars, vaccBar, percent] {
+        Motion::reveal(&dialog, QColor("#F3F7F8"), 220);
+        for (const auto &entry : speciesBars)
+            Motion::progressTo(entry.first, entry.second, true);
+        Motion::progressTo(vaccBar, percent, true);
     });
 
-    menuFichier->addSeparator();
-
-    QAction *actExportPDF = menuFichier->addAction("📄   Exporter en PDF");
-    connect(actExportPDF, &QAction::triggered, this, [this]() {
-        QString fichier = QFileDialog::getSaveFileName(this,
-                                                       "Exporter en PDF", "employes.pdf", "Fichiers PDF (*.pdf)");
-        if (fichier.isEmpty()) return;
-        QMessageBox::information(this, "Export PDF",
-                                 "✅ Export PDF réussi :\n" + fichier);
-    });
-
-    QAction *actExportCSV = menuFichier->addAction("📊   Exporter en CSV");
-    connect(actExportCSV, &QAction::triggered, this, [this]() {
-        QString fichier = QFileDialog::getSaveFileName(this,
-                                                       "Exporter en CSV", "employes.csv", "Fichiers CSV (*.csv)");
-        if (fichier.isEmpty()) return;
-        QMessageBox::information(this, "Export CSV",
-                                 "✅ Export CSV réussi :\n" + fichier);
-    });
-
-    menuFichier->addSeparator();
-
-    QAction *actQuitter = menuFichier->addAction("🚪   Quitter");
-    connect(actQuitter, &QAction::triggered, this, &QWidget::close);
-
-    btnFichier->setMenu(menuFichier);
-    layout->addWidget(btnFichier);
-
-    QLabel *user = new QLabel("Responsable du centre");
-    user->setObjectName("userLabel");
-    layout->addWidget(user);
-
-    return bar;
+    dialog.exec();
 }
 
-// ==================== SIDEBAR ====================
-QFrame *MainWindow::creerSidebar()
+void MainWindow::onExportCsvClicked()
 {
-    QFrame *sb = new QFrame;
-    sb->setObjectName("sidebar");
-    sb->setFixedWidth(280);
-
-    QVBoxLayout *l = new QVBoxLayout(sb);
-    l->setContentsMargins(0, 20, 0, 15);
-    l->setSpacing(5);
-
-    // ==================== LOGO + TITRE (m3a PULSE) ====================
-    m_logoWidget = new QWidget;
-
-    QHBoxLayout *headerL = new QHBoxLayout(m_logoWidget);
-    headerL->setContentsMargins(20, 0, 15, 0);
-    headerL->setSpacing(12);
-
-    // ---- Logo: transparent, no background, shrinks/grows on hover ----
-    HoverLogo *logoImage = new HoverLogo(":/logo.png", QSize(56, 56));
-    headerL->addWidget(logoImage);
-
-    QVBoxLayout *textL = new QVBoxLayout;
-    textL->setSpacing(0);
-    textL->setContentsMargins(0, 0, 0, 0);
-
-    QLabel *logo = new QLabel("ANIWORLD");
-    logo->setObjectName("logo");
-    logo->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    textL->addWidget(logo);
-
-    QLabel *sub = new QLabel("THE OFFICIAL APPLICATION");
-    sub->setObjectName("logoSubtitle");
-    sub->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    textL->addWidget(sub);
-
-    headerL->addLayout(textL);
-    headerL->addStretch();
-
-    l->addWidget(m_logoWidget);
-    l->addSpacing(15);
-
-    // ---- Card Centre ----
-    QFrame *centreCard = new QFrame;
-    centreCard->setObjectName("centreCard");
-    QVBoxLayout *centreL = new QVBoxLayout(centreCard);
-    centreL->setContentsMargins(18, 12, 18, 12);
-    centreL->setSpacing(3);
-
-    QLabel *centreTitre = new QLabel("Centre de soins");
-    centreTitre->setStyleSheet("font-size: 13px; font-weight: 900; color: #0F3D48;"
-                               "background: transparent;");
-    centreL->addWidget(centreTitre);
-
-    QLabel *centreSous = new QLabel("Espace de gestion");
-    centreSous->setStyleSheet("font-size: 11px; color: #1E5A68; background: transparent;"
-                              "font-weight: 600;");
-    centreL->addWidget(centreSous);
-
-    l->addWidget(centreCard);
-    l->addSpacing(20);
-
-    // ---- Navigation ----
-    QLabel *section = new QLabel("NAVIGATION");
-    section->setObjectName("sectionTitle");
-    l->addWidget(section);
-
-    m_btnTableau = creerBoutonMenu("📊", "Tableau de bord");
-    connect(m_btnTableau, &QPushButton::clicked, this, &MainWindow::afficherTableauDeBord);
-    l->addWidget(m_btnTableau);
-
-    m_btnServices = creerBoutonMenu("🐾", "Services");
-    connect(m_btnServices, &QPushButton::clicked, this, &MainWindow::afficherServices);
-    l->addWidget(m_btnServices);
-
-    m_btnEmployes = creerBoutonMenu("👥", "Employés");
-    m_btnEmployes->setChecked(true);
-    connect(m_btnEmployes, &QPushButton::clicked, this, &MainWindow::afficherEmployes);
-    l->addWidget(m_btnEmployes);
-
-    m_btnStock = creerBoutonMenu("📦", "Stock");
-    connect(m_btnStock, &QPushButton::clicked, this, &MainWindow::afficherStock);
-    l->addWidget(m_btnStock);
-
-    m_btnLocaux = creerBoutonMenu("🏠", "Locaux");
-    connect(m_btnLocaux, &QPushButton::clicked, this, &MainWindow::afficherLocaux);
-    l->addWidget(m_btnLocaux);
-
-    m_btnDossiers = creerBoutonMenu("📋", "Dossiers médicaux");
-    connect(m_btnDossiers, &QPushButton::clicked, this, &MainWindow::afficherDossiers);
-    l->addWidget(m_btnDossiers);
-
-    l->addStretch();
-
-    // ---- Footer ----
-    QLabel *footer1 = new QLabel("Une attention à chaque patte.");
-    footer1->setObjectName("footerText");
-    footer1->setAlignment(Qt::AlignCenter);
-    l->addWidget(footer1);
-
-    QLabel *footer2 = new QLabel("ANIWORLD · Centre de soins");
-    footer2->setObjectName("footerSub");
-    footer2->setAlignment(Qt::AlignCenter);
-    l->addWidget(footer2);
-
-    return sb;
-}
-
-QPushButton *MainWindow::creerBoutonMenu(const QString &icone, const QString &texte)
-{
-    QPushButton *b = new QPushButton(icone + "    " + texte);
-    b->setObjectName("menuButton");
-    b->setCheckable(true);
-    b->setCursor(Qt::PointingHandCursor);
-    b->setMinimumHeight(44);
-    return b;
-}
-
-// ==================== PAGE EMPLOYÉS ====================
-QWidget *MainWindow::creerPageEmployes() { return new GestionEmployes; }
-
-// ==================== PAGE PLACEHOLDER ====================
-QWidget *MainWindow::creerPagePlaceholder(const QString &titre, const QString &icone,
-                                          const QString &description)
-{
-    QWidget *page = new QWidget;
-    QVBoxLayout *layout = new QVBoxLayout(page);
-    layout->setContentsMargins(30, 25, 30, 25);
-    layout->setSpacing(15);
-
-    QHBoxLayout *headerL = new QHBoxLayout;
-    QVBoxLayout *titreL = new QVBoxLayout;
-    titreL->setSpacing(4);
-
-    QLabel *lblTitre = new QLabel(icone + "  " + titre);
-    lblTitre->setStyleSheet("font-size: 30px; font-weight: 900; color: #1E5A68;"
-                            "background: transparent;");
-    titreL->addWidget(lblTitre);
-
-    QLabel *lblSous = new QLabel(description);
-    lblSous->setStyleSheet("font-size: 13px; color: #7A8B8F; background: transparent;");
-    titreL->addWidget(lblSous);
-
-    headerL->addLayout(titreL);
-    headerL->addStretch();
-    layout->addLayout(headerL);
-
-    QFrame *card = new QFrame;
-    card->setObjectName("card");
-    QVBoxLayout *cardL = new QVBoxLayout(card);
-    cardL->setContentsMargins(50, 80, 50, 80);
-    cardL->setSpacing(15);
-
-    QLabel *ico = new QLabel(icone);
-    ico->setAlignment(Qt::AlignCenter);
-    ico->setStyleSheet("font-size: 90px; background: transparent;");
-    cardL->addWidget(ico);
-
-    QLabel *msg = new QLabel("Module en cours de développement");
-    msg->setAlignment(Qt::AlignCenter);
-    msg->setStyleSheet("font-size: 22px; font-weight: 900; color: #1E5A68;"
-                       "background: transparent;");
-    cardL->addWidget(msg);
-
-    QLabel *sub = new QLabel("Cette fonctionnalité sera disponible prochainement.");
-    sub->setAlignment(Qt::AlignCenter);
-    sub->setStyleSheet("font-size: 13px; color: #7A8B8F; background: transparent;");
-    cardL->addWidget(sub);
-
-    cardL->addStretch();
-    layout->addWidget(card, 1);
-
-    return page;
-}
-
-// ==================== FADE-IN PAGE ====================
-void MainWindow::fadeInPage(QWidget *page)
-{
-    if (!page) return;
-
-    QGraphicsOpacityEffect *eff = new QGraphicsOpacityEffect(page);
-    page->setGraphicsEffect(eff);
-
-    QPropertyAnimation *anim = new QPropertyAnimation(eff, "opacity");
-    anim->setDuration(400);
-    anim->setStartValue(0.0);
-    anim->setEndValue(1.0);
-    anim->setEasingCurve(QEasingCurve::OutCubic);
-
-    connect(anim, &QPropertyAnimation::finished, [page]() {
-        page->setGraphicsEffect(nullptr);
-    });
-
-    anim->start(QPropertyAnimation::DeleteWhenStopped);
-}
-
-// ==================== SLOTS ====================
-void MainWindow::afficherEmployes()
-{
-    m_stack->setCurrentIndex(0);
-    m_breadcrumb->setText("Gestion   /   <b>Employés</b>");
-    fadeInPage(m_stack->currentWidget());
-    m_btnTableau->setChecked(false);
-    m_btnServices->setChecked(false);
-    m_btnEmployes->setChecked(true);
-    m_btnStock->setChecked(false);
-    m_btnLocaux->setChecked(false);
-    m_btnDossiers->setChecked(false);
-}
-
-void MainWindow::afficherTableauDeBord()
-{
-    m_stack->setCurrentIndex(1);
-    m_breadcrumb->setText("Gestion   /   <b>Tableau de bord</b>");
-    fadeInPage(m_stack->currentWidget());
-    m_btnTableau->setChecked(true);
-    m_btnServices->setChecked(false);
-    m_btnEmployes->setChecked(false);
-    m_btnStock->setChecked(false);
-    m_btnLocaux->setChecked(false);
-    m_btnDossiers->setChecked(false);
-}
-
-void MainWindow::afficherServices()
-{
-    m_stack->setCurrentIndex(2);
-    m_breadcrumb->setText("Gestion   /   <b>Services</b>");
-    fadeInPage(m_stack->currentWidget());
-    m_btnTableau->setChecked(false);
-    m_btnServices->setChecked(true);
-    m_btnEmployes->setChecked(false);
-    m_btnStock->setChecked(false);
-    m_btnLocaux->setChecked(false);
-    m_btnDossiers->setChecked(false);
-}
-
-void MainWindow::afficherStock()
-{
-    m_stack->setCurrentIndex(3);
-    m_breadcrumb->setText("Gestion   /   <b>Stock</b>");
-    fadeInPage(m_stack->currentWidget());
-    m_btnTableau->setChecked(false);
-    m_btnServices->setChecked(false);
-    m_btnEmployes->setChecked(false);
-    m_btnStock->setChecked(true);
-    m_btnLocaux->setChecked(false);
-    m_btnDossiers->setChecked(false);
-}
-
-void MainWindow::afficherLocaux()
-{
-    m_stack->setCurrentIndex(4);
-    m_breadcrumb->setText("Gestion   /   <b>Locaux</b>");
-    fadeInPage(m_stack->currentWidget());
-    m_btnTableau->setChecked(false);
-    m_btnServices->setChecked(false);
-    m_btnEmployes->setChecked(false);
-    m_btnStock->setChecked(false);
-    m_btnLocaux->setChecked(true);
-    m_btnDossiers->setChecked(false);
-}
-
-void MainWindow::afficherDossiers()
-{
-    m_stack->setCurrentIndex(5);
-    m_breadcrumb->setText("Gestion   /   <b>Dossiers médicaux</b>");
-    fadeInPage(m_stack->currentWidget());
-    m_btnTableau->setChecked(false);
-    m_btnServices->setChecked(false);
-    m_btnEmployes->setChecked(false);
-    m_btnStock->setChecked(false);
-    m_btnLocaux->setChecked(false);
-    m_btnDossiers->setChecked(true);
+    const QString path = QFileDialog::getSaveFileName(this, "Exporter les dossiers",
+                                                      "dossiers_medicaux.csv", "CSV (*.csv)");
+    if (path.isEmpty())
+        return;
+    QFile f(path);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Export", "Impossible d'écrire le fichier.");
+        return;
+    }
+    QTextStream out(&f);
+    out.setEncoding(QStringConverter::Utf8);
+    out.setGenerateByteOrderMark(true);
+    auto esc = [](QString s) { s.replace('"', "\"\""); return '"' + s + '"'; };
+    out << "ID dossier;ID animal;Nom;Espèce;Race;Âge;Sexe;Propriétaire;Date;Motif;Diagnostic;Traitement;Vaccinations;Allergies;Poids;Statut vaccination\n";
+    for (const auto &r : m_filteredRecords) {
+        out << esc(r.medical.recordId) << ';' << esc(r.animal.animalId) << ';' << esc(r.animal.name) << ';'
+            << esc(r.animal.species) << ';' << esc(r.animal.breed) << ';' << r.animal.age << ';'
+            << esc(r.animal.sex) << ';' << esc(r.animal.owner) << ';'
+            << r.medical.consultationDate.toString("dd/MM/yyyy") << ';' << esc(r.medical.reason) << ';'
+            << esc(r.medical.diagnosis) << ';' << esc(r.medical.treatment) << ';'
+            << esc(r.medical.vaccinations) << ';' << esc(r.medical.allergies) << ';'
+            << r.medical.weight << ';' << esc(r.medical.vaccinationStatus) << '\n';
+    }
 }
