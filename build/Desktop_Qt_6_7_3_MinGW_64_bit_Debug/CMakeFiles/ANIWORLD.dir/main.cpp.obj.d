@@ -1,5 +1,5 @@
 CMakeFiles/ANIWORLD.dir/main.cpp.obj: \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\main.cpp \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\main.cpp \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QApplication \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qapplication.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -360,9 +360,9 @@ CMakeFiles/ANIWORLD.dir/main.cpp.obj: \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qlocale.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qvariant.h \
  C:/Qt/6.7.3/mingw_64/include/QtGui/qguiapplication_platform.h \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\mainwindow.h \
- C:/Qt/6.7.3/mingw_64/include/QtWidgets/QMainWindow \
- C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmainwindow.h \
+ C:/Qt/6.7.3/mingw_64/include/QtWidgets/QMessageBox \
+ C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmessagebox.h \
+ C:/Qt/6.7.3/mingw_64/include/QtWidgets/qdialog.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qwidget.h \
  C:/Qt/6.7.3/mingw_64/include/QtGui/qaction.h \
  C:/Qt/6.7.3/mingw_64/include/QtGui/qkeysequence.h \
@@ -374,15 +374,26 @@ CMakeFiles/ANIWORLD.dir/main.cpp.obj: \
  C:/Qt/6.7.3/mingw_64/include/QtGui/qfontmetrics.h \
  C:/Qt/6.7.3/mingw_64/include/QtGui/qfontinfo.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qsizepolicy.h \
+ C:/Qt/6.7.3/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\mainwindow.h \
+ C:/Qt/6.7.3/mingw_64/include/QtWidgets/QMainWindow \
+ C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmainwindow.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtabwidget.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/QVector \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\medicalrecord.h \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\medicalrecord.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/QString \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qstring.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/QDate \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qdatetime.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qcalendar.h \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\logindialog.h \
- C:/Qt/6.7.3/mingw_64/include/QtWidgets/QDialog \
- C:/Qt/6.7.3/mingw_64/include/QtWidgets/qdialog.h
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\Connection.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/QSqlDatabase \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qsqldatabase.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qtsqlglobal.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qtsql-config.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qtsqlexports.h \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/QDebug \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/qdebug.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/QSqlError \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qsqlerror.h

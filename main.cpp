@@ -1,20 +1,22 @@
 #include <QApplication>
+#include <QMessageBox>
 #include "mainwindow.h"
-#include "logindialog.h"
+#include "Connection.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setApplicationName("ANIWORLD");
+    a.setOrganizationName("ANIWORLD");
 
-    // Show login dialog first
-    LoginDialog loginDialog;
-    if (loginDialog.exec() == QDialog::Accepted) {
-        // Login successful, show main window
-        MainWindow w;
-        w.show();
-        return a.exec();
-    }
+    // Connexion à la base (Singleton). En cas d'échec, l'application démarre
+    // avec les données d'exemple en mémoire (rien n'est enregistré).
+    const bool connected = Connection::createInstance().createConnection();
+    if (!connected)
+        QMessageBox::warning(nullptr, "Base de données",
+            "Connexion à la base impossible.\nMode hors ligne : les modifications ne seront pas enregistrées.");
 
-    // Login cancelled or failed
-    return 0;
+    MainWindow w;
+    w.show();
+    return a.exec();
 }

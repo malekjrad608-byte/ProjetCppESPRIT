@@ -116,6 +116,7 @@ private:
     QVector<MedicalRecord> m_records;
     QVector<MedicalRecord> m_filteredRecords;
     QString m_selectedId;
+    bool m_db = false;   // true si les données viennent de la base
 };
 
 #endif // MAINWINDOW_H

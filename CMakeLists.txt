@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.19)
 project(ANIWORLD LANGUAGES CXX)
 
@@ -7,7 +8,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Svg)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Svg Sql)
 
 qt_standard_project_setup()
 
@@ -28,8 +29,10 @@ qt_add_executable(ANIWORLD
     logindialog.cpp
     loginvisuals.h
     loginvisuals.cpp
-    src/ui/motion.h
-    src/ui/motion.cpp
+    motion.h
+    motion.cpp
+    Connection.h
+    Connection.cpp
     resources.qrc
 )
 
@@ -38,6 +41,7 @@ target_link_libraries(ANIWORLD
         Qt::Core
         Qt::Widgets
         Qt::Svg
+        Qt::Sql
 )
 
 install(TARGETS ANIWORLD

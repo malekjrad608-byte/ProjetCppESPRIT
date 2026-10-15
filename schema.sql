@@ -1,0 +1,20 @@
+-- Table attendue par le code (Oracle). Adaptez les noms/types à votre base.
+CREATE TABLE MEDICAL_RECORD (
+    RECORD_ID     VARCHAR2(20) PRIMARY KEY,
+    ANIMAL_ID     VARCHAR2(20),
+    NAME          VARCHAR2(100),
+    SPECIES       VARCHAR2(50),
+    BREED         VARCHAR2(100),
+    AGE           NUMBER(3),
+    SEX           VARCHAR2(10),
+    OWNER         VARCHAR2(100),
+    CONSULT_DATE  DATE,
+    REASON        VARCHAR2(500),
+    DIAGNOSIS     VARCHAR2(500),
+    TREATMENT     VARCHAR2(500),
+    VACCINATIONS  VARCHAR2(500),
+    ALLERGIES     VARCHAR2(500),
+    WEIGHT        NUMBER(7,2),
+    OBSERVATIONS  VARCHAR2(1000),
+    VACC_STATUS   VARCHAR2(20)
+);

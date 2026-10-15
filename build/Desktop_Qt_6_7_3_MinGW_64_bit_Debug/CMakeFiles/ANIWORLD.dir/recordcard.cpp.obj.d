@@ -1,6 +1,6 @@
 CMakeFiles/ANIWORLD.dir/recordcard.cpp.obj: \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\recordcard.cpp \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\recordcard.h \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\recordcard.cpp \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\recordcard.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QFrame \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qframe.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -361,13 +361,15 @@ CMakeFiles/ANIWORLD.dir/recordcard.cpp.obj: \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qsizepolicy.h \
  C:/Qt/6.7.3/mingw_64/include/QtGui/qcursor.h \
  C:/Qt/6.7.3/mingw_64/include/QtGui/qbitmap.h \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\medicalrecord.h \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\medicalrecord.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/QString \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qstring.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/QDate \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qdatetime.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qcalendar.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qlocale.h \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/QVector \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QHBoxLayout \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qboxlayout.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qlayout.h \

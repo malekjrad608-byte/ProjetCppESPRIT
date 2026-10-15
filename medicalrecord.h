@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QDate>
+#include <QVector>
 
 struct AnimalInfo {
     QString animalId;
@@ -38,6 +39,12 @@ public:
 
     QString getFullName() const;
     QString getVaccinationStatus() const;
+
+    // --- Persistance base de données (table MEDICAL_RECORD) ---
+    static QVector<MedicalRecord> afficher();      // SELECT *
+    bool ajouter() const;                          // INSERT
+    bool modifier() const;                         // UPDATE (clé : RECORD_ID)
+    static bool supprimer(const QString& recordId); // DELETE
 
     bool operator==(const MedicalRecord& other) const;
 };

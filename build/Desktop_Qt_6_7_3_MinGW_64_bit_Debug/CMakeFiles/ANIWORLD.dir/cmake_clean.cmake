@@ -10,6 +10,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ANIWORLD.dir/ANIWORLD_autogen/EWIEGA46WW/qrc_resources.cpp.obj.d"
   "CMakeFiles/ANIWORLD.dir/ANIWORLD_autogen/mocs_compilation.cpp.obj"
   "CMakeFiles/ANIWORLD.dir/ANIWORLD_autogen/mocs_compilation.cpp.obj.d"
+  "CMakeFiles/ANIWORLD.dir/Connection.cpp.obj"
+  "CMakeFiles/ANIWORLD.dir/Connection.cpp.obj.d"
   "CMakeFiles/ANIWORLD.dir/logindialog.cpp.obj"
   "CMakeFiles/ANIWORLD.dir/logindialog.cpp.obj.d"
   "CMakeFiles/ANIWORLD.dir/loginvisuals.cpp.obj"
@@ -24,10 +26,10 @@ file(REMOVE_RECURSE
   "CMakeFiles/ANIWORLD.dir/medicalrecorddetailsdialog.cpp.obj.d"
   "CMakeFiles/ANIWORLD.dir/medicalrecorddialog.cpp.obj"
   "CMakeFiles/ANIWORLD.dir/medicalrecorddialog.cpp.obj.d"
+  "CMakeFiles/ANIWORLD.dir/motion.cpp.obj"
+  "CMakeFiles/ANIWORLD.dir/motion.cpp.obj.d"
   "CMakeFiles/ANIWORLD.dir/recordcard.cpp.obj"
   "CMakeFiles/ANIWORLD.dir/recordcard.cpp.obj.d"
-  "CMakeFiles/ANIWORLD.dir/src/ui/motion.cpp.obj"
-  "CMakeFiles/ANIWORLD.dir/src/ui/motion.cpp.obj.d"
   "libANIWORLD.dll.a"
 )
 

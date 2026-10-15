@@ -56,10 +56,10 @@ RM = C:\Qt\Tools\CMake_64\bin\cmake.exe -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige
+CMAKE_SOURCE_DIR = C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\build\Desktop_Qt_6_7_3_MinGW_64_bit_Debug
+CMAKE_BINARY_DIR = C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\build\Desktop_Qt_6_7_3_MinGW_64_bit_Debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -131,9 +131,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\build\Desktop_Qt_6_7_3_MinGW_64_bit_Debug\CMakeFiles C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\build\Desktop_Qt_6_7_3_MinGW_64_bit_Debug\\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\build\Desktop_Qt_6_7_3_MinGW_64_bit_Debug\CMakeFiles C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\build\Desktop_Qt_6_7_3_MinGW_64_bit_Debug\\CMakeFiles\progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\build\Desktop_Qt_6_7_3_MinGW_64_bit_Debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\build\Desktop_Qt_6_7_3_MinGW_64_bit_Debug\CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -246,6 +246,30 @@ ANIWORLD_autogen/mocs_compilation.s: ANIWORLD_autogen/mocs_compilation.cpp.s
 ANIWORLD_autogen/mocs_compilation.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/ANIWORLD_autogen/mocs_compilation.cpp.s
 .PHONY : ANIWORLD_autogen/mocs_compilation.cpp.s
+
+Connection.obj: Connection.cpp.obj
+.PHONY : Connection.obj
+
+# target to build an object file
+Connection.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/Connection.cpp.obj
+.PHONY : Connection.cpp.obj
+
+Connection.i: Connection.cpp.i
+.PHONY : Connection.i
+
+# target to preprocess a source file
+Connection.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/Connection.cpp.i
+.PHONY : Connection.cpp.i
+
+Connection.s: Connection.cpp.s
+.PHONY : Connection.s
+
+# target to generate assembly for a file
+Connection.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/Connection.cpp.s
+.PHONY : Connection.cpp.s
 
 logindialog.obj: logindialog.cpp.obj
 .PHONY : logindialog.obj
@@ -415,6 +439,30 @@ medicalrecorddialog.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/medicalrecorddialog.cpp.s
 .PHONY : medicalrecorddialog.cpp.s
 
+motion.obj: motion.cpp.obj
+.PHONY : motion.obj
+
+# target to build an object file
+motion.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/motion.cpp.obj
+.PHONY : motion.cpp.obj
+
+motion.i: motion.cpp.i
+.PHONY : motion.i
+
+# target to preprocess a source file
+motion.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/motion.cpp.i
+.PHONY : motion.cpp.i
+
+motion.s: motion.cpp.s
+.PHONY : motion.s
+
+# target to generate assembly for a file
+motion.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/motion.cpp.s
+.PHONY : motion.cpp.s
+
 recordcard.obj: recordcard.cpp.obj
 .PHONY : recordcard.obj
 
@@ -439,30 +487,6 @@ recordcard.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/recordcard.cpp.s
 .PHONY : recordcard.cpp.s
 
-src/ui/motion.obj: src/ui/motion.cpp.obj
-.PHONY : src/ui/motion.obj
-
-# target to build an object file
-src/ui/motion.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/src/ui/motion.cpp.obj
-.PHONY : src/ui/motion.cpp.obj
-
-src/ui/motion.i: src/ui/motion.cpp.i
-.PHONY : src/ui/motion.i
-
-# target to preprocess a source file
-src/ui/motion.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/src/ui/motion.cpp.i
-.PHONY : src/ui/motion.cpp.i
-
-src/ui/motion.s: src/ui/motion.cpp.s
-.PHONY : src/ui/motion.s
-
-# target to generate assembly for a file
-src/ui/motion.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\ANIWORLD.dir\build.make CMakeFiles/ANIWORLD.dir/src/ui/motion.cpp.s
-.PHONY : src/ui/motion.cpp.s
-
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -484,6 +508,9 @@ help:
 	@echo ... ANIWORLD_autogen/mocs_compilation.obj
 	@echo ... ANIWORLD_autogen/mocs_compilation.i
 	@echo ... ANIWORLD_autogen/mocs_compilation.s
+	@echo ... Connection.obj
+	@echo ... Connection.i
+	@echo ... Connection.s
 	@echo ... logindialog.obj
 	@echo ... logindialog.i
 	@echo ... logindialog.s
@@ -505,12 +532,12 @@ help:
 	@echo ... medicalrecorddialog.obj
 	@echo ... medicalrecorddialog.i
 	@echo ... medicalrecorddialog.s
+	@echo ... motion.obj
+	@echo ... motion.i
+	@echo ... motion.s
 	@echo ... recordcard.obj
 	@echo ... recordcard.i
 	@echo ... recordcard.s
-	@echo ... src/ui/motion.obj
-	@echo ... src/ui/motion.i
-	@echo ... src/ui/motion.s
 .PHONY : help
 
 

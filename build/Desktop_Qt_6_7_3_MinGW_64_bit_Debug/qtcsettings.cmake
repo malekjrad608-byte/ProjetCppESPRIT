@@ -6,7 +6,7 @@ set("CMAKE_CXX_COMPILER" "C:/Qt/Tools/mingw1120_64/bin/g++.exe" CACHE "FILEPATH"
 set("CMAKE_C_COMPILER" "C:/Qt/Tools/mingw1120_64/bin/gcc.exe" CACHE "FILEPATH" "" FORCE)
 set("CMAKE_GENERATOR" "MinGW Makefiles" CACHE "STRING" "" FORCE)
 set("CMAKE_PREFIX_PATH" "C:/Qt/6.7.3/mingw_64" CACHE "PATH" "" FORCE)
-set("CMAKE_PROJECT_INCLUDE_BEFORE" "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/.qtcreator/cmake-helper/qtcreator-project.cmake" CACHE "FILEPATH" "" FORCE)
+set("CMAKE_PROJECT_INCLUDE_BEFORE" "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/.qtcreator/cmake-helper/qtcreator-project.cmake" CACHE "FILEPATH" "" FORCE)
 set("QT_CREATOR_ENABLE_MAINTENANCE_TOOL_PROVIDER" "ON" CACHE "BOOL" "" FORCE)
 set("QT_CREATOR_ENABLE_PACKAGE_MANAGER_SETUP" "ON" CACHE "BOOL" "" FORCE)
 set("QT_ENABLE_QML_DEBUG" "ON" CACHE "BOOL" "" FORCE)

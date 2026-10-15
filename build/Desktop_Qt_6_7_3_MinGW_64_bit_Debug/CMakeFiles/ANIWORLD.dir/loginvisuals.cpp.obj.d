@@ -1,6 +1,6 @@
 CMakeFiles/ANIWORLD.dir/loginvisuals.cpp.obj: \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\loginvisuals.cpp \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\loginvisuals.h \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\loginvisuals.cpp \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\loginvisuals.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QPushButton \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qpushbutton.h \
  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtwidgetsglobal.h \

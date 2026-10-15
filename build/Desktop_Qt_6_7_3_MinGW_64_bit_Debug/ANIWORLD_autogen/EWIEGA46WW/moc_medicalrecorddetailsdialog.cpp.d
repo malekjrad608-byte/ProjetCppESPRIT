@@ -1,7 +1,8 @@
-C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/EWIEGA46WW/moc_medicalrecorddetailsdialog.cpp: C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/medicalrecorddetailsdialog.h \
-  C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/moc_predefs.h \
+C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/EWIEGA46WW/moc_medicalrecorddetailsdialog.cpp: C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/medicalrecorddetailsdialog.h \
+  C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/moc_predefs.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/QDate \
   C:/Qt/6.7.3/mingw_64/include/QtCore/QString \
+  C:/Qt/6.7.3/mingw_64/include/QtCore/QVector \
   C:/Qt/6.7.3/mingw_64/include/QtCore/q20functional.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/q20memory.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/q20type_traits.h \
@@ -119,6 +120,7 @@ C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/buil
   C:/Qt/6.7.3/mingw_64/include/QtCore/qutf8stringview.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qvariant.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qvarlengtharray.h \
+  C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qversiontagging.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qxptype_traits.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qyieldcpu.h \
@@ -353,4 +355,4 @@ C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/buil
   C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include/time.h \
   C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include/vadefs.h \
   C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include/wchar.h \
-  C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/medicalrecord.h
+  C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/medicalrecord.h

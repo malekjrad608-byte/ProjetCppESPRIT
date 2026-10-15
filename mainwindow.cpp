@@ -1,9 +1,10 @@
 #include "mainwindow.h"
-#include "src/ui/motion.h"
+#include "motion.h"
 #include "ui_mainwindow.h"
 #include "recordcard.h"
 #include "medicalrecorddialog.h"
 #include "medicalrecorddetailsdialog.h"
+#include "Connection.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -14,6 +15,9 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QProgressBar>
+#include <QFont>
+#include <QHeaderView>
+#include <QTableWidget>
 #include <QMenu>
 #include <QAction>
 #include <QApplication>
@@ -31,15 +35,14 @@
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QProgressBar>
 #include <QTimer>
 #include <QGraphicsDropShadowEffect>
 #include <algorithm>
 
 namespace {
-const int kCardMinWidth = 330;
+const int kCardMinWidth = 310;
 const int kGridSpacing = 16;
-const int kCardHeight = 186;
+const int kCardHeight = 190;
 const int kPanelWidth = 360;
 const int kPanelGap = 26;
 }
@@ -50,7 +53,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);      // builds everything described in mainwindow.ui
 
-    loadStaticData();
+    m_db = Connection::createInstance().isOpen();
+    if (m_db)
+        m_records = MedicalRecord::afficher();   // données de la base
+    else
+        loadStaticData();                        // mode hors ligne
     setupUI();              // wires the widgets from the .ui to the logic
     loadStylesheet();
     refreshView();
@@ -77,14 +84,18 @@ void MainWindow::setupUI()
              ui->btnNavStock, ui->btnNavPremises, ui->btnNavRecords}, "navButton");
     styleId({ui->crumbGestion, ui->crumbSep}, "crumb");
     styleId({ui->chipTotal, ui->chipConsultations, ui->chipUpToDate, ui->chipToRenew}, "chip");
+    ui->chipTotal->setProperty("tone", "blue");
+    ui->chipConsultations->setProperty("tone", "purple");
+    ui->chipUpToDate->setProperty("tone", "green");
+    ui->chipToRenew->setProperty("tone", "orange");
     styleId({ui->footerLeft, ui->footerDate}, "footerText");
-    styleId({ui->btnAdd, ui->btnView}, "primaryButton");
-    styleId({ui->btnStatsTop, ui->btnStatsPanel}, "outlineButton");
+    styleId({ui->btnView}, "primaryButton");
+    styleId({ui->btnStatsPanel}, "outlineButton");
     styleId({ui->btnToggle}, "actionToggleButton");
     styleId({ui->btnEdit}, "actionEditButton");
     styleId({ui->btnDelete}, "actionDeleteButton");
     ui->btnView->setObjectName("actionViewButton");
-    styleId({ui->btnReset}, "linkButton");
+    // Keep btnReset and btnStatsTop object names so their compact styles apply.
     styleId({ui->btnFile}, "topButton");
     styleId({ui->selectedCard, ui->globalCard}, "panelCard");
     styleId({ui->detailLine1, ui->detailLine2, ui->detailLine3, ui->globalText}, "panelMeta");
@@ -119,6 +130,7 @@ void MainWindow::setupUI()
     // --- Records page: header & toolbar ----------------------------------
     connect(ui->btnAdd, &QPushButton::clicked, this, &MainWindow::onAddRecordClicked);
     connect(ui->btnStatsTop, &QPushButton::clicked, this, &MainWindow::onShowStatisticsClicked);
+    ui->btnStatsTop->setText(QString::fromUtf8("📊  Statistiques"));
 
     m_chipTotal = ui->chipTotal;
     m_chipConsultations = ui->chipConsultations;
@@ -161,7 +173,9 @@ void MainWindow::setupUI()
     connect(m_btnEdit, &QPushButton::clicked, this, &MainWindow::onEditRecordClicked);
     connect(m_btnDelete, &QPushButton::clicked, this, &MainWindow::onDeleteRecordClicked);
 
-    // --- Global vaccination card ------------------------------------------
+    // Statistics are opened on demand from the top "Statistiques" button.
+    // Keep the right column focused on the selected medical record.
+    ui->globalCard->hide();
     m_globalValue = ui->bigValue;
     m_globalBar = ui->globalBar;
     m_globalText = ui->globalText;
@@ -379,8 +393,8 @@ void MainWindow::layoutUi()
 
     // Sidebar (slogan stays glued to the bottom)
     ui->sidebar->setGeometry(0, 0, sidebarW, H);
-    ui->sloganSub->setGeometry(18, H - 22 - 18, 254, 18);
-    ui->sloganLabel->setGeometry(18, H - 22 - 18 - 4 - 18, 254, 18);
+    ui->sloganSub->setGeometry(18, H - 28 - 18, 254, 22);
+    ui->sloganLabel->setGeometry(18, H - 28 - 18 - 26, 254, 26);
 
     // Main area
     ui->mainContent->setGeometry(sidebarW, 0, mainW, H);
@@ -408,32 +422,55 @@ void MainWindow::layoutUi()
     ui->pageSubtitle->setGeometry(0, 50, LW, 20);
     ui->btnAdd->setGeometry(LW - 210, 0, 210, 49);
 
-    // Chips: width follows the text
+    // Summary chips: keep them on their own row, with a fixed compact height.
+    // A smaller font and proportional widths keep the four chips inside the
+    // records column even on narrower windows.
+    const QList<QLabel *> chips = {ui->chipTotal, ui->chipConsultations,
+                                   ui->chipUpToDate, ui->chipToRenew};
+    const int chipsY = 104;
+    const int chipsH = 34;
+    const int chipsGap = 8;
+    int naturalTotal = 0;
+    for (QLabel *chip : chips)
+        naturalTotal += qMax(chip->fontMetrics().horizontalAdvance(chip->text()) + 24,
+                             chip->sizeHint().width());
+    naturalTotal += chipsGap * (chips.size() - 1);
+    const int chipsAvailable = qMax(280, LW - 8);
+    const qreal chipScale = naturalTotal > chipsAvailable
+                                ? qreal(chipsAvailable - chipsGap * (chips.size() - 1)) /
+                                      qMax(1, naturalTotal - chipsGap * (chips.size() - 1))
+                                : 1.0;
     int x = 0;
-    for (QLabel *chip : {ui->chipTotal, ui->chipConsultations, ui->chipUpToDate, ui->chipToRenew}) {
-        const int cw = qMax(chip->sizeHint().width(),
-                            chip->fontMetrics().horizontalAdvance(chip->text()) + 36) + 8;
-        chip->setGeometry(x, 90, cw, 39);
-        x += cw + 10;
+    for (QLabel *chip : chips) {
+        const int naturalW = qMax(chip->fontMetrics().horizontalAdvance(chip->text()) + 24,
+                                  chip->sizeHint().width());
+        const int cw = qMax(58, qRound(naturalW * chipScale));
+        chip->setGeometry(x, chipsY, cw, chipsH);
+        x += cw + chipsGap;
     }
-    // Toolbar: the Statistics button stays on the SAME ROW as the summary chips,
-    // like the original layout. The search field remains on the row below.
-    // This avoids pushing Statistics too far down into the filters area.
-    const int statsW = 130;
-    const int statsY = 90;
-    ui->btnStatsTop->setGeometry(LW - statsW, statsY, statsW, 45);
 
-    // Search gets the complete row below the chips/statistics.
-    const int ty = 147;
-    ui->searchEdit->setGeometry(0, ty, LW, 45);
+    // The add and statistics buttons have explicit compact sizes.  Leave a
+    // full row gap so Qt style metrics/high-DPI scaling cannot make them touch.
+    const int addW = qMin(250, qMax(200, LW / 3));
+    ui->btnAdd->setGeometry(LW - addW, 0, addW, 52);
+    const int statsW = qMin(158, qMax(140, LW / 4));
+    ui->btnStatsTop->setGeometry(LW - statsW, 62, statsW, 40);
 
-    // Filters stay on a separate row, so every control has enough breathing room.
-    const int y2 = ty + 45 + 10;
-    ui->filterSpecies->setGeometry(0, y2, 175, 45);
-    ui->filterVaccination->setGeometry(187, y2, 160, 45);
-    ui->sortCombo->setGeometry(359, y2, 170, 45);
-    ui->btnReset->setGeometry(qMax(0, LW - 110), y2 + 5, 110, 34);
-    const int toolbarBottom = y2 + 45;
+    // Search and filters form a separate toolbar, matching the Employees page.
+    const int ty = 150;
+    ui->searchEdit->setGeometry(0, ty, LW, 42);
+
+    const int y2 = ty + 42 + 10;
+    const int filterGap = 8;
+    const int resetW = qMin(126, qMax(96, LW / 6));
+    const int availableForCombos = qMax(3, LW - resetW - 3 * filterGap);
+    const int comboW = availableForCombos / 3;
+    const int filterH = 36;
+    ui->filterSpecies->setGeometry(0, y2, comboW, filterH);
+    ui->filterVaccination->setGeometry(comboW + filterGap, y2, comboW, filterH);
+    ui->sortCombo->setGeometry(2 * (comboW + filterGap), y2, comboW, filterH);
+    ui->btnReset->setGeometry(LW - resetW, y2, resetW, filterH);
+    const int toolbarBottom = y2 + filterH;
 
     const int scrollTop = toolbarBottom + 16;
     ui->cardsScroll->setGeometry(0, scrollTop, LW, qMax(100, pageH - scrollTop));
@@ -452,32 +489,29 @@ void MainWindow::layoutDetailPanel()
         m_detailPill->adjustSize();
         m_detailPill->setGeometry(0, 44, m_detailPill->width() + 8, 28);
 
-        // Compact action layout matching the reference: one primary button,
-        // two small buttons side-by-side, then one danger button.
+        // Four evenly sized, full-width actions; never overlap or touch.
         const int actionX = 0;
         const int actionW = 316;
         const int actionH = 36;
         const int actionGap = 9;
-        const int halfW = (actionW - actionGap) / 2;
         const int actionY = 208;
-
-        // Clean, reference-style action layout:
-        // 1) full-width primary button
-        // 2) two separated half-width buttons
-        // 3) full-width danger button
-        // Every row has a real gap so the buttons never touch/overlap.
+        ui->btnView->setText("📋  Consulter le dossier");
+        ui->btnEdit->setText("✏️  Modifier");
+        ui->btnDelete->setText("🗑  Supprimer le dossier");
         ui->btnView->setGeometry(actionX, actionY, actionW, actionH);
-        ui->btnToggle->setGeometry(actionX, actionY + actionH + actionGap, halfW, actionH);
-        ui->btnEdit->setGeometry(actionX + halfW + actionGap, actionY + actionH + actionGap, halfW, actionH);
-        ui->btnDelete->setGeometry(actionX, actionY + 2 * (actionH + actionGap), actionW, actionH);
+        ui->btnToggle->setGeometry(actionX, actionY + actionH + actionGap, actionW, actionH);
+        ui->btnEdit->setGeometry(actionX, actionY + 2 * (actionH + actionGap), actionW, actionH);
+        ui->btnDelete->setGeometry(actionX, actionY + 3 * (actionH + actionGap), actionW, actionH);
 
-        // Give the action block enough room; do not clip the last button.
-        ui->detailContent->setGeometry(22, 44, 316, 390);
+        // Enough room for all four actions, including the Delete button.
+        ui->detailContent->setGeometry(22, 44, 316, 430);
     }
-    const int cardH = has ? 434 : 126;
+    const int cardH = has ? 474 : 150;
     ui->selectedCard->setGeometry(0, 0, kPanelWidth, cardH);
-    ui->globalCard->setGeometry(0, cardH + 18, kPanelWidth, 215);
-    ui->detailPanel->resize(kPanelWidth, cardH + 18 + 215);
+    // The global statistics card is intentionally not shown permanently.
+    // Clicking "Statistiques" opens the dedicated statistics window.
+    ui->globalCard->hide();
+    ui->detailPanel->resize(kPanelWidth, cardH);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -530,7 +564,7 @@ void MainWindow::updateDetailPanel()
     m_detailLine2->setText(QString("Dossier %1 · Âge : %2 an%3 · Sexe : %4")
         .arg(r.medical.recordId).arg(r.animal.age).arg(r.animal.age > 1 ? "s" : "", r.animal.sex));
     m_detailLine3->setText(QString("Propriétaire : %1\nMotif : %2").arg(r.animal.owner, r.medical.reason));
-    m_btnToggle->setText(upToDate ? "Vaccin à renouveler" : "Marquer à jour");
+    m_btnToggle->setText(upToDate ? "💉  Vaccin à renouveler" : "✅  Marquer à jour");
 }
 
 void MainWindow::updateGlobalPanel()
@@ -573,7 +607,12 @@ void MainWindow::editRecord(const QString &recordId)
     MedicalRecordDialog dialog(this);
     dialog.setMedicalRecord(m_records[idx]);
     if (dialog.exec() == QDialog::Accepted) {
-        m_records[idx] = dialog.getMedicalRecord();
+        const MedicalRecord updated = dialog.getMedicalRecord();
+        if (m_db && !updated.modifier()) {
+            QMessageBox::critical(this, "Base de données", "La modification a échoué.");
+            return;
+        }
+        m_records[idx] = updated;
         m_selectedId = m_records[idx].medical.recordId;
         refreshView();
     }
@@ -588,6 +627,10 @@ void MainWindow::deleteRecord(const QString &recordId)
         QString("Êtes-vous sûr de vouloir supprimer le dossier de %1 ?").arg(m_records[idx].animal.name),
         QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
+        if (m_db && !MedicalRecord::supprimer(recordId)) {
+            QMessageBox::critical(this, "Base de données", "La suppression a échoué.");
+            return;
+        }
         m_records.removeAt(idx);
         m_selectedId.clear();
         refreshView();
@@ -608,6 +651,10 @@ void MainWindow::onAddRecordClicked()
         MedicalRecord rec = dialog.getMedicalRecord();
         if (rec.medical.recordId.trimmed().isEmpty() || indexOfRecord(rec.medical.recordId) >= 0)
             rec.medical.recordId = nextRecordNumber(m_records);
+        if (m_db && !rec.ajouter()) {
+            QMessageBox::critical(this, "Base de données", "L'ajout a échoué.");
+            return;
+        }
         m_records.append(rec);
         m_selectedId = rec.medical.recordId;
         refreshView();
@@ -624,7 +671,13 @@ void MainWindow::onToggleVaccinationClicked()
     if (idx < 0)
         return;
     QString &status = m_records[idx].medical.vaccinationStatus;
+    const QString previous = status;
     status = (status == "À jour") ? "À renouveler" : "À jour";
+    if (m_db && !m_records[idx].modifier()) {
+        status = previous;
+        QMessageBox::critical(this, "Base de données", "La mise à jour a échoué.");
+        return;
+    }
     refreshView();
 }
 
@@ -659,148 +712,144 @@ void MainWindow::onCardClicked(const QString &recordId)
 
 void MainWindow::onShowStatisticsClicked()
 {
-    QMap<QString, int> bySpecies;
+    QMap<QString, QPair<int, QPair<int, int>>> bySpecies;
     int upToDate = 0, toRenew = 0;
     for (const auto &r : m_records) {
-        ++bySpecies[r.animal.species];
-        if (r.medical.vaccinationStatus == "À jour") ++upToDate;
-        else ++toRenew;
+        auto &entry = bySpecies[r.animal.species];
+        ++entry.first;
+        if (r.medical.vaccinationStatus == "À jour") {
+            ++upToDate;
+            ++entry.second.first;
+        } else {
+            ++toRenew;
+            ++entry.second.second;
+        }
     }
+    const int total = m_records.size();
+    const int percent = total ? qRound(100.0 * upToDate / total) : 0;
 
-    // A real statistics interface (instead of a QMessageBox): cards, progress
-    // bars and a compact breakdown. It deliberately keeps the main
-    // Medecaldosss window untouched, as requested.
+    // Dedicated statistics window styled like the Employés statistics window.
+    // It only reads m_records; no medical-record behavior is changed.
     QDialog dialog(this);
     dialog.setObjectName("statisticsDialog");
-    dialog.setWindowTitle("Medecaldosss — Statistiques");
-    dialog.setMinimumSize(720, 560);
-    dialog.resize(820, 620);
+    dialog.setWindowTitle("Statistiques des dossiers médicaux");
+    dialog.setMinimumSize(900, 650);
+    dialog.resize(1000, 760);
 
     auto *root = new QVBoxLayout(&dialog);
-    root->setContentsMargins(30, 26, 30, 26);
+    root->setContentsMargins(30, 24, 30, 24);
     root->setSpacing(18);
 
     auto *heading = new QHBoxLayout;
     auto *titleBox = new QVBoxLayout;
-    titleBox->setSpacing(4);
-    auto *title = new QLabel("Statistiques");
+    titleBox->setSpacing(5);
+    auto *title = new QLabel("Statistiques des dossiers médicaux");
     title->setObjectName("statisticsTitle");
-    auto *subtitle = new QLabel("Vue globale de vos dossiers médicaux et vaccinations");
+    auto *subtitle = new QLabel("Suivi des dossiers, espèces et vaccinations");
     subtitle->setObjectName("statisticsSubtitle");
     titleBox->addWidget(title);
     titleBox->addWidget(subtitle);
     heading->addLayout(titleBox);
     heading->addStretch();
-
     auto *logo = new QLabel;
     QPixmap logoPix(":/assets/logo.png");
     if (!logoPix.isNull())
-        logo->setPixmap(logoPix.scaled(52, 52, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        logo->setPixmap(logoPix.scaled(48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     logo->setObjectName("statisticsLogo");
     heading->addWidget(logo);
     root->addLayout(heading);
 
-    auto *totals = new QHBoxLayout;
-    totals->setSpacing(14);
-    auto addMetric = [&](const QString &caption, const QString &value, const QString &tone) {
+    auto *metrics = new QHBoxLayout;
+    metrics->setSpacing(14);
+    auto addMetric = [&](const QString &caption, const QString &value, const QString &tone, const QString &iconText) {
         auto *card = new QFrame;
         card->setObjectName("statisticsMetric");
         card->setProperty("tone", tone);
-        auto *box = new QVBoxLayout(card);
-        box->setContentsMargins(17, 14, 17, 14);
-        box->setSpacing(5);
-        auto *c = new QLabel(caption.toUpper());
-        c->setObjectName("statisticsMetricCaption");
-        auto *v = new QLabel(value);
-        v->setObjectName("statisticsMetricValue");
-        box->addWidget(c);
-        box->addWidget(v);
-        totals->addWidget(card, 1);
-        return v;
+        auto *row = new QHBoxLayout(card);
+        row->setContentsMargins(18, 14, 18, 14);
+        row->setSpacing(12);
+        auto *ico = new QLabel(iconText);
+        ico->setObjectName("statisticsMetricIcon");
+        auto *box = new QVBoxLayout;
+        box->setSpacing(3);
+        auto *cap = new QLabel(caption);
+        cap->setObjectName("statisticsMetricCaption");
+        auto *val = new QLabel(value);
+        val->setObjectName("statisticsMetricValue");
+        box->addWidget(cap);
+        box->addWidget(val);
+        row->addWidget(ico);
+        row->addLayout(box, 1);
+        metrics->addWidget(card, 1);
     };
-    addMetric("Dossiers", QString::number(m_records.size()), "blue");
-    addMetric("Vaccins à jour", QString::number(upToDate), "green");
-    addMetric("À renouveler", QString::number(toRenew), "orange");
-    root->addLayout(totals);
+    addMetric("Dossiers", QString::number(total), "blue", "▣");
+    addMetric("Vaccins à jour", QString::number(upToDate), "green", "✓");
+    addMetric("À renouveler", QString::number(toRenew), "red", "×");
+    addMetric("Taux à jour", QString("%1 %").arg(percent), "orange", "↗");
+    root->addLayout(metrics);
 
-    auto *content = new QHBoxLayout;
-    content->setSpacing(16);
+    auto *sectionTitle = new QLabel("Répartition et état des dossiers");
+    sectionTitle->setObjectName("statisticsSectionTitle");
+    root->addWidget(sectionTitle);
 
-    auto *speciesCard = new QFrame;
-    speciesCard->setObjectName("statisticsPanel");
-    auto *speciesLayout = new QVBoxLayout(speciesCard);
-    speciesLayout->setContentsMargins(20, 18, 20, 18);
-    speciesLayout->setSpacing(12);
-    auto *speciesTitle = new QLabel("Répartition par espèce");
-    speciesTitle->setObjectName("statisticsSectionTitle");
-    speciesLayout->addWidget(speciesTitle);
-
-    QList<QPair<QProgressBar *, int>> speciesBars;
-    int maxSpecies = 1;
-    for (auto it = bySpecies.cbegin(); it != bySpecies.cend(); ++it)
-        maxSpecies = qMax(maxSpecies, it.value());
-    for (auto it = bySpecies.cbegin(); it != bySpecies.cend(); ++it) {
-        auto *line = new QHBoxLayout;
-        auto *name = new QLabel(it.key());
-        name->setObjectName("statisticsRowLabel");
-        name->setMinimumWidth(90);
-        auto *bar = new QProgressBar;
-        bar->setRange(0, maxSpecies);
-        bar->setValue(0);
-        bar->setTextVisible(false);
-        bar->setObjectName("statisticsBar");
-        auto *count = new QLabel(QString::number(it.value()));
-        count->setObjectName("statisticsCount");
-        line->addWidget(name);
-        line->addWidget(bar, 1);
-        line->addWidget(count);
-        speciesLayout->addLayout(line);
-        speciesBars.append({bar, it.value()});
+    auto *table = new QTableWidget;
+    table->setObjectName("statisticsTable");
+    table->setColumnCount(5);
+    table->setHorizontalHeaderLabels({"Espèce", "Dossiers", "Vaccins à jour", "À renouveler", "Taux à jour"});
+    table->setRowCount(bySpecies.size());
+    table->setAlternatingRowColors(true);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->verticalHeader()->setVisible(false);
+    table->horizontalHeader()->setStretchLastSection(true);
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    for (int col = 1; col < 4; ++col)
+        table->horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
+    int row = 0;
+    for (auto it = bySpecies.cbegin(); it != bySpecies.cend(); ++it, ++row) {
+        auto *species = new QTableWidgetItem(it.key());
+        species->setFont(QFont("Segoe UI", 10, QFont::DemiBold));
+        table->setItem(row, 0, species);
+        table->setItem(row, 1, new QTableWidgetItem(QString::number(it.value().first)));
+        table->setItem(row, 2, new QTableWidgetItem(QString::number(it.value().second.first)));
+        table->setItem(row, 3, new QTableWidgetItem(QString::number(it.value().second.second)));
+        for (int col = 1; col < 4; ++col)
+            table->item(row, col)->setTextAlignment(Qt::AlignCenter);
+        const int speciesTotal = it.value().first;
+        const int speciesUpToDate = it.value().second.first;
+        const int speciesPercent = speciesTotal ? qRound(100.0 * speciesUpToDate / speciesTotal) : 0;
+        auto *rate = new QProgressBar;
+        rate->setObjectName("statisticsRateBar");
+        rate->setRange(0, 100);
+        rate->setValue(speciesPercent);
+        rate->setFormat(QString("%1 %").arg(speciesPercent));
+        rate->setTextVisible(true);
+        rate->setMinimumHeight(24);
+        table->setCellWidget(row, 4, rate);
+        table->setRowHeight(row, 52);
     }
-    if (bySpecies.isEmpty())
-        speciesLayout->addWidget(new QLabel("Aucun dossier disponible."));
-    content->addWidget(speciesCard, 3);
+    root->addWidget(table, 1);
 
-    auto *vaccCard = new QFrame;
-    vaccCard->setObjectName("statisticsPanel");
-    auto *vaccLayout = new QVBoxLayout(vaccCard);
-    vaccLayout->setContentsMargins(20, 18, 20, 18);
-    vaccLayout->setSpacing(12);
-    auto *vaccTitle = new QLabel("État des vaccinations");
-    vaccTitle->setObjectName("statisticsSectionTitle");
-    vaccLayout->addWidget(vaccTitle);
-    auto *vaccBar = new QProgressBar;
-    const int total = m_records.size();
-    const int percent = total ? qRound(100.0 * upToDate / total) : 0;
-    vaccBar->setRange(0, 100);
-    vaccBar->setValue(0);
-    vaccBar->setFormat("%p%");
-    vaccBar->setObjectName("statisticsVaccBar");
-    vaccLayout->addWidget(vaccBar);
-    auto *vaccText = new QLabel(QString("%1 sur %2 dossiers sont à jour").arg(upToDate).arg(total));
-    vaccText->setObjectName("statisticsRowLabel");
-    vaccLayout->addWidget(vaccText);
-    vaccLayout->addStretch();
-    content->addWidget(vaccCard, 2);
-    root->addLayout(content, 1);
+    auto *summary = new QFrame;
+    summary->setObjectName("statisticsSummary");
+    auto *summaryLayout = new QHBoxLayout(summary);
+    summaryLayout->setContentsMargins(18, 12, 18, 12);
+    auto *summaryText = new QLabel(QString("Dossiers : %1    •    Vaccins à jour : %2    •    À renouveler : %3    •    Taux : %4 %")
+                                      .arg(total).arg(upToDate).arg(toRenew).arg(percent));
+    summaryText->setObjectName("statisticsSummaryText");
+    summaryLayout->addWidget(summaryText);
+    root->addWidget(summary);
 
     auto *actions = new QHBoxLayout;
     actions->addStretch();
     auto *close = new QPushButton("Fermer");
     close->setObjectName("statisticsClose");
     close->setCursor(Qt::PointingHandCursor);
+    close->setMinimumSize(180, 48);
     actions->addWidget(close);
     root->addLayout(actions);
     connect(close, &QPushButton::clicked, &dialog, &QDialog::accept);
-
-    // Gentle entrance + animated bars, like the reference interface.
-    QTimer::singleShot(0, &dialog, [&dialog, speciesBars, vaccBar, percent] {
-        Motion::reveal(&dialog, QColor("#F3F7F8"), 220);
-        for (const auto &entry : speciesBars)
-            Motion::progressTo(entry.first, entry.second, true);
-        Motion::progressTo(vaccBar, percent, true);
-    });
-
     dialog.exec();
 }
 

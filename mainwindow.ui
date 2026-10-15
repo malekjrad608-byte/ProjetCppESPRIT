@@ -49,7 +49,7 @@
           </property>
           <widget class="QLabel" name="sectionTitle">
             <property name="geometry">
-              <rect><x>18</x><y>14</y><width>218</width><height>22</height></rect>
+              <rect><x>18</x><y>10</y><width>218</width><height>27</height></rect>
             </property>
             <property name="text">
               <string>Centre de soins</string>
@@ -57,7 +57,7 @@
           </widget>
           <widget class="QLabel" name="sectionSub">
             <property name="geometry">
-              <rect><x>18</x><y>38</y><width>218</width><height>18</height></rect>
+              <rect><x>18</x><y>40</y><width>218</width><height>22</height></rect>
             </property>
             <property name="text">
               <string>Espace de gestion</string>
@@ -312,7 +312,7 @@
             </widget>
             <widget class="QLabel" name="chipTotal">
               <property name="geometry">
-                <rect><x>0</x><y>90</y><width>130</width><height>39</height></rect>
+                <rect><x>0</x><y>90</y><width>110</width><height>39</height></rect>
               </property>
               <property name="text">
                 <string></string>
@@ -326,7 +326,7 @@
             </widget>
             <widget class="QLabel" name="chipConsultations">
               <property name="geometry">
-                <rect><x>140</x><y>90</y><width>160</width><height>39</height></rect>
+                <rect><x>120</x><y>90</y><width>130</width><height>39</height></rect>
               </property>
               <property name="text">
                 <string></string>
@@ -340,7 +340,7 @@
             </widget>
             <widget class="QLabel" name="chipUpToDate">
               <property name="geometry">
-                <rect><x>310</x><y>90</y><width>110</width><height>39</height></rect>
+                <rect><x>260</x><y>90</y><width>90</width><height>39</height></rect>
               </property>
               <property name="text">
                 <string></string>
@@ -354,7 +354,7 @@
             </widget>
             <widget class="QLabel" name="chipToRenew">
               <property name="geometry">
-                <rect><x>430</x><y>90</y><width>150</width><height>39</height></rect>
+                <rect><x>360</x><y>90</y><width>145</width><height>39</height></rect>
               </property>
               <property name="text">
                 <string></string>
@@ -368,7 +368,7 @@
             </widget>
             <widget class="QPushButton" name="btnStatsTop">
               <property name="geometry">
-                <rect><x>526</x><y>90</y><width>130</width><height>45</height></rect>
+                <rect><x>526</x><y>54</y><width>130</width><height>30</height></rect>
               </property>
               <property name="text">
                 <string>Statistiques</string>
@@ -390,7 +390,7 @@
             </widget>
             <widget class="QComboBox" name="filterSpecies">
               <property name="geometry">
-                <rect><x>0</x><y>202</y><width>175</width><height>45</height></rect>
+                <rect><x>0</x><y>202</y><width>160</width><height>42</height></rect>
               </property>
               <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
@@ -423,7 +423,7 @@
             </widget>
             <widget class="QComboBox" name="filterVaccination">
               <property name="geometry">
-                <rect><x>187</x><y>202</y><width>160</width><height>45</height></rect>
+                <rect><x>170</x><y>202</y><width>155</width><height>42</height></rect>
               </property>
               <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
@@ -446,7 +446,7 @@
             </widget>
             <widget class="QComboBox" name="sortCombo">
               <property name="geometry">
-                <rect><x>359</x><y>202</y><width>170</width><height>45</height></rect>
+                <rect><x>335</x><y>202</y><width>155</width><height>42</height></rect>
               </property>
               <property name="cursor">
                 <cursorShape>PointingHandCursor</cursorShape>
@@ -474,7 +474,7 @@
             </widget>
             <widget class="QPushButton" name="btnReset">
               <property name="geometry">
-                <rect><x>541</x><y>207</y><width>110</width><height>34</height></rect>
+                <rect><x>500</x><y>202</y><width>156</width><height>42</height></rect>
               </property>
               <property name="text">
                 <string>Réinitialiser</string>

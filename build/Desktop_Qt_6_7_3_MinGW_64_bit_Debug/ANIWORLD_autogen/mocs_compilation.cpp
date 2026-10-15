@@ -3,5 +3,5 @@
 #include "EWIEGA46WW/moc_mainwindow.cpp"
 #include "EWIEGA46WW/moc_medicalrecorddetailsdialog.cpp"
 #include "EWIEGA46WW/moc_medicalrecorddialog.cpp"
+#include "EWIEGA46WW/moc_motion.cpp"
 #include "EWIEGA46WW/moc_recordcard.cpp"
-#include "YPKJ5OE7LN/moc_motion.cpp"

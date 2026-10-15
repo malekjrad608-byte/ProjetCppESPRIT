@@ -1,6 +1,6 @@
 CMakeFiles/ANIWORLD.dir/medicalrecord.cpp.obj: \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\medicalrecord.cpp \
- C:\Users\marsb\OneDrive\Bureau\medicalldooss_sans_login_compilation_corrige\medicalrecord.h \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\medicalrecord.cpp \
+ C:\Users\marsb\OneDrive\Bureau\Dossier_Medical_ANIWORLD\medicalrecord.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/QString \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qstring.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qchar.h \
@@ -328,4 +328,18 @@ CMakeFiles/ANIWORLD.dir/medicalrecord.cpp.obj: \
  C:/Qt/6.7.3/mingw_64/include/QtCore/q23utility.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qobject.h \
  C:/Qt/6.7.3/mingw_64/include/QtCore/qobject_impl.h \
- C:/Qt/6.7.3/mingw_64/include/QtCore/qbindingstorage.h
+ C:/Qt/6.7.3/mingw_64/include/QtCore/qbindingstorage.h \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/QVector \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/qvector.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/QSqlQuery \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qsqlquery.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qtsqlglobal.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qtsql-config.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qtsqlexports.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qsqldatabase.h \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/QSqlError \
+ C:/Qt/6.7.3/mingw_64/include/QtSql/qsqlerror.h \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/QVariant \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/qvariant.h \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/QDebug \
+ C:/Qt/6.7.3/mingw_64/include/QtCore/qdebug.h

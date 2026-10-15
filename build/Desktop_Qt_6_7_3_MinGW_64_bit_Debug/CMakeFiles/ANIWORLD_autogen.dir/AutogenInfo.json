@@ -1,20 +1,20 @@
 {
 	"AUTOGEN_COMMAND_LINE_LENGTH_MAX" : 32000,
-	"BUILD_DIR" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen",
-	"CMAKE_BINARY_DIR" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug",
-	"CMAKE_CURRENT_BINARY_DIR" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug",
-	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige",
+	"BUILD_DIR" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen",
+	"CMAKE_BINARY_DIR" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug",
+	"CMAKE_CURRENT_BINARY_DIR" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug",
+	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD",
 	"CMAKE_EXECUTABLE" : "C:/Qt/Tools/CMake_64/bin/cmake.exe",
 	"CMAKE_LIST_FILES" : 
 	[
-		"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/CMakeLists.txt",
-		"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/.qtcreator/cmake-helper/qtcreator-project.cmake",
-		"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/.qtcreator/cmake-helper/package-manager.cmake",
+		"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/CMakeLists.txt",
+		"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/.qtcreator/cmake-helper/qtcreator-project.cmake",
+		"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/.qtcreator/cmake-helper/package-manager.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeDetermineSystem.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystem.cmake.in",
-		"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/3.30.5/CMakeSystem.cmake",
+		"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/3.30.5/CMakeSystem.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeMinGWFindMake.cmake",
-		"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/.qtcreator/cmake-helper/maintenance_tool_provider.cmake",
+		"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/.qtcreator/cmake-helper/maintenance_tool_provider.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystemSpecificInitialize.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-Initialize.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeDetermineCXXCompiler.cmake",
@@ -67,7 +67,7 @@
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindBinUtils.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Compiler/GNU-FindBinUtils.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCXXCompiler.cmake.in",
-		"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
+		"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystemSpecificInformation.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeGenericSystem.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeInitializeConfigs.cmake",
@@ -82,7 +82,7 @@
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-GNU.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeDetermineRCCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeRCCompiler.cmake.in",
-		"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/3.30.5/CMakeRCCompiler.cmake",
+		"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/3.30.5/CMakeRCCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeRCInformation.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-windres.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeTestRCCompiler.cmake",
@@ -99,7 +99,7 @@
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeDetermineCompilerSupport.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Internal/FeatureTesting.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCXXCompiler.cmake.in",
-		"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
+		"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-GNU-CXX-ABI.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfigVersionImpl.cmake",
@@ -348,6 +348,36 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Svg/Qt6SvgTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Svg/Qt6SvgAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Svg/Qt6SvgVersionlessTargets.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6SqlConfigVersion.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6SqlConfigVersionImpl.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6SqlConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6SqlDependencies.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6SqlTargets.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6SqlTargets-relwithdebinfo.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6SqlAdditionalTargetInfo.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6SqlVersionlessTargets.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6SqlPlugins.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QMimerSQLDriverPluginConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QMimerSQLDriverPluginTargets.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QMimerSQLDriverPluginTargets-relwithdebinfo.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QMimerSQLDriverPluginAdditionalTargetInfo.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QODBCDriverPluginConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QODBCDriverPluginTargets.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QODBCDriverPluginTargets-relwithdebinfo.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QODBCDriverPluginAdditionalTargetInfo.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QPSQLDriverPluginConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QPSQLDriverPluginTargets.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QPSQLDriverPluginTargets-relwithdebinfo.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QPSQLDriverPluginAdditionalTargetInfo.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QSQLiteDriverPluginConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QSQLiteDriverPluginTargets.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QSQLiteDriverPluginTargets-relwithdebinfo.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Sql/Qt6QSQLiteDriverPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6ConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6ConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6Config.cmake",
@@ -373,72 +403,79 @@
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6Dependencies.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/GNUInstallDirs.cmake",
-		"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/resources.qrc"
+		"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/resources.qrc"
 	],
-	"CMAKE_SOURCE_DIR" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige",
+	"CMAKE_SOURCE_DIR" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD",
 	"CROSS_CONFIG" : false,
-	"DEP_FILE" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/deps",
+	"DEP_FILE" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/deps",
 	"DEP_FILE_RULE_NAME" : "ANIWORLD_autogen/timestamp",
 	"HEADERS" : 
 	[
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/logindialog.h",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/Connection.h",
+			"MU",
+			"EWIEGA46WW/moc_Connection.cpp",
+			null
+		],
+		[
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/logindialog.h",
 			"MU",
 			"EWIEGA46WW/moc_logindialog.cpp",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/loginvisuals.h",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/loginvisuals.h",
 			"MU",
 			"EWIEGA46WW/moc_loginvisuals.cpp",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/mainwindow.h",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/mainwindow.h",
 			"MU",
 			"EWIEGA46WW/moc_mainwindow.cpp",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/medicalrecord.h",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/medicalrecord.h",
 			"MU",
 			"EWIEGA46WW/moc_medicalrecord.cpp",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/medicalrecorddetailsdialog.h",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/medicalrecorddetailsdialog.h",
 			"MU",
 			"EWIEGA46WW/moc_medicalrecorddetailsdialog.cpp",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/medicalrecorddialog.h",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/medicalrecorddialog.h",
 			"MU",
 			"EWIEGA46WW/moc_medicalrecorddialog.cpp",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/recordcard.h",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/motion.h",
 			"MU",
-			"EWIEGA46WW/moc_recordcard.cpp",
+			"EWIEGA46WW/moc_motion.cpp",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/src/ui/motion.h",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/recordcard.h",
 			"MU",
-			"YPKJ5OE7LN/moc_motion.cpp",
+			"EWIEGA46WW/moc_recordcard.cpp",
 			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
-	"INCLUDE_DIR" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/include",
-	"MOC_COMPILATION_FILE" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/mocs_compilation.cpp",
+	"INCLUDE_DIR" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/include",
+	"MOC_COMPILATION_FILE" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/mocs_compilation.cpp",
 	"MOC_DEFINITIONS" : 
 	[
 		"MINGW_HAS_SECURE_API=1",
 		"QT_CORE_LIB",
 		"QT_GUI_LIB",
 		"QT_QML_DEBUG",
+		"QT_SQL_LIB",
 		"QT_SVG_LIB",
 		"QT_WIDGETS_LIB",
 		"UNICODE",
@@ -463,6 +500,7 @@
 		"C:/Qt/6.7.3/mingw_64/include/QtWidgets",
 		"C:/Qt/6.7.3/mingw_64/include/QtGui",
 		"C:/Qt/6.7.3/mingw_64/include/QtSvg",
+		"C:/Qt/6.7.3/mingw_64/include/QtSql",
 		"C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++",
 		"C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32",
 		"C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward",
@@ -490,61 +528,66 @@
 		"-c",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp"
 	],
-	"MOC_PREDEFS_FILE" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/moc_predefs.h",
+	"MOC_PREDEFS_FILE" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/ANIWORLD_autogen/moc_predefs.h",
 	"MOC_RELAXED_MODE" : false,
 	"MOC_SKIP" : [],
 	"MULTI_CONFIG" : false,
 	"PARALLEL" : 4,
-	"PARSE_CACHE_FILE" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/ANIWORLD_autogen.dir/ParseCache.txt",
+	"PARSE_CACHE_FILE" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/ANIWORLD_autogen.dir/ParseCache.txt",
 	"QT_MOC_EXECUTABLE" : "C:/Qt/6.7.3/mingw_64/bin/moc.exe",
 	"QT_UIC_EXECUTABLE" : "C:/Qt/6.7.3/mingw_64/bin/uic.exe",
 	"QT_VERSION_MAJOR" : 6,
 	"QT_VERSION_MINOR" : 7,
-	"SETTINGS_FILE" : "C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/ANIWORLD_autogen.dir/AutogenUsed.txt",
+	"SETTINGS_FILE" : "C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug/CMakeFiles/ANIWORLD_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/logindialog.cpp",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/Connection.cpp",
 			"MU",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/loginvisuals.cpp",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/logindialog.cpp",
 			"MU",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/main.cpp",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/loginvisuals.cpp",
 			"MU",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/mainwindow.cpp",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/main.cpp",
 			"MU",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/medicalrecord.cpp",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/mainwindow.cpp",
 			"MU",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/medicalrecorddetailsdialog.cpp",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/medicalrecord.cpp",
 			"MU",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/medicalrecorddialog.cpp",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/medicalrecorddetailsdialog.cpp",
 			"MU",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/recordcard.cpp",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/medicalrecorddialog.cpp",
 			"MU",
 			null
 		],
 		[
-			"C:/Users/marsb/OneDrive/Bureau/medicalldooss_sans_login_compilation_corrige/src/ui/motion.cpp",
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/motion.cpp",
+			"MU",
+			null
+		],
+		[
+			"C:/Users/marsb/OneDrive/Bureau/Dossier_Medical_ANIWORLD/recordcard.cpp",
 			"MU",
 			null
 		]
