@@ -1,0 +1,74 @@
+ANIWORLD - Gestion des locaux (Qt 6.7.3, C++ / Widgets)
+Version complete : CRUD + plan + statistiques + PDF + affectation intelligente + alertes automatiques
+
+COMMENT LANCER
+1. Qt Creator > Fichier > Ouvrir un fichier ou projet... > ANIWORLD_Locaux.pro
+2. Kit "Desktop Qt 6.7.3 ..." (MinGW ou MSVC) > Configurer le projet
+3. IMPORTANT : Build > Nettoyer, puis Build > Executer qmake, puis Ctrl+R
+   (de nouveaux fichiers ont ete ajoutes au .pro)
+
+SI IL Y A UNE ERREUR : copie le message complet de l'onglet "Problemes" et envoie-le.
+
+FONCTIONNALITES (demande du prof : 1 entite, CRUD + 5 fonctionnalites avancees)
+CRUD
+  - Ajouter / Modifier : formulaire avec controle de saisie (nom obligatoire et unique, capacite 1-50,
+    impossible de mettre "hors service" un local occupe)
+  - Supprimer : fenetre de confirmation
+  - Affichage en Cartes ou en Liste (tableau triable en cliquant sur les en-tetes)
+1. Recherche intelligente + tri : UNE seule barre qui comprend des mots-cles
+     "chirurgie dispo", "sale etage 1", "hors service", "plein", "alerte", "consultation 3"
+     (ce qui est compris s'affiche sous la barre). Les pastilles du haut sont des raccourcis.
+     Tri : Priorite (alertes > a nettoyer, blocs d'abord > remplis) / Nom A-Z / Remplissage ;
+     en vue Liste : clic sur les en-tetes du tableau.
+2. PDF : "Rapport nettoyage PDF" -> locaux a nettoyer classes par priorite, case "Fait", remarques,
+   agent, signatures, alertes actives, puis liste des locaux propres
+3. Statistiques : bouton "Voir les statistiques" (tuiles, tableau par type, nettoyage, resume)
+4. Plan de la clinique (metier avance 1) : mini-map "en direct" dans la page + grand plan (bouton ou
+   "Agrandir"). Il se modifie tout seul quand on ajoute / modifie / supprime un local.
+   Les locaux a nettoyer clignotent.
+5. Suivi du nettoyage (metier avance 2) : Propre > A nettoyer > En cours > Propre, avec chronometre.
+   "Retirer un animal (-1)" enleve un animal a la fois ; quand le dernier part, le local passe "A nettoyer".
+6. Affectation intelligente (metier avance 3) : on choisit l'espece et le besoin de l'animal, ANIWORLD
+   classe les locaux (proprete, places, specialite, urgence) et propose le meilleur avec les raisons.
+7. Alertes automatiques (bonus) : verifiees toutes les 20 secondes
+   - local sale depuis trop longtemps (seuil reglable dans la fenetre Alertes, 60 min par defaut,
+     moitie moins pour les blocs et l'isolement)
+   - local sature / presque plein, clinique occupee a 70 % et plus, plus aucun local d'un type important
+   - bouton "Alertes (n)" qui change de couleur, pastille ! sur les cartes, message en bas a l'ecran
+     quand une NOUVELLE alerte apparait
+
+DONNEES
+  Les donnees de depart (avec quelques alertes visibles) sont creees au premier lancement et sauvegardees
+  dans un fichier JSON (locaux_v2.json, dossier AppData). Pour repartir de zero : supprimer ce fichier.
+
+STRUCTURE
+  main.cpp                  demarrage, palette claire, chargement du style
+  resources/style.qss       tout le design
+  src/pagelocaux.*          LA PAGE a integrer dans le projet de l'equipe (QStackedWidget)
+  src/local.*               entite Local
+  src/localrepository.*     stockage JSON  -> a remplacer par la base de donnees a l'integration
+  src/localdialog.*         formulaire ajout / modification
+  src/confirmdialog.*       confirmation (suppression...)
+  src/roomcard.*, cardgrid.*, detailpanel.*   cartes et panneau de details
+  src/clinicmap.*, plandialog.*               plan de la clinique
+  src/statsdialog.*                           statistiques
+  src/pdfreport.*                             rapport PDF
+  src/smartassign.*, smartassigndialog.*      affectation intelligente
+  src/smartsearch.*                           recherche intelligente (mots-cles)
+  src/alerts.*, alertsdialog.*                alertes automatiques
+  src/hoverglow, toast, pawburst, spinlogo, icons, theme.h   effets visuels et outils
+
+INTEGRATION (etape finale)
+  1. Copier le dossier src/ (sauf mainwindow.*) + resources/style.qss + les images dans le projet de l'equipe
+  2. Ajouter PageLocaux dans leur QStackedWidget : new PageLocaux(new LocalRepository(this))
+  3. Fusionner style.qss avec leur feuille de style (ou garder les regles de la page)
+  4. Brancher LocalRepository sur leur base de donnees (add / update / remove / all / find)
+
+
+--- CONNEXION ORACLE (ajoutee) ---
+1. Creer la source ODBC "Source_Projet2A" (ODBC 64 bits) + l'utilisateur Oracle (voir atelier).
+2. Ouvrir src/connection.cpp et saisir : nom de la source, utilisateur, mot de passe.
+3. Table utilisee : LOCAUX (id_local, nom_local, type_local, emplacement, capacite, statut, description).
+   Pour utiliser "LOCAL", changer kTable dans src/localrepository.cpp.
+4. Qt Creator : Build > Executer qmake > Nettoyer > Ctrl+R. (kit 64 bits)
+5. Si Oracle est inaccessible, l'application retombe sur le fichier JSON (message dans "Sortie de l'application").

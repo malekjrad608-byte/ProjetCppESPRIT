@@ -1,36 +1,43 @@
-#include "mainwindow.h"
-#include "loginwindow.h"
 #include <QApplication>
 #include <QFile>
+#include <QFont>
+#include <QIcon>
+#include <QPalette>
+
+#include "mainwindow.h"
+#include "theme.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
+    app.setApplicationName("ANIWORLD");
+    app.setOrganizationName("ANIWORLD");
+    app.setWindowIcon(QIcon(":/images/logo.png"));
 
-    // Charger le style QSS
-    QFile styleFile(":/style.qss");
-    if (styleFile.open(QFile::ReadOnly)) {
-        a.setStyleSheet(QString::fromUtf8(styleFile.readAll()));
-        styleFile.close();
-    }
+    // Style identique sur tous les PC (meme si Windows est en mode sombre)
+    app.setStyle("Fusion");
+    QPalette pal;
+    pal.setColor(QPalette::Window, Theme::Background);
+    pal.setColor(QPalette::WindowText, Theme::Ink);
+    pal.setColor(QPalette::Base, Qt::white);
+    pal.setColor(QPalette::AlternateBase, Theme::TealXL);
+    pal.setColor(QPalette::Text, Theme::Ink);
+    pal.setColor(QPalette::Button, Qt::white);
+    pal.setColor(QPalette::ButtonText, Theme::Ink);
+    pal.setColor(QPalette::ToolTipBase, Theme::TealDark);
+    pal.setColor(QPalette::ToolTipText, Qt::white);
+    pal.setColor(QPalette::Highlight, Theme::Teal);
+    pal.setColor(QPalette::HighlightedText, Qt::white);
+    pal.setColor(QPalette::PlaceholderText, Theme::Muted);
+    app.setPalette(pal);
+    app.setFont(Theme::font(9.5));
 
-    LoginWindow loginWindow;
-    MainWindow *mainWindow = nullptr;
+    QFile qss(":/resources/style.qss");
+    if (qss.open(QIODevice::ReadOnly | QIODevice::Text))
+        app.setStyleSheet(QString::fromUtf8(qss.readAll()));
 
-    QObject::connect(&loginWindow, &LoginWindow::loginSuccessful,
-                     &a, [&]() {
-        if (!mainWindow)
-            mainWindow = new MainWindow;
-
-        loginWindow.hide();
-        mainWindow->show();
-        mainWindow->raise();
-        mainWindow->activateWindow();
-    });
-
-    loginWindow.show();
-
-    const int result = a.exec();
-    delete mainWindow;
-    return result;
+    MainWindow w;
+    w.resize(1360, 820);
+    w.show();
+    return app.exec();
 }

@@ -1,162 +1,243 @@
 #include "mainwindow.h"
-#include "ui/design.h"
-#include "database/databasemanager.h"
-#include "widgets/animatedlogo.h"
-#include "ui/motion.h"
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QScrollArea>
-#include <QScreen>
+#include "confirmdialog.h"
+#include "connection.h"
+#include "hoverglow.h"
+#include "icons.h"
+#include "localrepository.h"
+#include "pagelocaux.h"
+#include "pawburst.h"
+#include "roomcard.h"
+#include "spinlogo.h"
+#include "theme.h"
+
+#include <QAbstractButton>
 #include <QApplication>
-#include <QTimer>
-#include <QShortcut>
+#include <QDate>
+#include <QFrame>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QLocale>
-#include <QPainter>
+#include <QMessageBox>
+#include <QMouseEvent>
+#include <QPushButton>
+#include <QVBoxLayout>
 
-namespace {
-// Every navigation frame starts with a solid surface. Applying an opacity
-// effect to the entire stack left old page pixels in the Windows backing store.
-class PageSurface : public QStackedWidget {
-public:
-    PageSurface() {
-        setObjectName("pageStack");
-        setAttribute(Qt::WA_OpaquePaintEvent);
-        setAutoFillBackground(true);
-        QPalette colors=palette(); colors.setColor(QPalette::Window,QColor("#F3F7F8")); setPalette(colors);
-    }
-protected:
-    void paintEvent(QPaintEvent *event) override {
-        { QPainter painter(this); painter.fillRect(rect(),QColor("#F3F7F8")); }
-        QStackedWidget::paintEvent(event);
-    }
-};
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+{
+    setWindowTitle(QStringLiteral("ANIWORLD — Gestion du centre"));
+    setMinimumSize(1100, 680);
+
+    m_repo = new LocalRepository(this);
+
+    auto *central = new QWidget;
+    central->setObjectName("central");
+    setCentralWidget(central);
+
+    auto *h = new QHBoxLayout(central);
+    h->setContentsMargins(0, 0, 0, 0);
+    h->setSpacing(0);
+    h->addWidget(buildSidebar());
+
+    auto *right = new QWidget;
+    auto *rv = new QVBoxLayout(right);
+    rv->setContentsMargins(0, 0, 0, 0);
+    rv->setSpacing(0);
+    rv->addWidget(buildHeader());
+    rv->addWidget(new PageLocaux(m_repo), 1);
+    rv->addWidget(buildFooter());
+    h->addWidget(right, 1);
+
+    // calque des pattes (animation au clic)
+    m_paws = new PawBurst(central);
+    m_paws->setGeometry(central->rect());
+    m_paws->raise();
+
+    qApp->installEventFilter(this);
 }
 
-MainWindow::MainWindow(bool demo,QWidget *parent):QMainWindow(parent) {
-    setWindowTitle(demo?"ANIWORLD — Démonstration":"ANIWORLD — Gestion des services");
-    setMinimumSize(1100,700);
-    const QSize available=QApplication::primaryScreen()->availableGeometry().size();
-    resize(qMin(1400,available.width()-40),qMin(900,available.height()-60));
-    auto *central=new QWidget; setCentralWidget(central);
-    auto *root=new QHBoxLayout(central); root->setContentsMargins(0,0,0,0); root->setSpacing(0);
-    auto *side=new QFrame; side->setObjectName("sidebar"); side->setFixedWidth(248);
-    auto *sidebar=new QVBoxLayout(side); sidebar->setContentsMargins(17,20,17,17); sidebar->setSpacing(3);
-    auto *brandRow=new QHBoxLayout; brandRow->setSpacing(7);
-    auto *brandLogo=new AnimatedLogo; brandRow->addWidget(brandLogo);
-    connect(brandLogo,&QAbstractButton::clicked,this,[this] { navigate(0); });
-    auto *brandText=new QVBoxLayout; brandText->setSpacing(2); brandText->addStretch();
-    auto *name=Design::label("ANIWORLD"); name->setStyleSheet("font-size:20px;font-weight:700;color:#263E46;letter-spacing:1px;"); brandText->addWidget(name);
-    auto *tagline=Design::label("THE OFFICIAL APPLICATION"); tagline->setStyleSheet("font-size:7px;letter-spacing:0.8px;color:#87989E;"); brandText->addWidget(tagline);
-    brandText->addStretch();
-    brandRow->addLayout(brandText); sidebar->addLayout(brandRow); sidebar->addSpacing(12);
-    auto *workspace=Design::card("workspace"); auto *wl=new QHBoxLayout(workspace); wl->setContentsMargins(12,11,10,11);
-    auto *paw=Design::label(""); paw->setPixmap(Design::icon("paw").pixmap(23,23)); paw->setFixedSize(30,30); wl->addWidget(paw);
-    auto *wt=new QVBoxLayout; wt->setSpacing(3); wt->addWidget(Design::label("Centre de soins",nullptr)); wt->addWidget(Design::label("Espace de gestion","muted")); wl->addLayout(wt); sidebar->addWidget(workspace);
-    sidebar->addSpacing(16); sidebar->addWidget(Design::label("  ESPACE PRINCIPAL","eyebrow")); sidebar->addSpacing(5);
-    const QStringList labels={"Tableau de bord","Services"}; const QStringList icons={"grid","services"};
-    for(int i=0;i<labels.size();++i) {
-        auto *button=Design::button("  "+labels[i],icons[i],"nav"); button->setCheckable(true); button->setObjectName(i==0?"navDashboard":"navServices");
-        m_navigation.append(button); sidebar->addWidget(button); connect(button,&QPushButton::clicked,this,[this,i]{navigate(i);});
+QWidget *MainWindow::buildSidebar()
+{
+    auto *side = new QFrame;
+    side->setObjectName("sidebar");
+    side->setFixedWidth(238);
+    auto *v = new QVBoxLayout(side);
+    v->setContentsMargins(16, 18, 16, 14);
+    v->setSpacing(4);
+
+    // logo + nom
+    auto *brand = new QHBoxLayout;
+    brand->setSpacing(10);
+    brand->addWidget(new SpinLogo(QPixmap(":/images/logo.png"), 50));
+    auto *names = new QVBoxLayout;
+    names->setSpacing(0);
+    auto *title = new QLabel(QStringLiteral("ANIWORLD"));
+    title->setObjectName("brandName");
+    QFont tf = title->font();
+    tf.setLetterSpacing(QFont::AbsoluteSpacing, 2.2);
+    title->setFont(tf);
+    auto *tag = new QLabel(QStringLiteral("THE OFFICIAL APPLICATION"));
+    tag->setObjectName("brandTag");
+    QFont gf = tag->font();
+    gf.setLetterSpacing(QFont::AbsoluteSpacing, 1.2);
+    tag->setFont(gf);
+    names->addWidget(title);
+    names->addWidget(tag);
+    brand->addLayout(names);
+    brand->addStretch();
+    v->addLayout(brand);
+    v->addSpacing(14);
+
+    // carte de contexte
+    auto *ctx = new QFrame;
+    ctx->setObjectName("ctx");
+    auto *cl = new QHBoxLayout(ctx);
+    cl->setContentsMargins(14, 12, 14, 12);
+    cl->setSpacing(10);
+    auto *pawIcon = new QLabel;
+    pawIcon->setPixmap(Icons::paw(QColor(0x16, 0x46, 0x50), 22));
+    auto *ct = new QVBoxLayout;
+    ct->setSpacing(0);
+    auto *c1 = new QLabel(QStringLiteral("Centre de soins"));
+    c1->setObjectName("ctxTitle");
+    auto *c2 = new QLabel(QStringLiteral("Espace de gestion"));
+    c2->setObjectName("ctxSub");
+    ct->addWidget(c1);
+    ct->addWidget(c2);
+    cl->addWidget(pawIcon);
+    cl->addLayout(ct);
+    cl->addStretch();
+    v->addWidget(ctx);
+    v->addSpacing(16);
+
+    auto *nav = new QLabel(QStringLiteral("NAVIGATION"));
+    nav->setObjectName("kicker");
+    QFont nf = nav->font();
+    nf.setLetterSpacing(QFont::AbsoluteSpacing, 1.6);
+    nav->setFont(nf);
+    v->addWidget(nav);
+
+    auto addNav = [&](const QString &text, const QString &icon, bool active) {
+        auto *b = new QPushButton(text);
+        b->setProperty("nav", true);
+        b->setCursor(Qt::PointingHandCursor);
+        b->setIconSize(QSize(18, 18));
+        if (active) {
+            b->setCheckable(true);
+            b->setChecked(true);
+            b->setIcon(Icons::icon(icon, Theme::TealDark, 18));
+        } else {
+            b->setIcon(Icons::icon(icon, QColor(0x4a, 0x67, 0x70), 18));
+            connect(b, &QPushButton::clicked, this, [this, text] {
+                QMessageBox::information(this, QStringLiteral("ANIWORLD"),
+                    QStringLiteral("« %1 » est le module de ton équipe.\n"
+                                   "Il sera relié ici lors de l'intégration.").arg(text));
+            });
+        }
+        v->addWidget(b);
+    };
+    addNav(QStringLiteral("Tableau de bord"), "rooms", false);
+    addNav(QStringLiteral("Services"), "services", false);
+    addNav(QStringLiteral("Employés"), "people", false);
+    addNav(QStringLiteral("Stock"), "stock", false);
+    addNav(QStringLiteral("Locaux"), "rooms", true);
+    addNav(QStringLiteral("Dossiers médicaux"), "records", false);
+
+    v->addStretch();
+    auto *who = new QLabel(QStringLiteral("Connecté · admin"));
+    who->setObjectName("foot");
+    auto *slogan = new QLabel(QStringLiteral("Une attention à chaque patte."));
+    slogan->setObjectName("slogan");
+    auto *centre = new QLabel(QStringLiteral("ANIWORLD · Centre de soins"));
+    centre->setObjectName("foot");
+    v->addWidget(who);
+    v->addSpacing(6);
+    v->addWidget(slogan);
+    v->addWidget(centre);
+    return side;
+}
+
+QWidget *MainWindow::buildHeader()
+{
+    auto *bar = new QFrame;
+    bar->setObjectName("header");
+    bar->setFixedHeight(62);
+    auto *h = new QHBoxLayout(bar);
+    h->setContentsMargins(26, 0, 26, 0);
+    h->setSpacing(10);
+
+    auto *crumb = new QLabel(QStringLiteral("Gestion / <span style='color:#1d3b44'>Locaux</span>"));
+    crumb->setObjectName("sub");
+    crumb->setTextFormat(Qt::RichText);
+    h->addWidget(crumb);
+    h->addStretch();
+
+    auto *date = new QLabel(QLocale(QLocale::French).toString(QDate::currentDate(),
+                                                              QStringLiteral("dddd d MMMM yyyy")));
+    date->setObjectName("sub");
+    h->addWidget(date);
+
+    auto *save = new QLabel;
+    save->setObjectName("pill");
+    if (m_repo->usesDatabase()) {
+        save->setText(QStringLiteral("●  Base Oracle connectée"));
+    } else {
+        save->setText(QStringLiteral("●  Oracle non connecté (fichier local)"));
+        save->setToolTip(QStringLiteral("Erreur : ") + Connection::createInstance().lastError());
     }
-    sidebar->addSpacing(16); sidebar->addWidget(Design::label("  PROCHAINS MODULES","eyebrow")); sidebar->addSpacing(5);
-    const QStringList future={"Employés","Stock","Locaux","Animaux & dossiers"};
-    const QStringList fi={"users","services","grid","shield"};
-    for(int i=0;i<future.size();++i) {
-        auto *button=Design::button("  "+future[i],fi[i],"nav"); button->setEnabled(false);
-        button->setToolTip(i==3?"Animaux et dossiers médicaux réunis dans un futur module.":"Intégration prévue ultérieurement. Cette version gère uniquement les services."); sidebar->addWidget(button);
-    }
-    sidebar->addStretch(1);
-    m_sessionUser=Design::label("","muted"); m_sessionUser->setObjectName("signedInUser");
-    m_sessionUser->setStyleSheet("color:#6F858B;font-size:11px;padding:5px 3px;");
-    m_sessionUser->hide(); sidebar->addWidget(m_sessionUser);
-    auto *mission=Design::label("Une attention à chaque patte."); mission->setStyleSheet("font-size:11px;font-weight:600;color:#53717B;padding:12px 3px;"); sidebar->addWidget(mission);
-    sidebar->addWidget(Design::label("ANIWORLD · Centre de soins","muted")); root->addWidget(side);
-    m_navigationMarker=new QFrame(side); m_navigationMarker->setObjectName("navigationMarker");
-    m_navigationMarker->setFixedSize(3,22); m_navigationMarker->setAttribute(Qt::WA_TransparentForMouseEvents);
-    m_navigationMarker->setStyleSheet("background:#377E8E;border-radius:1px;"); m_navigationMarker->hide();
-    m_markerMotion=new QPropertyAnimation(m_navigationMarker,"pos",this);
-    m_markerMotion->setDuration(220); m_markerMotion->setEasingCurve(QEasingCurve::OutCubic);
-    auto *right=new QVBoxLayout; right->setContentsMargins(0,0,0,0); right->setSpacing(0); root->addLayout(right,1);
-    auto *top= new QFrame; top->setObjectName("topbar"); top->setFixedHeight(64);
-    auto *topLayout=new QHBoxLayout(top); topLayout->setContentsMargins(28,0,28,0);
-    m_breadcrumb=Design::label("Espace de gestion   /   Tableau de bord","muted"); topLayout->addWidget(m_breadcrumb); topLayout->addStretch();
-    m_headerDate=Design::label("","muted");
-    auto updateDate=[this]{ m_headerDate->setText(QLocale().toString(QDate::currentDate(),"dddd d MMMM yyyy")); };
-    updateDate(); auto *timer=new QTimer(this); connect(timer,&QTimer::timeout,this,updateDate); timer->start(60000);
-    topLayout->addWidget(m_headerDate); topLayout->addSpacing(8);
-    auto *mode=Design::label(demo?"●  Démo · non enregistré":"●  Sauvegarde locale");
-    mode->setStyleSheet("background:#E6F0F3;color:#3B7481;border-radius:7px;padding:8px 11px;font-size:11px;");
-    mode->setToolTip(demo?"Données fictives. Les modifications disparaissent à la fermeture.":DatabaseManager::instance().storagePath());
-    topLayout->addWidget(mode,0,Qt::AlignVCenter);
-    auto *motionToggle=Design::button("Animations","motion","toggle"); motionToggle->setObjectName("motionToggle");
-    motionToggle->setCheckable(true); motionToggle->setChecked(Motion::instance().enabled());
-    motionToggle->setAccessibleName("Activer ou désactiver les animations");
-    motionToggle->setToolTip("Activer ou désactiver les animations. Votre préférence est conservée.");
-    connect(motionToggle,&QPushButton::clicked,this,[](bool checked) { Motion::instance().setEnabled(checked,true); });
-    topLayout->addWidget(motionToggle,0,Qt::AlignVCenter);
-    m_logoutButton=Design::button("Se déconnecter","logout");
-    m_logoutButton->setObjectName("logoutButton");
-    m_logoutButton->setAccessibleName("Se déconnecter et revenir à la connexion");
-    m_logoutButton->setToolTip("Revenir à la connexion. Les services enregistrés sont conservés.");
-    m_logoutButton->setStyleSheet(
-        "QPushButton { color:#2B6973;background:#EAF3F3;border:1px solid #B7D2D4;padding:10px 12px; }"
-        "QPushButton:hover { background:#D7EBEB;border-color:#397E89; }"
-        "QPushButton:pressed { background:#C5E0E1; }"
-        "QPushButton:focus { border:1px solid #397E89; }");
-    m_logoutButton->hide(); topLayout->addWidget(m_logoutButton,0,Qt::AlignVCenter);
-    connect(m_logoutButton,&QPushButton::clicked,this,&MainWindow::logoutRequested);
-    m_headerDate->setVisible(width()>=1280);
-    right->addWidget(top);
-    m_stack=new PageSurface; right->addWidget(m_stack,1);
-    connect(&Motion::instance(),&Motion::changed,this,[this,motionToggle](bool enabled) {
-        motionToggle->setChecked(enabled);
-        if(!enabled) { m_markerMotion->stop(); positionNavigationMarker(false); }
+    h->addWidget(save);
+
+    auto *anim = new QPushButton(QStringLiteral("Animations : ON"));
+    anim->setProperty("role", "ghost");
+    anim->setCheckable(true);
+    anim->setChecked(true);
+    anim->setCursor(Qt::PointingHandCursor);
+    HoverGlow::attach(anim);
+    connect(anim, &QPushButton::toggled, this, [anim](bool on) {
+        Theme::animations = on;
+        anim->setText(on ? QStringLiteral("Animations : ON") : QStringLiteral("Animations : OFF"));
     });
-    m_dashboard=new DashboardWidget; auto *scroll=new QScrollArea; scroll->setWidgetResizable(true); scroll->setWidget(m_dashboard); scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_services=new ServiceWidget; m_services->setProperty("demoMode",demo); m_stack->addWidget(scroll); m_stack->addWidget(m_services);
-    QPalette pageColors=m_stack->palette(); pageColors.setColor(QPalette::Base,QColor("#F3F7F8"));
-    for(auto *page:{static_cast<QWidget *>(m_services),static_cast<QWidget *>(m_dashboard),scroll->viewport()}) {
-        page->setPalette(pageColors); page->setAutoFillBackground(true);
+    h->addWidget(anim);
+
+    auto *out = new QPushButton(QStringLiteral("Se déconnecter"));
+    out->setProperty("role", "ghost");
+    out->setCursor(Qt::PointingHandCursor);
+    out->setIcon(Icons::icon("logout", Theme::TealDark, 16));
+    HoverGlow::attach(out);
+    connect(out, &QPushButton::clicked, this, &QWidget::close);
+    h->addWidget(out);
+    return bar;
+}
+
+QWidget *MainWindow::buildFooter()
+{
+    auto *bar = new QFrame;
+    bar->setObjectName("footer");
+    bar->setFixedHeight(38);
+    auto *h = new QHBoxLayout(bar);
+    h->setContentsMargins(26, 0, 26, 0);
+    auto *l = new QLabel(QStringLiteral("ANIWORLD · Gestion des locaux"));
+    l->setObjectName("foot");
+    auto *r = new QLabel(QStringLiteral("Ctrl+N Ajouter   ·   Ctrl+F Rechercher"));
+    r->setObjectName("foot");
+    h->addWidget(l);
+    h->addStretch();
+    h->addWidget(r);
+    return bar;
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *e)
+{
+    if (m_paws) {
+        if (e->type() == QEvent::Resize && obj == centralWidget()) {
+            m_paws->setGeometry(centralWidget()->rect());
+            m_paws->raise();
+        } else if (e->type() == QEvent::MouseButtonPress && Theme::animations) {
+            QWidget *w = qobject_cast<QWidget *>(obj);
+            if (w && (qobject_cast<QAbstractButton *>(w) || qobject_cast<RoomCard *>(w))) {
+                auto *me = static_cast<QMouseEvent *>(e);
+                m_paws->spawn(m_paws->mapFromGlobal(me->globalPosition().toPoint()));
+            }
+        }
     }
-    connect(m_dashboard,&DashboardWidget::createRequested,this,[this]{navigate(1);m_services->onAdd();});
-    connect(m_dashboard,&DashboardWidget::servicesRequested,this,[this]{navigate(1);});
-    connect(m_dashboard,&DashboardWidget::serviceRequested,this,[this](int id){navigate(1);m_services->viewService(id);});
-    connect(m_services,&ServiceWidget::servicesChanged,m_dashboard,&DashboardWidget::refresh);
-    auto *addShortcut=new QShortcut(QKeySequence("Ctrl+N"),this); connect(addShortcut,&QShortcut::activated,this,[this]{navigate(1);m_services->onAdd();});
-    auto *searchShortcut=new QShortcut(QKeySequence("Ctrl+F"),this); connect(searchShortcut,&QShortcut::activated,this,[this]{navigate(1);m_services->focusSearch();});
-    navigate(1);
-}
-void MainWindow::setSignedInUser(const QString &username) {
-    const bool signedIn=!username.isEmpty();
-    m_sessionUser->setText(m_sessionUser->fontMetrics().elidedText("Connecté · "+username,Qt::ElideRight,202));
-    m_sessionUser->setToolTip(username);
-    m_sessionUser->setVisible(signedIn);
-    m_logoutButton->setVisible(signedIn);
-}
-void MainWindow::navigate(int page) {
-    if(page<0 || page>=m_stack->count()) return;
-    const bool changed=m_stack->currentIndex()!=page;
-    m_stack->setCurrentIndex(page);
-    for(int i=0;i<m_navigation.size();++i) m_navigation[i]->setChecked(i==page);
-    m_breadcrumb->setText("Espace de gestion   /   "+QString(page==0?"Tableau de bord":"Services"));
-    if(page==0) m_dashboard->refresh(); else m_services->refresh();
-    positionNavigationMarker(changed);
-    if(changed && isVisible() && Motion::instance().enabled()) {
-        Motion::reveal(m_stack,QColor("#F3F7F8"),200);
-    }
-}
-void MainWindow::positionNavigationMarker(bool animated) {
-    QTimer::singleShot(0,this,[this,animated] {
-        auto *button=m_navigation.value(m_stack->currentIndex()); if(!button) return;
-        const QPoint destination(button->x()+2,button->y()+(button->height()-m_navigationMarker->height())/2);
-        m_markerMotion->stop();
-        if(animated && isVisible() && m_navigationMarker->isVisible() && Motion::instance().enabled()) {
-            m_markerMotion->setStartValue(m_navigationMarker->pos()); m_markerMotion->setEndValue(destination); m_markerMotion->start();
-        } else m_navigationMarker->move(destination);
-        m_navigationMarker->show(); m_navigationMarker->raise();
-    });
-}
-void MainWindow::resizeEvent(QResizeEvent *event) {
-    QMainWindow::resizeEvent(event); positionNavigationMarker(false);
-    if(m_headerDate) m_headerDate->setVisible(width()>=1280);
+    return QMainWindow::eventFilter(obj, e);
 }

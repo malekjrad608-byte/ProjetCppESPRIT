@@ -1,0 +1,21 @@
+MODELE DE DONNEES - Module Gestion des locaux (a completer avec les tables de l'equipe)
+
+1) MODELE ENTITE / ASSOCIATION (partie "Locaux")
+   Entite : LOCAL
+   Attributs : id_local (identifiant), nom_local, type_local, emplacement (etage),
+               capacite, statut, description
+   Associations a decider avec l'equipe (une seule ligne chacune, a verifier avec les autres modules) :
+     - LOCAL (0,N) --- heberger --- (0,1) ANIMAL / DOSSIER MEDICAL : un local contient plusieurs animaux
+     - LOCAL (0,N) --- nettoyer  --- (0,N) EMPLOYE               : agent d'entretien responsable
+     - SERVICE (1,1) --- possede --- (0,N) LOCAL                    : un local appartient a un service
+
+2) MODELE RELATIONNEL (MLD)
+   LOCAL (#id_local, nom_local, type_local, emplacement, capacite, statut, description)
+   (si l'equipe ajoute ANIMAL : ANIMAL (..., #id_local)  -> cle etrangere vers LOCAL)
+
+3) MODELE PHYSIQUE (MPD) Oracle : voir sql/locaux.sql
+   id_local NUMBER(10) PK | nom_local VARCHAR2(60) NOT NULL UNIQUE | type_local VARCHAR2(30)
+   emplacement VARCHAR2(30) | capacite NUMBER(3) entre 1 et 50 | statut VARCHAR2(20) (AVAILABLE, OCCUPIED, MAINTENANCE)
+   description CLOB (l'application y range aussi : specialite, occupation, etat de nettoyage en JSON)
+
+CONNEXION ORACLE (src/connection.cpp) : modifier kDsn, kUser, kPassword selon ton PC.

@@ -1,8 +1,0 @@
-build/
-.qtcreator/
-*.o
-*.exe
-Makefile
-*.pro.user
-debug/
-release/
