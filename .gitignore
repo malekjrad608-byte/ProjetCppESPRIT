@@ -1,0 +1,10 @@
+build/
+*.exe
+*.o
+*.obj
+.vscode/
+.vs/
+Debug/
+Release/
+*.log
+*.user
