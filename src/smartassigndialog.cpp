@@ -246,12 +246,12 @@ void SmartAssignDialog::rebuild()
         const int id = s.localId;
         connect(go, &QPushButton::clicked, this, [this, id] {
             const Local *cur = m_repo->find(id);
-            if (!cur || cur->outOfService || cur->occupancy >= cur->capacity)
+            if (!cur || cur->getOutOfService() || cur->getOccupancy() >= cur->getCapacity())
                 return;
             Local l = *cur;
-            l.occupancy++;
+            l.setOccupancy(l.getOccupancy() + 1);
             m_assignedId = id;
-            m_assignedName = l.name;
+            m_assignedName = l.getName();
             m_repo->update(l);
             accept();
         });

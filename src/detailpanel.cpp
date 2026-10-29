@@ -120,7 +120,7 @@ void DetailPanel::setLocal(const Local *l, const QStringList &alerts)
     m_badge->setVisible(has);
     m_info->setVisible(has);
     m_buttons->setVisible(has);
-    m_name->setText(has ? l->name : QStringLiteral("—"));
+    m_name->setText(has ? l->getName() : QStringLiteral("—"));
     if (!has)
         return;
 
@@ -131,18 +131,18 @@ void DetailPanel::setLocal(const Local *l, const QStringList &alerts)
         "background:%1;color:%2;border-radius:8px;padding:4px 12px;font-weight:600;")
         .arg(bg.name(), fg.name()));
 
-    m_values[0]->setText(QString::number(l->id));
-    m_values[1]->setText(l->type);
+    m_values[0]->setText(QString::number(l->getId()));
+    m_values[1]->setText(l->getType());
     m_values[2]->setText(l->floorText());
-    m_values[3]->setText(QStringLiteral("%1 / %2").arg(l->occupancy).arg(l->capacity));
-    m_values[4]->setText(l->specialty.isEmpty() ? QStringLiteral("—") : l->specialty);
+    m_values[3]->setText(QStringLiteral("%1 / %2").arg(l->getOccupancy()).arg(l->getCapacity()));
+    m_values[4]->setText(l->getSpecialty().isEmpty() ? QStringLiteral("—") : l->getSpecialty());
     m_values[5]->setText(l->cleaningText());
-    m_values[6]->setText(QLocale(QLocale::French).toString(l->lastCleaned, "dd MMM, HH:mm"));
+    m_values[6]->setText(QLocale(QLocale::French).toString(l->getLastCleaned(), "dd MMM, HH:mm"));
 
-    m_btnAssign->setEnabled(!l->outOfService && l->occupancy < l->capacity);
-    m_btnFree->setEnabled(l->occupancy > 0);
+    m_btnAssign->setEnabled(!l->getOutOfService() && l->getOccupancy() < l->getCapacity());
+    m_btnFree->setEnabled(l->getOccupancy() > 0);
 
-    switch (l->cleaning) {
+    switch (l->getCleaning()) {
     case CleaningState::Clean:      m_btnClean->setText(QStringLiteral("Signaler à nettoyer"));   break;
     case CleaningState::ToClean:    m_btnClean->setText(QStringLiteral("Démarrer le nettoyage")); break;
     case CleaningState::InProgress: m_btnClean->setText(QStringLiteral("Nettoyage terminé"));     break;

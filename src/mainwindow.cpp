@@ -176,14 +176,26 @@ QWidget *MainWindow::buildHeader()
     date->setObjectName("sub");
     h->addWidget(date);
 
-    auto *save = new QLabel;
-    save->setObjectName("pill");
-    if (m_repo->usesDatabase()) {
-        save->setText(QStringLiteral("●  Base Oracle connectée"));
-    } else {
-        save->setText(QStringLiteral("●  Oracle non connecté (fichier local)"));
-        save->setToolTip(QStringLiteral("Erreur : ") + Connection::createInstance().lastError());
-    }
+    auto *save = new QPushButton;
+    save->setProperty("role", "ghost");
+    save->setFlat(true);
+    auto refreshBadge = [this, save]() {
+        if (m_repo->usesDatabase()) {
+            save->setText(QStringLiteral("●  Base Oracle connectée"));
+            save->setToolTip(QString());
+            save->setCursor(Qt::ArrowCursor);
+        } else {
+            save->setText(QStringLiteral("●  Oracle non connecté — cliquer pour réessayer"));
+            save->setToolTip(QStringLiteral("Erreur : ") + Connection::createInstance().lastError());
+            save->setCursor(Qt::PointingHandCursor);
+        }
+    };
+    refreshBadge();
+    connect(save, &QPushButton::clicked, this, [this, refreshBadge]() {
+        if (!m_repo->usesDatabase())
+            m_repo->reconnect();
+        refreshBadge();
+    });
     h->addWidget(save);
 
     auto *anim = new QPushButton(QStringLiteral("Animations : ON"));

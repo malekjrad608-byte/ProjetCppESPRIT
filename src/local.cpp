@@ -1,4 +1,6 @@
 #include "local.h"
+#include <QSqlError>
+#include <QVariant>
 
 RoomState Local::state() const
 {
@@ -89,39 +91,163 @@ QStringList Local::types()
              "Laboratoire", "Imagerie", "Isolement" };
 }
 
-QJsonObject Local::toJson() const
+// =====================================================================
+//  CRUD - table LOCAUX (meme architecture que l'atelier CRUD)
+//  Requetes preparees : prepare() + bindValue() -> protection contre l'injection SQL
+// =====================================================================
+
+static QString s_erreur;   // dernier message d'erreur SQL (affiche dans l'interface)
+
+QString Local::derniereErreur()
 {
-    QJsonObject o;
-    o["id"] = id;
-    o["name"] = name;
-    o["type"] = type;
-    o["floor"] = floor;
-    o["capacity"] = capacity;
-    o["occupancy"] = occupancy;
-    o["specialty"] = specialty;
-    o["outOfService"] = outOfService;
-    o["cleaning"] = static_cast<int>(cleaning);
-    o["lastCleaned"] = lastCleaned.toString(Qt::ISODate);
-    if (dirtySince.isValid())
-        o["dirtySince"] = dirtySince.toString(Qt::ISODate);
-    return o;
+    return s_erreur;
 }
 
-Local Local::fromJson(const QJsonObject &o)
+// Controle de saisie (fait en C++ avant d'envoyer la requete)
+QString Local::controleSaisie() const
+{
+    if (name.trimmed().isEmpty())
+        return QStringLiteral("Le nom du local est obligatoire.");
+    if (name.trimmed().size() > 150)
+        return QStringLiteral("Le nom ne doit pas dépasser 150 caractères.");
+    if (type.trimmed().isEmpty())
+        return QStringLiteral("Le type du local est obligatoire.");
+    if (capacity < 1 || capacity > 50)
+        return QStringLiteral("La capacité doit être comprise entre 1 et 50.");
+    if (occupancy < 0 || occupancy > capacity)
+        return QStringLiteral("L'occupation doit être comprise entre 0 et la capacité.");
+    if (idService <= 0)
+        return QStringLiteral("Choisissez le service du local.");
+    return QString();
+}
+
+// Les dates sont enregistrees en texte (format ISO).
+// Date vide -> chaine vide (Oracle la stocke comme NULL ; evite l'erreur ODBC S1010)
+static QString dateVersBd(const QDateTime &d)
+{
+    return d.isValid() ? d.toString(Qt::ISODate) : QString("");
+}
+
+// ---------- Create ----------
+bool Local::ajouter()
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO LOCAUX (ID_LOCAL, NOM_LOCAL, TYPE_LOCAL, ETAGE, CAPACITE, OCCUPATION, "
+                  "SPECIALITE, HORS_SERVICE, NETTOYAGE, DERNIER_NETTOYAGE, SALE_DEPUIS, ID_SERV) "
+                  "VALUES (:id, :name, :type, :floor, :capacity, :occupancy, :specialty, "
+                  ":oos, :cleaning, :last, :dirty, :service)");
+    query.bindValue(":id", id);
+    query.bindValue(":name", name.trimmed());
+    query.bindValue(":type", type);
+    query.bindValue(":floor", floor);
+    query.bindValue(":capacity", capacity);
+    query.bindValue(":occupancy", occupancy);
+    query.bindValue(":specialty", specialty.trimmed());
+    query.bindValue(":oos", outOfService ? 1 : 0);
+    query.bindValue(":cleaning", static_cast<int>(cleaning));
+    query.bindValue(":last", dateVersBd(lastCleaned));
+    query.bindValue(":dirty", dateVersBd(dirtySince));
+    query.bindValue(":service", idService);
+
+    bool ok = query.exec();
+    s_erreur = ok ? QString() : query.lastError().text();
+    return ok;
+}
+
+// ---------- Read ----------
+QSqlQueryModel *Local::afficher()
+{
+    QSqlQueryModel *model = new QSqlQueryModel();
+    model->setQuery("SELECT ID_LOCAL, NOM_LOCAL, TYPE_LOCAL, ETAGE, CAPACITE, OCCUPATION, SPECIALITE, "
+                    "HORS_SERVICE, NETTOYAGE, DERNIER_NETTOYAGE, SALE_DEPUIS, ID_SERV "
+                    "FROM LOCAUX ORDER BY ID_LOCAL");
+    model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Nom"));
+    model->setHeaderData(2, Qt::Horizontal, QObject::tr("Type"));
+    model->setHeaderData(3, Qt::Horizontal, QObject::tr("Étage"));
+    model->setHeaderData(4, Qt::Horizontal, QObject::tr("Capacité"));
+    model->setHeaderData(5, Qt::Horizontal, QObject::tr("Occupation"));
+    model->setHeaderData(6, Qt::Horizontal, QObject::tr("Spécialité"));
+    model->setHeaderData(7, Qt::Horizontal, QObject::tr("Hors service"));
+    model->setHeaderData(8, Qt::Horizontal, QObject::tr("Nettoyage"));
+    model->setHeaderData(9, Qt::Horizontal, QObject::tr("Dernier nettoyage"));
+    model->setHeaderData(10, Qt::Horizontal, QObject::tr("Sale depuis"));
+    model->setHeaderData(11, Qt::Horizontal, QObject::tr("Service"));
+    s_erreur = model->lastError().isValid() ? model->lastError().text() : QString();
+    return model;
+}
+
+// ---------- Update ----------
+bool Local::modifier()
+{
+    QSqlQuery query;
+    query.prepare("UPDATE LOCAUX SET NOM_LOCAL = :name, TYPE_LOCAL = :type, ETAGE = :floor, "
+                  "CAPACITE = :capacity, OCCUPATION = :occupancy, SPECIALITE = :specialty, "
+                  "HORS_SERVICE = :oos, NETTOYAGE = :cleaning, "
+                  "DERNIER_NETTOYAGE = :last, SALE_DEPUIS = :dirty, ID_SERV = :service "
+                  "WHERE ID_LOCAL = :id");
+    query.bindValue(":id", id);
+    query.bindValue(":name", name.trimmed());
+    query.bindValue(":type", type);
+    query.bindValue(":floor", floor);
+    query.bindValue(":capacity", capacity);
+    query.bindValue(":occupancy", occupancy);
+    query.bindValue(":specialty", specialty.trimmed());
+    query.bindValue(":oos", outOfService ? 1 : 0);
+    query.bindValue(":cleaning", static_cast<int>(cleaning));
+    query.bindValue(":last", dateVersBd(lastCleaned));
+    query.bindValue(":dirty", dateVersBd(dirtySince));
+    query.bindValue(":service", idService);
+
+    bool ok = query.exec();
+    s_erreur = ok ? QString() : query.lastError().text();
+    return ok;
+}
+
+// ---------- Delete ----------
+bool Local::supprimer(int id)
+{
+    QSqlQuery query;
+    query.prepare("DELETE FROM LOCAUX WHERE ID_LOCAL = :id");
+    query.bindValue(":id", id);
+
+    bool ok = query.exec();
+    s_erreur = ok ? QString() : query.lastError().text();
+    return ok;
+}
+
+// Liste des services (pour choisir le service d'un local dans le formulaire)
+QList<QPair<int, QString>> Local::services()
+{
+    QList<QPair<int, QString>> liste;
+    QSqlQuery query;
+    if (query.exec("SELECT ID_SERV, CATEGORIE, PRESTATION FROM SERVICES ORDER BY ID_SERV")) {
+        while (query.next())
+            liste.append({ query.value(0).toInt(),
+                           query.value(1).toString() + " - " + query.value(2).toString() });
+    }
+    return liste;
+}
+
+// Transforme une ligne du SELECT (meme ordre de colonnes que afficher()) en objet Local
+Local Local::fromRecord(const QSqlRecord &r)
 {
     Local l;
-    l.id = o["id"].toInt();
-    l.name = o["name"].toString();
-    l.type = o["type"].toString();
-    l.floor = o["floor"].toInt();
-    l.capacity = o["capacity"].toInt(1);
-    l.occupancy = o["occupancy"].toInt();
-    l.specialty = o["specialty"].toString();
-    l.outOfService = o["outOfService"].toBool();
-    l.cleaning = static_cast<CleaningState>(o["cleaning"].toInt());
-    l.lastCleaned = QDateTime::fromString(o["lastCleaned"].toString(), Qt::ISODate);
+    l.id = r.value(0).toInt();
+    l.name = r.value(1).toString();
+    l.type = r.value(2).toString();
+    l.floor = r.value(3).toInt();
+    l.capacity = qMax(1, r.value(4).toInt());
+    l.occupancy = qBound(0, r.value(5).toInt(), l.capacity);
+    l.specialty = r.value(6).toString();
+    l.outOfService = r.value(7).toInt() != 0;
+    l.cleaning = static_cast<CleaningState>(qBound(0, r.value(8).toInt(), 2));
+    l.lastCleaned = QDateTime::fromString(r.value(9).toString(), Qt::ISODate);
     if (!l.lastCleaned.isValid())
         l.lastCleaned = QDateTime::currentDateTime();
-    l.dirtySince = QDateTime::fromString(o["dirtySince"].toString(), Qt::ISODate);
+    l.dirtySince = QDateTime::fromString(r.value(10).toString(), Qt::ISODate);
+    if (l.cleaning == CleaningState::ToClean && !l.dirtySince.isValid())
+        l.dirtySince = l.lastCleaned;
+    l.idService = r.value(11).toInt();
     return l;
 }

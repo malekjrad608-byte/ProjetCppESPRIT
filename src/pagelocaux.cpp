@@ -390,31 +390,31 @@ QLayout *PageLocaux::buildBody()
     // ---------------------------------------------------- actions du panneau de detail
     connect(m_detail, &DetailPanel::assignRequested, this, [this] {
         modifySelected([this](Local &l) {
-            if (l.outOfService || l.occupancy >= l.capacity)
+            if (l.getOutOfService() || l.getOccupancy() >= l.getCapacity())
                 return false;
-            l.occupancy++;
-            m_toast->showMessage(QStringLiteral("Animal affecté à ") + l.name);
+            l.setOccupancy(l.getOccupancy() + 1);
+            m_toast->showMessage(QStringLiteral("Animal affecté à ") + l.getName());
             return true;
         });
     });
     connect(m_detail, &DetailPanel::freeRequested, this, [this] {
         modifySelected([this](Local &l) {
-            if (l.occupancy <= 0)
+            if (l.getOccupancy() <= 0)
                 return false;
-            l.occupancy--;                       // un animal à la fois (-1)
-            if (l.occupancy == 0) {              // dernier animal parti : le local est vide -> à nettoyer
+            l.setOccupancy(l.getOccupancy() - 1);                       // un animal à la fois (-1)
+            if (l.getOccupancy() == 0) {              // dernier animal parti : le local est vide -> à nettoyer
                 l.markToClean();
-                m_toast->showMessage(l.name + QStringLiteral(" est vide — à nettoyer"));
+                m_toast->showMessage(l.getName() + QStringLiteral(" est vide — à nettoyer"));
             } else {
                 m_toast->showMessage(QStringLiteral("Animal retiré de %1 (%2 / %3)")
-                                         .arg(l.name).arg(l.occupancy).arg(l.capacity));
+                                         .arg(l.getName()).arg(l.getOccupancy()).arg(l.getCapacity()));
             }
             return true;
         });
     });
     connect(m_detail, &DetailPanel::cleanRequested, this, [this] {
         modifySelected([this](Local &l) {
-            switch (l.cleaning) {
+            switch (l.getCleaning()) {
             case CleaningState::Clean:
                 l.markToClean();
                 m_toast->showMessage(QStringLiteral("Signalé à nettoyer"));
@@ -444,7 +444,7 @@ QList<Local> PageLocaux::filteredSorted() const
 
     QList<Local> out;
     for (const Local &l : m_repo->all())
-        if (q.matches(l, m_alertLevel.value(l.id)))
+        if (q.matches(l, m_alertLevel.value(l.getId())))
             out.append(l);
 
     QCollator coll;
@@ -453,30 +453,30 @@ QList<Local> PageLocaux::filteredSorted() const
     switch (m_sortCombo->currentIndex()) {
     case 1:     // nom A -> Z
         std::sort(out.begin(), out.end(), [&](const Local &a, const Local &b) {
-            return coll.compare(a.name, b.name) < 0;
+            return coll.compare(a.getName(), b.getName()) < 0;
         });
         break;
     case 2:     // remplissage (taux d'occupation)
         std::stable_sort(out.begin(), out.end(), [](const Local &a, const Local &b) {
-            const double ra = a.capacity > 0 ? double(a.occupancy) / a.capacity : 0.0;
-            const double rb = b.capacity > 0 ? double(b.occupancy) / b.capacity : 0.0;
+            const double ra = a.getCapacity() > 0 ? double(a.getOccupancy()) / a.getCapacity() : 0.0;
+            const double rb = b.getCapacity() > 0 ? double(b.getOccupancy()) / b.getCapacity() : 0.0;
             return ra > rb;
         });
         break;
     default:    // priorite : alertes > a nettoyer (urgent d'abord, le plus ancien d'abord) > remplissage
         std::stable_sort(out.begin(), out.end(), [this](const Local &a, const Local &b) {
-            const int la = m_alertLevel.value(a.id), lb = m_alertLevel.value(b.id);
+            const int la = m_alertLevel.value(a.getId()), lb = m_alertLevel.value(b.getId());
             if (la != lb)
                 return la > lb;
-            const bool da = a.cleaning == CleaningState::ToClean, db = b.cleaning == CleaningState::ToClean;
+            const bool da = a.getCleaning() == CleaningState::ToClean, db = b.getCleaning() == CleaningState::ToClean;
             if (da != db)
                 return da;
             if (da && a.isUrgentType() != b.isUrgentType())
                 return a.isUrgentType();
             if (da && a.dirtyMinutes() != b.dirtyMinutes())
                 return a.dirtyMinutes() > b.dirtyMinutes();
-            const double ra = a.capacity > 0 ? double(a.occupancy) / a.capacity : 0.0;
-            const double rb = b.capacity > 0 ? double(b.occupancy) / b.capacity : 0.0;
+            const double ra = a.getCapacity() > 0 ? double(a.getOccupancy()) / a.getCapacity() : 0.0;
+            const double rb = b.getCapacity() > 0 ? double(b.getOccupancy()) / b.getCapacity() : 0.0;
             return ra > rb;
         });
         break;
@@ -498,8 +498,8 @@ void PageLocaux::refresh(bool playIntro)
     int i = 0;
     for (const Local &l : list) {
         auto *c = new RoomCard(l);
-        c->setSelected(l.id == m_selectedId);
-        c->setAlertLevel(m_alertLevel.value(l.id));
+        c->setSelected(l.getId() == m_selectedId);
+        c->setAlertLevel(m_alertLevel.value(l.getId()));
         connect(c, &RoomCard::clicked, this, &PageLocaux::onCardClicked);
         if (playIntro)
             c->playIntro(qMin(i, 14) * 35);
@@ -532,18 +532,18 @@ void PageLocaux::updateTable(const QList<Local> &list)
         const Local &l = list[r];
 
         auto *idItem = new QTableWidgetItem;
-        idItem->setData(Qt::DisplayRole, l.id);
-        idItem->setData(Qt::UserRole, l.id);
+        idItem->setData(Qt::DisplayRole, l.getId());
+        idItem->setData(Qt::UserRole, l.getId());
         idItem->setTextAlignment(Qt::AlignCenter);
 
-        auto *name = new QTableWidgetItem(Icons::icon(l.iconName(), Theme::Teal, 18), "  " + l.name);
+        auto *name = new QTableWidgetItem(Icons::icon(l.iconName(), Theme::Teal, 18), "  " + l.getName());
         QFont bold = name->font();
         bold.setBold(true);
         name->setFont(bold);
 
-        auto *type = new QTableWidgetItem(l.type);
+        auto *type = new QTableWidgetItem(l.getType());
         auto *floor = new QTableWidgetItem(l.floorText());
-        auto *occ = new QTableWidgetItem(QStringLiteral("%1 / %2").arg(l.occupancy).arg(l.capacity));
+        auto *occ = new QTableWidgetItem(QStringLiteral("%1 / %2").arg(l.getOccupancy()).arg(l.getCapacity()));
 
         QColor bg, fg;
         auto *state = new QTableWidgetItem(l.stateText());
@@ -552,7 +552,7 @@ void PageLocaux::updateTable(const QList<Local> &list)
         state->setFont(bold);
 
         auto *clean = new QTableWidgetItem(l.cleaningText());
-        Theme::cleaningColors(l.cleaning, bg, fg);
+        Theme::cleaningColors(l.getCleaning(), bg, fg);
         clean->setForeground(fg);
         clean->setFont(bold);
 
@@ -584,7 +584,7 @@ void PageLocaux::updateChips()
         case RoomState::Occupied:     ++occ;   break;
         case RoomState::OutOfService: ++oos;   break;
         }
-        if (l.cleaning == CleaningState::ToClean)
+        if (l.getCleaning() == CleaningState::ToClean)
             ++dirty;
     }
     m_chipAvail->setText(QStringLiteral("%1 disponible(s)").arg(avail));
@@ -623,10 +623,10 @@ void PageLocaux::updateGlobal()
 {
     int cap = 0, occ = 0;
     for (const Local &l : m_repo->all()) {
-        if (l.outOfService)
+        if (l.getOutOfService())
             continue;
-        cap += l.capacity;
-        occ += l.occupancy;
+        cap += l.getCapacity();
+        occ += l.getOccupancy();
     }
     const int pct = cap > 0 ? qRound(100.0 * occ / cap) : 0;
     m_pct->setText(QStringLiteral("%1 %").arg(pct));
@@ -724,7 +724,7 @@ void PageLocaux::addLocal()
         return;
     const int id = m_repo->add(dlg.result());
     if (id == 0) {
-        m_toast->showMessage(QStringLiteral("Erreur : ajout impossible dans la base"));
+        m_toast->showMessage(QStringLiteral("Ajout non effectué : ") + m_repo->lastDbError());
         return;
     }
     selectRoom(id);
@@ -739,7 +739,10 @@ void PageLocaux::editSelected()
     LocalDialog dlg(cur, m_repo, this);
     if (dlg.exec() != QDialog::Accepted)
         return;
-    m_repo->update(dlg.result());
+    if (!m_repo->update(dlg.result())) {
+        m_toast->showMessage(QStringLiteral("Modification non effectuée : ") + m_repo->lastDbError());
+        return;
+    }
     m_toast->showMessage(QStringLiteral("Local modifié"));
 }
 
@@ -748,15 +751,18 @@ void PageLocaux::deleteSelected()
     const Local *cur = m_repo->find(m_selectedId);
     if (!cur)
         return;
-    const QString name = cur->name;
+    const QString name = cur->getName();
     QString text = QStringLiteral("« %1 » sera retiré de la liste et du plan de la clinique.").arg(name);
-    if (cur->occupancy > 0)
-        text += QStringLiteral("\n\nAttention : %1 animal(aux) y sont encore affecté(s).").arg(cur->occupancy);
+    if (cur->getOccupancy() > 0)
+        text += QStringLiteral("\n\nAttention : %1 animal(aux) y sont encore affecté(s).").arg(cur->getOccupancy());
     if (!Confirm::ask(this, QStringLiteral("Supprimer ce local ?"), text, QStringLiteral("Supprimer")))
         return;
     const int id = m_selectedId;
+    if (!m_repo->remove(id)) {
+        m_toast->showMessage(QStringLiteral("Suppression non effectuée : ") + m_repo->lastDbError());
+        return;
+    }
     m_selectedId = 0;
-    m_repo->remove(id);
     m_toast->showMessage(QStringLiteral("« %1 » supprimé — le plan a été mis à jour").arg(name));
 }
 
@@ -766,8 +772,8 @@ void PageLocaux::modifySelected(const std::function<bool(Local &)> &fn)
     if (!cur)
         return;
     Local copy = *cur;
-    if (fn(copy))
-        m_repo->update(copy);
+    if (fn(copy) && !m_repo->update(copy))
+        m_toast->showMessage(QStringLiteral("Modification non effectuée : ") + m_repo->lastDbError());
 }
 
 // ================================================================ fonctionnalites avancees

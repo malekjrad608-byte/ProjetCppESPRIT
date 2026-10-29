@@ -35,9 +35,9 @@ QString formatMinutes(qint64 m)
 
 QString priorityText(const Local &l)
 {
-    if (l.cleaning == CleaningState::InProgress)
+    if (l.getCleaning() == CleaningState::InProgress)
         return QStringLiteral("En cours");
-    if (l.cleaning != CleaningState::ToClean)
+    if (l.getCleaning() != CleaningState::ToClean)
         return QStringLiteral("—");
     const qint64 m = l.dirtyMinutes();
     const int th = thresholdFor(l);
@@ -56,54 +56,54 @@ QList<Alert> evaluate(const QList<Local> &all)
     QMap<QString, int> freeOfType;
 
     for (const Local &l : all) {
-        roomsOfType[l.type] += 1;
-        if (!l.outOfService && l.occupancy < l.capacity)
-            freeOfType[l.type] += 1;
-        if (!l.outOfService) {
-            cap += l.capacity;
-            occ += l.occupancy;
+        roomsOfType[l.getType()] += 1;
+        if (!l.getOutOfService() && l.getOccupancy() < l.getCapacity())
+            freeOfType[l.getType()] += 1;
+        if (!l.getOutOfService()) {
+            cap += l.getCapacity();
+            occ += l.getOccupancy();
         }
 
         // 1) local sale depuis trop longtemps
-        if (l.cleaning == CleaningState::ToClean) {
+        if (l.getCleaning() == CleaningState::ToClean) {
             const qint64 m = l.dirtyMinutes();
             const int th = thresholdFor(l);
             if (m >= th) {
                 Alert a;
                 a.level = (m >= 2 * th || l.isUrgentType()) ? Alert::Critical : Alert::Warning;
                 a.kind = "dirty";
-                a.localId = l.id;
-                a.title = QStringLiteral("%1 est sale depuis %2").arg(l.name, formatMinutes(m));
+                a.localId = l.getId();
+                a.title = QStringLiteral("%1 est sale depuis %2").arg(l.getName(), formatMinutes(m));
                 a.shortText = QStringLiteral("Sale depuis %1").arg(formatMinutes(m));
                 a.detail = QStringLiteral("Seuil : %1 min%2. À nettoyer en priorité.")
                                .arg(th)
                                .arg(l.isUrgentType() ? QStringLiteral(" (local stérile)") : QString());
-                a.key = QStringLiteral("dirty:%1:%2").arg(l.id).arg(int(a.level));
+                a.key = QStringLiteral("dirty:%1:%2").arg(l.getId()).arg(int(a.level));
                 out.append(a);
             }
         }
 
         // 2) local sature (plusieurs places seulement)
-        if (!l.outOfService && l.capacity > 1) {
-            if (l.occupancy >= l.capacity) {
+        if (!l.getOutOfService() && l.getCapacity() > 1) {
+            if (l.getOccupancy() >= l.getCapacity()) {
                 Alert a;
                 a.level = Alert::Warning;
                 a.kind = "full";
-                a.localId = l.id;
-                a.title = QStringLiteral("%1 est complet (%2/%3)").arg(l.name).arg(l.occupancy).arg(l.capacity);
-                a.shortText = QStringLiteral("Complet (%1/%2)").arg(l.occupancy).arg(l.capacity);
+                a.localId = l.getId();
+                a.title = QStringLiteral("%1 est complet (%2/%3)").arg(l.getName()).arg(l.getOccupancy()).arg(l.getCapacity());
+                a.shortText = QStringLiteral("Complet (%1/%2)").arg(l.getOccupancy()).arg(l.getCapacity());
                 a.detail = QStringLiteral("Plus aucune place libre : orienter les nouveaux animaux ailleurs.");
-                a.key = QStringLiteral("full:%1").arg(l.id);
+                a.key = QStringLiteral("full:%1").arg(l.getId());
                 out.append(a);
-            } else if (l.occupancy * 100 >= l.capacity * 85) {
+            } else if (l.getOccupancy() * 100 >= l.getCapacity() * 85) {
                 Alert a;
                 a.level = Alert::Info;
                 a.kind = "almost-full";
-                a.localId = l.id;
-                a.title = QStringLiteral("%1 est presque plein (%2/%3)").arg(l.name).arg(l.occupancy).arg(l.capacity);
-                a.shortText = QStringLiteral("Presque plein (%1/%2)").arg(l.occupancy).arg(l.capacity);
-                a.detail = QStringLiteral("Il ne reste que %1 place(s).").arg(l.capacity - l.occupancy);
-                a.key = QStringLiteral("almost:%1").arg(l.id);
+                a.localId = l.getId();
+                a.title = QStringLiteral("%1 est presque plein (%2/%3)").arg(l.getName()).arg(l.getOccupancy()).arg(l.getCapacity());
+                a.shortText = QStringLiteral("Presque plein (%1/%2)").arg(l.getOccupancy()).arg(l.getCapacity());
+                a.detail = QStringLiteral("Il ne reste que %1 place(s).").arg(l.getCapacity() - l.getOccupancy());
+                a.key = QStringLiteral("almost:%1").arg(l.getId());
                 out.append(a);
             }
         }

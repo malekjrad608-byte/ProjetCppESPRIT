@@ -165,22 +165,22 @@ StatsDialog::StatsDialog(const QList<Local> &all, QWidget *parent) : QDialog(par
     int cap = 0, occ = 0, avail = 0, busy = 0, clean = 0, prog = 0, dirty = 0;
     QMap<QString, TypeRow> byType;
     for (const Local &l : all) {
-        floors.insert(l.floor);
+        floors.insert(l.getFloor());
         if (l.state() == RoomState::Available) ++avail;
         if (l.state() == RoomState::Occupied) ++busy;
-        switch (l.cleaning) {
+        switch (l.getCleaning()) {
         case CleaningState::Clean:      ++clean; break;
         case CleaningState::InProgress: ++prog;  break;
         case CleaningState::ToClean:    ++dirty; break;
         }
-        TypeRow &r = byType[l.type];
-        r.type = l.type;
+        TypeRow &r = byType[l.getType()];
+        r.type = l.getType();
         r.rooms++;
-        if (!l.outOfService) {
-            cap += l.capacity;
-            occ += l.occupancy;
-            r.places += l.capacity;
-            r.occ += l.occupancy;
+        if (!l.getOutOfService()) {
+            cap += l.getCapacity();
+            occ += l.getOccupancy();
+            r.places += l.getCapacity();
+            r.occ += l.getOccupancy();
         }
     }
     const int total = all.size();
@@ -288,7 +288,7 @@ StatsDialog::StatsDialog(const QList<Local> &all, QWidget *parent) : QDialog(par
     for (int r = 0; r < rows.size(); ++r) {
         const TypeRow &row = rows[r];
         Local tmp;
-        tmp.type = row.type;
+        tmp.setType(row.type);
         auto *name = new QTableWidgetItem(Icons::icon(tmp.iconName(), Theme::Teal, 18), "  " + row.type);
         QFont f = name->font();
         f.setBold(true);

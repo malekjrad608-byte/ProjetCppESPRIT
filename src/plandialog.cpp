@@ -118,8 +118,8 @@ void PlanDialog::updateInfo()
     m_info->setText(QStringLiteral(
         "<b>%1</b> &nbsp;·&nbsp; %2 &nbsp;·&nbsp; %3 &nbsp;·&nbsp; %4 &nbsp;·&nbsp; "
         "Occupation <b>%5/%6</b> &nbsp;·&nbsp; Nettoyage : <b>%7</b>")
-        .arg(l->name.toHtmlEscaped(), l->type.toHtmlEscaped(), l->floorText(), l->stateText())
-        .arg(l->occupancy)
-        .arg(l->capacity)
+        .arg(l->getName().toHtmlEscaped(), l->getType().toHtmlEscaped(), l->floorText(), l->stateText())
+        .arg(l->getOccupancy())
+        .arg(l->getCapacity())
         .arg(l->cleaningText()));
 }

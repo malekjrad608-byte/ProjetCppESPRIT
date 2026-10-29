@@ -41,20 +41,20 @@ QList<AssignSuggestion> suggest(const QList<Local> &all, const AssignQuery &q, i
     const QString type = typeForNeed(q.need);
 
     for (const Local &l : all) {
-        if (l.type != type)
+        if (l.getType() != type)
             continue;
-        if (l.outOfService || l.occupancy >= l.capacity)
+        if (l.getOutOfService() || l.getOccupancy() >= l.getCapacity())
             continue;
 
         AssignSuggestion s;
-        s.localId = l.id;
-        s.name = l.name;
-        s.type = l.type;
+        s.localId = l.getId();
+        s.name = l.getName();
+        s.type = l.getType();
         s.floorText = l.floorText();
         int score = 50;
 
         // proprete
-        switch (l.cleaning) {
+        switch (l.getCleaning()) {
         case CleaningState::Clean:
             score += 20;
             s.reasons << QStringLiteral("Local propre");
@@ -71,17 +71,17 @@ QList<AssignSuggestion> suggest(const QList<Local> &all, const AssignQuery &q, i
         }
 
         // places libres
-        if (l.capacity == 1) {
+        if (l.getCapacity() == 1) {
             score += 10;
             s.reasons << QStringLiteral("Libre");
         } else {
-            const int left = l.capacity - l.occupancy;
-            score += (15 * left) / l.capacity;
+            const int left = l.getCapacity() - l.getOccupancy();
+            score += (15 * left) / l.getCapacity();
             s.reasons << QStringLiteral("%1 place(s) libre(s)").arg(left);
         }
 
         // specialite / equipement
-        const QString sp = l.specialty;
+        const QString sp = l.getSpecialty();
         if (q.need == "Consultation générale") {
             if (has(sp, "général")) {
                 score += 30;
@@ -133,7 +133,7 @@ QList<AssignSuggestion> suggest(const QList<Local> &all, const AssignQuery &q, i
         }
 
         // urgence : acces rapide
-        if (q.urgent && l.floor == 0) {
+        if (q.urgent && l.getFloor() == 0) {
             score += 10;
             s.reasons << QStringLiteral("Accès rapide (rez-de-chaussée)");
         }
@@ -154,12 +154,12 @@ QString explainNone(const QList<Local> &all, const AssignQuery &q)
     const QString type = typeForNeed(q.need);
     int rooms = 0, oos = 0, full = 0;
     for (const Local &l : all) {
-        if (l.type != type)
+        if (l.getType() != type)
             continue;
         ++rooms;
-        if (l.outOfService)
+        if (l.getOutOfService())
             ++oos;
-        else if (l.occupancy >= l.capacity)
+        else if (l.getOccupancy() >= l.getCapacity())
             ++full;
     }
     if (rooms == 0)

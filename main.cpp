@@ -2,8 +2,10 @@
 #include <QFile>
 #include <QFont>
 #include <QIcon>
+#include <QMessageBox>
 #include <QPalette>
 
+#include "connection.h"
 #include "mainwindow.h"
 #include "theme.h"
 
@@ -36,8 +38,19 @@ int main(int argc, char *argv[])
     if (qss.open(QIODevice::ReadOnly | QIODevice::Text))
         app.setStyleSheet(QString::fromUtf8(qss.readAll()));
 
+    // Connexion a la base (comme l'atelier) : ouverte une seule fois, avant l'interface
+    Connection &c = Connection::createInstance();
+    bool test = c.createConnection();
+    if (!test) {
+        QMessageBox::critical(nullptr, QObject::tr("database is not open"),
+                              QObject::tr("connection failed.\n") + c.lastError());
+        return 1;
+    }
+
     MainWindow w;
     w.resize(1360, 820);
     w.show();
+    QMessageBox::information(nullptr, QObject::tr("database is open"),
+                             QObject::tr("connection successful."));
     return app.exec();
 }

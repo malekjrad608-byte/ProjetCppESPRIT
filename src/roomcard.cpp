@@ -104,7 +104,7 @@ void RoomCard::mousePressEvent(QMouseEvent *e)
 void RoomCard::mouseReleaseEvent(QMouseEvent *e)
 {
     if (m_pressed && e->button() == Qt::LeftButton && rect().contains(e->position().toPoint()))
-        emit clicked(m_local.id);
+        emit clicked(m_local.getId());
     m_pressed = false;
     QWidget::mouseReleaseEvent(e);
 }
@@ -184,9 +184,9 @@ void RoomCard::paintEvent(QPaintEvent *)
     {
         const QFont f = Theme::font(8.5);
         const QString t = QStringLiteral("%1/%2 animal%3")
-                              .arg(m_local.occupancy)
-                              .arg(m_local.capacity)
-                              .arg(QString(m_local.capacity > 1 ? "aux" : ""));
+                              .arg(m_local.getOccupancy())
+                              .arg(m_local.getCapacity())
+                              .arg(QString(m_local.getCapacity() > 1 ? "aux" : ""));
         const qreal w = Theme::pillWidth(t, f, false);
         Theme::drawPill(p, QRectF(cr.right() - 14 - w, cr.top() + 20, w, 22), t,
                         Theme::TealXL, Theme::TealDark, f, false);
@@ -201,7 +201,7 @@ void RoomCard::paintEvent(QPaintEvent *)
         p.setFont(f);
         p.setPen(Theme::Ink);
         p.drawText(QRectF(left, cr.top() + 58, textW, 24), Qt::AlignVCenter | Qt::AlignLeft,
-                   QFontMetricsF(f).elidedText(m_local.name, Qt::ElideRight, textW));
+                   QFontMetricsF(f).elidedText(m_local.getName(), Qt::ElideRight, textW));
     }
     // type
     {
@@ -209,7 +209,7 @@ void RoomCard::paintEvent(QPaintEvent *)
         p.setFont(f);
         p.setPen(Theme::Muted);
         p.drawText(QRectF(left, cr.top() + 82, textW, 18), Qt::AlignVCenter | Qt::AlignLeft,
-                   m_local.type);
+                   m_local.getType());
     }
     // etat + nettoyage
     {
@@ -220,7 +220,7 @@ void RoomCard::paintEvent(QPaintEvent *)
         Theme::drawPill(p, QRectF(left, cr.top() + 108, Theme::pillWidth(st, f, true), 24),
                         st, bg, fg, f, true);
 
-        Theme::cleaningColors(m_local.cleaning, bg, fg);
+        Theme::cleaningColors(m_local.getCleaning(), bg, fg);
         const QString cl = m_local.cleaningText();
         const qreal w = Theme::pillWidth(cl, f, true);
         Theme::drawPill(p, QRectF(cr.right() - 14 - w, cr.top() + 108, w, 24), cl, bg, fg, f, true);
@@ -231,8 +231,8 @@ void RoomCard::paintEvent(QPaintEvent *)
         p.setFont(f);
         p.setPen(Theme::Muted);
         QString info = m_local.floorShort();
-        if (!m_local.specialty.isEmpty())
-            info = m_local.specialty + QStringLiteral("  ·  ") + info;
+        if (!m_local.getSpecialty().isEmpty())
+            info = m_local.getSpecialty() + QStringLiteral("  ·  ") + info;
         p.drawText(QRectF(left, cr.top() + 134, textW, 16), Qt::AlignVCenter | Qt::AlignLeft,
                    QFontMetricsF(f).elidedText(info, Qt::ElideRight, textW));
     }

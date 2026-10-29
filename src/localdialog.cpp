@@ -56,7 +56,7 @@ LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *
     if (existing) {
         m_base = *existing;
     } else {
-        m_base.lastCleaned = QDateTime::currentDateTime();
+        m_base.setLastCleaned(QDateTime::currentDateTime());
     }
 
     auto *root = new QVBoxLayout(this);
@@ -83,8 +83,8 @@ LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *
     root->addLayout(titleRow);
 
     // nom
-    m_name = new QLineEdit(m_base.name);
-    m_name->setMaxLength(30);
+    m_name = new QLineEdit(m_base.getName());
+    m_name->setMaxLength(60);
     m_name->setPlaceholderText(QStringLiteral("ex. Consultation 6, Bloc C…"));
     m_nameErr = makeError();
     root->addWidget(field(QStringLiteral("Nom du local *"), m_name, m_nameErr));
@@ -96,26 +96,37 @@ LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *
     m_type = new QComboBox;
     m_type->addItems(Local::types());
     if (m_editing)
-        m_type->setCurrentText(m_base.type);
+        m_type->setCurrentText(m_base.getType());
     m_floor = new QComboBox;
     m_floor->addItems({ "Rez-de-chaussée", "Étage 1", "Étage 2", "Étage 3" });
-    m_floor->setCurrentIndex(qBound(0, m_base.floor, 3));
+    m_floor->setCurrentIndex(qBound(0, m_base.getFloor(), 3));
     row1->addWidget(field(QStringLiteral("Type"), m_type), 1);
     row1->addWidget(field(QStringLiteral("Étage"), m_floor), 1);
     root->addLayout(row1);
+
+    // service du local (cle etrangere obligatoire -> table SERVICES)
+    m_service = new QComboBox;
+    const QList<QPair<int, QString>> services = Local::services();
+    for (const auto &sv : services)
+        m_service->addItem(sv.second, sv.first);
+    if (services.isEmpty())   // table SERVICES vide ou absente : on le dit clairement
+        m_service->addItem(QStringLiteral("Aucun service : exécutez sql/base_commune_aniworld.sql"), 0);
+    const int idx = m_service->findData(m_base.getIdService());
+    m_service->setCurrentIndex(idx >= 0 ? idx : 0);
+    root->addWidget(field(QStringLiteral("Service *"), m_service));
 
     // capacite (+ occupation en modification)
     auto *row2 = new QHBoxLayout;
     row2->setSpacing(14);
     m_capacity = new QSpinBox;
     m_capacity->setRange(1, 50);
-    m_capacity->setValue(qBound(1, m_base.capacity, 50));
+    m_capacity->setValue(qBound(1, m_base.getCapacity(), 50));
     m_capacity->setSuffix(QStringLiteral(" place(s)"));
     row2->addWidget(field(QStringLiteral("Capacité *"), m_capacity), 1);
     if (m_editing) {
         m_occupancy = new QSpinBox;
         m_occupancy->setRange(0, m_capacity->value());
-        m_occupancy->setValue(qMin(m_base.occupancy, m_capacity->value()));
+        m_occupancy->setValue(qMin(m_base.getOccupancy(), m_capacity->value()));
         m_occupancy->setSuffix(QStringLiteral(" animal(aux)"));
         row2->addWidget(field(QStringLiteral("Occupation actuelle"), m_occupancy), 1);
         connect(m_capacity, QOverload<int>::of(&QSpinBox::valueChanged), this,
@@ -124,14 +135,14 @@ LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *
     root->addLayout(row2);
 
     // specialite
-    m_specialty = new QLineEdit(m_base.specialty);
-    m_specialty->setMaxLength(30);
+    m_specialty = new QLineEdit(m_base.getSpecialty());
+    m_specialty->setMaxLength(100);
     m_specialty->setPlaceholderText(QStringLiteral("ex. Généraliste, Dentiste, Aseptique, Chiens…"));
     root->addWidget(field(QStringLiteral("Spécialité / remarque"), m_specialty));
 
     // hors service
     m_oos = new QCheckBox(QStringLiteral("Hors service (travaux, panne, désinfection…)"));
-    m_oos->setChecked(m_base.outOfService);
+    m_oos->setChecked(m_base.getOutOfService());
     m_oosErr = makeError();
     root->addWidget(m_oos);
     root->addWidget(m_oosErr);
@@ -161,13 +172,13 @@ LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *
 void LocalDialog::accept()
 {
     const QString name = m_name->text().trimmed();
-    const int occupancy = m_occupancy ? m_occupancy->value() : m_base.occupancy;
+    const int occupancy = m_occupancy ? m_occupancy->value() : m_base.getOccupancy();
     bool ok = true;
 
     if (name.size() < 2) {
         showError(m_nameErr, QStringLiteral("Le nom est obligatoire (2 caractères minimum)."));
         ok = false;
-    } else if (m_repo->nameExists(name, m_base.id)) {
+    } else if (m_repo->nameExists(name, m_base.getId())) {
         showError(m_nameErr, QStringLiteral("Un local porte déjà ce nom."));
         ok = false;
     }
@@ -180,12 +191,20 @@ void LocalDialog::accept()
         return;
 
     m_result = m_base;
-    m_result.name = name;
-    m_result.type = m_type->currentText();
-    m_result.floor = m_floor->currentIndex();
-    m_result.capacity = m_capacity->value();
-    m_result.occupancy = qMin(occupancy, m_result.capacity);
-    m_result.specialty = m_specialty->text().trimmed();
-    m_result.outOfService = m_oos->isChecked();
+    m_result.setName(name);
+    m_result.setType(m_type->currentText());
+    m_result.setFloor(m_floor->currentIndex());
+    m_result.setCapacity(m_capacity->value());
+    m_result.setOccupancy(qMin(occupancy, m_result.getCapacity()));
+    m_result.setSpecialty(m_specialty->text().trimmed());
+    m_result.setOutOfService(m_oos->isChecked());
+    m_result.setIdService(m_service->currentData().toInt());
+
+    // controle de saisie fait dans la classe C++ de l'entite
+    const QString err = m_result.controleSaisie();
+    if (!err.isEmpty()) {
+        showError(m_nameErr, err);
+        return;
+    }
     QDialog::accept();
 }

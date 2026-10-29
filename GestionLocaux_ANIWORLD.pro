@@ -1,7 +1,7 @@
 QT       += core gui widgets svg sql
 CONFIG   += c++17
 TEMPLATE  = app
-TARGET    = ANIWORLD_Locaux
+TARGET    = GestionLocaux_ANIWORLD
 
 # Evite les problemes d'accents avec MSVC
 msvc: QMAKE_CXXFLAGS += /utf-8

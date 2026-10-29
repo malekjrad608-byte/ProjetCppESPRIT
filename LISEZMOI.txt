@@ -2,7 +2,7 @@ ANIWORLD - Gestion des locaux (Qt 6.7.3, C++ / Widgets)
 Version complete : CRUD + plan + statistiques + PDF + affectation intelligente + alertes automatiques
 
 COMMENT LANCER
-1. Qt Creator > Fichier > Ouvrir un fichier ou projet... > ANIWORLD_Locaux.pro
+1. Qt Creator > Fichier > Ouvrir un fichier ou projet... > GestionLocaux_ANIWORLD.pro
 2. Kit "Desktop Qt 6.7.3 ..." (MinGW ou MSVC) > Configurer le projet
 3. IMPORTANT : Build > Nettoyer, puis Build > Executer qmake, puis Ctrl+R
    (de nouveaux fichiers ont ete ajoutes au .pro)
@@ -38,15 +38,15 @@ CRUD
      quand une NOUVELLE alerte apparait
 
 DONNEES
-  Les donnees de depart (avec quelques alertes visibles) sont creees au premier lancement et sauvegardees
-  dans un fichier JSON (locaux_v2.json, dossier AppData). Pour repartir de zero : supprimer ce fichier.
+  Base Oracle uniquement (table LOCAUX de la base commune, schema rawand). Au premier lancement, si la table est vide,
+  l'application ajoute 10 locaux d'exemple.
 
 STRUCTURE
   main.cpp                  demarrage, palette claire, chargement du style
   resources/style.qss       tout le design
   src/pagelocaux.*          LA PAGE a integrer dans le projet de l'equipe (QStackedWidget)
   src/local.*               entite Local
-  src/localrepository.*     stockage JSON  -> a remplacer par la base de donnees a l'integration
+  src/localrepository.*     liste des locaux en memoire (lue depuis Oracle via Local::afficher)
   src/localdialog.*         formulaire ajout / modification
   src/confirmdialog.*       confirmation (suppression...)
   src/roomcard.*, cardgrid.*, detailpanel.*   cartes et panneau de details
@@ -65,10 +65,9 @@ INTEGRATION (etape finale)
   4. Brancher LocalRepository sur leur base de donnees (add / update / remove / all / find)
 
 
---- CONNEXION ORACLE (ajoutee) ---
-1. Creer la source ODBC "Source_Projet2A" (ODBC 64 bits) + l'utilisateur Oracle (voir atelier).
-2. Ouvrir src/connection.cpp et saisir : nom de la source, utilisateur, mot de passe.
-3. Table utilisee : LOCAUX (id_local, nom_local, type_local, emplacement, capacite, statut, description).
-   Pour utiliser "LOCAL", changer kTable dans src/localrepository.cpp.
-4. Qt Creator : Build > Executer qmake > Nettoyer > Ctrl+R. (kit 64 bits)
-5. Si Oracle est inaccessible, l'application retombe sur le fichier JSON (message dans "Sortie de l'application").
+--- CONNEXION ORACLE ---
+1. Source ODBC 64 bits "Source_Projet2A18", utilisateur rawand (src/connection.cpp).
+2. Creer la base commune : executer sql/base_commune_aniworld.sql dans SQL Developer (F5).
+3. La connexion est ouverte dans main.cpp avant l'interface (comme l'atelier).
+4. Le CRUD est dans la classe Local (src/local.cpp) : ajouter / afficher / modifier / supprimer,
+   avec prepare() + bindValue().

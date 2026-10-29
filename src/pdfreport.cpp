@@ -71,21 +71,21 @@ bool generate(const QList<Local> &all, const QString &path, QString *error)
     QList<Local> todo, clean;
     int nDirty = 0, nProg = 0, nBusy = 0, nOos = 0;
     for (const Local &l : all) {
-        if (l.cleaning == CleaningState::Clean)
+        if (l.getCleaning() == CleaningState::Clean)
             clean.append(l);
         else
             todo.append(l);
-        if (l.cleaning == CleaningState::ToClean) ++nDirty;
-        if (l.cleaning == CleaningState::InProgress) ++nProg;
+        if (l.getCleaning() == CleaningState::ToClean) ++nDirty;
+        if (l.getCleaning() == CleaningState::InProgress) ++nProg;
         if (l.state() == RoomState::Occupied) ++nBusy;
-        if (l.outOfService) ++nOos;
+        if (l.getOutOfService()) ++nOos;
     }
     std::stable_sort(todo.begin(), todo.end(), [](const Local &a, const Local &b) {
         if (rank(a) != rank(b))
             return rank(a) < rank(b);
         if (a.dirtyMinutes() != b.dirtyMinutes())
             return a.dirtyMinutes() > b.dirtyMinutes();
-        return a.floor < b.floor;
+        return a.getFloor() < b.getFloor();
     });
 
     const QList<Alert> alerts = AlertEngine::evaluate(all);
@@ -135,14 +135,14 @@ bool generate(const QList<Local> &all, const QString &path, QString *error)
              + th("Nettoyage") + th("Fait") + th("Remarques / agent");
         h += "</tr>";
         for (const Local &l : todo) {
-            const QString state = l.stateText() + (l.occupancy > 0 ? QStringLiteral(" (%1/%2)").arg(l.occupancy).arg(l.capacity) : QString());
+            const QString state = l.stateText() + (l.getOccupancy() > 0 ? QStringLiteral(" (%1/%2)").arg(l.getOccupancy()).arg(l.getCapacity()) : QString());
             h += "<tr>";
             h += priorityCell(AlertEngine::priorityText(l));
-            h += td("<b>" + l.name.toHtmlEscaped() + "</b>");
-            h += td(l.type.toHtmlEscaped());
+            h += td("<b>" + l.getName().toHtmlEscaped() + "</b>");
+            h += td(l.getType().toHtmlEscaped());
             h += td(l.floorShort());
             h += td(state.toHtmlEscaped());
-            h += td(l.cleaning == CleaningState::ToClean ? AlertEngine::formatMinutes(l.dirtyMinutes()) : QStringLiteral("—"));
+            h += td(l.getCleaning() == CleaningState::ToClean ? AlertEngine::formatMinutes(l.dirtyMinutes()) : QStringLiteral("—"));
             h += td(l.cleaningText());
             h += td("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
             h += td("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -161,11 +161,11 @@ bool generate(const QList<Local> &all, const QString &path, QString *error)
         h += "</tr>";
         for (const Local &l : clean) {
             h += "<tr>";
-            h += td(l.name.toHtmlEscaped());
-            h += td(l.type.toHtmlEscaped());
+            h += td(l.getName().toHtmlEscaped());
+            h += td(l.getType().toHtmlEscaped());
             h += td(l.floorShort());
             h += td(l.stateText());
-            h += td(fr.toString(l.lastCleaned, "dd MMM yyyy HH:mm"));
+            h += td(fr.toString(l.getLastCleaned(), "dd MMM yyyy HH:mm"));
             h += "</tr>";
         }
         h += "</table>";

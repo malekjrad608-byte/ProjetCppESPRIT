@@ -28,7 +28,7 @@ ClinicMap::ClinicMap(bool compact, QWidget *parent) : QWidget(parent), m_compact
             return;
         bool dirty = false;
         for (const Tile &t : m_tiles) {
-            if (t.l.cleaning == CleaningState::ToClean) {
+            if (t.l.getCleaning() == CleaningState::ToClean) {
                 dirty = true;
                 break;
             }
@@ -72,7 +72,7 @@ void ClinicMap::relayout(bool animate)
     // positions actuelles (pour faire glisser les tuiles qui restent)
     QHash<int, QRectF> previous;
     for (const Tile &t : m_tiles)
-        previous.insert(t.l.id, currentRect(t));
+        previous.insert(t.l.getId(), currentRect(t));
 
     const qreal W = width() > 40 ? width() : 320;
     const qreal pad = m_compact ? 8 : 14;
@@ -87,9 +87,9 @@ void ClinicMap::relayout(bool animate)
     {
         QSet<int> seen;
         for (const Local &l : m_list) {
-            if (!seen.contains(l.floor)) {
-                seen.insert(l.floor);
-                floors.append(l.floor);
+            if (!seen.contains(l.getFloor())) {
+                seen.insert(l.getFloor());
+                floors.append(l.getFloor());
             }
         }
         std::sort(floors.begin(), floors.end(), [](int a, int b) { return a > b; });
@@ -105,12 +105,12 @@ void ClinicMap::relayout(bool animate)
         qreal rowY = top + titleH;
         int col = 0;
         for (const Local &l : m_list) {
-            if (l.floor != f)
+            if (l.getFloor() != f)
                 continue;
             ++fb.rooms;
-            if (l.occupancy > 0)
+            if (l.getOccupancy() > 0)
                 ++fb.busy;
-            const int span = qMin(cols, l.capacity >= 8 ? 2 : 1);
+            const int span = qMin(cols, l.getCapacity() >= 8 ? 2 : 1);
             if (col + span > cols) {
                 col = 0;
                 rowY += tileH + gap;
@@ -118,10 +118,10 @@ void ClinicMap::relayout(bool animate)
             Tile t;
             t.l = l;
             t.to = QRectF(pad + col * (unit + gap), rowY, unit * span + gap * (span - 1), tileH);
-            if (previous.contains(l.id) && animate) {
-                t.from = previous.value(l.id);
+            if (previous.contains(l.getId()) && animate) {
+                t.from = previous.value(l.getId());
                 t.isNew = false;
-            } else if (previous.contains(l.id)) {
+            } else if (previous.contains(l.getId())) {
                 t.from = t.to;
                 t.isNew = false;
             } else {
@@ -167,7 +167,7 @@ int ClinicMap::tileAt(const QPoint &p) const
 {
     for (const Tile &t : m_tiles)
         if (t.to.contains(p))
-            return t.l.id;
+            return t.l.getId();
     return 0;
 }
 
@@ -179,11 +179,11 @@ void ClinicMap::mouseMoveEvent(QMouseEvent *e)
         setCursor(id ? Qt::PointingHandCursor : Qt::ArrowCursor);
         QString tip;
         for (const Tile &t : m_tiles) {
-            if (t.l.id == id) {
+            if (t.l.getId() == id) {
                 tip = QStringLiteral("%1 — %2 (%3/%4)\n%5")
-                          .arg(t.l.name, t.l.stateText())
-                          .arg(t.l.occupancy)
-                          .arg(t.l.capacity)
+                          .arg(t.l.getName(), t.l.stateText())
+                          .arg(t.l.getOccupancy())
+                          .arg(t.l.getCapacity())
                           .arg(QStringLiteral("Nettoyage : ") + t.l.cleaningText());
                 break;
             }
@@ -253,7 +253,7 @@ void ClinicMap::paintEvent(QPaintEvent *)
             r = QRectF(c.x() - r.width() * s / 2, c.y() - r.height() * s / 2, r.width() * s, r.height() * s);
             opacity = m_t;
         }
-        if (t.l.id == m_hover)
+        if (t.l.getId() == m_hover)
             r.adjust(-1.5, -1.5, 1.5, 1.5);
 
         p.setOpacity(opacity);
@@ -263,7 +263,7 @@ void ClinicMap::paintEvent(QPaintEvent *)
         case RoomState::Occupied:     base = QColor(0x5b, 0x76, 0xc9); break;
         case RoomState::OutOfService: base = QColor(0xd9, 0x97, 0x2f); break;
         }
-        if (t.l.id == m_hover)
+        if (t.l.getId() == m_hover)
             base = base.lighter(112);
 
         p.setPen(Qt::NoPen);
@@ -276,7 +276,7 @@ void ClinicMap::paintEvent(QPaintEvent *)
         p.setFont(nf);
         const QRectF textR = r.adjusted(4, m_compact ? 0 : 6, -4, m_compact ? 0 : -22);
         p.drawText(textR, Qt::AlignCenter,
-                   QFontMetricsF(nf).elidedText(t.l.name, Qt::ElideRight, textR.width()));
+                   QFontMetricsF(nf).elidedText(t.l.getName(), Qt::ElideRight, textR.width()));
         if (!m_compact) {
             const QFont sf = Theme::font(8.0);
             p.setFont(sf);
@@ -284,18 +284,18 @@ void ClinicMap::paintEvent(QPaintEvent *)
             soft.setAlphaF(0.85);
             p.setPen(soft);
             p.drawText(QRectF(r.left() + 4, r.bottom() - 24, r.width() - 8, 18), Qt::AlignCenter,
-                       QStringLiteral("%1/%2 · %3").arg(t.l.occupancy).arg(t.l.capacity).arg(t.l.cleaningText()));
+                       QStringLiteral("%1/%2 · %3").arg(t.l.getOccupancy()).arg(t.l.getCapacity()).arg(t.l.cleaningText()));
         }
 
         // selection
-        if (t.l.id == m_selected) {
+        if (t.l.getId() == m_selected) {
             p.setPen(QPen(Theme::Orange, 3));
             p.setBrush(Qt::NoBrush);
             p.drawRoundedRect(r.adjusted(-2, -2, 2, 2), m_compact ? 7 : 11, m_compact ? 7 : 11);
         }
 
         // local a nettoyer : point clignotant
-        if (t.l.cleaning == CleaningState::ToClean && opacity > 0.5) {
+        if (t.l.getCleaning() == CleaningState::ToClean && opacity > 0.5) {
             const QPointF c(r.right() - 7, r.top() + 7);
             if (Theme::animations) {
                 const qreal ring = 4.0 + 7.0 * m_phase;
@@ -308,7 +308,7 @@ void ClinicMap::paintEvent(QPaintEvent *)
             p.setPen(QPen(Theme::Red, 2));
             p.setBrush(Qt::white);
             p.drawEllipse(c, 3.5, 3.5);
-        } else if (t.l.cleaning == CleaningState::InProgress && opacity > 0.5) {
+        } else if (t.l.getCleaning() == CleaningState::InProgress && opacity > 0.5) {
             p.setPen(QPen(QColor(0xe0, 0x9b, 0x3d), 2));
             p.setBrush(Qt::white);
             p.drawEllipse(QPointF(r.right() - 7, r.top() + 7), 3.0, 3.0);

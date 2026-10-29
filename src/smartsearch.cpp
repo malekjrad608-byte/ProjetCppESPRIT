@@ -150,25 +150,25 @@ bool SmartQuery::matches(const Local &l, int alertLevel) const
 {
     if (!states.isEmpty() && !states.contains(int(l.state())))
         return false;
-    if (!cleanings.isEmpty() && !cleanings.contains(int(l.cleaning)))
+    if (!cleanings.isEmpty() && !cleanings.contains(int(l.getCleaning())))
         return false;
-    if (!types.isEmpty() && !types.contains(l.type))
+    if (!types.isEmpty() && !types.contains(l.getType()))
         return false;
-    if (!floors.isEmpty() && !floors.contains(l.floor))
+    if (!floors.isEmpty() && !floors.contains(l.getFloor()))
         return false;
-    if (full && !(!l.outOfService && l.capacity > 0 && l.occupancy >= l.capacity))
+    if (full && !(!l.getOutOfService() && l.getCapacity() > 0 && l.getOccupancy() >= l.getCapacity()))
         return false;
     if (alertsOnly && alertLevel <= 0)
         return false;
 
     if (!terms.isEmpty()) {
-        const QString hay = SmartSearch::normalize(l.name + ' ' + l.type + ' ' + l.specialty);
+        const QString hay = SmartSearch::normalize(l.getName() + ' ' + l.getType() + ' ' + l.getSpecialty());
         for (const QString &t : terms) {
             bool numeric = !t.isEmpty();
             for (const QChar c : t)
                 if (!c.isDigit())
                     numeric = false;
-            const bool ok = hay.contains(t) || (numeric && QString::number(l.id) == t);
+            const bool ok = hay.contains(t) || (numeric && QString::number(l.getId()) == t);
             if (!ok)
                 return false;
         }

@@ -3,11 +3,9 @@
 #include <QObject>
 #include "local.h"
 
-class QSqlQuery;
-
-// Stockage des locaux (fichier JSON local).
-// Plus tard, c'est ici seulement qu'on remplacera par SQLite/Oracle
-// pour l'integration avec le reste du projet.
+// Garde en memoire la liste des locaux lue depuis Oracle (table LOCAUX)
+// et previent l'interface (signal changed) apres chaque ajout / modification / suppression.
+// Aucune requete SQL ici : elles sont toutes dans la classe Local.
 class LocalRepository : public QObject
 {
     Q_OBJECT
@@ -21,31 +19,17 @@ public:
     int  add(Local l);            // retourne l'id attribue
     bool update(const Local &l);
     bool remove(int id);
-    void resetDemo();             // remet les donnees de demonstration
 
-    bool usesDatabase() const { return m_useDb; }   // true = Oracle, false = fichier JSON (secours)
+    bool reconnect();                 // retente la connexion Oracle
+    QString lastDbError() const;      // derniere erreur Oracle (pour l'afficher)
+    bool usesDatabase() const;        // true si la connexion Oracle est ouverte
 
 signals:
     void changed();
 
 private:
-    // --- Oracle ---
-    bool loadFromDb();
-    bool dbInsert(const Local &l);
-    bool dbUpdate(const Local &l);
-    bool dbDelete(int id);
-    bool dbClear();
-    int  dbNextId() const;
-    static Local fromRow(QSqlQuery &q);
-    static QString extraToJson(const Local &l);
-    static QString statutOf(const Local &l);
-    bool m_useDb = false;
-
-    // --- secours JSON ---
-    QString filePath() const;
-    void load();
-    void save() const;
-    void seed();
+    bool charger();       // relit la table LOCAUX (Local::afficher)
+    void seed();          // premiers locaux si la table est vide
     int nextId() const;
 
     QList<Local> m_items;

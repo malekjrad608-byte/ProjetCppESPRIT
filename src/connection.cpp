@@ -1,45 +1,39 @@
 #include "connection.h"
-
-#include <QDebug>
 #include <QSqlError>
+#include <QDebug>
 
-// ====== A MODIFIER SELON VOTRE PC ======
-static const char *kDsn      = "Source_Projet2A";  // nom de la source de donnees ODBC
-static const char *kUser     = "SYSTEM";         // utilisateur Oracle
-static const char *kPassword = "1234";         // mot de passe de l'utilisateur
-// =======================================
-
-Connection::Connection()
-{
+// Ctor : initialise l'attribut `db` avec le driver ODBC (Singleton => une seule connexion partagee)
+Connection::Connection() {
     db = QSqlDatabase::addDatabase("QODBC");
 }
 
-Connection::~Connection()
-{
+// Dtor : ferme la connexion si elle est encore ouverte
+Connection::~Connection() {
     if (db.isOpen())
         db.close();
 }
 
-Connection &Connection::createInstance()
-{
+// Meyers Singleton : instance statique locale, creee au premier appel
+Connection& Connection::createInstance() {
     static Connection instance;
     return instance;
 }
 
-bool Connection::createConnection()
-{
+bool Connection::createConnection() {
     if (db.isOpen())
         return true;
-    db.setDatabaseName(kDsn);
-    db.setUserName(kUser);
-    db.setPassword(kPassword);
+
+    db.setDatabaseName("Source_Projet2A18");   // nom de la source de donnees ODBC
+    db.setUserName("rawand");                  // utilisateur commun de l'equipe
+    db.setPassword("rawand123123");            // mot de passe
 
     if (db.open()) {
-        qDebug() << "Connexion etablie";
+        qDebug() << "Connexion établie";
         m_error.clear();
         return true;
     }
+
     m_error = db.lastError().text();
-    qDebug() << "Echec de la connexion :" << m_error;
+    qDebug() << "Échec de la connexion :" << m_error;
     return false;
 }

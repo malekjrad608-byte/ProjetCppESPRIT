@@ -19,7 +19,7 @@ public:
 
     explicit RoomCard(const Local &l, QWidget *parent = nullptr);
 
-    int localId() const { return m_local.id; }
+    int localId() const { return m_local.getId(); }
     void setSelected(bool on);
     void setAlertLevel(int level);   // 0 aucune, 1 attention, 2 critique
     void playIntro(int delayMs);

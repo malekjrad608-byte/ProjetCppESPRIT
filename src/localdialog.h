@@ -29,6 +29,7 @@ private:
     QLineEdit *m_name;
     QComboBox *m_type;
     QComboBox *m_floor;
+    QComboBox *m_service = nullptr;
     QSpinBox *m_capacity;
     QSpinBox *m_occupancy = nullptr;
     QLineEdit *m_specialty;
