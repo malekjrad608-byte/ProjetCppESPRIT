@@ -1,0 +1,11 @@
+*.user
+*.autosave
+build*/
+Makefile*
+*.o
+*.obj
+moc_*
+ui_*
+qrc_*
+debug/
+release/

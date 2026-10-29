@@ -1,0 +1,63 @@
+ANIWORLD — Employes / Oracle / Qt 6.7
+====================================
+
+CONFIGURATION ORACLE
+--------------------
+Le projet utilise QODBC (connexion ODBC 64 bits) et les parametres suivants
+sont dans connection.cpp :
+  DSN      : Source_Projet2A
+  Service  : localhost:1521/XEPDB1 (dans le DSN ODBC)
+  Utilisateur : EMPLOYES
+  Mot de passe : Tunisie2024
+
+Si votre configuration est differente, adaptez ODBC_DSN, DB_USER et DB_PASS.
+Le compte Oracle doit avoir CREATE SESSION, CREATE TABLE, CREATE SEQUENCE,
+CREATE TRIGGER et un quota suffisant sur son tablespace.
+
+DEMARRAGE DANS QT CREATOR
+-------------------------
+1. Verifiez que le service Oracle est demarre.
+2. Ouvrez la source ODBC 64 bits et testez Source_Projet2A. Elle doit viser
+   localhost:1521/XEPDB1 (ou le service de votre installation).
+3. Ouvrez ANIWORLD2.pro avec Qt Creator.
+4. Faites Build > Run qmake, puis Rebuild, puis Run.
+5. En haut de l'application, le badge Oracle doit afficher « Oracle connecté ».
+   S'il affiche « Oracle non connecté », cliquez dessus pour retenter. Le
+   message d'erreur indique si le probleme vient du DSN, du compte ou du schema.
+
+CREATION / PREPARATION DES TABLES
+---------------------------------
+Au demarrage, le programme verifie et prepare les tables EMPLOYES et
+PLANNING_AFFECTATIONS dans le schema de l'utilisateur connecte. Il ne supprime
+aucune donnee. Si une table existe deja, les colonnes optionnelles attendues
+qui manquent sont ajoutees. Le code verifie aussi le generateur de l'ID :
+sequence + trigger, sauf si la colonne ID est de type IDENTITY Oracle ou si un
+trigger actif genere deja :NEW.ID.
+
+Pour une nouvelle base, la table EMPLOYES utilise DATE_EMBAUCHE de type DATE.
+Le code accepte aussi une ancienne table ou DATE_EMBAUCHE est VARCHAR2(10).
+Les donnees existantes ne sont pas supprimees ni converties automatiquement.
+Si la table existante ne contient pas ID, NOM ou PRENOM, l'application affiche
+un message explicite : verifiez cette structure dans Oracle SQL Developer.
+
+TESTER L'AJOUT D'UN EMPLOYE
+---------------------------
+1. Lancez l'application, puis ouvrez Gestion > Employes.
+2. Cliquez sur « Ajouter un employé », remplissez au minimum Nom et Prénom.
+3. Cliquez « Ajouter ». Si l'enregistrement reussit, la liste est actualisee.
+4. Dans Oracle SQL Developer, connectez-vous au meme utilisateur et service,
+   puis executez :
+
+   SELECT ID, NOM, PRENOM, COURRIEL, TELEPHONE, POSTE, DATE_EMBAUCHE,
+          DISPONIBLE, CHARGE_HEBDO, DISPO_HEBDO, COMPETENCES
+   FROM EMPLOYES
+   ORDER BY ID DESC;
+
+Les ajouts, modifications et suppressions passent par le modele Employe
+(employe.cpp) et sont executes dans Oracle via la connexion Qt partagee.
+Les erreurs Oracle (courriel deja utilise, probleme de colonne, de droits, etc.)
+sont affichees dans l'application au lieu d'afficher un faux succes.
+
+RECONSTRUCTION APRES MODIFICATION
+--------------------------------
+Qt Creator > Build > Run qmake > Rebuild > Run.
