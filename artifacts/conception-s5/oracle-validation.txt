@@ -1,0 +1,437 @@
+
+Session altered.
+
+
+User created.
+
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table created.
+
+
+Comment created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Index created.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Index created.
+
+
+Index created.
+
+
+Index created.
+
+
+Index created.
+
+
+Index created.
+
+
+Index created.
+
+
+Index created.
+
+
+View created.
+
+
+View created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Trigger created.
+
+
+Commit complete.
+
+PASS 23 tables
+PASS Tous les objets compiles
+PASS Facture avec precision TND 3 decimales
+PASS Un dossier par animal
+PASS Une facture par consultation
+PASS FK animal obligatoire
+PASS Tarif negatif
+PASS Duree positive
+PASS Ressources avant demarrage
+PASS Motif annulation obligatoire
+PASS Paiement date
+PASS Login insensible a la casse
+PASS Echeance vaccinale coherente
+PASS Stock disponible exclut les lots bloques
+PASS Pas de stock negatif
+PASS Mouvement non modifiable
+PASS Mouvement non supprimable
+PASS Validation adoption complete
+PASS Une adoption validee active par animal
+PASS Suppression parent referencee
+RESULTAT: 20 controles reussis
+
+PL/SQL procedure successfully completed.
+
+
+LIGNES_TEST_RESTANTES
+---------------------
+		    0
+

@@ -1,0 +1,19 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+PASS   : ServiceTests::atelierModelCrudAndValidation()
+PASS   : ServiceTests::storageCrudAndPersistence()
+QWARN  : ServiceTests::interfaceCrud() QFontDatabase: Cannot find font directory C:/Qt/6.7.3/mingw_64/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QWARN  : ServiceTests::interfaceCrud() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::interfaceCrud() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::interfaceCrud()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::filterSortAndRefresh()
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 6 passed, 0 failed, 0 skipped, 0 blacklisted, 11636ms
+********* Finished testing of ServiceTests *********

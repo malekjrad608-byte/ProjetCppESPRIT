@@ -1,0 +1,18 @@
+    void oracleFiveTablesScreens() {
+        if(qEnvironmentVariable("ANIWORLD_FIVE_TESTS")!="1")QSKIP("Five-table Oracle UI opt-in.");
+        const auto appName=qApp->applicationName(),org=qApp->organizationName();qApp->setApplicationName("ANIWORLD");qApp->setOrganizationName("ANIWORLD");
+        auto &manager=DatabaseManager::instance();const auto restore=qScopeGuard([&]{manager.initialize(":memory:");qApp->setApplicationName(appName);qApp->setOrganizationName(org);});
+        QVERIFY2(manager.initializeOracle(),qPrintable(manager.lastError()));Motion::instance().setEnabled(false);
+        QStringList errors;QTimer watcher;connect(&watcher,&QTimer::timeout,this,[&]{if(auto *box=qobject_cast<QMessageBox *>(QApplication::activeModalWidget())){errors<<box->text();box->accept();}});watcher.start(30);
+        MainWindow window(false);window.setSession("admin",Accounts::Role::Admin);window.resize(1280,800);window.show();
+        const auto output=qEnvironmentVariable("ANIWORLD_CAPTURE_DIR");
+        for(int page=0;page<=5;++page){window.navigate(page);QTest::qWait(120);QVERIFY2(errors.isEmpty(),qPrintable(errors.join('\n')));if(!output.isEmpty())window.grab().save(output+QString("/five-module-%1.png").arg(page));}
+        LocalRepository repo(nullptr,"oracle:");LocalDialog local(nullptr,&repo);local.show();QTest::qWait(30);auto *service=local.findChild<QComboBox *>("localService");QVERIFY(service);QVERIFY(service->isVisible());QVERIFY(service->count()>1);local.hide();
+        MedicalRecordDialog medical;medical.show();QTest::qWait(30);auto *employee=medical.findChild<QComboBox *>("medicalEmployee");QVERIFY(employee);QVERIFY(employee->isVisible());QVERIFY(employee->count()>1);medical.hide();
+        QVERIFY2(errors.isEmpty(),qPrintable(errors.join('\n')));
+        // Verify invoice freeze in an uncommitted transaction on the existing service.
+        auto db=QSqlDatabase::database("aniworld-services");QSqlQuery q(db);QVERIFY(db.transaction());const auto rollback=qScopeGuard([&]{db.rollback();});
+        QVERIFY(q.exec("UPDATE services SET invoice_status='EMISE' WHERE id=5 AND invoice_status='BROUILLON'"));
+        QVERIFY(!q.exec("UPDATE services SET price=price+1 WHERE id=5"));QVERIFY(q.lastError().text().contains("20041"));
+        Motion::instance().setEnabled(true);
+    }

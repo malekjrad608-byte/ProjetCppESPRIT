@@ -1,0 +1,154 @@
+=== Connexion ===
+
+UTILISATEUR
+--------------------------------------------------------------------------------------------------------------------------------
+CONTENEUR
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+RAWAND
+CDB$ROOT
+
+
+=== Exactement 5 tables ===
+
+NOMBRE_TABLES
+-------------
+	    5
+
+
+TABLE_NAME
+--------------------------------------------------------------------------------------------------------------------------------
+EMPLOYES
+LOCAUX
+MEDICAL_RECORDS
+SERVICES
+STOCK_LOTS
+
+=== Relations ===
+
+ENFANT
+--------------------------------------------------------------------------------------------------------------------------------
+COLONNE
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PARENT
+--------------------------------------------------------------------------------------------------------------------------------
+CONSTRAINT_NAME 														 STATUS   VALIDATED
+-------------------------------------------------------------------------------------------------------------------------------- -------- -------------
+EMPLOYES
+ID_SERVICE
+SERVICES
+FK_EMPLOYE_SERVICE														 ENABLED  VALIDATED
+
+LOCAUX
+ID_SERVICE
+SERVICES
+FK_LOCAL_SERVICE														 ENABLED  VALIDATED
+
+MEDICAL_RECORDS
+ID_EMPLOYE
+EMPLOYES
+FK_MEDICAL_EMPLOYE														 ENABLED  VALIDATED
+
+SERVICES
+ID_EMPLOYE
+EMPLOYES
+FK_SERVICE_TEAM 														 ENABLED  VALIDATED
+
+SERVICES
+ID
+EMPLOYES
+FK_SERVICE_TEAM 														 ENABLED  VALIDATED
+
+STOCK_LOTS
+ID_LOCAL
+LOCAUX
+FK_STOCK_LOCAL															 ENABLED  VALIDATED
+
+
+6 rows selected.
+
+=== Donnees ===
+
+MODULE		    NOMBRE
+--------------- ----------
+SERVICES		 2
+EMPLOYES		 2
+LOCAUX			 0
+STOCK_LOTS		 0
+MEDICAL_RECORDS 	 0
+
+=== Services et equipes ===
+
+SERVICE_ID SERVICE														    EMPLOYE_ID
+---------- ------------------------------------------------------------------------------------------------------------------------ ----------
+NOM
+------------------------------------------------------------------------------------------------------------------------
+PRENOM
+------------------------------------------------------------------------------------------------------------------------
+	 5 wcwcwwcwc															    12
+malek
+jard
+
+	30 toilettage															    33
+ali
+daysem
+
+
+=== Locaux ===
+
+no rows selected
+
+=== Stock ===
+
+no rows selected
+
+=== Dossiers ===
+
+no rows selected
+
+=== Anomalies : chaque resultat doit valoir 0 ===
+
+CONTROLE	      ANOMALIES
+-------------------- ----------
+Service sans employe	      0
+Employe sans service	      0
+Local sans service	      0
+Stock sans local	      0
+Dossier sans employe	      0
+Referent hors equipe	      0
+
+6 rows selected.
+
+=== Objets invalides : 0 ligne attendue ===
+
+no rows selected
+
+=== Planning calcule : vue, pas une table ===
+
+OBJECT_NAME															 OBJECT_TYPE
+-------------------------------------------------------------------------------------------------------------------------------- -----------------------
+PLANNING_AFFECTATIONS														 VIEW
+
+
+	ID TITRE
+---------- ------------------------------------------------------------------------------------------------------------------------
+COMPETENCE_REQUISE
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+DEBUT									     FIN		 CHARGE_HEURES RESPONSABLE_ID CREATED_AT
+---------------------------------------------------------------------------- ------------------- ------------- -------------- -----------------------------------
+	12 wcwcwwcwc
+Service
+2026-10-16 11:50:37							     2026-10-16 12:20:37	    .5		   12 2026-10-16T11:50:37
+
+	33 toilettage
+Service
+2026-10-16 22:35:15							     2026-10-16 22:41:15	    .1		   33 2026-10-16T22:35:15
+
+
+
+C STATUS   VALIDATED	      TOTAL
+- -------- ------------- ----------
+C ENABLED  VALIDATED		 52
+P ENABLED  VALIDATED		  5
+R ENABLED  VALIDATED		  5
+U ENABLED  VALIDATED		  2
+

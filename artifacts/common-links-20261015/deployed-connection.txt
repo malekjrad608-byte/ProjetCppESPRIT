@@ -1,0 +1,7 @@
+Connexion Qt QODBC : ANIWORLD_APP / XEPDB1
+services : 3
+employes : 7
+medical_records : 8
+accounts : 6
+locaux : 14
+stock_lots : 19

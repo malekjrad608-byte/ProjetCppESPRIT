@@ -1,0 +1,17 @@
+debug/hrdashboard.o
+debug/hrdesign.o
+debug/hrdialogs.o
+debug/hrschedule.o
+debug/hrstore.o
+debug/hrwidget.o
+debug/hr_tests.o
+debug/motion.o
+debug/qrc_rh.o
+debug/qrc_resources.o
+debug/moc_hrdashboard.o
+debug/moc_hrdesign.o
+debug/moc_hrdialogs.o
+debug/moc_hrschedule.o
+debug/moc_hrstore.o
+debug/moc_hrwidget.o
+debug/moc_motion.o

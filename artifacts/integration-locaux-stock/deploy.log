@@ -1,0 +1,48 @@
+C:\Users\malek\Documents\gestion_service\ANIWORLD\ANIWORLD.exe 64 bit, release executable
+Adding in plugin type generic for module: Qt6Gui
+Skipping plugin qinsighttracker.dll. Use -deploy-insighttracker if you want to use it.
+Warning: Cannot find any version of the dxcompiler.dll and dxil.dll.
+Adding in plugin type iconengines for module: Qt6Gui
+Adding in plugin type imageformats for module: Qt6Gui
+Adding in plugin type networkinformation for module: Qt6Network
+Adding in plugin type platforminputcontexts for module: Qt6Gui
+Skipping plugin qtvirtualkeyboardplugin.dll due to disabled dependencies (Qt6Qml Qt6Quick).
+Adding in plugin type platforms for module: Qt6Gui
+Adding in plugin type sqldrivers for module: Qt6Sql
+Adding in plugin type styles for module: Qt6Widgets
+Adding in plugin type tls for module: Qt6Network
+Direct dependencies: Qt6Core Qt6Gui Qt6Network Qt6Pdf Qt6Sql Qt6Svg Qt6Widgets
+All dependencies   : Qt6Core Qt6Gui Qt6Network Qt6Pdf Qt6Sql Qt6Svg Qt6Widgets
+To be deployed     : Qt6Core Qt6Gui Qt6Network Qt6Pdf Qt6Sql Qt6Svg Qt6Widgets
+Qt6Core.dll is up to date.
+Qt6Gui.dll is up to date.
+Qt6Network.dll is up to date.
+Qt6Pdf.dll is up to date.
+Qt6Sql.dll is up to date.
+Qt6Svg.dll is up to date.
+Qt6Widgets.dll is up to date.
+libgcc_s_seh-1.dll is up to date.
+libstdc++-6.dll is up to date.
+libwinpthread-1.dll is up to date.
+qtuiotouchplugin.dll is up to date.
+qsvgicon.dll is up to date.
+qgif.dll is up to date.
+qicns.dll is up to date.
+qico.dll is up to date.
+qjpeg.dll is up to date.
+qpdf.dll is up to date.
+qsvg.dll is up to date.
+qtga.dll is up to date.
+qtiff.dll is up to date.
+qwbmp.dll is up to date.
+qwebp.dll is up to date.
+qnetworklistmanager.dll is up to date.
+qwindows.dll is up to date.
+qsqlite.dll is up to date.
+qsqlmimer.dll is up to date.
+qsqlodbc.dll is up to date.
+qsqlpsql.dll is up to date.
+qmodernwindowsstyle.dll is up to date.
+qcertonlybackend.dll is up to date.
+qopensslbackend.dll is up to date.
+qschannelbackend.dll is up to date.

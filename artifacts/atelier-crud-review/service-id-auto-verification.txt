@@ -1,0 +1,16 @@
+ID automatique : SERVICES_BI / SERVICES_SEQ. Trigger secondaire desactive.
+
+PL/SQL procedure successfully completed.
+
+PASS : ID omis et ID NULL generes automatiquement, increment de 1. Donnees de
+test annulees.
+
+PL/SQL procedure successfully completed.
+
+
+TRIGGER_NAME															 STATUS
+-------------------------------------------------------------------------------------------------------------------------------- --------
+SERVICES_BI															 ENABLED
+SERVICES_TRG															 DISABLED
+SERVICES_INVOICE_GUARD														 ENABLED
+

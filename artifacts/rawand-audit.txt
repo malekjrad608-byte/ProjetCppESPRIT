@@ -1,0 +1,112 @@
+
+COMPTE                                                                                                                                                                                                                      
+--------------------------------------------------------------------------------------------------------------------------------                                                                                            
+BASE                                                                                                                                                                                                                        
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+RAWAND                                                                                                                                                                                                                      
+CDB$ROOT                                                                                                                                                                                                                    
+                                                                                                                                                                                                                            
+
+
+TABLE_NAME                                                                                                                                                                                                                  
+--------------------------------------------------------------------------------------------------------------------------------                                                                                            
+COLUMN_NAME                                                                                                                                                                                                                 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TABLE_REFERENCEE                                                                                                                                                                                                            
+--------------------------------------------------------------------------------------------------------------------------------                                                                                            
+COLONNE_REFERENCEE                                                                                                                                                                                                          
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+DELETE_RU STATUS   VALIDATED                                                                                                                                                                                                
+--------- -------- -------------                                                                                                                                                                                            
+FACTURES                                                                                                                                                                                                                    
+ID_CLIENT                                                                                                                                                                                                                   
+CLIENTS                                                                                                                                                                                                                     
+ID                                                                                                                                                                                                                          
+NO ACTION ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+FACTURES                                                                                                                                                                                                                    
+ID_SERVICE                                                                                                                                                                                                                  
+SERVICES                                                                                                                                                                                                                    
+ID                                                                                                                                                                                                                          
+SET NULL  ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+LIGNES_FACTURE                                                                                                                                                                                                              
+ID_FACTURE                                                                                                                                                                                                                  
+FACTURES                                                                                                                                                                                                                    
+ID                                                                                                                                                                                                                          
+NO ACTION ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+MEDICAL_RECORDS                                                                                                                                                                                                             
+ID_LOCAL                                                                                                                                                                                                                    
+LOCAUX                                                                                                                                                                                                                      
+ID                                                                                                                                                                                                                          
+NO ACTION ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+MEDICAL_RECORDS                                                                                                                                                                                                             
+ID_SERVICE                                                                                                                                                                                                                  
+SERVICES                                                                                                                                                                                                                    
+ID                                                                                                                                                                                                                          
+NO ACTION ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+PLANNING_AFFECTATIONS                                                                                                                                                                                                       
+RESPONSABLE_ID                                                                                                                                                                                                              
+EMPLOYES                                                                                                                                                                                                                    
+ID                                                                                                                                                                                                                          
+NO ACTION ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+SERVICES                                                                                                                                                                                                                    
+ID_CLIENT                                                                                                                                                                                                                   
+CLIENTS                                                                                                                                                                                                                     
+ID                                                                                                                                                                                                                          
+NO ACTION ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+SERVICES                                                                                                                                                                                                                    
+ID_EMPLOYE                                                                                                                                                                                                                  
+EMPLOYES                                                                                                                                                                                                                    
+ID                                                                                                                                                                                                                          
+NO ACTION ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+SERVICES                                                                                                                                                                                                                    
+ID_LOCAL                                                                                                                                                                                                                    
+LOCAUX                                                                                                                                                                                                                      
+ID                                                                                                                                                                                                                          
+NO ACTION ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+STOCK_LOTS                                                                                                                                                                                                                  
+ID_LOCAL                                                                                                                                                                                                                    
+LOCAUX                                                                                                                                                                                                                      
+ID                                                                                                                                                                                                                          
+NO ACTION ENABLED  VALIDATED                                                                                                                                                                                                
+                                                                                                                                                                                                                            
+
+10 rows selected.
+
+SERVICES / FK_SERVICES_LOCAL : 0 reference(s) orpheline(s)                                                                                                                                                                  
+MEDICAL_RECORDS / FK_MEDICAL_LOCAL : 0 reference(s) orpheline(s)                                                                                                                                                            
+STOCK_LOTS / FK_STOCK_LOCAL : 0 reference(s) orpheline(s)                                                                                                                                                                   
+SERVICES / FK_SERVICES_EMPLOYE : 0 reference(s) orpheline(s)                                                                                                                                                                
+SERVICES / FK_SERVICES_CLIENT : 0 reference(s) orpheline(s)                                                                                                                                                                 
+MEDICAL_RECORDS / FK_MEDICAL_SERVICE : 0 reference(s) orpheline(s)                                                                                                                                                          
+FACTURES / SYS_C008416 : 0 reference(s) orpheline(s)                                                                                                                                                                        
+FACTURES / SYS_C008417 : 0 reference(s) orpheline(s)                                                                                                                                                                        
+LIGNES_FACTURE / SYS_C008427 : 0 reference(s) orpheline(s)                                                                                                                                                                  
+PLANNING_AFFECTATIONS / FK_PLANNING_EMPLOYE : 0 reference(s) orpheline(s)                                                                                                                                                   
+TOTAL REFERENCES ORPHELINES = 0                                                                                                                                                                                             
+
+PL/SQL procedure successfully completed.
+
+
+CONTROLE                    ANOMALIES                                                                                                                                                                                       
+-------------------------- ----------                                                                                                                                                                                       
+OBJETS_INVALIDES                    0                                                                                                                                                                                       
+CONTRAINTES_NON_VALIDEES            0                                                                                                                                                                                       
+SERVICES_SANS_FACTURE               0                                                                                                                                                                                       
+TOTAUX_FACTURE_INCOHERENTS          0                                                                                                                                                                                       
+OCCUPATIONS_INVALIDES               0                                                                                                                                                                                       
+
+
+no rows selected
+
+
+no rows selected
+

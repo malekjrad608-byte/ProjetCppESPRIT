@@ -1,0 +1,9 @@
+{
+  "profile": "ANIWORLD - XEPDB1",
+  "subtype": "oraJDBC",
+  "promptForMissingPassword": "TRUE",
+  "user": "ANIWORLD_APP",
+  "service": "XEPDB1",
+  "passwordDialogObserved": true,
+  "authenticationCompleted": true
+}

@@ -1,0 +1,12 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+QDEBUG : ServiceTests::oracleFiveTablesIntegration() Connexion établie
+QWARN  : ServiceTests::oracleFiveTablesIntegration() "QODBCResult::exec: Unable to execute statement:" 	Error: "[Oracle][ODBC][Ora]ORA-00001: unique constraint (RAWAND.UQ_EMPLOYER_CIN) violated\n\u0000\u0000??T\u0000\u0000\u0000T\u0000??T\u0000??T\u0000\u0000\u0000\u0000\u0000 \u0000\u0000\u0000\u0000\u0000\u0000\u00000\u0000\u0000\u0000?\uA6FF/\u0000??T\u0000\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u00000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+QWARN  : ServiceTests::oracleFiveTablesIntegration() "QODBCResult::exec: Unable to execute statement:" 	Error: "[Oracle][ODBC][Ora]ORA-00001: unique constraint (RAWAND.UQ_MEDICAL_ANIMAL) violated\n\u0000?T\u0000\u0000\u0000T\u0000??T\u0000??T\u0000\u0000\u0000\u0000\u0000 \u0000\u0000\u0000\u0000\u0000\u0000\u00000\u0000\u0000\u0000?\uA6FF/\u0000??T\u0000\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u00000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+QWARN  : ServiceTests::oracleFiveTablesIntegration() "QODBCResult::exec: Unable to execute statement:" 	Error: "[Oracle][ODBC][Ora]ORA-00001: unique constraint (RAWAND.UQ_SERVICE_REF) violated\n\u0000\u0000\u0000??T\u0000\u0000\u0000T\u0000??T\u0000??T\u0000\u0000\u0000\u0000\u0000 \u0000\u0000\u0000\u0000\u0000\u0000\u00000\u0000\u0000\u0000\uD830\uA6FF/\u0000??T\u0000\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u00000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+FAIL!  : ServiceTests::oracleFiveTablesIntegration() '!q.exec(QString("UPDATE employer SET id_serv=99999999 WHERE id_emp=%1").arg(employee.getId()))' returned FALSE. ()
+..\tests\service_tests.cpp(262) : failure location
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 2 passed, 1 failed, 0 skipped, 0 blacklisted, 3330ms
+********* Finished testing of ServiceTests *********

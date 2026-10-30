@@ -1,0 +1,11 @@
+{
+  "services": "preserved",
+  "employes": "preserved",
+  "planning_affectations": "preserved",
+  "accounts": "preserved",
+  "medical_records": 8,
+  "existing_medical_records": 0,
+  "import_marked": true,
+  "packaged_startup": "passed",
+  "release_hash_matches": true
+}

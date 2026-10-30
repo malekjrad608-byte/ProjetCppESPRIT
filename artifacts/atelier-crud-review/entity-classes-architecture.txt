@@ -1,0 +1,4 @@
+Checked 39 view files; SQL confined to model/connection sources.
+PASS: no SQL in views; prepared queries; entity CRUD methods present.
+SQL ownership: 56 compiled C++ sources checked.
+PASS: SQL belongs to class methods: Accounts, DatabaseManager, Employe, EmployeeQueries, InvoiceModel, Local, MedicalRecord, OracleConnection, RelationModel, Service, StockRecord

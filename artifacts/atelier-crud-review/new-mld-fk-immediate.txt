@@ -1,0 +1,6 @@
+
+Table altered.
+
+
+Trigger created.
+

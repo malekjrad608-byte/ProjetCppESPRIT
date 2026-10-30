@@ -1,0 +1,7 @@
+{
+  "existing_accounts_preserved": 5,
+  "medical_account_created": true,
+  "medical_demo_records_in_live_database": 0,
+  "existing_tables_preserved": true,
+  "packaged_startup": "passed"
+}

@@ -1,0 +1,30 @@
+
+RELATION									      STATUS   VALIDATED     OBLIGATOIRE
+------------------------------------------------------------------------------------- -------- ------------- ------------
+EMPLOYES.ID_SERVICE -> SERVICES.ID						      ENABLED  VALIDATED     OUI
+LOCAUX.ID_SERVICE -> SERVICES.ID						      ENABLED  VALIDATED     OUI
+MEDICAL_RECORDS.ID_EMPLOYE -> EMPLOYES.ID					      ENABLED  VALIDATED     OUI
+STOCK_LOTS.ID_LOCAL -> LOCAUX.ID						      ENABLED  VALIDATED     OUI
+
+
+TABLE_NAME	   ORPHANS
+--------------- ----------
+EMPLOYES		 0
+LOCAUX			 0
+STOCK_LOTS		 0
+MEDICAL_RECORDS 	 0
+
+
+no rows selected
+
+
+EXTRA_SERVICE_EMPLOYEE_COLUMN
+-----------------------------
+			    0
+
+
+CONTROLE		 NOMBRE
+-------------------- ----------
+Service sans local	      2
+Service sans employe	      0
+

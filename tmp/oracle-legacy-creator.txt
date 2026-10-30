@@ -1,0 +1,201 @@
+Compiled from "LegacyOracleConnectionCreator.java"
+public class oracle.dbtools.connections.db.ora.LegacyOracleConnectionCreator extends oracle.dbtools.connections.db.ora.AbstractOracleConnCreator {
+  public static final java.lang.String ORACLE_DRIVER_CLASS;
+
+  public static final java.lang.String OLD_ORACLE_DRIVER_CLASS;
+
+  public static final java.lang.String SUBTYPE_ORA_JDBC;
+
+  public static final java.lang.String ORA_DRIVER_TYPE_CLASS_REFTYPE;
+
+  public static final java.lang.String ORA_DRIVER_THIN;
+
+  public static final java.lang.String ORA_DRIVER_OCI8;
+
+  public oracle.dbtools.connections.db.ora.LegacyOracleConnectionCreator();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method oracle/dbtools/connections/db/ora/AbstractOracleConnCreator."<init>":()V
+       4: return
+
+  public java.lang.String getConnectionURL(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #2                  // Method oracle/dbtools/connections/db/ora/AbstractOracleConnCreator.getConnectionURL:(Ljava/util/Properties;)Ljava/lang/String;
+       5: astore_2
+       6: aload_0
+       7: aload_2
+       8: invokevirtual #3                  // Method hasLength:(Ljava/lang/String;)Z
+      11: ifeq          16
+      14: aload_2
+      15: areturn
+      16: aload_0
+      17: aload_1
+      18: ldc           #5                  // String hostname
+      20: invokevirtual #6                  // Method getPropertyOrThrow:(Ljava/util/Properties;Ljava/lang/String;)Ljava/lang/String;
+      23: astore_3
+      24: aload_0
+      25: aload_1
+      26: ldc           #7                  // String port
+      28: invokevirtual #6                  // Method getPropertyOrThrow:(Ljava/util/Properties;Ljava/lang/String;)Ljava/lang/String;
+      31: astore        4
+      33: aload_1
+      34: ldc           #8                  // String sid
+      36: invokevirtual #9                  // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      39: astore        5
+      41: aload_1
+      42: ldc           #10                 // String serviceName
+      44: invokevirtual #9                  // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      47: astore        6
+      49: aload_0
+      50: aload_1
+      51: ldc           #12                 // String oraDriverType
+      53: invokevirtual #6                  // Method getPropertyOrThrow:(Ljava/util/Properties;Ljava/lang/String;)Ljava/lang/String;
+      56: astore        7
+      58: ldc           #13                 // String thin
+      60: aload         7
+      62: invokevirtual #14                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      65: ifeq          113
+      68: aload         5
+      70: ifnull        84
+      73: aload_3
+      74: aload         4
+      76: aload         5
+      78: invokedynamic #15,  0             // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      83: areturn
+      84: aload         6
+      86: ifnull        100
+      89: aload_3
+      90: aload         4
+      92: aload         6
+      94: invokedynamic #16,  0             // InvokeDynamic #1:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      99: areturn
+     100: new           #17                 // class java/sql/SQLException
+     103: dup
+     104: ldc           #19                 // String ERROR_SID_SERVICE_NAME
+     106: invokestatic  #20                 // Method oracle/dbtools/connections/db/DBAdapterBundle.get:(Ljava/lang/String;)Ljava/lang/String;
+     109: invokespecial #21                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+     112: athrow
+     113: ldc           #22                 // String oci8
+     115: aload         7
+     117: invokevirtual #14                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     120: ifeq          248
+     123: new           #23                 // class java/lang/StringBuilder
+     126: dup
+     127: invokespecial #24                 // Method java/lang/StringBuilder."<init>":()V
+     130: astore        8
+     132: aload         8
+     134: ldc           #25                 // String jdbc:oracle:oci8:@
+     136: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     139: pop
+     140: aload         8
+     142: ldc           #27                 // String (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=
+     144: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     147: pop
+     148: aload         8
+     150: aload_3
+     151: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     154: pop
+     155: aload         8
+     157: ldc           #28                 // String )(PORT=
+     159: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     162: pop
+     163: aload         8
+     165: aload         4
+     167: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     170: pop
+     171: aload         8
+     173: ldc           #29                 // String ))(CONNECT_DATA=(
+     175: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     178: pop
+     179: aload         5
+     181: ifnull        200
+     184: aload         8
+     186: ldc           #30                 // String SID=
+     188: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     191: aload         5
+     193: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     196: pop
+     197: goto          234
+     200: aload         6
+     202: ifnull        221
+     205: aload         8
+     207: ldc           #31                 // String SERVICE_NAME=
+     209: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     212: aload         6
+     214: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     217: pop
+     218: goto          234
+     221: new           #17                 // class java/sql/SQLException
+     224: dup
+     225: ldc           #19                 // String ERROR_SID_SERVICE_NAME
+     227: invokestatic  #20                 // Method oracle/dbtools/connections/db/DBAdapterBundle.get:(Ljava/lang/String;)Ljava/lang/String;
+     230: invokespecial #21                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+     233: athrow
+     234: aload         8
+     236: ldc           #32                 // String )))
+     238: invokevirtual #26                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     241: pop
+     242: aload         8
+     244: invokevirtual #33                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     247: areturn
+     248: new           #17                 // class java/sql/SQLException
+     251: dup
+     252: aload         7
+     254: invokedynamic #34,  0             // InvokeDynamic #2:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     259: invokespecial #21                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+     262: athrow
+
+  public java.lang.String getDriverClassName(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #35                 // Method oracle/dbtools/connections/db/ora/AbstractOracleConnCreator.getDriverClassName:(Ljava/util/Properties;)Ljava/lang/String;
+       5: astore_2
+       6: aload_0
+       7: aload_2
+       8: invokevirtual #3                  // Method hasLength:(Ljava/lang/String;)Z
+      11: ifeq          25
+      14: aload_2
+      15: ldc           #36                 // String oracle.jdbc.driver.OracleDriver
+      17: invokevirtual #14                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      20: ifne          25
+      23: aload_2
+      24: areturn
+      25: ldc           #37                 // String oracle.jdbc.OracleDriver
+      27: areturn
+
+  public java.util.Collection<java.lang.String> listAllowedProperties();
+    Code:
+       0: aload_0
+       1: invokespecial #38                 // Method oracle/dbtools/connections/db/ora/AbstractOracleConnCreator.listAllowedProperties:()Ljava/util/Collection;
+       4: astore_1
+       5: aload_1
+       6: ldc           #10                 // String serviceName
+       8: invokeinterface #39,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      13: pop
+      14: aload_1
+      15: areturn
+
+  public java.util.Collection<java.lang.String> listRequiredProperties();
+    Code:
+       0: new           #40                 // class java/util/HashSet
+       3: dup
+       4: invokespecial #41                 // Method java/util/HashSet."<init>":()V
+       7: astore_1
+       8: aload_1
+       9: ldc           #5                  // String hostname
+      11: invokeinterface #39,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      16: pop
+      17: aload_1
+      18: ldc           #7                  // String port
+      20: invokeinterface #39,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      25: pop
+      26: aload_1
+      27: ldc           #12                 // String oraDriverType
+      29: invokeinterface #39,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      34: pop
+      35: aload_1
+      36: areturn
+}

@@ -1,0 +1,488 @@
+
+=== SLIDE 1 ===
+Projet C++ Atelier 3 : CRUD
+1
+Elaboré par :
+Mme. Soumaya Argoubi / Mme. Soumaya Nheri
+AU : 2025 -2026
+IMAGE: ../media/image2.png
+NOTES: 9
+
+=== SLIDE 2 ===
+Plan
+Implémenter l’interface (GUI)
+               Architecture Modèle-Vue en Qt                    Créer la classe purement C++
+Sécuriser l’application Implémenter les fonctionnalités de base
+2
+IMAGE: ../media/image9.png
+IMAGE: ../media/image4.png
+IMAGE: ../media/image8.png
+IMAGE: ../media/image3.png
+IMAGE: ../media/image7.png
+IMAGE: ../media/image12.png
+IMAGE: ../media/image6.png
+IMAGE: ../media/image11.png
+IMAGE: ../media/image5.png
+IMAGE: ../media/image10.png
+NOTES: Among the best practices and guidelines to follow in code implementation: Queries should be implemented within C++ classes related to the entities managed by the application. No query should be directly implemented behind a button. To fully understand and apply these guidelines, we must first grasp the software architecture of the Qt framework.
+
+=== SLIDE 3 ===
+Objectif
+3
+L’objectif de ce workshop est de manipuler la table etudiant via une 	interface graphique en y effectuant :
+L’ajout d’un nouvel étudiant (create)
+La suppression d’un étudiant (delete)
+L’affichage de la liste des étudiants (read)
+NOTES: Le  rendering  désigne le moment où le  modèle transmet les données à la vue , qui les  affiche à l’écran . dans une architecture  Modèle–Vue , le modèle contient les données, et la vue les “rend” sous forme de tableau, formulaire, graphique, … 11
+
+=== SLIDE 4 ===
+4
+Implémenter l’interface
+IMAGE: ../media/image14.png
+IMAGE: ../media/image13.jpg
+NOTES: 
+
+=== SLIDE 5 ===
+Implémenter l’interface « 1/3 »
+5
+IMAGE: ../media/image15.png
+NOTES: 13
+
+=== SLIDE 6 ===
+Implémenter l’interface « 2/3 »
+6
+IMAGE: ../media/image16.png
+
+=== SLIDE 7 ===
+Implémenter l’interface « 3/3 »
+7
+IMAGE: ../media/image17.png
+
+=== SLIDE 8 ===
+12
+Architecture Modèle-Vue en Qt
+8
+IMAGE: ../media/image14.png
+IMAGE: ../media/image13.jpg
+
+=== SLIDE 9 ===
+Architecture Modèle-Vue en Qt
+L'architecture Modèle-Vue dans Qt sépare les données (modèle) de l'interface utilisateur (vue).
+Elle assure une approche structurée et flexible pour la gestion et l'affichage des données.
+9
+IMAGE: ../media/image18.png
+
+=== SLIDE 10 ===
+10
+Aucune requête ne doit être implémentée derrière un bouton.
+Les requêtes doivent être implémentées dans des classes C++ liées aux entités gérées par l'application. 
+Architecture Modèle-Vue en Qt
+IMAGE: ../media/image19.png
+
+=== SLIDE 11 ===
+Dans Qt, l'architecture Modèle/Vue divise les responsabilités, améliorant ainsi la séparation des préoccupations et facilitant la maintenance des applications complexes:
+ Modèle :
+       Gère les données et leur logique.
+        Exemple : MyModel, implémenté avec QAbstractListModel.
+        Exemple de composant : Une BD ou un fichier texte peut servir 
+        de source de données pour un modèle,qui fournit ces données au composant de vue.
+ Vue :
+        Affiche les données fournies par le modèle.
+        Exemple : QListView pour afficher des éléments.
+        Exemple d'interface graphique : Une table ou une liste d’éléments 
+        dans une fenêtre principale peut être un composant affichant des données.
+ 
+11
+Architecture Modèle-Vue en Qt
+IMAGE: ../media/image20.jpeg
+
+=== SLIDE 12 ===
+Interaction Modèle-Vue : Signals & Slots
+Les signaux et les slots sont utilisés pour la communication entre les objets :
+Signal : Émis par un objet Qt lorsqu'un événement spécifique se produit.
+Slot : Une fonction  appelable qui est exécutée en réponse à un signal particulier.
+Les modèles et les vues utilisent des signaux et des slots pour communiquer:​
+Les signaux du modèle informent la vue des modifications des données dans la source de données.​
+Les signaux de la vue informent le modèle des interactions de l’utilisateur avec les éléments affichés.​
+12
+IMAGE: ../media/image21.png
+
+=== SLIDE 13 ===
+Interaction : Lorsqu'un utilisateur interagit avec l'IU par exemple, en saisissant un nom et un numéro de contact, puis en cliquant sur le bouton « Ajouter un contact » — cette action déclenche un slot dans le ContactManager, qui interagit avec le ContactModel. Le modèle met à jour ses données, et la vue se rafraîchit pour refléter ces modifications.
+       Ce mécanisme garantit une synchronisation fluide et une réactivité optimale entre les composants.
+13
+Interaction Modèle-Vue : Signals & Slots
+IMAGE: ../media/image22.png
+IMAGE: ../media/image23.svg
+
+=== SLIDE 14 ===
+12
+Créer la classe purement C++
+14
+IMAGE: ../media/image14.png
+IMAGE: ../media/image13.jpg
+
+=== SLIDE 15 ===
+Créer la classe purement C++ (Modèle) « 1/4 »
+15
+IMAGE: ../media/image24.png
+
+=== SLIDE 16 ===
+ Ajouter une nouvelle classe C++ « Etudiant » :
+16
+Créer la classe purement C++ (Modèle) « 2/4 »
+IMAGE: ../media/image26.png
+IMAGE: ../media/image25.png
+
+=== SLIDE 17 ===
+17
+Fichier « etudiant.h »
+Créer la classe purement C++ (Modèle) « 3/4 »
+IMAGE: ../media/image28.png
+IMAGE: ../media/image27.png
+
+=== SLIDE 18 ===
+Fichier « etudiant.cpp »
+18
+Créer la classe purement C++ (Modèle) « 4/4 »
+IMAGE: ../media/image30.png
+IMAGE: ../media/image29.png
+
+=== SLIDE 19 ===
+Application de l’architecture Modèle-Vue
+19
+Couche
+Fichiers
+Rôle
+Modèle
+etudiant.cpp, etudiant.h
+Gère les données et les requêtes
+Vue
+mainwindow.ui, mainwindow.cpp, mainwindow.h
+Affiche les données, gère l’interface et les interactions utilisateur
+
+=== SLIDE 20 ===
+17
+Sécuriser l’application
+IMAGE: ../media/image14.png
+IMAGE: ../media/image13.jpg
+
+=== SLIDE 21 ===
+Sécuriser l’application
+Protéger la Base de données
+Nous allons manipuler la table Etudiant de notre BD via des requêtes SQL
+Il faut, donc, bien protéger notre BD.
+Exemple : SQL injection, l’attaque de sécurité classée 1re	par l’OWASP
+Cette attaque consiste a utiliser ou « injecter » des expressions et les interpréter comme une partie de la requête.
+Exemple : Envoyer une requête dans les champs du formulaire d’authentification de l’application.
+ L’attaquant aura un accès libre à la BD
+21
+IMAGE: ../media/image31.png
+
+=== SLIDE 22 ===
+Sécuriser l’application
+22
+Requête utilisée pour l’authentification
+Exécution de la requête
+IMAGE: ../media/image33.jpg
+IMAGE: ../media/image32.jpg
+IMAGE: ../media/image36.png
+IMAGE: ../media/image35.png
+IMAGE: ../media/image34.png
+
+=== SLIDE 23 ===
+Sécuriser l’application
+Requête utilisée pour l’authentification
+1- Connection à la BD et exécution de la requête
+3- Accès accordé
+2- Identité vérifiée
+23
+IMAGE: ../media/image43.png
+IMAGE: ../media/image38.png
+IMAGE: ../media/image42.png
+IMAGE: ../media/image37.jpg
+IMAGE: ../media/image41.png
+IMAGE: ../media/image40.png
+IMAGE: ../media/image39.jpg
+IMAGE: ../media/image44.png
+
+=== SLIDE 24 ===
+Expression injectée : toto ’ or ‘1’=‘1
+Sécuriser l’application
+Exemple d’une attaque SQL injection
+Requête envoyée à la BD :
+password = ‘ toto’ or ‘1’=‘1	‘ 21
+IMAGE: ../media/image45.jpg
+IMAGE: ../media/image33.jpg
+IMAGE: ../media/image48.png
+IMAGE: ../media/image47.png
+IMAGE: ../media/image46.png
+
+=== SLIDE 25 ===
+3- Accès accordé
+Sécuriser l’application
+Exemple d’une attaque SQL injection
+2- Identité vérifiée
+1- Connection à la BD et
+exécution de la requête
+25
+IMAGE: ../media/image55.png
+IMAGE: ../media/image50.jpg
+IMAGE: ../media/image54.png
+IMAGE: ../media/image49.jpg
+IMAGE: ../media/image53.png
+IMAGE: ../media/image52.png
+IMAGE: ../media/image56.png
+IMAGE: ../media/image51.png
+IMAGE: ../media/image47.png
+
+=== SLIDE 26 ===
+Sécuriser l’application
+Exemple d’une attaque SQL injection
+3- Accès accordé	COMMENT ???
+La requête est : SELECT login FROM account WHERE login = ‘admin' AND password = ‘toto' OR ‘1'=‘1‘ ;
+La condition du WHERE sera toujours évaluée à True car 1 est toujours égale à 1.
+ La condition du WHERE est équivalente à : X OR true True
+ La requête sera équivalente à : SELECT login FROM account WHERE true;
+ Cette requête est équivalente à : SELECT login FROM account ;  accès à tout le contenu de la table account.
+Condition du Where
+26
+IMAGE: ../media/image49.jpg
+IMAGE: ../media/image57.png
+IMAGE: ../media/image60.png
+IMAGE: ../media/image59.png
+IMAGE: ../media/image58.png
+
+=== SLIDE 27 ===
+Sécuriser l’application
+Prévention :
+Eviter les requêtes simples.
+Faire appel aux requêtes préparées.
+Les paramètres sont interprétés indépendamment de la requête elle-même.
+Comment ?
+La méthode prepare() : Prendra la requête en paramètre pour la préparer à l’exécution.
+Dans la requête il faut utiliser des variables Bind (BindValue) et non pas les informations récupérées du formulaire.
+La méthode exec() : Envoie la requête pour l’exécuter.
+27
+IMAGE: ../media/image62.png
+IMAGE: ../media/image61.png
+
+=== SLIDE 28 ===
+Sécuriser l’application
+28
+ Requêtes préparées
+la requête est découpée en deux parties : fixe et variable.
+Partie fixe : Sera envoyé à la base de données pour préparer l’exécution.
+	Partie variable : Va changer selon la valeur saisie dans le lineEdit. (Les paramètres qui seront liés (binding).)
+ Les caractères spéciaux ne seront plus interprétés, expl : ‘
+ Protection contre les injections SQL
+
+=== SLIDE 29 ===
+Sécuriser l’application
+29
+ Requêtes préparées
+Au lieu de mettre directement les valeurs, on va mettre des marqueurs (? ou un marqueur nominatif) qui seront remplacer plus tard.
+Qt prend en charge deux syntaxes :
+La liaison nommée	(marqueur nominatif) : QSqlQuery::bindValue()
+La liaison de position (?) : QSqlQuery::addBindValue()
+La requête sera réutilisable pour différentes valeurs  Optimisation des requêtes SQL
+On n'écrit pas la requête dans la méthode QSqlQuery::exec(), mais dans la méthode QSqlQuery::prepare().
+
+=== SLIDE 30 ===
+Sécuriser l’application
+30
+ Requêtes préparées : QSqlQuery::addBindValue()
+IMAGE: ../media/image64.jpg
+IMAGE: ../media/image63.png
+
+=== SLIDE 31 ===
+28
+Sécuriser l’application
+ Requêtes préparées : QSqlQuery::bindValue()
+BindValue (variable précédée par
+« : » et insérée dans la partie SQL)
+Associer une variable applicatives (contenant les valeurs saisies dans les lineEdits) à chaque bindvalue
+La requête n'est plus passée à exec() (Comme diapo 19), mais à la méthode prepare() .
+IMAGE: ../media/image66.png
+IMAGE: ../media/image65.jpg
+IMAGE: ../media/image68.png
+IMAGE: ../media/image67.png
+
+=== SLIDE 32 ===
+29
+Implémenter les fonctionnalités de base
+IMAGE: ../media/image69.png
+IMAGE: ../media/image13.jpg
+IMAGE: ../media/image14.png
+IMAGE: ../media/image70.png
+
+=== SLIDE 33 ===
+AJOUT
+Implémentation de la méthode ajouter() : [Modèle]
+etudiant.cpp
+30
+IMAGE: ../media/image72.jpg
+IMAGE: ../media/image71.png
+
+=== SLIDE 34 ===
+31
+AJOUT
+Appel de la méthode ajouter() : [Vue]
+Aucune requête SQL et aucun accès à la base de données ne doit se faire en dehors de la classe C++ .
+mainwindow.cpp
+Convertir la chaine saisie en un entier car l’attribut id est de type int
+IMAGE: ../media/image74.png
+IMAGE: ../media/image73.png
+IMAGE: ../media/image77.png
+IMAGE: ../media/image76.png
+IMAGE: ../media/image75.png
+
+=== SLIDE 35 ===
+AJOUT
+Exécution : [Vue]
+35
+IMAGE: ../media/image79.png
+IMAGE: ../media/image78.png
+
+=== SLIDE 36 ===
+Suppression
+36
+Implémentation de la méthode supprimer() : [Modèle]
+etudiant.cpp
+IMAGE: ../media/image81.png
+IMAGE: ../media/image80.png
+
+=== SLIDE 37 ===
+mainwindow.h
+Suppression
+Appel de la méthode supprimer() : [Vue]
+Ajouter un attribut à la classe mainwindow qui correspond à un objet de la classe étudiant pour pouvoir faire appel à la méthode supprimer ()
+37
+IMAGE: ../media/image82.jpg
+
+=== SLIDE 38 ===
+Suppression
+38
+Appel de la méthode supprimer() : [Vue]
+mainwindow.cpp
+Convertir la chaine saisie en un entier car l’attribut id est de type int
+Appel de la méthode supprimer() via l’attribut Etmp
+IMAGE: ../media/image84.jpg
+IMAGE: ../media/image83.png
+IMAGE: ../media/image86.png
+IMAGE: ../media/image85.png
+
+=== SLIDE 39 ===
+Suppression
+Exécution : [Vue]
+39
+IMAGE: ../media/image88.png
+IMAGE: ../media/image87.png
+
+=== SLIDE 40 ===
+Implémentation de la méthode afficher() : [Modèle]
+AFFICHAGE
+etudiant.cpp
+40
+IMAGE: ../media/image90.png
+IMAGE: ../media/image89.png
+
+=== SLIDE 41 ===
+mainwindow.cpp
+38
+AFFICHAGE
+Appel de la méthode afficher() : [Vue]
+Constructeur de la classe mainwindow généré automatiquement
+Instruction ajoutée dans le constructeur : Appel de la
+méthode afficher () via l’attribut Etmp (voir diapo 34)
+IMAGE: ../media/image92.png
+IMAGE: ../media/image91.png
+
+=== SLIDE 42 ===
+39
+AFFICHAGE
+Exécution : [Vue] Affichage du contenu de la table lors de l’exécution de l’application 
+                                                                                                                                                     main.cpp
+Appel du constructeur 
+appel de la méthode afficher()
+L’instanciation de l’objet de la classe mainwindow dans le main doit se faire après avoir établie la connexion à la BD pour avoir l’affichage lors de l’exécution car l’appel de la méthode afficher() se fait dans le constructeur de la
+classe mainwindow et l’appel du constructeur se fait lors
+de l’instanciation de l’objet W.
+IMAGE: ../media/image94.png
+IMAGE: ../media/image98.png
+IMAGE: ../media/image93.png
+IMAGE: ../media/image97.png
+IMAGE: ../media/image96.png
+IMAGE: ../media/image95.png
+
+=== SLIDE 43 ===
+40
+Actualisation de l’affichage
+Maintenant, si on essaye de faire l’affichage de la liste des étudiants après un ajout ou bien une suppression, nous aura la même liste sans mise à jour.
+Pourquoi ?	Car la requête select est exécutée dans la méthode afficher() qui est appelée uniquement dans le constructeur de la classe mainwindow !
+ L’affichage du contenu de la table etudiant ne se fait qu’une seule fois : lors de l’exécution (appel du constructeur de la classe mainwindow pour instancier l’objet w)
+ Solution : la requête select doit être exécutée après chaque requête qui peut
+modifier le contenu de la table etudiant.
+
+=== SLIDE 44 ===
+Actualisation de l’affichage
+Actualiser après ajout : [Vue]
+mainwindow.cpp
+Appeler la méthode afficher()  exécuter la requête select si l’ajout a eu lieu ( if (test)).
+44
+IMAGE: ../media/image100.png
+IMAGE: ../media/image99.png
+
+=== SLIDE 45 ===
+Actualisation de l’affichage
+Actualiser après suppression: [Vue]
+mainwindow.cpp
+Appeler la méthode afficher()  exécuter la requête select si la suppression a eu lieu ( if (test)).
+45
+IMAGE: ../media/image102.jpg
+IMAGE: ../media/image101.png
+
+=== SLIDE 46 ===
+Récapitulation
+CRUD : Fonctionnalités de base
+create : Ajouter
+Read : Afficher
+Update : Modifier
+Delete : Supprimer
+Métiers & Arduino : fonctionnalités avancés
+46
+IMAGE: ../media/image104.jpg
+IMAGE: ../media/image103.png
+
+=== SLIDE 47 ===
+Consignes	et remarques
+Une seule connexion à la BD (Patron Singleton)
+Requêtes préparées.
+L’interface graphique proposée n’est qu’un exemple simple pour comprendre le principe.
+Essayez d’innover en proposant des GUI ergonomiques.
+Optimiser l’espace : expl : l’interface de la suppression ici contient uniquement 3 composants : label, lineEdit et
+bouton !  à éviter.
+Opter plutôt pour les « containers », tels que : Tab Widget, Stacked widget.
+47
+IMAGE: ../media/image105.png
+
+=== SLIDE 48 ===
+Consignes	et remarques
+Minimiser les « dialog » au maximum.
+Contrôle de saisie obligatoire dans le code C++.
+Mettre les contraintes nécessaires dans les tables au niveau de la BD.
+	Les	requêtes	doivent	être	implémentées	dans	les	classes	purement	C++	relatives	aux	entités	gérées	par l’application. (Architecture modèle-vue)
+Aucune requête ne doit être implémentée derrière un bouton.
+48
+IMAGE: ../media/image105.png
+
+=== SLIDE 49 ===
+https://owasp.org/www-community/attacks/SQL_Injection
+https://qt-quarterly.developpez.com/qq-04/qt-fonctionnalites-sql/ https://alain-defrance.developpez.com/articles/Qt/SGBD/
+49
+Références
+
+=== SLIDE 50 ===
+BON TRAVAIL
+50
+IMAGE: ../media/image106.png

@@ -1,0 +1,146 @@
+
+Session altered.
+
+
+PL/SQL procedure successfully completed.
+
+
+Trigger dropped.
+
+
+Trigger dropped.
+
+
+Trigger dropped.
+
+
+Trigger dropped.
+
+
+Package dropped.
+
+
+Table altered.
+
+
+Table altered.
+
+
+1 row updated.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+1 row updated.
+
+
+1 row updated.
+
+
+Commit complete.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Index created.
+
+
+Index created.
+
+
+Index created.
+
+
+Table dropped.
+
+
+Table dropped.
+
+
+Table dropped.
+
+
+Table dropped.
+
+
+Sequence dropped.
+
+
+Table dropped.
+
+
+Table dropped.
+
+
+Table dropped.
+
+
+Table dropped.
+
+
+Table dropped.
+
+SP2-0310: unable to open file "../five_table_rules.sql"
+Migration terminee : 5 tables metier.
+
+TABLE_NAME
+--------------------------------------------------------------------------------
+EMPLOYES
+LOCAUX
+MEDICAL_RECORDS
+SERVICES
+STOCK_LOTS
+
+
+no rows selected
+

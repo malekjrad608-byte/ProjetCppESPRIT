@@ -18,14 +18,14 @@ ServiceCard::ServiceCard(const Service &service, QWidget *parent)
     : QAbstractButton(parent), m_service(service), m_hoverAnimation(new QVariantAnimation(this)),
       m_entranceAnimation(new QVariantAnimation(this)) {
     setCheckable(true);
-    setFixedHeight(184);
+    setFixedHeight(144);
     setMinimumWidth(245);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     setFocusPolicy(Qt::StrongFocus);
     setCursor(Qt::PointingHandCursor);
-    setObjectName("serviceCard_" + QString::number(service.id));
-    setAccessibleName(service.name + ", " + service.status);
-    setToolTip(service.name + "\n" + service.description);
+    setObjectName("serviceCard_" + QString::number(service.getId()));
+    setAccessibleName(service.getName() + ", " + service.getStatus());
+    setToolTip(service.getName() + "\n" + service.getDescription());
     m_hoverAnimation->setObjectName("cardHoverAnimation");
     m_hoverAnimation->setDuration(160);
     m_hoverAnimation->setEasingCurve(QEasingCurve::OutCubic);
@@ -68,33 +68,40 @@ void ServiceCard::paintEvent(QPaintEvent *) {
     p.setRenderHint(QPainter::SmoothPixmapTransform);
     p.setOpacity(.2+.8*m_entranceProgress);
     p.translate(0,8*(1-m_entranceProgress));
-    p.setPen(QPen(isChecked() ? QColor("#E7A342") : blend(QColor("#DFE8EB"),QColor("#72A3AE"),m_hoverProgress), isChecked() ? 2 : 1));
-    p.setBrush(isChecked() ? QColor("#FFFAF2") : blend(Qt::white,QColor("#EFF7F9"),m_hoverProgress));
+    p.setPen(QPen(isChecked() ? QColor("#F5A133") : blend(QColor("#DFE8EB"),QColor("#FF9B28"),m_hoverProgress), isChecked() ? 1.5 : 1));
+    p.setBrush(blend(isChecked()?QColor("#FFFAF2"):QColor(Qt::white),QColor("#FFF2DE"),m_hoverProgress));
     p.drawRoundedRect(QRectF(1,1,width()-2,height()-2), 12,12);
-    const QString categoryIcon=m_service.category=="Soins & bien-être"?"heart":m_service.category=="Toilettage"?"drop":m_service.category=="Pension & garde"?"home":m_service.category=="Éducation"?"star":"paw";
+    if(m_hoverProgress>0) {
+        p.setBrush(Qt::NoBrush);
+        for(int width:{7,4,2}) {
+            QColor orange("#FF9B28"); orange.setAlphaF((width==2?.9:.08)*m_hoverProgress);
+            p.setPen(QPen(orange,width)); p.drawRoundedRect(QRectF(rect()).adjusted(3,3,-3,-3),7,7);
+        }
+    }
+    const QString categoryIcon=m_service.getCategory()=="Soins & bien-être"?"heart":m_service.getCategory()=="Toilettage"?"drop":m_service.getCategory()=="Pension & garde"?"home":m_service.getCategory()=="Éducation"?"star":"paw";
     const QColor iconColor=categoryIcon=="star"?QColor("#B78130"):categoryIcon=="home"?QColor("#7C72A9"):QColor("#40889A");
     const QColor iconBackground=categoryIcon=="star"?QColor("#FFF2DA"):categoryIcon=="home"?QColor("#F0ECF9"):QColor("#EAF3F5");
-    p.setPen(Qt::NoPen); p.setBrush(blend(iconBackground,iconColor.lighter(220),m_hoverProgress*.3)); p.drawRoundedRect(QRect(18,17,31,31),8,8);
+    p.setPen(Qt::NoPen); p.setBrush(blend(iconBackground,iconColor.lighter(220),m_hoverProgress*.3)); p.drawRoundedRect(QRect(16,14,25,25),8,8);
     const int iconSize=qRound(17+2*m_hoverProgress);
-    Design::icon(categoryIcon,iconColor).paint(&p,QRect(25-(iconSize-17)/2,24-(iconSize-17)/2,iconSize,iconSize));
+    Design::icon(categoryIcon,iconColor).paint(&p,QRect(20-(iconSize-17)/2,18-(iconSize-17)/2,iconSize,iconSize));
     QString bg="#EAEAF8", fg="#7374A9";
-    if (m_service.status=="En cours") { bg="#FFF0D7"; fg="#AA7830"; }
-    if (m_service.status=="Terminé") { bg="#E5F2E9"; fg="#4D8A6B"; }
-    if (m_service.status=="Annulé") { bg="#FBE9E8"; fg="#B36463"; }
-    const QRect badge(width()-113,21,94,25);
+    if (m_service.getStatus()=="En cours") { bg="#FFF0D7"; fg="#AA7830"; }
+    if (m_service.getStatus()=="Terminé") { bg="#E5F2E9"; fg="#4D8A6B"; }
+    if (m_service.getStatus()=="Annulé") { bg="#FBE9E8"; fg="#B36463"; }
+    const QRect badge(width()-108,14,92,21);
     p.setBrush(QColor(bg)); p.drawRoundedRect(badge,12,12);
     QFont f("Segoe UI"); f.setPixelSize(10); f.setWeight(QFont::DemiBold); p.setFont(f); p.setPen(QColor(fg));
-    p.drawText(badge,Qt::AlignCenter,"●  "+m_service.status);
-    f.setPixelSize(16); f.setWeight(QFont::DemiBold); p.setFont(f); p.setPen(QColor("#315D6C"));
-    p.drawText(QRect(19,60,width()-38,25),Qt::AlignVCenter,p.fontMetrics().elidedText(m_service.name,Qt::ElideRight,width()-38));
+    p.drawText(badge,Qt::AlignCenter,"●  "+m_service.getStatus());
+    f.setPixelSize(14); f.setWeight(QFont::DemiBold); p.setFont(f); p.setPen(QColor("#315D6C"));
+    p.drawText(QRect(17,48,width()-34,22),Qt::AlignVCenter,p.fontMetrics().elidedText(m_service.getName(),Qt::ElideRight,width()-38));
     f.setPixelSize(12); f.setWeight(QFont::Normal); p.setFont(f); p.setPen(QColor("#84979E"));
-    p.drawText(QRect(19,89,width()-38,20),m_service.category);
+    p.drawText(QRect(17,74,width()-34,18),m_service.getCategory());
     f.setPixelSize(10); p.setFont(f);
-    p.drawText(QRect(19,115,width()-38,18),QString("SRV-%1   ·   %2 min").arg(m_service.id,3,10,QChar('0')).arg(m_service.duration));
-    p.setPen(QColor("#E8EEF0")); p.drawLine(19,143,width()-19,143);
-    Design::icon("calendar",QColor("#8B9EA5")).paint(&p,QRect(19,156,13,13));
+    p.drawText(QRect(17,95,width()-34,16),QString("SRV-%1   ·   %2 min").arg(m_service.getId(),3,10,QChar('0')).arg(m_service.getDuration()));
+
+    Design::icon("calendar",QColor("#8B9EA5")).paint(&p,QRect(17,121,12,12));
     f.setPixelSize(11); p.setFont(f); p.setPen(QColor("#617F8A"));
-    p.drawText(QRect(39,152,140,23),Qt::AlignVCenter,QLocale().toString(m_service.dateTime,"dd MMM · HH:mm"));
+    p.drawText(QRect(35,117,140,20),Qt::AlignVCenter,QLocale().toString(m_service.getDateTime(),"dd MMM · HH:mm"));
     f.setWeight(QFont::DemiBold); p.setFont(f); p.setPen(QColor("#377D8E"));
-    p.drawText(QRect(width()-111,152,91,23),Qt::AlignRight|Qt::AlignVCenter,Design::money(m_service.price));
+    p.drawText(QRect(width()-111,117,94,20),Qt::AlignRight|Qt::AlignVCenter,Design::money(m_service.getPrice()));
 }

@@ -1,0 +1,29 @@
+Compiled from "ConnectionCreator.java"
+public interface oracle.dbtools.connections.db.ConnectionCreator extends oracle.dbtools.connections.ConnectionConstants {
+  public abstract java.sql.Connection getConnection(java.util.Properties) throws java.sql.SQLException;
+
+  public abstract java.lang.String getConnectionURL(java.util.Properties) throws java.sql.SQLException;
+
+  public abstract java.util.Properties getJDBCProperties(java.util.Properties) throws java.sql.SQLException;
+
+  public abstract java.lang.String getDriverClassName(java.util.Properties) throws java.sql.SQLException;
+
+  public abstract boolean shouldEncrypt(java.lang.String);
+
+  public abstract boolean isPassword(java.lang.String);
+
+  public abstract boolean shouldSave(java.lang.String, oracle.dbtools.connections.db.DatabaseProvider);
+
+  public abstract boolean shouldPromptForPassword(java.util.Properties);
+
+  public abstract java.util.Collection<java.lang.String> listAllowedProperties();
+
+  public abstract java.util.Collection<java.lang.String> listRequiredProperties();
+
+  public abstract java.util.Collection<oracle.dbtools.connections.db.JDBCParameterInfo> listJDBCParameterInfos(java.util.Properties) throws java.sql.SQLException;
+
+  public default boolean isPath(java.lang.String);
+    Code:
+       0: iconst_0
+       1: ireturn
+}

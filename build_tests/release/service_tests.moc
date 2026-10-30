@@ -35,25 +35,55 @@ namespace {
 struct qt_meta_stringdata_CLASSServiceTestsENDCLASS_t {};
 constexpr auto qt_meta_stringdata_CLASSServiceTestsENDCLASS = QtMocHelpers::stringData(
     "ServiceTests",
-    "initTestCase",
+    "serviceCreatesFromMedicalOwner",
     "",
+    "atelierModelCrudAndValidation",
+    "atelierEmbeddedFormKeepsInputOnError",
+    "oracleFiveTablesScreens",
+    "oracleFiveTablesIntegration",
+    "scheduleConflictValidation",
+    "oracleScheduleGuards",
+    "servicePlanningBoundaries",
+    "servicePlanningFiltersAndEntry",
+    "oracleServicePlanningAssignment",
+    "oracleFreshRawand",
+    "oracleCommonRelations",
+    "oracleLocalLinks",
+    "oracleEndToEnd",
+    "medicalReferenceImportOnce",
+    "medicalPersistenceAndHistory",
+    "medicalIntegratedCrudAndScreens",
+    "initTestCase",
     "loginSessionAndSavedServices",
     "logoutMotionAndImmediateReturn",
     "loginRecoveryAndTransitions",
     "loginRememberUsernameOnly",
     "captureLoginIntegration",
+    "stockColorsIgnoreSystemAccent",
+    "stockFiltersAndMovements",
+    "stockCrudExpiryAndStatistics",
+    "stockIntegratedNavigationAndLogout",
+    "invoiceMigrationPersistenceAndPdf",
+    "invoicePreviewAndRemovedFeatures",
+    "tariffAndDurationOrdering",
     "storageCrudAndPersistence",
     "formValidation",
     "filterSortAndRefresh",
     "interfaceCrud",
-    "exportEscaping",
     "dateFiltersAndCards",
-    "quickStatusAndDuplication",
+    "quickStatusWithoutDuplication",
     "metricsAndPdfReport",
     "logoHoverAnimation",
     "pageAndCardMotion",
     "dashboardPaintsOpaqueDuringNavigation",
     "motionControlsAndInteractions",
+    "orangeHoverPreservesInteraction",
+    "locauxPersistenceAndBusinessRules",
+    "locauxNavigationCrudAndScreens",
+    "moduleAccountsAndPersistence",
+    "moduleLoginRoutingAndIsolation",
+    "integratedEmployeeCrudPlanningAndScreens",
+    "employeeLeavePdfAndPasswordDialog",
     "renderScreens",
     "captureMotionPreview"
 );
@@ -68,7 +98,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSServiceTestsENDCLASS[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-      20,   14, // methods
+      50,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -76,28 +106,88 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSServiceTestsENDCLASS[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,  134,    2, 0x08,    1 /* Private */,
-       3,    0,  135,    2, 0x08,    2 /* Private */,
-       4,    0,  136,    2, 0x08,    3 /* Private */,
-       5,    0,  137,    2, 0x08,    4 /* Private */,
-       6,    0,  138,    2, 0x08,    5 /* Private */,
-       7,    0,  139,    2, 0x08,    6 /* Private */,
-       8,    0,  140,    2, 0x08,    7 /* Private */,
-       9,    0,  141,    2, 0x08,    8 /* Private */,
-      10,    0,  142,    2, 0x08,    9 /* Private */,
-      11,    0,  143,    2, 0x08,   10 /* Private */,
-      12,    0,  144,    2, 0x08,   11 /* Private */,
-      13,    0,  145,    2, 0x08,   12 /* Private */,
-      14,    0,  146,    2, 0x08,   13 /* Private */,
-      15,    0,  147,    2, 0x08,   14 /* Private */,
-      16,    0,  148,    2, 0x08,   15 /* Private */,
-      17,    0,  149,    2, 0x08,   16 /* Private */,
-      18,    0,  150,    2, 0x08,   17 /* Private */,
-      19,    0,  151,    2, 0x08,   18 /* Private */,
-      20,    0,  152,    2, 0x08,   19 /* Private */,
-      21,    0,  153,    2, 0x08,   20 /* Private */,
+       1,    0,  314,    2, 0x08,    1 /* Private */,
+       3,    0,  315,    2, 0x08,    2 /* Private */,
+       4,    0,  316,    2, 0x08,    3 /* Private */,
+       5,    0,  317,    2, 0x08,    4 /* Private */,
+       6,    0,  318,    2, 0x08,    5 /* Private */,
+       7,    0,  319,    2, 0x08,    6 /* Private */,
+       8,    0,  320,    2, 0x08,    7 /* Private */,
+       9,    0,  321,    2, 0x08,    8 /* Private */,
+      10,    0,  322,    2, 0x08,    9 /* Private */,
+      11,    0,  323,    2, 0x08,   10 /* Private */,
+      12,    0,  324,    2, 0x08,   11 /* Private */,
+      13,    0,  325,    2, 0x08,   12 /* Private */,
+      14,    0,  326,    2, 0x08,   13 /* Private */,
+      15,    0,  327,    2, 0x08,   14 /* Private */,
+      16,    0,  328,    2, 0x08,   15 /* Private */,
+      17,    0,  329,    2, 0x08,   16 /* Private */,
+      18,    0,  330,    2, 0x08,   17 /* Private */,
+      19,    0,  331,    2, 0x08,   18 /* Private */,
+      20,    0,  332,    2, 0x08,   19 /* Private */,
+      21,    0,  333,    2, 0x08,   20 /* Private */,
+      22,    0,  334,    2, 0x08,   21 /* Private */,
+      23,    0,  335,    2, 0x08,   22 /* Private */,
+      24,    0,  336,    2, 0x08,   23 /* Private */,
+      25,    0,  337,    2, 0x08,   24 /* Private */,
+      26,    0,  338,    2, 0x08,   25 /* Private */,
+      27,    0,  339,    2, 0x08,   26 /* Private */,
+      28,    0,  340,    2, 0x08,   27 /* Private */,
+      29,    0,  341,    2, 0x08,   28 /* Private */,
+      30,    0,  342,    2, 0x08,   29 /* Private */,
+      31,    0,  343,    2, 0x08,   30 /* Private */,
+      32,    0,  344,    2, 0x08,   31 /* Private */,
+      33,    0,  345,    2, 0x08,   32 /* Private */,
+      34,    0,  346,    2, 0x08,   33 /* Private */,
+      35,    0,  347,    2, 0x08,   34 /* Private */,
+      36,    0,  348,    2, 0x08,   35 /* Private */,
+      37,    0,  349,    2, 0x08,   36 /* Private */,
+      38,    0,  350,    2, 0x08,   37 /* Private */,
+      39,    0,  351,    2, 0x08,   38 /* Private */,
+      40,    0,  352,    2, 0x08,   39 /* Private */,
+      41,    0,  353,    2, 0x08,   40 /* Private */,
+      42,    0,  354,    2, 0x08,   41 /* Private */,
+      43,    0,  355,    2, 0x08,   42 /* Private */,
+      44,    0,  356,    2, 0x08,   43 /* Private */,
+      45,    0,  357,    2, 0x08,   44 /* Private */,
+      46,    0,  358,    2, 0x08,   45 /* Private */,
+      47,    0,  359,    2, 0x08,   46 /* Private */,
+      48,    0,  360,    2, 0x08,   47 /* Private */,
+      49,    0,  361,    2, 0x08,   48 /* Private */,
+      50,    0,  362,    2, 0x08,   49 /* Private */,
+      51,    0,  363,    2, 0x08,   50 /* Private */,
 
  // slots: parameters
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -131,6 +221,40 @@ Q_CONSTINIT const QMetaObject ServiceTests::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSServiceTestsENDCLASS_t,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<ServiceTests, std::true_type>,
+        // method 'serviceCreatesFromMedicalOwner'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'atelierModelCrudAndValidation'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'atelierEmbeddedFormKeepsInputOnError'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'oracleFiveTablesScreens'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'oracleFiveTablesIntegration'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'scheduleConflictValidation'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'oracleScheduleGuards'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'servicePlanningBoundaries'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'servicePlanningFiltersAndEntry'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'oracleServicePlanningAssignment'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'oracleFreshRawand'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'oracleCommonRelations'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'oracleLocalLinks'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'oracleEndToEnd'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'medicalReferenceImportOnce'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'medicalPersistenceAndHistory'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'medicalIntegratedCrudAndScreens'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'initTestCase'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'loginSessionAndSavedServices'
@@ -143,6 +267,20 @@ Q_CONSTINIT const QMetaObject ServiceTests::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'captureLoginIntegration'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'stockColorsIgnoreSystemAccent'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'stockFiltersAndMovements'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'stockCrudExpiryAndStatistics'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'stockIntegratedNavigationAndLogout'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'invoiceMigrationPersistenceAndPdf'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'invoicePreviewAndRemovedFeatures'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'tariffAndDurationOrdering'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'storageCrudAndPersistence'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'formValidation'
@@ -151,11 +289,9 @@ Q_CONSTINIT const QMetaObject ServiceTests::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'interfaceCrud'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'exportEscaping'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'dateFiltersAndCards'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'quickStatusAndDuplication'
+        // method 'quickStatusWithoutDuplication'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'metricsAndPdfReport'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
@@ -166,6 +302,20 @@ Q_CONSTINIT const QMetaObject ServiceTests::staticMetaObject = { {
         // method 'dashboardPaintsOpaqueDuringNavigation'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'motionControlsAndInteractions'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'orangeHoverPreservesInteraction'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'locauxPersistenceAndBusinessRules'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'locauxNavigationCrudAndScreens'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'moduleAccountsAndPersistence'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'moduleLoginRoutingAndIsolation'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'integratedEmployeeCrudPlanningAndScreens'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'employeeLeavePdfAndPasswordDialog'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'renderScreens'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
@@ -181,26 +331,56 @@ void ServiceTests::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         auto *_t = static_cast<ServiceTests *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->initTestCase(); break;
-        case 1: _t->loginSessionAndSavedServices(); break;
-        case 2: _t->logoutMotionAndImmediateReturn(); break;
-        case 3: _t->loginRecoveryAndTransitions(); break;
-        case 4: _t->loginRememberUsernameOnly(); break;
-        case 5: _t->captureLoginIntegration(); break;
-        case 6: _t->storageCrudAndPersistence(); break;
-        case 7: _t->formValidation(); break;
-        case 8: _t->filterSortAndRefresh(); break;
-        case 9: _t->interfaceCrud(); break;
-        case 10: _t->exportEscaping(); break;
-        case 11: _t->dateFiltersAndCards(); break;
-        case 12: _t->quickStatusAndDuplication(); break;
-        case 13: _t->metricsAndPdfReport(); break;
-        case 14: _t->logoHoverAnimation(); break;
-        case 15: _t->pageAndCardMotion(); break;
-        case 16: _t->dashboardPaintsOpaqueDuringNavigation(); break;
-        case 17: _t->motionControlsAndInteractions(); break;
-        case 18: _t->renderScreens(); break;
-        case 19: _t->captureMotionPreview(); break;
+        case 0: _t->serviceCreatesFromMedicalOwner(); break;
+        case 1: _t->atelierModelCrudAndValidation(); break;
+        case 2: _t->atelierEmbeddedFormKeepsInputOnError(); break;
+        case 3: _t->oracleFiveTablesScreens(); break;
+        case 4: _t->oracleFiveTablesIntegration(); break;
+        case 5: _t->scheduleConflictValidation(); break;
+        case 6: _t->oracleScheduleGuards(); break;
+        case 7: _t->servicePlanningBoundaries(); break;
+        case 8: _t->servicePlanningFiltersAndEntry(); break;
+        case 9: _t->oracleServicePlanningAssignment(); break;
+        case 10: _t->oracleFreshRawand(); break;
+        case 11: _t->oracleCommonRelations(); break;
+        case 12: _t->oracleLocalLinks(); break;
+        case 13: _t->oracleEndToEnd(); break;
+        case 14: _t->medicalReferenceImportOnce(); break;
+        case 15: _t->medicalPersistenceAndHistory(); break;
+        case 16: _t->medicalIntegratedCrudAndScreens(); break;
+        case 17: _t->initTestCase(); break;
+        case 18: _t->loginSessionAndSavedServices(); break;
+        case 19: _t->logoutMotionAndImmediateReturn(); break;
+        case 20: _t->loginRecoveryAndTransitions(); break;
+        case 21: _t->loginRememberUsernameOnly(); break;
+        case 22: _t->captureLoginIntegration(); break;
+        case 23: _t->stockColorsIgnoreSystemAccent(); break;
+        case 24: _t->stockFiltersAndMovements(); break;
+        case 25: _t->stockCrudExpiryAndStatistics(); break;
+        case 26: _t->stockIntegratedNavigationAndLogout(); break;
+        case 27: _t->invoiceMigrationPersistenceAndPdf(); break;
+        case 28: _t->invoicePreviewAndRemovedFeatures(); break;
+        case 29: _t->tariffAndDurationOrdering(); break;
+        case 30: _t->storageCrudAndPersistence(); break;
+        case 31: _t->formValidation(); break;
+        case 32: _t->filterSortAndRefresh(); break;
+        case 33: _t->interfaceCrud(); break;
+        case 34: _t->dateFiltersAndCards(); break;
+        case 35: _t->quickStatusWithoutDuplication(); break;
+        case 36: _t->metricsAndPdfReport(); break;
+        case 37: _t->logoHoverAnimation(); break;
+        case 38: _t->pageAndCardMotion(); break;
+        case 39: _t->dashboardPaintsOpaqueDuringNavigation(); break;
+        case 40: _t->motionControlsAndInteractions(); break;
+        case 41: _t->orangeHoverPreservesInteraction(); break;
+        case 42: _t->locauxPersistenceAndBusinessRules(); break;
+        case 43: _t->locauxNavigationCrudAndScreens(); break;
+        case 44: _t->moduleAccountsAndPersistence(); break;
+        case 45: _t->moduleLoginRoutingAndIsolation(); break;
+        case 46: _t->integratedEmployeeCrudPlanningAndScreens(); break;
+        case 47: _t->employeeLeavePdfAndPasswordDialog(); break;
+        case 48: _t->renderScreens(); break;
+        case 49: _t->captureMotionPreview(); break;
         default: ;
         }
     }
@@ -226,13 +406,13 @@ int ServiceTests::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 20)
+        if (_id < 50)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 20;
+        _id -= 50;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 20)
+        if (_id < 50)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 20;
+        _id -= 50;
     }
     return _id;
 }

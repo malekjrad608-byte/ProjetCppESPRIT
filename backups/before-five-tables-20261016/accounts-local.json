@@ -1,0 +1,44 @@
+[
+  {
+    "password_hash": "4FEF975EC5DD77AE034F1C923640BDED9C6CB2547AB17D0B34727EFAF3C3DAB7",
+    "username": "admin",
+    "salt": "687DC1EC1CBFACF9D2D6DA9C60C69ECA76F27418E076D483",
+    "iterations": 100000,
+    "role": "admin"
+  },
+  {
+    "password_hash": "3948CD70F662DCBC652580EA720D545EB4B708FBF3AB28A875D0C97211C7EBA4",
+    "username": "employes",
+    "salt": "BB78793500B4539F3D892AE63DFDE96FA144F886F7585A20",
+    "iterations": 100000,
+    "role": "employes"
+  },
+  {
+    "password_hash": "AA0A14385236ED0BBE1E39122641185FAB62F9EF54102494F257E183E0E40428",
+    "username": "locaux",
+    "salt": "44B21126C3027575312F2020A6F23495E9E69B99661CCF84",
+    "iterations": 100000,
+    "role": "locaux"
+  },
+  {
+    "password_hash": "7EF8E62E864FD9F642C46A1488C96502363E423C41CB50AB93D00D004EFE8A75",
+    "username": "medical",
+    "salt": "DE9D9005AA07A2A6FE24076052D553AD0350ABFE78DEE0E3",
+    "iterations": 100000,
+    "role": "medical"
+  },
+  {
+    "password_hash": "5A777441903C6832526232968610F7B1D43498A8AC462162B951520CFB6825B4",
+    "username": "services",
+    "salt": "384A9FF06D45239771443493BED490996EC7DCC9453E5085",
+    "iterations": 100000,
+    "role": "services"
+  },
+  {
+    "password_hash": "A1C05C28BBFDDC647D85A458F0B79117D8C2A683FACF25D83E2558815A3407D5",
+    "username": "stock",
+    "salt": "4717D3066146EA95B76096ED363A5CF6A65F933F3984E966",
+    "iterations": 100000,
+    "role": "stock"
+  }
+]

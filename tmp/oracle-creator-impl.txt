@@ -1,0 +1,834 @@
+Compiled from "OracleConnectionCreator.java"
+public class oracle.dbtools.connections.db.ora.OracleConnectionCreator extends oracle.dbtools.connections.db.AbstractConnectionCreator {
+  public static final java.lang.String ORACLE_DRIVER_CLASS;
+
+  public static final java.lang.String OLD_ORACLE_DRIVER_CLASS;
+
+  public static final java.lang.String SUBTYPE_ORA_JDBC;
+
+  public static final java.lang.String ORA_DRIVER_TYPE_CLASS_REFTYPE;
+
+  public static final java.lang.String ORA_DRIVER_THIN;
+
+  public static final java.lang.String ORA_DRIVER_OCI8;
+
+  public static final java.lang.String EXPORT_PASSWORD_CHECKSUM;
+
+  private static final java.util.logging.Logger LOGGER;
+
+  private final boolean thickAvailable;
+
+  private final oracle.dbtools.connections.db.ora.PasswordPrompterProvider support;
+
+  private final oracle.dbtools.connections.db.ora.ConnectionWrapperProvider wrapperProvider;
+
+  private static final java.util.Collection<java.lang.String> PASSWORD_RESET_OPTIONS;
+
+  private static final java.util.Collection<java.lang.String> KERBEROS_OPTIONS;
+
+  static final boolean $assertionsDisabled;
+
+  private static boolean isThick(java.lang.String);
+    Code:
+       0: aload_0
+       1: ldc           #1                  // String jdbc:oracle:oci
+       3: invokevirtual #2                  // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+       6: ireturn
+
+  public static oracle.dbtools.connections.db.ora.OracleConnectionCreator newInstance();
+    Code:
+       0: iconst_0
+       1: getstatic     #3                  // Field oracle/dbtools/connections/db/ora/PasswordPrompterProvider.DEFAULT:Loracle/dbtools/connections/db/ora/PasswordPrompterProvider;
+       4: getstatic     #4                  // Field oracle/dbtools/connections/db/ora/ConnectionWrapperProvider.DEFAULT:Loracle/dbtools/connections/db/ora/ConnectionWrapperProvider;
+       7: invokestatic  #5                  // Method newInstance:(ZLoracle/dbtools/connections/db/ora/PasswordPrompterProvider;Loracle/dbtools/connections/db/ora/ConnectionWrapperProvider;)Loracle/dbtools/connections/db/ora/OracleConnectionCreator;
+      10: areturn
+
+  public static oracle.dbtools.connections.db.ora.OracleConnectionCreator newInstance(boolean, oracle.dbtools.connections.db.ora.PasswordPrompterProvider, oracle.dbtools.connections.db.ora.ConnectionWrapperProvider);
+    Code:
+       0: getstatic     #6                  // Field $assertionsDisabled:Z
+       3: ifne          18
+       6: aload_1
+       7: ifnonnull     18
+      10: new           #7                  // class java/lang/AssertionError
+      13: dup
+      14: invokespecial #8                  // Method java/lang/AssertionError."<init>":()V
+      17: athrow
+      18: getstatic     #6                  // Field $assertionsDisabled:Z
+      21: ifne          36
+      24: aload_2
+      25: ifnonnull     36
+      28: new           #7                  // class java/lang/AssertionError
+      31: dup
+      32: invokespecial #8                  // Method java/lang/AssertionError."<init>":()V
+      35: athrow
+      36: new           #9                  // class oracle/dbtools/connections/db/ora/OracleConnectionCreator
+      39: dup
+      40: iload_0
+      41: aload_1
+      42: aload_2
+      43: invokespecial #10                 // Method "<init>":(ZLoracle/dbtools/connections/db/ora/PasswordPrompterProvider;Loracle/dbtools/connections/db/ora/ConnectionWrapperProvider;)V
+      46: areturn
+
+  private oracle.dbtools.connections.db.ora.OracleConnectionCreator(boolean, oracle.dbtools.connections.db.ora.PasswordPrompterProvider, oracle.dbtools.connections.db.ora.ConnectionWrapperProvider);
+    Code:
+       0: aload_0
+       1: invokespecial #11                 // Method oracle/dbtools/connections/db/AbstractConnectionCreator."<init>":()V
+       4: aload_0
+       5: iload_1
+       6: putfield      #12                 // Field thickAvailable:Z
+       9: aload_0
+      10: aload_2
+      11: putfield      #13                 // Field support:Loracle/dbtools/connections/db/ora/PasswordPrompterProvider;
+      14: aload_0
+      15: aload_3
+      16: putfield      #14                 // Field wrapperProvider:Loracle/dbtools/connections/db/ora/ConnectionWrapperProvider;
+      19: return
+
+  public boolean isPath(java.lang.String);
+    Code:
+       0: aload_1
+       1: invokestatic  #15                 // InterfaceMethod oracle/dbtools/connections/db/ora/OracleSubtypeConfigurator.isPathProperty:(Ljava/lang/String;)Z
+       4: ireturn
+
+  public boolean shouldPromptForPassword(java.util.Properties);
+    Code:
+       0: iconst_1
+       1: ireturn
+
+  public final java.sql.Connection getConnection(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: invokestatic  #16                 // Method oracle/dbtools/jdbc/OracleDataSources.instance:()Loracle/dbtools/jdbc/OracleDataSources;
+       3: invokevirtual #17                 // Method oracle/dbtools/jdbc/OracleDataSources.builder:()Loracle/dbtools/jdbc/OracleDataSources$Builder;
+       6: astore_2
+       7: aload_0
+       8: aload_2
+       9: aload_1
+      10: invokevirtual #18                 // Method configure:(Loracle/dbtools/jdbc/DataSourceBuilder;Ljava/util/Properties;)V
+      13: goto          26
+      16: astore_3
+      17: new           #20                 // class java/sql/SQLException
+      20: dup
+      21: aload_3
+      22: invokespecial #21                 // Method java/sql/SQLException."<init>":(Ljava/lang/Throwable;)V
+      25: athrow
+      26: aload_2
+      27: invokevirtual #22                 // Method oracle/dbtools/jdbc/OracleDataSources$Builder.build:()Ljavax/sql/DataSource;
+      30: checkcast     #23                 // class oracle/jdbc/datasource/OracleDataSource
+      33: astore_3
+      34: aload_3
+      35: invokeinterface #24,  1           // InterfaceMethod oracle/jdbc/datasource/OracleDataSource.getURL:()Ljava/lang/String;
+      40: astore        5
+      42: aload         5
+      44: invokestatic  #25                 // Method isThick:(Ljava/lang/String;)Z
+      47: ifne          73
+      50: aload_1
+      51: ldc           #27                 // String KERBEROS_AUTHENTICATION
+      53: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      56: invokestatic  #29                 // Method java/lang/Boolean.parseBoolean:(Ljava/lang/String;)Z
+      59: ifeq          73
+      62: aload_0
+      63: aload_3
+      64: aload_1
+      65: invokevirtual #30                 // Method connectWithKerberos:(Loracle/jdbc/datasource/OracleDataSource;Ljava/util/Properties;)Ljava/sql/Connection;
+      68: astore        4
+      70: goto          81
+      73: aload_0
+      74: aload_3
+      75: aload_1
+      76: invokevirtual #31                 // Method getConnectionImpl:(Loracle/jdbc/datasource/OracleDataSource;Ljava/util/Properties;)Ljava/sql/Connection;
+      79: astore        4
+      81: aload_1
+      82: ldc           #32                 // String IS_PROXY
+      84: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      87: invokestatic  #29                 // Method java/lang/Boolean.parseBoolean:(Ljava/lang/String;)Z
+      90: ifeq          100
+      93: aload_0
+      94: aload         4
+      96: aload_1
+      97: invokevirtual #33                 // Method openProxySession:(Ljava/sql/Connection;Ljava/util/Properties;)V
+     100: aload         4
+     102: areturn
+    Exception table:
+       from    to  target type
+           7    13    16   Class java/io/IOException
+
+  protected void configure(oracle.dbtools.jdbc.DataSourceBuilder<?>, java.util.Properties) throws java.sql.SQLException, java.io.IOException;
+    Code:
+       0: aload_2
+       1: invokestatic  #34                 // Method configureSessionProperties:(Ljava/util/Properties;)Loracle/dbtools/jdbc/configurators/SessionConfiguration;
+       4: astore_3
+       5: aload_3
+       6: aload_1
+       7: invokevirtual #35                 // Method oracle/dbtools/jdbc/configurators/SessionConfiguration.configure:(Loracle/dbtools/jdbc/DataSourceBuilder;)V
+      10: aload_2
+      11: ldc           #36                 // String OracleConnectionType
+      13: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      16: astore        4
+      18: aload         4
+      20: invokestatic  #37                 // InterfaceMethod oracle/dbtools/connections/db/ora/OracleSubtypeConfigurator.lookupConfiguration:(Ljava/lang/String;)Loracle/dbtools/connections/db/ora/OracleSubtypeConfigurator;
+      23: astore        5
+      25: aload         5
+      27: aload_2
+      28: invokeinterface #38,  2           // InterfaceMethod oracle/dbtools/connections/db/ora/OracleSubtypeConfigurator.createConfigurator:(Ljava/util/Properties;)Loracle/dbtools/jdbc/DataSourceConfigurator;
+      33: astore        6
+      35: aload         6
+      37: aload_1
+      38: invokeinterface #39,  2           // InterfaceMethod oracle/dbtools/jdbc/DataSourceConfigurator.configure:(Loracle/dbtools/jdbc/DataSourceBuilder;)V
+      43: aload_2
+      44: invokestatic  #40                 // Method configureCustomProperties:(Ljava/util/Properties;)Loracle/dbtools/connections/db/ora/CustomOptionsConfiguration;
+      47: astore        7
+      49: aload         7
+      51: aload_1
+      52: invokevirtual #41                 // Method oracle/dbtools/connections/db/ora/CustomOptionsConfiguration.configure:(Loracle/dbtools/jdbc/DataSourceBuilder;)V
+      55: aload_2
+      56: invokestatic  #42                 // Method configureAuthenticationProperties:(Ljava/util/Properties;)Loracle/dbtools/jdbc/DataSourceConfigurator;
+      59: astore        8
+      61: aload         8
+      63: aload_1
+      64: invokeinterface #39,  2           // InterfaceMethod oracle/dbtools/jdbc/DataSourceConfigurator.configure:(Loracle/dbtools/jdbc/DataSourceBuilder;)V
+      69: return
+
+  private static java.util.Properties filterProperties(java.util.Properties, java.util.Collection<java.lang.String>);
+    Code:
+       0: new           #43                 // class java/util/Properties
+       3: dup
+       4: invokespecial #44                 // Method java/util/Properties."<init>":()V
+       7: astore_2
+       8: aload_1
+       9: invokeinterface #45,  1           // InterfaceMethod java/util/Collection.iterator:()Ljava/util/Iterator;
+      14: astore_3
+      15: aload_3
+      16: invokeinterface #46,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      21: ifeq          60
+      24: aload_3
+      25: invokeinterface #47,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      30: checkcast     #48                 // class java/lang/String
+      33: astore        4
+      35: aload_0
+      36: aload         4
+      38: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      41: astore        5
+      43: aload         5
+      45: ifnull        57
+      48: aload_2
+      49: aload         4
+      51: aload         5
+      53: invokevirtual #49                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      56: pop
+      57: goto          15
+      60: aload_2
+      61: areturn
+
+  private static oracle.dbtools.connections.db.ora.CustomOptionsConfiguration configureCustomProperties(java.util.Properties);
+    Code:
+       0: new           #43                 // class java/util/Properties
+       3: dup
+       4: invokespecial #44                 // Method java/util/Properties."<init>":()V
+       7: astore_1
+       8: aload_0
+       9: ldc           #51                 // String customUrl
+      11: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      14: astore_2
+      15: aload_0
+      16: ldc           #52                 // String OS_AUTHENTICATION
+      18: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      21: invokestatic  #29                 // Method java/lang/Boolean.parseBoolean:(Ljava/lang/String;)Z
+      24: ifeq          57
+      27: aload_2
+      28: invokestatic  #53                 // Method oracle/dbtools/connections/db/ora/OracleConnectionUtils.scrubOraDriverType:(Ljava/lang/String;)Ljava/lang/String;
+      31: astore_3
+      32: invokestatic  #54                 // Method oracle/dbtools/common/utils/PlatformUtils.isWindows:()Z
+      35: ifeq          57
+      38: ldc           #55                 // String thin
+      40: aload_3
+      41: invokevirtual #56                 // Method java/lang/String.equalsIgnoreCase:(Ljava/lang/String;)Z
+      44: ifeq          57
+      47: aload_1
+      48: ldc           #58                 // String v$session.osuser
+      50: invokestatic  #59                 // Method oracle/dbtools/raptor/utils/WindowsUtility.getUserWithDomain:()Ljava/lang/String;
+      53: invokevirtual #49                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      56: pop
+      57: aload_1
+      58: aload_0
+      59: getstatic     #60                 // Field PASSWORD_RESET_OPTIONS:Ljava/util/Collection;
+      62: invokestatic  #61                 // Method filterProperties:(Ljava/util/Properties;Ljava/util/Collection;)Ljava/util/Properties;
+      65: invokevirtual #62                 // Method java/util/Properties.putAll:(Ljava/util/Map;)V
+      68: aload_1
+      69: aload_0
+      70: getstatic     #63                 // Field KERBEROS_OPTIONS:Ljava/util/Collection;
+      73: invokestatic  #61                 // Method filterProperties:(Ljava/util/Properties;Ljava/util/Collection;)Ljava/util/Properties;
+      76: invokevirtual #62                 // Method java/util/Properties.putAll:(Ljava/util/Map;)V
+      79: aload_0
+      80: invokevirtual #64                 // Method java/util/Properties.stringPropertyNames:()Ljava/util/Set;
+      83: invokeinterface #65,  1           // InterfaceMethod java/util/Set.stream:()Ljava/util/stream/Stream;
+      88: invokedynamic #66,  0             // InvokeDynamic #0:test:()Ljava/util/function/Predicate;
+      93: invokeinterface #67,  2           // InterfaceMethod java/util/stream/Stream.filter:(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;
+      98: aload_1
+      99: aload_0
+     100: invokedynamic #68,  0             // InvokeDynamic #1:accept:(Ljava/util/Properties;Ljava/util/Properties;)Ljava/util/function/Consumer;
+     105: invokeinterface #69,  2           // InterfaceMethod java/util/stream/Stream.forEach:(Ljava/util/function/Consumer;)V
+     110: invokestatic  #70                 // Method oracle/dbtools/connections/db/ora/CustomOptionsConfiguration.builder:()Loracle/dbtools/connections/db/ora/CustomOptionsConfiguration$Builder;
+     113: astore_3
+     114: aload_3
+     115: aload_1
+     116: invokevirtual #71                 // Method oracle/dbtools/connections/db/ora/CustomOptionsConfiguration$Builder.connectionProperties:(Ljava/util/Properties;)Loracle/dbtools/connections/db/ora/CustomOptionsConfiguration$Builder;
+     119: pop
+     120: aload_3
+     121: invokevirtual #72                 // Method oracle/dbtools/connections/db/ora/CustomOptionsConfiguration$Builder.build:()Loracle/dbtools/connections/db/ora/CustomOptionsConfiguration;
+     124: areturn
+
+  private static oracle.dbtools.jdbc.configurators.SessionConfiguration configureSessionProperties(java.util.Properties);
+    Code:
+       0: invokestatic  #73                 // Method oracle/dbtools/jdbc/configurators/SessionConfiguration.builder:()Loracle/dbtools/jdbc/configurators/SessionConfiguration$Builder;
+       3: astore_1
+       4: aload_0
+       5: ldc           #74                 // String jdbc.terminal
+       7: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      10: astore_2
+      11: aload_2
+      12: ifnull        21
+      15: aload_1
+      16: aload_2
+      17: invokevirtual #75                 // Method oracle/dbtools/jdbc/configurators/SessionConfiguration$Builder.terminal:(Ljava/lang/String;)Loracle/dbtools/jdbc/configurators/SessionConfiguration$Builder;
+      20: astore_1
+      21: aload_0
+      22: ldc           #76                 // String jdbc.machine
+      24: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      27: astore_3
+      28: aload_3
+      29: ifnull        59
+      32: aload_3
+      33: ifnull        53
+      36: aload_3
+      37: invokevirtual #77                 // Method java/lang/String.length:()I
+      40: bipush        60
+      42: if_icmple     53
+      45: aload_3
+      46: iconst_0
+      47: bipush        60
+      49: invokevirtual #78                 // Method java/lang/String.substring:(II)Ljava/lang/String;
+      52: astore_3
+      53: aload_1
+      54: aload_3
+      55: invokevirtual #79                 // Method oracle/dbtools/jdbc/configurators/SessionConfiguration$Builder.machine:(Ljava/lang/String;)Loracle/dbtools/jdbc/configurators/SessionConfiguration$Builder;
+      58: astore_1
+      59: ldc           #80                 // String jdbc.program
+      61: aconst_null
+      62: invokestatic  #81                 // Method java/lang/System.getProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      65: astore        4
+      67: aload         4
+      69: ifnonnull     77
+      72: invokestatic  #82                 // Method oracle/dbtools/connections/db/DatabaseProviderHelper.getProgramName:()Ljava/lang/String;
+      75: astore        4
+      77: aload         4
+      79: ifnull        89
+      82: aload_1
+      83: aload         4
+      85: invokevirtual #83                 // Method oracle/dbtools/jdbc/configurators/SessionConfiguration$Builder.programName:(Ljava/lang/String;)Loracle/dbtools/jdbc/configurators/SessionConfiguration$Builder;
+      88: astore_1
+      89: ldc           #84                 // String jdbc.process
+      91: aconst_null
+      92: invokestatic  #81                 // Method java/lang/System.getProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      95: astore        5
+      97: aload         5
+      99: ifnonnull     185
+     102: ldc           #85                 // String java.vm.name
+     104: invokestatic  #86                 // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     107: astore        6
+     109: ldc           #87                 // String disablePIDCheck
+     111: invokestatic  #86                 // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     114: ifnonnull     185
+     117: aload         6
+     119: ifnull        132
+     122: aload         6
+     124: ldc           #88                 // String OJVM Client VM
+     126: invokevirtual #89                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     129: ifne          185
+     132: invokestatic  #90                 // Method java/lang/management/ManagementFactory.getRuntimeMXBean:()Ljava/lang/management/RuntimeMXBean;
+     135: astore        7
+     137: aload         7
+     139: ifnull        180
+     142: aload         7
+     144: invokeinterface #91,  1           // InterfaceMethod java/lang/management/RuntimeMXBean.getName:()Ljava/lang/String;
+     149: astore        8
+     151: aload         8
+     153: ifnull        180
+     156: aload         8
+     158: bipush        64
+     160: invokevirtual #92                 // Method java/lang/String.indexOf:(I)I
+     163: istore        9
+     165: iload         9
+     167: iflt          180
+     170: aload         8
+     172: iconst_0
+     173: iload         9
+     175: invokevirtual #78                 // Method java/lang/String.substring:(II)Ljava/lang/String;
+     178: astore        5
+     180: goto          185
+     183: astore        7
+     185: aload         5
+     187: ifnull        197
+     190: aload_1
+     191: aload         5
+     193: invokevirtual #94                 // Method oracle/dbtools/jdbc/configurators/SessionConfiguration$Builder.process:(Ljava/lang/String;)Loracle/dbtools/jdbc/configurators/SessionConfiguration$Builder;
+     196: astore_1
+     197: aload_1
+     198: ldc           #95                 // int 300000
+     200: invokevirtual #96                 // Method oracle/dbtools/jdbc/configurators/SessionConfiguration$Builder.timeout:(I)Loracle/dbtools/jdbc/configurators/SessionConfiguration$Builder;
+     203: astore_1
+     204: aload_1
+     205: invokevirtual #97                 // Method oracle/dbtools/jdbc/configurators/SessionConfiguration$Builder.build:()Loracle/dbtools/jdbc/configurators/SessionConfiguration;
+     208: areturn
+    Exception table:
+       from    to  target type
+         132   180   183   Class java/lang/Throwable
+
+  private static oracle.dbtools.jdbc.DataSourceConfigurator configureAuthenticationProperties(java.util.Properties);
+    Code:
+       0: aload_0
+       1: invokestatic  #98                 // Method oracle/dbtools/jdbc/configurators/SimpleCredentialsConfiguration.builder:(Ljava/util/Properties;)Loracle/dbtools/jdbc/configurators/SimpleCredentialsConfiguration$Builder;
+       4: invokevirtual #99                 // Method oracle/dbtools/jdbc/configurators/SimpleCredentialsConfiguration$Builder.build:()Loracle/dbtools/jdbc/configurators/SimpleCredentialsConfiguration;
+       7: areturn
+
+  protected java.sql.Connection getConnectionImpl(oracle.jdbc.datasource.OracleDataSource, java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_0
+       1: getfield      #14                 // Field wrapperProvider:Loracle/dbtools/connections/db/ora/ConnectionWrapperProvider;
+       4: aload_1
+       5: invokeinterface #100,  1          // InterfaceMethod oracle/jdbc/datasource/OracleDataSource.getConnection:()Ljava/sql/Connection;
+      10: aload_2
+      11: invokeinterface #101,  3          // InterfaceMethod oracle/dbtools/connections/db/ora/ConnectionWrapperProvider.wrapConnection:(Ljava/sql/Connection;Ljava/util/Properties;)Ljava/sql/Connection;
+      16: areturn
+
+  private java.sql.Connection connectWithKerberos(oracle.jdbc.datasource.OracleDataSource, java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: aload_2
+       3: invokevirtual #31                 // Method getConnectionImpl:(Loracle/jdbc/datasource/OracleDataSource;Ljava/util/Properties;)Ljava/sql/Connection;
+       6: areturn
+
+  protected boolean allowNullPassword();
+    Code:
+       0: iconst_1
+       1: ireturn
+
+  private static void updateProperty(java.util.Properties, java.util.Properties, java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_2
+       2: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       5: astore_3
+       6: aload_3
+       7: ifnull        17
+      10: aload_1
+      11: aload_2
+      12: aload_3
+      13: invokevirtual #49                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      16: pop
+      17: return
+
+  protected void setCustomProperties(java.util.Properties, java.util.Properties);
+    Code:
+       0: return
+
+  private void openProxySession(java.sql.Connection, java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_2
+       1: ldc           #102                // String PROXY_TYPE
+       3: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       6: astore_3
+       7: new           #43                 // class java/util/Properties
+      10: dup
+      11: invokespecial #44                 // Method java/util/Properties."<init>":()V
+      14: astore        4
+      16: aload_3
+      17: ldc           #103                // String USER NAME
+      19: invokevirtual #89                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      22: ifeq          89
+      25: aload_2
+      26: ldc           #104                // String PROXY_USER_NAME
+      28: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      31: astore        5
+      33: aload_2
+      34: ldc           #105                // String PROXY_USER_PASSWORD
+      36: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      39: astore        6
+      41: aload         4
+      43: ldc           #104                // String PROXY_USER_NAME
+      45: aload         5
+      47: invokevirtual #106                // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      50: pop
+      51: aload         6
+      53: ifnull        74
+      56: aload         6
+      58: invokevirtual #77                 // Method java/lang/String.length:()I
+      61: ifle          74
+      64: aload         4
+      66: ldc           #105                // String PROXY_USER_PASSWORD
+      68: aload         6
+      70: invokevirtual #106                // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      73: pop
+      74: aload_1
+      75: checkcast     #57                 // class oracle/jdbc/OracleConnection
+      78: iconst_1
+      79: aload         4
+      81: invokeinterface #107,  3          // InterfaceMethod oracle/jdbc/OracleConnection.openProxySession:(ILjava/util/Properties;)V
+      86: goto          138
+      89: aload_3
+      90: ldc           #108                // String DISTINGUISHED NAME
+      92: invokevirtual #89                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      95: ifeq          138
+      98: aload         4
+     100: ldc           #104                // String PROXY_USER_NAME
+     102: aload_2
+     103: ldc           #104                // String PROXY_USER_NAME
+     105: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     108: invokevirtual #106                // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     111: pop
+     112: aload         4
+     114: ldc           #109                // String PROXY_DISTINGUISHED_NAME
+     116: aload_2
+     117: ldc           #109                // String PROXY_DISTINGUISHED_NAME
+     119: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+     122: invokevirtual #106                // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+     125: pop
+     126: aload_1
+     127: checkcast     #57                 // class oracle/jdbc/OracleConnection
+     130: iconst_2
+     131: aload         4
+     133: invokeinterface #107,  3          // InterfaceMethod oracle/jdbc/OracleConnection.openProxySession:(ILjava/util/Properties;)V
+     138: return
+
+  java.lang.String getPassword(java.util.Properties) throws oracle.dbtools.raptor.utils.ConnectionCanceledException;
+    Code:
+       0: aload_0
+       1: getfield      #13                 // Field support:Loracle/dbtools/connections/db/ora/PasswordPrompterProvider;
+       4: aload_1
+       5: invokeinterface #110,  2          // InterfaceMethod oracle/dbtools/connections/db/ora/PasswordPrompterProvider.promptForPassword:(Ljava/util/Properties;)Ljava/lang/String;
+      10: areturn
+
+  public boolean shouldEncrypt(java.lang.String);
+    Code:
+       0: iconst_0
+       1: istore_2
+       2: ldc           #111                // String ExportKeyChecksum
+       4: aload_1
+       5: invokevirtual #89                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+       8: ifeq          16
+      11: iconst_1
+      12: istore_2
+      13: goto          27
+      16: ldc           #105                // String PROXY_USER_PASSWORD
+      18: aload_1
+      19: invokevirtual #89                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      22: ifeq          27
+      25: iconst_1
+      26: istore_2
+      27: iload_2
+      28: ifne          39
+      31: aload_0
+      32: aload_1
+      33: invokespecial #112                // Method oracle/dbtools/connections/db/AbstractConnectionCreator.shouldEncrypt:(Ljava/lang/String;)Z
+      36: ifeq          43
+      39: iconst_1
+      40: goto          44
+      43: iconst_0
+      44: ireturn
+
+  private static void addPropertyIfSet(java.util.Properties, java.lang.String, java.lang.String);
+    Code:
+       0: aload_1
+       1: aconst_null
+       2: invokestatic  #81                 // Method java/lang/System.getProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+       5: astore_3
+       6: aload_3
+       7: ifnull        16
+      10: aload_0
+      11: aload_2
+      12: aload_3
+      13: invokestatic  #113                // Method setProperty:(Ljava/util/Properties;Ljava/lang/String;Ljava/lang/String;)V
+      16: return
+
+  private static void setProperty(java.util.Properties, java.lang.String, java.lang.String);
+    Code:
+       0: aload_2
+       1: ifnull        11
+       4: aload_0
+       5: aload_1
+       6: aload_2
+       7: invokevirtual #49                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      10: pop
+      11: return
+
+  public java.lang.String getConnectionURL(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #114                // Method oracle/dbtools/connections/db/AbstractConnectionCreator.getConnectionURL:(Ljava/util/Properties;)Ljava/lang/String;
+       5: astore_2
+       6: aload_0
+       7: aload_2
+       8: invokevirtual #115                // Method hasLength:(Ljava/lang/String;)Z
+      11: ifeq          16
+      14: aload_2
+      15: areturn
+      16: aload_0
+      17: aload_1
+      18: ldc           #116                // String hostname
+      20: invokevirtual #117                // Method getPropertyOrThrow:(Ljava/util/Properties;Ljava/lang/String;)Ljava/lang/String;
+      23: astore_3
+      24: aload_0
+      25: aload_1
+      26: ldc           #118                // String port
+      28: invokevirtual #117                // Method getPropertyOrThrow:(Ljava/util/Properties;Ljava/lang/String;)Ljava/lang/String;
+      31: astore        4
+      33: aload_1
+      34: ldc           #119                // String sid
+      36: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      39: astore        5
+      41: aload_1
+      42: ldc           #120                // String serviceName
+      44: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      47: astore        6
+      49: aload_0
+      50: aload_1
+      51: ldc           #121                // String oraDriverType
+      53: invokevirtual #117                // Method getPropertyOrThrow:(Ljava/util/Properties;Ljava/lang/String;)Ljava/lang/String;
+      56: astore        7
+      58: ldc           #55                 // String thin
+      60: aload         7
+      62: invokevirtual #89                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      65: ifeq          113
+      68: aload         5
+      70: ifnull        84
+      73: aload_3
+      74: aload         4
+      76: aload         5
+      78: invokedynamic #122,  0            // InvokeDynamic #2:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      83: areturn
+      84: aload         6
+      86: ifnull        100
+      89: aload_3
+      90: aload         4
+      92: aload         6
+      94: invokedynamic #123,  0            // InvokeDynamic #3:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      99: areturn
+     100: new           #20                 // class java/sql/SQLException
+     103: dup
+     104: ldc           #125                // String ERROR_SID_SERVICE_NAME
+     106: invokestatic  #126                // Method oracle/dbtools/connections/db/DBAdapterBundle.get:(Ljava/lang/String;)Ljava/lang/String;
+     109: invokespecial #127                // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+     112: athrow
+     113: ldc           #128                // String oci8
+     115: aload         7
+     117: invokevirtual #89                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+     120: ifeq          248
+     123: new           #129                // class java/lang/StringBuilder
+     126: dup
+     127: invokespecial #130                // Method java/lang/StringBuilder."<init>":()V
+     130: astore        8
+     132: aload         8
+     134: ldc           #131                // String jdbc:oracle:oci8:@
+     136: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     139: pop
+     140: aload         8
+     142: ldc           #133                // String (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=
+     144: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     147: pop
+     148: aload         8
+     150: aload_3
+     151: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     154: pop
+     155: aload         8
+     157: ldc           #134                // String )(PORT=
+     159: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     162: pop
+     163: aload         8
+     165: aload         4
+     167: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     170: pop
+     171: aload         8
+     173: ldc           #135                // String ))(CONNECT_DATA=(
+     175: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     178: pop
+     179: aload         5
+     181: ifnull        200
+     184: aload         8
+     186: ldc           #136                // String SID=
+     188: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     191: aload         5
+     193: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     196: pop
+     197: goto          234
+     200: aload         6
+     202: ifnull        221
+     205: aload         8
+     207: ldc           #137                // String SERVICE_NAME=
+     209: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     212: aload         6
+     214: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     217: pop
+     218: goto          234
+     221: new           #20                 // class java/sql/SQLException
+     224: dup
+     225: ldc           #125                // String ERROR_SID_SERVICE_NAME
+     227: invokestatic  #126                // Method oracle/dbtools/connections/db/DBAdapterBundle.get:(Ljava/lang/String;)Ljava/lang/String;
+     230: invokespecial #127                // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+     233: athrow
+     234: aload         8
+     236: ldc           #138                // String )))
+     238: invokevirtual #132                // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+     241: pop
+     242: aload         8
+     244: invokevirtual #139                // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+     247: areturn
+     248: new           #20                 // class java/sql/SQLException
+     251: dup
+     252: aload         7
+     254: invokedynamic #140,  0            // InvokeDynamic #4:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+     259: invokespecial #127                // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+     262: athrow
+
+  public java.lang.String getDriverClassName(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokespecial #141                // Method oracle/dbtools/connections/db/AbstractConnectionCreator.getDriverClassName:(Ljava/util/Properties;)Ljava/lang/String;
+       5: astore_2
+       6: aload_0
+       7: aload_2
+       8: invokevirtual #115                // Method hasLength:(Ljava/lang/String;)Z
+      11: ifeq          25
+      14: aload_2
+      15: ldc           #142                // String oracle.jdbc.driver.OracleDriver
+      17: invokevirtual #89                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      20: ifne          25
+      23: aload_2
+      24: areturn
+      25: ldc           #143                // String oracle.jdbc.OracleDriver
+      27: areturn
+
+  public java.util.Collection<java.lang.String> listAllowedProperties();
+    Code:
+       0: aload_0
+       1: invokespecial #144                // Method oracle/dbtools/connections/db/AbstractConnectionCreator.listAllowedProperties:()Ljava/util/Collection;
+       4: astore_1
+       5: aload_1
+       6: ldc           #145                // String role
+       8: invokeinterface #146,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      13: pop
+      14: aload_1
+      15: ldc           #116                // String hostname
+      17: invokeinterface #146,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      22: pop
+      23: aload_1
+      24: ldc           #118                // String port
+      26: invokeinterface #146,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      31: pop
+      32: aload_1
+      33: ldc           #119                // String sid
+      35: invokeinterface #146,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      40: pop
+      41: aload_1
+      42: astore_2
+      43: aload_2
+      44: ldc           #120                // String serviceName
+      46: invokeinterface #146,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      51: pop
+      52: aload_2
+      53: areturn
+
+  public java.util.Collection<java.lang.String> listRequiredProperties();
+    Code:
+       0: new           #147                // class java/util/HashSet
+       3: dup
+       4: invokespecial #148                // Method java/util/HashSet."<init>":()V
+       7: astore_1
+       8: aload_1
+       9: ldc           #116                // String hostname
+      11: invokeinterface #146,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      16: pop
+      17: aload_1
+      18: ldc           #118                // String port
+      20: invokeinterface #146,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      25: pop
+      26: aload_1
+      27: ldc           #121                // String oraDriverType
+      29: invokeinterface #146,  2          // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      34: pop
+      35: aload_1
+      36: areturn
+
+  private static void lambda$configureCustomProperties$1(java.util.Properties, java.util.Properties, java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_2
+       2: ldc           #149                // String sqldev.advanced.
+       4: invokevirtual #77                 // Method java/lang/String.length:()I
+       7: invokevirtual #150                // Method java/lang/String.substring:(I)Ljava/lang/String;
+      10: aload_1
+      11: aload_2
+      12: invokevirtual #28                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      15: invokevirtual #106                // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      18: pop
+      19: return
+
+  private static boolean lambda$configureCustomProperties$0(java.lang.String);
+    Code:
+       0: aload_0
+       1: ldc           #149                // String sqldev.advanced.
+       3: invokevirtual #2                  // Method java/lang/String.startsWith:(Ljava/lang/String;)Z
+       6: ireturn
+
+  static {};
+    Code:
+       0: ldc           #9                  // class oracle/dbtools/connections/db/ora/OracleConnectionCreator
+       2: invokevirtual #151                // Method java/lang/Class.desiredAssertionStatus:()Z
+       5: ifne          12
+       8: iconst_1
+       9: goto          13
+      12: iconst_0
+      13: putstatic     #6                  // Field $assertionsDisabled:Z
+      16: ldc           #9                  // class oracle/dbtools/connections/db/ora/OracleConnectionCreator
+      18: invokevirtual #152                // Method java/lang/Class.getName:()Ljava/lang/String;
+      21: invokestatic  #153                // Method java/util/logging/Logger.getLogger:(Ljava/lang/String;)Ljava/util/logging/Logger;
+      24: putstatic     #154                // Field LOGGER:Ljava/util/logging/Logger;
+      27: iconst_1
+      28: anewarray     #48                 // class java/lang/String
+      31: dup
+      32: iconst_0
+      33: ldc           #156                // String oracle.jdbc.newPassword
+      35: aastore
+      36: invokestatic  #157                // Method java/util/Arrays.asList:([Ljava/lang/Object;)Ljava/util/List;
+      39: putstatic     #60                 // Field PASSWORD_RESET_OPTIONS:Ljava/util/Collection;
+      42: bipush        6
+      44: anewarray     #48                 // class java/lang/String
+      47: dup
+      48: iconst_0
+      49: ldc           #159                // String oracle.net.authentication_services
+      51: aastore
+      52: dup
+      53: iconst_1
+      54: ldc           #160                // String oracle.net.kerberos5_cc_name
+      56: aastore
+      57: dup
+      58: iconst_2
+      59: ldc           #159                // String oracle.net.authentication_services
+      61: aastore
+      62: dup
+      63: iconst_3
+      64: ldc           #161                // String oracle.net.kerberos5_mutual_authentication
+      66: aastore
+      67: dup
+      68: iconst_4
+      69: ldc           #160                // String oracle.net.kerberos5_cc_name
+      71: aastore
+      72: dup
+      73: iconst_5
+      74: ldc           #162                // String access.alternate.url
+      76: aastore
+      77: invokestatic  #157                // Method java/util/Arrays.asList:([Ljava/lang/Object;)Ljava/util/List;
+      80: putstatic     #63                 // Field KERBEROS_OPTIONS:Ljava/util/Collection;
+      83: return
+}

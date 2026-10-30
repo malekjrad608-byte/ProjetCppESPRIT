@@ -1,0 +1,6 @@
+OK : IDs automatiques des cinq tables, insertion sans aucune cle primaire
+fournie.
+OK : toutes les lignes de test annulees.
+
+PL/SQL procedure successfully completed.
+

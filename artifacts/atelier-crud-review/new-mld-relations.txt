@@ -1,0 +1,38 @@
+
+COMPTE
+--------------------------------------------------------------------------------------------------------------------------------
+BASE
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+RAWAND
+CDB$ROOT
+
+
+OK : LOCAL.ID_SERV -> SERVICE.ID_SERV ; obligatoire ; 0 orphelin
+OK : STOCK.ID_LOCAL -> LOCAL.ID_LOCAL ; obligatoire ; 0 orphelin
+OK : EMPLOYER.ID_SERV -> SERVICE.ID_SERV ; obligatoire ; 0 orphelin
+OK : MEDICAL.ID_EMP -> EMPLOYER.ID_EMP ; obligatoire ; 0 orphelin
+OK : les cinq gestions forment un seul ensemble relie.
+STOCK -> LOCAL -> SERVICE <- EMPLOYER <- MEDICAL
+
+PL/SQL procedure successfully completed.
+
+
+SERVICE_ID   LOCAL_ID
+---------- ----------
+STOCK_LOT
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+EMPLOYE_ID MEDICAL_ID
+---------- ----------
+	 5
+
+	12	   45
+
+	30
+
+	33	   65
+
+	77
+
+	95
+
+

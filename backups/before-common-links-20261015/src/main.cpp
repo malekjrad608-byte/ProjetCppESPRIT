@@ -1,0 +1,65 @@
+#include <QApplication>
+#include <QStandardPaths>
+#include <QDir>
+#include <QMessageBox>
+#include <QLocale>
+#include "appcontroller.h"
+#include "database/databasemanager.h"
+#include "ui/design.h"
+#include "employees/employeestore.h"
+#include "medical/medicalstore.h"
+#include "database/oracleconnection.h"
+#include <QTextStream>
+#include <QSqlQuery>
+
+int main(int argc,char *argv[]) {
+    QApplication app(argc,argv);
+    app.setApplicationName("ANIWORLD"); app.setOrganizationName("ANIWORLD"); app.setApplicationVersion("3.0.0");
+    app.setFont(QFont("Segoe UI",10));
+    QLocale::setDefault(QLocale(QLocale::French,QLocale::Tunisia));
+    Design::applyTheme();
+    app.setWindowIcon(QIcon(Design::brand("logo",QSize(128,128))));
+    const bool demo=app.arguments().contains("--demo");
+    const QString directory=QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    if(!demo && !QDir().mkpath(directory)) {
+        QMessageBox::critical(nullptr,"Stockage indisponible","Impossible de créer le dossier de sauvegarde :\n"+directory); return 1;
+    }
+    auto &db=DatabaseManager::instance();
+    const bool migrate=app.arguments().contains("--migrate-oracle");
+    const bool check=app.arguments().contains("--check-oracle");
+    const bool oracle=!demo && !app.arguments().contains("--local") && (migrate || check || app.arguments().contains("--oracle") || OracleConnection::configured());
+    const bool opened=oracle?db.initializeOracle():db.initialize(demo?":memory:":directory+"/services.sqlite");
+    if(!opened || (demo && !db.addExamples())) {
+        if(migrate || check) { QTextStream(stderr)<<db.lastError()<<Qt::endl;return 1; }
+        QMessageBox::critical(nullptr,"Stockage indisponible","Impossible d'ouvrir les services.\n"+db.lastError()); return 1;
+    }
+    QString error;
+    if(migrate) {
+        const bool ok=OracleConnection::migrateLocal(directory+"/services.sqlite",&error);
+        QTextStream(ok?stdout:stderr)<<(ok?"Migration Oracle terminée; données locales conservées.":error)<<Qt::endl;
+        return ok?0:1;
+    }
+    if(check) {
+        QSqlQuery q(QSqlDatabase::database("aniworld-services"));
+        if(!q.exec("SELECT USER, SYS_CONTEXT('USERENV','CON_NAME') FROM dual") || !q.next()) return 1;
+        QTextStream(stdout)<<"Connexion Qt QODBC : "<<q.value(0).toString()<<" / "<<q.value(1).toString()<<Qt::endl;
+        for(const QString &table:{QString("services"),QString("employes"),QString("medical_records"),QString("accounts"),QString("locaux"),QString("stock_lots")}) {
+            if(!q.exec("SELECT COUNT(*) FROM "+table) || !q.next()) return 1;
+            QTextStream(stdout)<<table<<" : "<<q.value(0).toInt()<<Qt::endl;
+        }
+        return 0;
+    }
+    if(oracle) {
+        QSqlQuery q(QSqlDatabase::database("aniworld-services"));
+        if(!q.exec("SELECT 1 FROM integration_migrations WHERE name='sqlite-to-oracle-v1'") || !q.next()) {
+            QMessageBox::critical(nullptr,"Migration nécessaire","Exécutez ANIWORLD.exe --migrate-oracle avant d'utiliser Oracle.");return 1;
+        }
+    }
+    if(!oracle && !EmployeeStore::importInitial(QSqlDatabase::database("aniworld-services"),&error)) {
+        QMessageBox::critical(nullptr,"Import des employés",error); return 1;
+    }
+    if(demo && !MedicalStore::seedExamples(&error)) { QMessageBox::critical(nullptr,"Dossiers médicaux",error); return 1; }
+    if(!oracle && !demo && !MedicalStore::importInitial(&error)) { QMessageBox::critical(nullptr,"Import des dossiers médicaux",error); return 1; }
+    AppController controller(demo); controller.start();
+    return app.exec();
+}

@@ -1,0 +1,3 @@
+Same Singleton instance: 1
+Driver: QODBC; DSN: Source_Projet2A18
+User: RAWAND; Container: CDB$ROOT; Tables: 5

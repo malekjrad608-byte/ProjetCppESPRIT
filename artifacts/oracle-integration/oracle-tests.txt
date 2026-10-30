@@ -1,0 +1,14 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+QINFO  : ServiceTests::oracleEndToEnd() Oracle connection, idempotent migration and account authentication: OK
+QWARN  : ServiceTests::oracleEndToEnd() QFontDatabase: Cannot find font directory C:/Qt/6.7.3/mingw_64/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QWARN  : ServiceTests::oracleEndToEnd() This plugin does not support propagateSizeHints()
+QINFO  : ServiceTests::oracleEndToEnd() Service/invoice, medical CLOB, employee/planning CRUD and password rollback: OK
+QWARN  : ServiceTests::oracleEndToEnd() "QODBCResult::exec: Unable to execute statement:" 	Error: "[Oracle][ODBC][Ora]ORA-02290: check constraint (ANIWORLD_APP.SYS_C008290) violated\n\u0000???\u0000\u0000\u0000?\u0000???\u0000???\u0000\u0000\u0000\u0000\u0000 \u0000\u0000\u0000\u0000\u0000\u0000\u00000\u0000\u0000\u0000\uDEC0?ö\u0000???\u0000\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u00000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+QINFO  : ServiceTests::oracleEndToEnd() Oracle UI for five modules, stock persistence, audit and stale-write rejection, local import: OK
+PASS   : ServiceTests::oracleEndToEnd()
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 3 passed, 0 failed, 0 skipped, 0 blacklisted, 8301ms
+********* Finished testing of ServiceTests *********

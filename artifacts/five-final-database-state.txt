@@ -1,0 +1,25 @@
+
+TABLES_METIER
+-------------
+	    5
+
+
+RELATIONS_INACTIVES
+-------------------
+		  0
+
+
+OBJETS_INVALIDES
+----------------
+	       0
+
+
+	ID ID_EMPLOYE INVOICE_STATUS					    PRICE
+---------- ---------- ------------------------------------------------ ----------
+	 5	   12 BROUILLON 						0
+
+
+	ID ID_SERVICE
+---------- ----------
+	12	    5
+

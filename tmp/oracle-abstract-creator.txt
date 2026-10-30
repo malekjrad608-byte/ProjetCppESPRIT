@@ -1,0 +1,198 @@
+Compiled from "AbstractOracleConnCreator.java"
+public abstract class oracle.dbtools.connections.db.ora.AbstractOracleConnCreator extends oracle.dbtools.connections.db.AbstractConnectionCreator {
+  protected oracle.dbtools.connections.db.ora.AbstractOracleConnCreator();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method oracle/dbtools/connections/db/AbstractConnectionCreator."<init>":()V
+       4: return
+
+  protected void setCustomProperties(java.util.Properties, java.util.Properties);
+    Code:
+       0: aload_1
+       1: ldc           #3                  // String role
+       3: invokevirtual #4                  // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       6: astore_3
+       7: aload_0
+       8: aload_3
+       9: invokevirtual #5                  // Method hasLength:(Ljava/lang/String;)Z
+      12: ifeq          23
+      15: aload_2
+      16: ldc           #7                  // String internal_logon
+      18: aload_3
+      19: invokevirtual #8                  // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      22: pop
+      23: aload_2
+      24: invokestatic  #9                  // Method setSessionProps:(Ljava/util/Properties;)V
+      27: aload_0
+      28: aload_1
+      29: aload_2
+      30: invokespecial #10                 // Method oracle/dbtools/connections/db/AbstractConnectionCreator.setCustomProperties:(Ljava/util/Properties;Ljava/util/Properties;)V
+      33: return
+
+  private static void addPropertyIfSet(java.util.Properties, java.lang.String, java.lang.String);
+    Code:
+       0: aload_1
+       1: aconst_null
+       2: invokestatic  #11                 // Method java/lang/System.getProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+       5: astore_3
+       6: aload_3
+       7: ifnull        16
+      10: aload_0
+      11: aload_2
+      12: aload_3
+      13: invokestatic  #12                 // Method setProperty:(Ljava/util/Properties;Ljava/lang/String;Ljava/lang/String;)V
+      16: return
+
+  private static void setSessionProps(java.util.Properties);
+    Code:
+       0: aload_0
+       1: ldc           #13                 // String jdbc.terminal
+       3: ldc           #14                 // String v$session.terminal
+       5: invokestatic  #15                 // Method addPropertyIfSet:(Ljava/util/Properties;Ljava/lang/String;Ljava/lang/String;)V
+       8: aload_0
+       9: ldc           #16                 // String jdbc.machine
+      11: ldc           #17                 // String v$session.machine
+      13: invokestatic  #15                 // Method addPropertyIfSet:(Ljava/util/Properties;Ljava/lang/String;Ljava/lang/String;)V
+      16: ldc           #18                 // String jdbc.program
+      18: aconst_null
+      19: invokestatic  #11                 // Method java/lang/System.getProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      22: astore_1
+      23: aload_1
+      24: ifnonnull     31
+      27: invokestatic  #19                 // Method oracle/dbtools/connections/db/DatabaseProviderHelper.getProgramName:()Ljava/lang/String;
+      30: astore_1
+      31: aload_1
+      32: ifnull        42
+      35: aload_0
+      36: ldc           #20                 // String v$session.program
+      38: aload_1
+      39: invokestatic  #12                 // Method setProperty:(Ljava/util/Properties;Ljava/lang/String;Ljava/lang/String;)V
+      42: ldc           #21                 // String jdbc.process
+      44: aconst_null
+      45: invokestatic  #11                 // Method java/lang/System.getProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      48: astore_2
+      49: aload_2
+      50: ifnonnull     132
+      53: ldc           #22                 // String java.vm.name
+      55: invokestatic  #23                 // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      58: astore_3
+      59: ldc           #24                 // String disablePIDCheck
+      61: invokestatic  #23                 // Method java/lang/System.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      64: ifnonnull     132
+      67: aload_3
+      68: ifnull        80
+      71: aload_3
+      72: ldc           #25                 // String OJVM Client VM
+      74: invokevirtual #26                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      77: ifne          132
+      80: invokestatic  #27                 // Method java/lang/management/ManagementFactory.getRuntimeMXBean:()Ljava/lang/management/RuntimeMXBean;
+      83: astore        4
+      85: aload         4
+      87: ifnull        127
+      90: aload         4
+      92: invokeinterface #28,  1           // InterfaceMethod java/lang/management/RuntimeMXBean.getName:()Ljava/lang/String;
+      97: astore        5
+      99: aload         5
+     101: ifnull        127
+     104: aload         5
+     106: bipush        64
+     108: invokevirtual #29                 // Method java/lang/String.indexOf:(I)I
+     111: istore        6
+     113: iload         6
+     115: iflt          127
+     118: aload         5
+     120: iconst_0
+     121: iload         6
+     123: invokevirtual #30                 // Method java/lang/String.substring:(II)Ljava/lang/String;
+     126: astore_2
+     127: goto          132
+     130: astore        4
+     132: aload_2
+     133: ifnull        143
+     136: aload_0
+     137: ldc           #32                 // String v$session.process
+     139: aload_2
+     140: invokestatic  #12                 // Method setProperty:(Ljava/util/Properties;Ljava/lang/String;Ljava/lang/String;)V
+     143: aload_0
+     144: ldc           #33                 // String oracle.net.CONNECT_TIMEOUT
+     146: ldc           #34                 // String 300000
+     148: invokestatic  #12                 // Method setProperty:(Ljava/util/Properties;Ljava/lang/String;Ljava/lang/String;)V
+     151: return
+    Exception table:
+       from    to  target type
+          80   127   130   Class java/lang/Throwable
+
+  private static void setProperty(java.util.Properties, java.lang.String, java.lang.String);
+    Code:
+       0: aload_2
+       1: ifnull        11
+       4: aload_0
+       5: aload_1
+       6: aload_2
+       7: invokevirtual #35                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      10: pop
+      11: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: new           #36                 // class java/util/Properties
+       3: dup
+       4: invokespecial #37                 // Method java/util/Properties."<init>":()V
+       7: astore_1
+       8: aload_1
+       9: invokestatic  #9                  // Method setSessionProps:(Ljava/util/Properties;)V
+      12: aload_1
+      13: invokestatic  #38                 // Method dumpProps:(Ljava/util/Properties;)V
+      16: getstatic     #39                 // Field java/lang/System.out:Ljava/io/PrintStream;
+      19: ldc           #40                 // String \nSystem Properties:
+      21: invokevirtual #41                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+      24: invokestatic  #42                 // Method java/lang/System.getProperties:()Ljava/util/Properties;
+      27: invokestatic  #38                 // Method dumpProps:(Ljava/util/Properties;)V
+      30: return
+
+  private static void dumpProps(java.util.Properties);
+    Code:
+       0: aload_0
+       1: invokevirtual #43                 // Method java/util/Properties.keySet:()Ljava/util/Set;
+       4: invokeinterface #44,  1           // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+       9: astore_1
+      10: aload_1
+      11: invokeinterface #45,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          46
+      19: aload_1
+      20: invokeinterface #46,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      25: astore_2
+      26: getstatic     #39                 // Field java/lang/System.out:Ljava/io/PrintStream;
+      29: aload_2
+      30: aload_0
+      31: aload_2
+      32: invokevirtual #47                 // Method java/util/Properties.get:(Ljava/lang/Object;)Ljava/lang/Object;
+      35: invokedynamic #48,  0             // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/String;
+      40: invokevirtual #41                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+      43: goto          10
+      46: return
+
+  public java.util.Collection<java.lang.String> listAllowedProperties();
+    Code:
+       0: aload_0
+       1: invokespecial #49                 // Method oracle/dbtools/connections/db/AbstractConnectionCreator.listAllowedProperties:()Ljava/util/Collection;
+       4: astore_1
+       5: aload_1
+       6: ldc           #3                  // String role
+       8: invokeinterface #50,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      13: pop
+      14: aload_1
+      15: ldc           #51                 // String hostname
+      17: invokeinterface #50,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      22: pop
+      23: aload_1
+      24: ldc           #52                 // String port
+      26: invokeinterface #50,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      31: pop
+      32: aload_1
+      33: ldc           #53                 // String sid
+      35: invokeinterface #50,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      40: pop
+      41: aload_1
+      42: areturn
+}

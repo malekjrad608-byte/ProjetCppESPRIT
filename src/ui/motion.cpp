@@ -8,8 +8,62 @@
 #include <QTimer>
 #include <QVariantAnimation>
 #include <QEvent>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QAbstractSpinBox>
+#include <QTextEdit>
+#include <QPainterPath>
 
 namespace {
+// An input-transparent overlay keeps native editing, dropdowns and validation intact.
+class InputGlow : public QWidget {
+public:
+    explicit InputGlow(QWidget *target):QWidget(target),m_animation(new QVariantAnimation(this)) {
+        setObjectName("inputHoverGlow"); setAttribute(Qt::WA_TransparentForMouseEvents);
+        setAttribute(Qt::WA_NoSystemBackground); setFocusPolicy(Qt::NoFocus);
+        setGeometry(target->rect()); target->installEventFilter(this);
+        m_animation->setObjectName("inputHoverMotion"); m_animation->setDuration(180);
+        m_animation->setEasingCurve(QEasingCurve::OutCubic);
+        connect(m_animation,&QVariantAnimation::valueChanged,this,[this](const QVariant &v) { m_progress=v.toReal(); update(); });
+        connect(&Motion::instance(),&Motion::changed,this,[this](bool enabled) {
+            if(!enabled) { m_animation->stop(); m_progress=0; update(); }
+        });
+        show(); raise();
+    }
+protected:
+    bool eventFilter(QObject *,QEvent *event) override {
+        const auto type=event->type();
+        if(type==QEvent::Resize) setGeometry(parentWidget()->rect());
+        if(type==QEvent::Show) { show(); raise(); }
+        if(type==QEvent::Hide || (type==QEvent::EnabledChange && !parentWidget()->isEnabled())) {
+            m_animation->stop(); m_progress=0; m_hovered=false; update();
+        } else if(type==QEvent::Enter || type==QEvent::Leave || type==QEvent::FocusIn || type==QEvent::FocusOut) {
+            if(type==QEvent::Enter) m_hovered=true;
+            if(type==QEvent::Leave) m_hovered=false;
+            if(parentWidget()->isEnabled() && Motion::instance().enabled()) {
+                const bool focused=type==QEvent::FocusIn || (type!=QEvent::FocusOut && parentWidget()->hasFocus());
+                m_animation->stop(); m_animation->setStartValue(m_progress);
+                m_animation->setEndValue(m_hovered || focused?1.0:0.0); m_animation->start(); raise();
+            }
+        }
+        return false;
+    }
+    void paintEvent(QPaintEvent *) override {
+        if(m_progress<=0) return;
+        QPainter p(this); p.setRenderHint(QPainter::Antialiasing); p.setBrush(Qt::NoBrush);
+        // Preserve the error border when validation flags a field.
+        const QColor accent(parentWidget()->property("invalid").toBool()?"#C26B5E":"#FF9B28");
+        for(int width:{7,4,2}) {
+            QColor color=accent; color.setAlphaF((width==2?.9:.08)*m_progress);
+            p.setPen(QPen(color,width)); p.drawRoundedRect(QRectF(rect()).adjusted(2,2,-2,-2),6,6);
+        }
+    }
+private:
+    QVariantAnimation *m_animation;
+    qreal m_progress=0;
+    bool m_hovered=false;
+};
+
 // Fade a decorative veil over the current, fully painted page. Never change
 // the opacity of the live page or include the outgoing page in the animation.
 class Reveal : public QWidget {
@@ -51,6 +105,18 @@ Motion::Motion(QObject *parent):QObject(parent),
 Motion &Motion::instance() {
     static auto *motion=new Motion(qApp);
     return *motion;
+}
+void Motion::installHoverEffects() { qApp->installEventFilter(&instance()); }
+bool Motion::eventFilter(QObject *object,QEvent *event) {
+    if(event->type()==QEvent::Polish) {
+        auto *widget=qobject_cast<QWidget *>(object);
+        const bool input=qobject_cast<QLineEdit *>(widget) || qobject_cast<QComboBox *>(widget)
+            || qobject_cast<QAbstractSpinBox *>(widget) || qobject_cast<QTextEdit *>(widget);
+        if(input && !widget->findChild<QWidget *>("inputHoverGlow",Qt::FindDirectChildrenOnly)
+            && !qobject_cast<QAbstractSpinBox *>(widget->parentWidget()) && !qobject_cast<QComboBox *>(widget->parentWidget()))
+            new InputGlow(widget);
+    }
+    return QObject::eventFilter(object,event);
 }
 void Motion::setEnabled(bool enabled,bool persist) {
     if(persist) QSettings("ANIWORLD","ANIWORLD").setValue("interface/animations",enabled);

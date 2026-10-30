@@ -1,0 +1,60 @@
+
+COMPTE
+--------------------------------------------------------------------------------------------------------------------------------
+BASE
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+RAWAND
+CDB$ROOT
+
+
+OK : LOCAUX.ID_SERVICE -> SERVICES.ID ; obligatoire ; 0 orphelin
+OK : STOCK_LOTS.ID_LOCAL -> LOCAUX.ID ; obligatoire ; 0 orphelin
+OK : EMPLOYES.ID_SERVICE -> SERVICES.ID ; obligatoire ; 0 orphelin
+OK : MEDICAL_RECORDS.ID_EMPLOYE -> EMPLOYES.ID ; obligatoire ; 0 orphelin
+OK : les cinq gestions forment un seul ensemble relie.
+STOCK_LOTS -> LOCAUX -> SERVICES <- EMPLOYES <- MEDICAL_RECORDS
+
+PL/SQL procedure successfully completed.
+
+
+SERVICE_ID   LOCAL_ID STOCK_LOT 													       EMPLOYE_ID MEDICAL_ID
+---------- ---------- ------------------------------------------------------------------------------------------------------------------------ ---------- ----------
+	 5																	       12	  45
+	30																	       33
+
+
+TABLE_NAME
+--------------------------------------------------------------------------------------------------------------------------------
+COLUMN_NAME
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+PARENT_TABLE
+--------------------------------------------------------------------------------------------------------------------------------
+PARENT_COLUMN
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+STATUS	 VALIDATED
+-------- -------------
+EMPLOYES
+ID_SERVICE
+SERVICES
+ID
+ENABLED  VALIDATED
+
+LOCAUX
+ID_SERVICE
+SERVICES
+ID
+ENABLED  VALIDATED
+
+MEDICAL_RECORDS
+ID_EMPLOYE
+EMPLOYES
+ID
+ENABLED  VALIDATED
+
+STOCK_LOTS
+ID_LOCAL
+LOCAUX
+ID
+ENABLED  VALIDATED
+
+

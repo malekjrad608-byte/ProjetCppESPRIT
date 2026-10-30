@@ -28,9 +28,9 @@ void AnimatedButton::stopMotion() {
 bool AnimatedButton::event(QEvent *event) {
     const auto type=event->type();
     if(type==QEvent::Hide || (type==QEvent::EnabledChange && !isEnabled())) stopMotion();
-    else if((type==QEvent::Enter || type==QEvent::Leave) && isEnabled() && Motion::instance().enabled()) {
+    else if((type==QEvent::Enter || type==QEvent::Leave || type==QEvent::FocusIn || type==QEvent::FocusOut) && isEnabled() && Motion::instance().enabled()) {
         m_hover->stop(); m_hover->setStartValue(m_highlight);
-        m_hover->setEndValue(type==QEvent::Enter?1.0:0.0); m_hover->start();
+        m_hover->setEndValue(type==QEvent::Enter || type==QEvent::FocusIn ? 1.0 : 0.0); m_hover->start();
     }
     return QPushButton::event(event);
 }
@@ -42,14 +42,16 @@ void AnimatedButton::paintEvent(QPaintEvent *event) {
     if(!isEnabled() || !Motion::instance().enabled()) return;
     QPainter painter(this); painter.setRenderHint(QPainter::Antialiasing);
     QPainterPath clip; clip.addRoundedRect(QRectF(rect()).adjusted(1,1,-1,-1),7,7); painter.setClipPath(clip);
-    const bool primary=property("role")=="primary";
-    const QColor accent=primary?QColor(Qt::white):QColor("#377E8E");
+    const QColor accent("#FF9B28");
     if(m_highlight>0) {
-        QColor border=accent; border.setAlphaF(.25*m_highlight);
-        painter.setBrush(Qt::NoBrush); painter.setPen(QPen(border,1.4));
-        painter.drawRoundedRect(QRectF(rect()).adjusted(1.5,1.5,-1.5,-1.5),6,6);
+        painter.setBrush(Qt::NoBrush);
+        for(int width:{7,4,2}) {
+            QColor border=accent; border.setAlphaF((width==2?.95:.08)*m_highlight);
+            painter.setPen(QPen(border,width));
+            painter.drawRoundedRect(QRectF(rect()).adjusted(2,2,-2,-2),6,6);
+        }
         QLinearGradient shine(0,0,width(),height());
-        QColor glow=accent; glow.setAlphaF(.075*m_highlight);
+        QColor glow=accent; glow.setAlphaF(.18*m_highlight);
         shine.setColorAt(0,glow); shine.setColorAt(1,Qt::transparent);
         painter.fillPath(clip,shine);
     }

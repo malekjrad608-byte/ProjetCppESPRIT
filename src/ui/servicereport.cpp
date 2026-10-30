@@ -44,9 +44,9 @@ bool ServiceReport::writePdf(const QString &path, const QList<Service> &services
         QList<QStringList> rows;
         QList<qreal> heights;
         for (const auto &service : services) {
-            QStringList row = {service.name+QString("\nSRV-%1").arg(service.id,3,10,QChar('0')),
-                service.category,service.dateTime.toString("dd/MM/yyyy HH:mm")+QString("\n%1 min").arg(service.duration),
-                service.responsible.isEmpty()?"Non attribué":service.responsible,service.status,Design::money(service.price)};
+            QStringList row = {service.getName()+QString("\nSRV-%1").arg(service.getId(),3,10,QChar('0')),
+                service.getCategory(),service.getDateTime().toString("dd/MM/yyyy HH:mm")+QString("\n%1 min").arg(service.getDuration()),
+                service.getResponsible().isEmpty()?"Non attribué":service.getResponsible(),service.getStatus(),Design::money(service.getPrice())};
             qreal rowHeight=30;
             for (int col=0;col<row.size();++col) {
                 const auto &metrics = col==0 ? boldMetrics : regularMetrics;

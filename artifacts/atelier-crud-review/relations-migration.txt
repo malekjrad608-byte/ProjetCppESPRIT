@@ -1,0 +1,37 @@
+
+PL/SQL procedure successfully completed.
+
+
+Table altered.
+
+
+Table altered.
+
+
+Table altered.
+
+
+TABLE_NAME
+--------------------------------------------------------------------------------------------------------------------------------
+CONSTRAINT_NAME 														 STATUS   VALIDATED
+-------------------------------------------------------------------------------------------------------------------------------- -------- -------------
+EMPLOYES
+FK_EMPLOYE_SERVICE														 ENABLED  VALIDATED
+
+LOCAUX
+FK_LOCAL_SERVICE														 ENABLED  VALIDATED
+
+MEDICAL_RECORDS
+FK_MEDICAL_EMPLOYE														 ENABLED  VALIDATED
+
+STOCK_LOTS
+FK_STOCK_LOCAL															 ENABLED  VALIDATED
+
+
+
+OBJECT_NAME															 OBJECT_TYPE
+-------------------------------------------------------------------------------------------------------------------------------- -----------------------
+PLANNING_AFFECTATIONS														 VIEW
+SERVICES_INVOICE_GUARD														 TRIGGER
+SERVICES_TRG															 TRIGGER
+

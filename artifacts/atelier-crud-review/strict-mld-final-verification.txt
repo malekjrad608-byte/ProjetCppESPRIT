@@ -1,0 +1,56 @@
+SERVICE(ID_SERV,REF_SERVICE,CATEGORIE,STATUT,DATE_HEUR,DUREE,TARIF,PRESTATION)
+LOCAL(ID_LOCAL,NOM_LOCAL,TYPE,ETAGE,CAPACITE,SPECIALITE,ETAT,ID_SERV)
+STOCK(ID_ARTICLE,ARTICLE,NOM_ARTICLE,LOT,QUANTITE_DISP,TYPE_ARTICLE,SEUIL_MIN,DATE_ECHEANCE,ID_LOCAL)
+EMPLOYER(ID_EMP,NOM,PRENOM,CIN,DATE_NAISS,ADRESSE,TEL,POSTE,COURRIEL,COMPETENCES,DATE_EMBAUCHE,TYPE_CONTRAT,SALAIRE,CHARGE,DISPONIBLE,DISPO_REPOS,ID_SERV)
+MEDICAL(ID_DOSS,DATE_CONSULTATION,MOTIF,DIAGNOSTIC,ID_ANIMAL,NOM_ANIMAL,ESPECE,RACE,AGE,SEXE,PROPRIETAIRE,ID_EMP)
+OK: colonnes exactes, ordre exact, 5 PK, 5 UNIQUE, 5 generateurs.
+
+PL/SQL procedure successfully completed.
+
+
+COMPTE
+--------------------------------------------------------------------------------------------------------------------------------
+BASE
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+RAWAND
+CDB$ROOT
+
+
+OK : LOCAL.ID_SERV -> SERVICE.ID_SERV ; obligatoire ; 0 orphelin
+OK : STOCK.ID_LOCAL -> LOCAL.ID_LOCAL ; obligatoire ; 0 orphelin
+OK : EMPLOYER.ID_SERV -> SERVICE.ID_SERV ; obligatoire ; 0 orphelin
+OK : MEDICAL.ID_EMP -> EMPLOYER.ID_EMP ; obligatoire ; 0 orphelin
+OK : les cinq gestions forment un seul ensemble relie.
+STOCK -> LOCAL -> SERVICE <- EMPLOYER <- MEDICAL
+
+PL/SQL procedure successfully completed.
+
+
+SERVICE_ID   LOCAL_ID
+---------- ----------
+STOCK_LOT
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+EMPLOYE_ID MEDICAL_ID
+---------- ----------
+	 5
+
+	12	   45
+
+	30
+
+	33	   65
+
+	77
+
+	95
+
+
+
+TABLE_NA ROWS_COUNT
+-------- ----------
+SERVICE 	  3
+LOCAL		  0
+STOCK		  0
+EMPLOYER	  3
+MEDICAL 	  2
+

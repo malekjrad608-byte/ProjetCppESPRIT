@@ -1,0 +1,6 @@
+accounts : 6 rows, 30 values identical
+services : 2 rows, 24 values identical
+employes : 6 rows, 66 values identical
+planning_affectations : 0 rows, 0 values identical
+medical_records : 8 rows, 136 values identical
+All schema objects valid. Original SQLite data and account credentials preserved.

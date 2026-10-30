@@ -1,0 +1,9 @@
+<RCC><qresource prefix="/">
+    <file>brand/logo.png</file>
+    <file>brand/logo-hover.gif</file>
+    <file>login/check.svg</file>
+    <file>theme.qss</file>
+    <file>data/employees-initial.sqlite</file>
+    <file>icons/down.xpm</file>
+    <file>icons/up.xpm</file>
+</qresource></RCC>

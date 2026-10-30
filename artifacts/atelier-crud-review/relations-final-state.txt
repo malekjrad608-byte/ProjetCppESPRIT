@@ -1,0 +1,28 @@
+
+RELATION											     STATUS   VALIDATED
+---------------------------------------------------------------------------------------------------- -------- -------------
+EMPLOYES.ID_SERVICE -> SERVICES.ID								     ENABLED  VALIDATED
+LOCAUX.ID_SERVICE -> SERVICES.ID								     ENABLED  VALIDATED
+MEDICAL_RECORDS.ID_EMPLOYE -> EMPLOYES.ID							     ENABLED  VALIDATED
+STOCK_LOTS.ID_LOCAL -> LOCAUX.ID								     ENABLED  VALIDATED
+
+
+TABLE_NAME	ROWS_COUNT
+--------------- ----------
+SERVICES		 2
+EMPLOYES		 2
+MEDICAL_RECORDS 	 1
+LOCAUX			 0
+STOCK_LOTS		 0
+
+
+no rows selected
+
+
+TABLE_NAME	   ORPHANS
+--------------- ----------
+EMPLOYES		 0
+LOCAUX			 0
+STOCK_LOTS		 0
+MEDICAL_RECORDS 	 0
+

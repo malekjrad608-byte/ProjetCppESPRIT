@@ -1,0 +1,2234 @@
+{
+  "tables": [
+    {
+      "name": "CLIENT",
+      "group": "Soins",
+      "description": "Personne de référence, propriétaire ou payeur. Une personne peut aussi avoir un profil adoptant.",
+      "columns": [
+        {
+          "name": "id_client",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "nom",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "prenom",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "telephone",
+          "type": "VARCHAR2(30 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "email",
+          "type": "VARCHAR2(150 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "adresse",
+          "type": "VARCHAR2(250 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_client"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "ANIMAL",
+      "group": "Soins",
+      "description": "Identité partagée entre Services, Dossiers médicaux et Adoptions. Propriétaire facultatif pour les animaux du centre.",
+      "columns": [
+        {
+          "name": "id_animal",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_client",
+          "type": "NUMBER(10)",
+          "required": false,
+          "default": null,
+          "check": null,
+          "ref": "CLIENT",
+          "unique": false
+        },
+        {
+          "name": "nom",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "espece",
+          "type": "VARCHAR2(60 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "race",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "sexe",
+          "type": "VARCHAR2(15 CHAR)",
+          "required": true,
+          "default": null,
+          "check": "sexe IN ('MALE','FEMELLE','INCONNU')"
+        },
+        {
+          "name": "date_naissance",
+          "type": "DATE",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "identifiant_puce",
+          "type": "VARCHAR2(80 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "besoins_foyer",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "statut_placement",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": "'AU_CENTRE'",
+          "check": "statut_placement IN ('AU_CENTRE','PROPRIETAIRE','ADOPTE')"
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_animal"
+      ],
+      "checks": [],
+      "uniques": [
+        [
+          "identifiant_puce"
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "EMPLOYE",
+      "group": "Employés",
+      "description": "Annuaire et disponibilité hebdomadaire de référence ; la charge est calculée depuis les services planifiés.",
+      "columns": [
+        {
+          "name": "id_employe",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "nom",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "prenom",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "email",
+          "type": "VARCHAR2(150 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "telephone",
+          "type": "VARCHAR2(30 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "poste",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "date_embauche",
+          "type": "DATE",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "heures_hebdo",
+          "type": "NUMBER(6,2)",
+          "required": true,
+          "default": "35",
+          "check": "heures_hebdo>=0"
+        },
+        {
+          "name": "habilitation_medicale",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "habilitation_medicale IN (0,1)"
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_employe"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "COMPTE",
+      "group": "Employés",
+      "description": "Authentification applicative. Le compte technique Oracle reste extérieur au modèle métier.",
+      "columns": [
+        {
+          "name": "id_compte",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_employe",
+          "type": "NUMBER(10)",
+          "required": false,
+          "default": null,
+          "check": null,
+          "ref": "EMPLOYE",
+          "unique": true
+        },
+        {
+          "name": "login",
+          "type": "VARCHAR2(80 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "role",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": null,
+          "check": "role IN ('ADMIN','SERVICES','EMPLOYES','STOCK','LOCAUX','MEDICAL','ADOPTIONS')"
+        },
+        {
+          "name": "sel",
+          "type": "RAW(24)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "empreinte",
+          "type": "RAW(32)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "iterations",
+          "type": "NUMBER(7)",
+          "required": true,
+          "default": "100000",
+          "check": "iterations BETWEEN 10000 AND 1000000"
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_compte"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "COMPETENCE",
+      "group": "Employés",
+      "description": "Référentiel des compétences exigées par les services.",
+      "columns": [
+        {
+          "name": "id_competence",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "libelle",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_competence"
+      ],
+      "checks": [],
+      "uniques": [
+        [
+          "libelle"
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "EMPLOYE_COMPETENCE",
+      "group": "Employés",
+      "description": "Association plusieurs-à-plusieurs entre employés et compétences.",
+      "columns": [
+        {
+          "name": "id_employe",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "EMPLOYE",
+          "unique": false
+        },
+        {
+          "name": "id_competence",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "COMPETENCE",
+          "unique": false
+        },
+        {
+          "name": "date_validation",
+          "type": "DATE",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "valide_jusquau",
+          "type": "DATE",
+          "required": false,
+          "default": null,
+          "check": null
+        }
+      ],
+      "pk": [
+        "id_employe",
+        "id_competence"
+      ],
+      "checks": [
+        "valide_jusquau IS NULL OR date_validation IS NULL OR valide_jusquau>=date_validation"
+      ],
+      "uniques": [],
+      "audit": false
+    },
+    {
+      "name": "CRENEAU_EMPLOYE",
+      "group": "Employés",
+      "description": "Disponibilités et absences datées pour contrôler les affectations.",
+      "columns": [
+        {
+          "name": "id_creneau_employe",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_employe",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "EMPLOYE",
+          "unique": false
+        },
+        {
+          "name": "debut",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "fin",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "type_creneau",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": null,
+          "check": "type_creneau IN ('DISPONIBLE','ABSENT')"
+        },
+        {
+          "name": "motif",
+          "type": "VARCHAR2(250 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_creneau_employe"
+      ],
+      "checks": [
+        "fin>debut"
+      ],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "LOCAL",
+      "group": "Locaux",
+      "description": "Local partagé : capacité, équipements et état de remise en service.",
+      "columns": [
+        {
+          "name": "id_local",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "nom",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "type_local",
+          "type": "VARCHAR2(80 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "etage",
+          "type": "NUMBER(3)",
+          "required": true,
+          "default": "0",
+          "check": null
+        },
+        {
+          "name": "capacite",
+          "type": "NUMBER(6)",
+          "required": true,
+          "default": null,
+          "check": "capacite>0"
+        },
+        {
+          "name": "surface_m2",
+          "type": "NUMBER(8,2)",
+          "required": false,
+          "default": null,
+          "check": "surface_m2>0"
+        },
+        {
+          "name": "equipements",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "etat",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": "'DISPONIBLE'",
+          "check": "etat IN ('DISPONIBLE','A_NETTOYER','NETTOYAGE','MAINTENANCE','HORS_SERVICE')"
+        },
+        {
+          "name": "seuil_entretien_h",
+          "type": "NUMBER(8,2)",
+          "required": true,
+          "default": "100",
+          "check": "seuil_entretien_h>0"
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_local"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "INTERVENTION_LOCAL",
+      "group": "Locaux",
+      "description": "Nettoyage ou maintenance, avec auteur, période et validation du contrôle.",
+      "columns": [
+        {
+          "name": "id_intervention_local",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_local",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "LOCAL",
+          "unique": false
+        },
+        {
+          "name": "id_employe",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "EMPLOYE",
+          "unique": false
+        },
+        {
+          "name": "type_intervention",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": null,
+          "check": "type_intervention IN ('NETTOYAGE','MAINTENANCE')"
+        },
+        {
+          "name": "debut",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "fin",
+          "type": "TIMESTAMP",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "statut",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": "'PLANIFIE'",
+          "check": "statut IN ('PLANIFIE','EN_COURS','TERMINE','ANNULE')"
+        },
+        {
+          "name": "controle_valide",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "controle_valide IN (0,1)"
+        },
+        {
+          "name": "observations",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_intervention_local"
+      ],
+      "checks": [
+        "fin IS NULL OR fin>=debut",
+        "statut<>'TERMINE' OR (fin IS NOT NULL AND controle_valide=1)"
+      ],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "SERVICE",
+      "group": "Services",
+      "description": "Prestation planifiée, conforme au cahier : animal, employé, local, date, durée et tarif. Ce n’est pas un catalogue abstrait.",
+      "columns": [
+        {
+          "name": "id_service",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_animal",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "ANIMAL",
+          "unique": false
+        },
+        {
+          "name": "id_employe",
+          "type": "NUMBER(10)",
+          "required": false,
+          "default": null,
+          "check": null,
+          "ref": "EMPLOYE",
+          "unique": false
+        },
+        {
+          "name": "id_local",
+          "type": "NUMBER(10)",
+          "required": false,
+          "default": null,
+          "check": null,
+          "ref": "LOCAL",
+          "unique": false
+        },
+        {
+          "name": "libelle",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "categorie",
+          "type": "VARCHAR2(80 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "debut",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "duree_minutes",
+          "type": "NUMBER(6)",
+          "required": true,
+          "default": null,
+          "check": "duree_minutes>0"
+        },
+        {
+          "name": "tarif_tnd",
+          "type": "NUMBER(12,3)",
+          "required": true,
+          "default": "0",
+          "check": "tarif_tnd>=0"
+        },
+        {
+          "name": "statut",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": "'PLANIFIE'",
+          "check": "statut IN ('PLANIFIE','EN_COURS','TERMINE','ANNULE')"
+        },
+        {
+          "name": "motif_annulation",
+          "type": "VARCHAR2(250 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "notes",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_service"
+      ],
+      "checks": [
+        "statut NOT IN ('EN_COURS','TERMINE') OR (id_employe IS NOT NULL AND id_local IS NOT NULL)",
+        "statut<>'ANNULE' OR motif_annulation IS NOT NULL"
+      ],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "SERVICE_COMPETENCE",
+      "group": "Services",
+      "description": "Compétences requises pour une prestation, sans liste de valeurs dans une cellule.",
+      "columns": [
+        {
+          "name": "id_service",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "SERVICE",
+          "unique": false
+        },
+        {
+          "name": "id_competence",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "COMPETENCE",
+          "unique": false
+        }
+      ],
+      "pk": [
+        "id_service",
+        "id_competence"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": false
+    },
+    {
+      "name": "DOSSIER_MEDICAL",
+      "group": "Soins",
+      "description": "Un dossier longitudinal unique par animal ; les consultations sont des lignes distinctes.",
+      "columns": [
+        {
+          "name": "id_dossier_medical",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_animal",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "ANIMAL",
+          "unique": true
+        },
+        {
+          "name": "date_ouverture",
+          "type": "DATE",
+          "required": true,
+          "default": "SYSDATE",
+          "check": null
+        },
+        {
+          "name": "antecedents",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "allergies",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "observations",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_dossier_medical"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "CONSULTATION",
+      "group": "Soins",
+      "description": "Acte clinique d’un dossier, associé à une prestation et à son vétérinaire. Poids facultatif mais strictement positif si renseigné.",
+      "columns": [
+        {
+          "name": "id_consultation",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_dossier_medical",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "DOSSIER_MEDICAL",
+          "unique": false
+        },
+        {
+          "name": "id_service",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "SERVICE",
+          "unique": true
+        },
+        {
+          "name": "id_employe",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "EMPLOYE",
+          "unique": false
+        },
+        {
+          "name": "date_consultation",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "motif",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "diagnostic",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "traitement",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "poids_kg",
+          "type": "NUMBER(7,3)",
+          "required": false,
+          "default": null,
+          "check": "poids_kg>0"
+        },
+        {
+          "name": "observations",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "validee",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "validee IN (0,1)"
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_consultation"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "VACCINATION",
+      "group": "Soins",
+      "description": "Événement vaccinal daté ; échéance saisie par le vétérinaire, sans calendrier médical automatique.",
+      "columns": [
+        {
+          "name": "id_vaccination",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_dossier_medical",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "DOSSIER_MEDICAL",
+          "unique": false
+        },
+        {
+          "name": "id_employe",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "EMPLOYE",
+          "unique": false
+        },
+        {
+          "name": "produit",
+          "type": "VARCHAR2(150 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "date_vaccination",
+          "type": "DATE",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "prochaine_echeance",
+          "type": "DATE",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "numero_lot",
+          "type": "VARCHAR2(100 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "observations",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_vaccination"
+      ],
+      "checks": [
+        "prochaine_echeance IS NULL OR prochaine_echeance>=date_vaccination"
+      ],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "FACTURE",
+      "group": "Factures",
+      "description": "Au plus une facture par consultation ; créée en brouillon, puis émise après validation. Identité du client figée à l’émission.",
+      "columns": [
+        {
+          "name": "id_facture",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_consultation",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "CONSULTATION",
+          "unique": true
+        },
+        {
+          "name": "id_client",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "CLIENT",
+          "unique": false
+        },
+        {
+          "name": "numero",
+          "type": "VARCHAR2(40 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "date_emission",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "nom_client_facture",
+          "type": "VARCHAR2(250 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "adresse_client_facture",
+          "type": "VARCHAR2(500 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "statut",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": "'BROUILLON'",
+          "check": "statut IN ('BROUILLON','EMISE','PAYEE','ANNULEE')"
+        },
+        {
+          "name": "date_paiement",
+          "type": "TIMESTAMP",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_facture"
+      ],
+      "checks": [
+        "statut<>'PAYEE' OR date_paiement IS NOT NULL",
+        "date_paiement IS NULL OR date_paiement>=date_emission"
+      ],
+      "uniques": [
+        [
+          "numero"
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "LIGNE_FACTURE",
+      "group": "Factures",
+      "description": "Détail historique : désignation, quantité et prix unitaire figés ; aucune dépendance au tarif courant du service.",
+      "columns": [
+        {
+          "name": "id_facture",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "FACTURE",
+          "unique": false
+        },
+        {
+          "name": "numero_ligne",
+          "type": "NUMBER(4)",
+          "required": true,
+          "default": null,
+          "check": "numero_ligne>0"
+        },
+        {
+          "name": "designation",
+          "type": "VARCHAR2(500 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "quantite",
+          "type": "NUMBER(10,3)",
+          "required": true,
+          "default": null,
+          "check": "quantite>0"
+        },
+        {
+          "name": "prix_unitaire_tnd",
+          "type": "NUMBER(12,3)",
+          "required": true,
+          "default": null,
+          "check": "prix_unitaire_tnd>=0"
+        }
+      ],
+      "pk": [
+        "id_facture",
+        "numero_ligne"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": false
+    },
+    {
+      "name": "STOCK",
+      "group": "Stock",
+      "description": "Emplacement d’inventaire ; un local peut accueillir plusieurs zones de stock.",
+      "columns": [
+        {
+          "name": "id_stock",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_local",
+          "type": "NUMBER(10)",
+          "required": false,
+          "default": null,
+          "check": null,
+          "ref": "LOCAL",
+          "unique": false
+        },
+        {
+          "name": "nom",
+          "type": "VARCHAR2(120 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "description",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_stock"
+      ],
+      "checks": [],
+      "uniques": [
+        [
+          "nom"
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "ARTICLE",
+      "group": "Stock",
+      "description": "Référence produit commune à plusieurs lots et emplacements. Quantité et péremption appartiennent au lot.",
+      "columns": [
+        {
+          "name": "id_article",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "reference",
+          "type": "VARCHAR2(80 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "designation",
+          "type": "VARCHAR2(150 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "categorie",
+          "type": "VARCHAR2(80 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "unite",
+          "type": "VARCHAR2(30 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "seuil_alerte",
+          "type": "NUMBER(12,3)",
+          "required": true,
+          "default": "0",
+          "check": "seuil_alerte>=0"
+        },
+        {
+          "name": "prix_unitaire_tnd",
+          "type": "NUMBER(12,3)",
+          "required": true,
+          "default": "0",
+          "check": "prix_unitaire_tnd>=0"
+        },
+        {
+          "name": "fournisseur",
+          "type": "VARCHAR2(150 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "delai_fournisseur_j",
+          "type": "NUMBER(5)",
+          "required": true,
+          "default": "0",
+          "check": "delai_fournisseur_j>=0"
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_article"
+      ],
+      "checks": [],
+      "uniques": [
+        [
+          "reference"
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "LOT_STOCK",
+      "group": "Stock",
+      "description": "Lot d’un article dans un stock, avec quantité courante et échéance. Les sorties sont atomiques et journalisées.",
+      "columns": [
+        {
+          "name": "id_lot_stock",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_article",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "ARTICLE",
+          "unique": false
+        },
+        {
+          "name": "id_stock",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "STOCK",
+          "unique": false
+        },
+        {
+          "name": "numero_lot",
+          "type": "VARCHAR2(100 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "quantite",
+          "type": "NUMBER(12,3)",
+          "required": true,
+          "default": "0",
+          "check": "quantite>=0"
+        },
+        {
+          "name": "date_peremption",
+          "type": "DATE",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "bloque",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "bloque IN (0,1)"
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_lot_stock"
+      ],
+      "checks": [],
+      "uniques": [
+        [
+          "id_article",
+          "id_stock",
+          "numero_lot"
+        ]
+      ],
+      "audit": true
+    },
+    {
+      "name": "MOUVEMENT_STOCK",
+      "group": "Stock",
+      "description": "Historique immuable des entrées et sorties ; une correction se fait par mouvement inverse motivé.",
+      "columns": [
+        {
+          "name": "id_mouvement_stock",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_lot_stock",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "LOT_STOCK",
+          "unique": false
+        },
+        {
+          "name": "id_compte",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "COMPTE",
+          "unique": false
+        },
+        {
+          "name": "id_service",
+          "type": "NUMBER(10)",
+          "required": false,
+          "default": null,
+          "check": null,
+          "ref": "SERVICE",
+          "unique": false
+        },
+        {
+          "name": "type_mouvement",
+          "type": "VARCHAR2(10 CHAR)",
+          "required": true,
+          "default": null,
+          "check": "type_mouvement IN ('ENTREE','SORTIE')"
+        },
+        {
+          "name": "quantite",
+          "type": "NUMBER(12,3)",
+          "required": true,
+          "default": null,
+          "check": "quantite>0"
+        },
+        {
+          "name": "date_mouvement",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "motif",
+          "type": "VARCHAR2(500 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        }
+      ],
+      "pk": [
+        "id_mouvement_stock"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": false
+    },
+    {
+      "name": "ADOPTANT",
+      "group": "Adoptions",
+      "description": "Profil de candidature d’une personne CLIENT ; identité non dupliquée.",
+      "columns": [
+        {
+          "name": "id_adoptant",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_client",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "CLIENT",
+          "unique": true
+        },
+        {
+          "name": "logement",
+          "type": "VARCHAR2(100 CHAR)",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "espace_exterieur",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "espace_exterieur IN (0,1)"
+        },
+        {
+          "name": "nombre_enfants",
+          "type": "NUMBER(3)",
+          "required": true,
+          "default": "0",
+          "check": "nombre_enfants>=0"
+        },
+        {
+          "name": "autres_animaux",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "experience",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "disponibilite",
+          "type": "VARCHAR2(250 CHAR)",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_adoptant"
+      ],
+      "checks": [],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "ADOPTION",
+      "group": "Adoptions",
+      "description": "Demande pour un animal, instruite par un référent. Une seule demande validée active par animal.",
+      "columns": [
+        {
+          "name": "id_adoption",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_animal",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "ANIMAL",
+          "unique": false
+        },
+        {
+          "name": "id_adoptant",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "ADOPTANT",
+          "unique": false
+        },
+        {
+          "name": "id_employe",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "EMPLOYE",
+          "unique": false
+        },
+        {
+          "name": "date_demande",
+          "type": "DATE",
+          "required": true,
+          "default": "SYSDATE",
+          "check": null
+        },
+        {
+          "name": "statut",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": "'EN_ETUDE'",
+          "check": "statut IN ('EN_ETUDE','VALIDEE','REFUSEE','ANNULEE')"
+        },
+        {
+          "name": "date_decision",
+          "type": "DATE",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "date_placement",
+          "type": "DATE",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "pieces_verifiees",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "pieces_verifiees IN (0,1)"
+        },
+        {
+          "name": "rencontre_effectuee",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "rencontre_effectuee IN (0,1)"
+        },
+        {
+          "name": "accord_responsable",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "accord_responsable IN (0,1)"
+        },
+        {
+          "name": "observations",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_adoption"
+      ],
+      "checks": [
+        "date_decision IS NULL OR date_decision>=date_demande",
+        "date_placement IS NULL OR (date_decision IS NOT NULL AND date_placement>=date_decision)",
+        "statut<>'VALIDEE' OR (date_decision IS NOT NULL AND pieces_verifiees=1 AND rencontre_effectuee=1 AND accord_responsable=1)",
+        "date_placement IS NULL OR statut='VALIDEE'"
+      ],
+      "uniques": [],
+      "audit": true
+    },
+    {
+      "name": "SUIVI_ADOPTION",
+      "group": "Adoptions",
+      "description": "Actions de suivi J+7 et J+30, contact et résultat ; validation humaine.",
+      "columns": [
+        {
+          "name": "id_suivi_adoption",
+          "type": "NUMBER(10)",
+          "required": true,
+          "identity": true
+        },
+        {
+          "name": "id_adoption",
+          "type": "NUMBER(10)",
+          "required": true,
+          "default": null,
+          "check": null,
+          "ref": "ADOPTION",
+          "unique": false
+        },
+        {
+          "name": "id_compte",
+          "type": "NUMBER(10)",
+          "required": false,
+          "default": null,
+          "check": null,
+          "ref": "COMPTE",
+          "unique": false
+        },
+        {
+          "name": "jalon_jours",
+          "type": "NUMBER(2)",
+          "required": true,
+          "default": null,
+          "check": "jalon_jours IN (7,30)"
+        },
+        {
+          "name": "date_prevue",
+          "type": "DATE",
+          "required": true,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "date_contact",
+          "type": "TIMESTAMP",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "statut",
+          "type": "VARCHAR2(20 CHAR)",
+          "required": true,
+          "default": "'A_FAIRE'",
+          "check": "statut IN ('A_FAIRE','REALISE','ANNULE')"
+        },
+        {
+          "name": "resultat",
+          "type": "CLOB",
+          "required": false,
+          "default": null,
+          "check": null
+        },
+        {
+          "name": "cree_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "modifie_le",
+          "type": "TIMESTAMP",
+          "required": true,
+          "default": "SYSTIMESTAMP",
+          "check": null
+        },
+        {
+          "name": "archive",
+          "type": "NUMBER(1)",
+          "required": true,
+          "default": "0",
+          "check": "archive IN (0,1)"
+        }
+      ],
+      "pk": [
+        "id_suivi_adoption"
+      ],
+      "checks": [
+        "statut<>'REALISE' OR date_contact IS NOT NULL"
+      ],
+      "uniques": [
+        [
+          "id_adoption",
+          "jalon_jours"
+        ]
+      ],
+      "audit": true
+    }
+  ],
+  "relations": [
+    {
+      "parent": "CLIENT",
+      "child": "ANIMAL",
+      "field": "id_client",
+      "optional": true,
+      "unique": false
+    },
+    {
+      "parent": "EMPLOYE",
+      "child": "COMPTE",
+      "field": "id_employe",
+      "optional": true,
+      "unique": true
+    },
+    {
+      "parent": "EMPLOYE",
+      "child": "EMPLOYE_COMPETENCE",
+      "field": "id_employe",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "COMPETENCE",
+      "child": "EMPLOYE_COMPETENCE",
+      "field": "id_competence",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "EMPLOYE",
+      "child": "CRENEAU_EMPLOYE",
+      "field": "id_employe",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "LOCAL",
+      "child": "INTERVENTION_LOCAL",
+      "field": "id_local",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "EMPLOYE",
+      "child": "INTERVENTION_LOCAL",
+      "field": "id_employe",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "ANIMAL",
+      "child": "SERVICE",
+      "field": "id_animal",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "EMPLOYE",
+      "child": "SERVICE",
+      "field": "id_employe",
+      "optional": true,
+      "unique": false
+    },
+    {
+      "parent": "LOCAL",
+      "child": "SERVICE",
+      "field": "id_local",
+      "optional": true,
+      "unique": false
+    },
+    {
+      "parent": "SERVICE",
+      "child": "SERVICE_COMPETENCE",
+      "field": "id_service",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "COMPETENCE",
+      "child": "SERVICE_COMPETENCE",
+      "field": "id_competence",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "ANIMAL",
+      "child": "DOSSIER_MEDICAL",
+      "field": "id_animal",
+      "optional": false,
+      "unique": true
+    },
+    {
+      "parent": "DOSSIER_MEDICAL",
+      "child": "CONSULTATION",
+      "field": "id_dossier_medical",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "SERVICE",
+      "child": "CONSULTATION",
+      "field": "id_service",
+      "optional": false,
+      "unique": true
+    },
+    {
+      "parent": "EMPLOYE",
+      "child": "CONSULTATION",
+      "field": "id_employe",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "DOSSIER_MEDICAL",
+      "child": "VACCINATION",
+      "field": "id_dossier_medical",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "EMPLOYE",
+      "child": "VACCINATION",
+      "field": "id_employe",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "CONSULTATION",
+      "child": "FACTURE",
+      "field": "id_consultation",
+      "optional": false,
+      "unique": true
+    },
+    {
+      "parent": "CLIENT",
+      "child": "FACTURE",
+      "field": "id_client",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "FACTURE",
+      "child": "LIGNE_FACTURE",
+      "field": "id_facture",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "LOCAL",
+      "child": "STOCK",
+      "field": "id_local",
+      "optional": true,
+      "unique": false
+    },
+    {
+      "parent": "ARTICLE",
+      "child": "LOT_STOCK",
+      "field": "id_article",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "STOCK",
+      "child": "LOT_STOCK",
+      "field": "id_stock",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "LOT_STOCK",
+      "child": "MOUVEMENT_STOCK",
+      "field": "id_lot_stock",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "COMPTE",
+      "child": "MOUVEMENT_STOCK",
+      "field": "id_compte",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "SERVICE",
+      "child": "MOUVEMENT_STOCK",
+      "field": "id_service",
+      "optional": true,
+      "unique": false
+    },
+    {
+      "parent": "CLIENT",
+      "child": "ADOPTANT",
+      "field": "id_client",
+      "optional": false,
+      "unique": true
+    },
+    {
+      "parent": "ANIMAL",
+      "child": "ADOPTION",
+      "field": "id_animal",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "ADOPTANT",
+      "child": "ADOPTION",
+      "field": "id_adoptant",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "EMPLOYE",
+      "child": "ADOPTION",
+      "field": "id_employe",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "ADOPTION",
+      "child": "SUIVI_ADOPTION",
+      "field": "id_adoption",
+      "optional": false,
+      "unique": false
+    },
+    {
+      "parent": "COMPTE",
+      "child": "SUIVI_ADOPTION",
+      "field": "id_compte",
+      "optional": true,
+      "unique": false
+    }
+  ]
+}

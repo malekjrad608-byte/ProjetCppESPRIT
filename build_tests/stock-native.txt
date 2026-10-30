@@ -1,0 +1,13 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+PASS   : ServiceTests::stockFiltersAndMovements()
+PASS   : ServiceTests::stockFefoAndReorderDialogs()
+QWARN  : ServiceTests::stockIntegratedNavigationAndLogout() setGeometry: Unable to set geometry 1750x1125+9+38 (frame: 1768x1172+0+0) on QWidgetWindow/"MainWindowClassWindow" on "\\.\DISPLAY1". Resulting geometry: 1750x1055+9+38 (frame: 1768x1102+0+0) margins: 9, 38, 9, 9 minimum size: 1100x700 MINMAXINFO(maxSize=POINT(x=0, y=0), maxpos=POINT(x=0, y=0), maxtrack=POINT(x=0, y=0), mintrack=POINT(x=1393, y=922)))
+FAIL!  : ServiceTests::stockIntegratedNavigationAndLogout() Compared values are not the same
+   Actual   (main->size()): QSize(1400x844)
+   Expected (size)        : QSize(1400x900)
+..\tests\service_tests.cpp(340) : failure location
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 4 passed, 1 failed, 0 skipped, 0 blacklisted, 2459ms
+********* Finished testing of ServiceTests *********

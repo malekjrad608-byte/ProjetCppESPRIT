@@ -1,0 +1,14 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+QWARN  : ServiceTests::oracleLocalLinks() QFontDatabase: Cannot find font directory C:/Qt/6.7.3/mingw_64/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QWARN  : ServiceTests::oracleLocalLinks() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::oracleLocalLinks() "QODBCResult::exec: Unable to execute statement:" 	Error: "[Oracle][ODBC][Ora]ORA-02292: integrity constraint (ANIWORLD_APP.FK_MEDICAL_LOCAL) violated - child record found\n\u0000\u0000\u0000\uDE00?\u001F\u0000???\u0000\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u00000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000???\u0000 \u0000\u0000\u0000\u0000\u0000\u0000\u0000A\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000"
+QWARN  : ServiceTests::oracleLocalLinks() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::oracleLocalLinks() This plugin does not support propagateSizeHints()
+QINFO  : ServiceTests::oracleLocalLinks() Local links: service/medical/stock round-trip, optional assignment, many-to-one, 3 FK rejections and protected deletion verified.
+PASS   : ServiceTests::oracleLocalLinks()
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 3 passed, 0 failed, 0 skipped, 0 blacklisted, 5432ms
+********* Finished testing of ServiceTests *********

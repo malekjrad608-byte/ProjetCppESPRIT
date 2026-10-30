@@ -11,6 +11,7 @@ public:
 public slots:
     void refresh();
 protected:
+    void paintEvent(QPaintEvent *event) override;
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 signals:

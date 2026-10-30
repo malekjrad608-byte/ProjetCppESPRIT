@@ -1,0 +1,44 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+QWARN  : ServiceTests::stockFiltersAndMovements() QFontDatabase: Cannot find font directory C:/Qt/6.7.3/mingw_64/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QWARN  : ServiceTests::stockFiltersAndMovements() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockFiltersAndMovements() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockFiltersAndMovements() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::stockFiltersAndMovements()
+QWARN  : ServiceTests::stockCrudExpiryAndStatistics() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockCrudExpiryAndStatistics() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockCrudExpiryAndStatistics() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockCrudExpiryAndStatistics() This plugin does not support propagateSizeHints()
+FAIL!  : ServiceTests::stockCrudExpiryAndStatistics() Compared values are not the same
+   Actual   (model->rowCount()): 19
+   Expected (18)               : 18
+..\tests\service_tests.cpp(337) : failure location
+QWARN  : ServiceTests::stockIntegratedNavigationAndLogout() This plugin does not support raise()
+QWARN  : ServiceTests::stockIntegratedNavigationAndLogout() This plugin does not support raise()
+QWARN  : ServiceTests::stockIntegratedNavigationAndLogout() This plugin does not support raise()
+PASS   : ServiceTests::stockIntegratedNavigationAndLogout()
+FAIL!  : ServiceTests::locauxPersistenceAndBusinessRules() Compared values are not the same
+   Actual   (l->cleaning)         : 1
+   Expected (CleaningState::Clean): 0
+..\tests\service_tests.cpp(818) : failure location
+QWARN  : ServiceTests::locauxNavigationCrudAndScreens() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::locauxNavigationCrudAndScreens()
+PASS   : ServiceTests::moduleAccountsAndPersistence()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+PASS   : ServiceTests::moduleLoginRoutingAndIsolation()
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 7 passed, 2 failed, 0 skipped, 0 blacklisted, 25246ms
+********* Finished testing of ServiceTests *********

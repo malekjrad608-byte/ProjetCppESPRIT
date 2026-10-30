@@ -1,0 +1,126 @@
+ANIWORLD	-	Inventaire	du	stock
+DÉMONSTRATION	-	DONNÉES	FICTIVES
+Édité	le	10/10/2026
+Toutes	les	catégories	·	Recherche	:	
+ARTICLE	/	ANIMAL
+LOT
+DISPONIBLE
+SEUIL
+ÉCHÉANCE
+ÉTAT
+[CHIEN]	Croquettes	Royal	Canin	Adulte
+DOG-F-01
+15	sacs
+5
+22/11/2027
+Disponible
+[CHIEN]	Shampooing	Poils	Longs
+DOG-S-02
+8	flacons
+5
+10/05/2028
+Disponible
+[CHIEN]	Vaccin	Rage/Parvovirose
+DOG-V-03
+2	doses
+10
+15/10/2026
+Sous	le	seuil
+[CHIEN]	Vermifuge	comprimés	(Dwa)
+DOG-M-04
+45	boîtes
+15
+05/01/2028
+Disponible
+[CHAT]	Pâtée	Saumon	(Chat	Sterilisé)
+CAT-F-01
+24	boîtes
+10
+30/08/2027
+Disponible
+[CHAT]	Shampooing	Sec	Mousse
+CAT-S-02
+5	flacons
+5
+14/02/2028
+Disponible
+[CHAT]	Vaccin	Typhus/Coryza
+CAT-V-03
+12	doses
+10
+20/12/2026
+Disponible
+[CHAT]	Gouttes	anti-puces	(Dwa)
+CAT-M-04
+3	pipettes
+8
+01/11/2026
+Sous	le	seuil
+[OISEAU]	Mélange	Graines	Canaris
+BIRD-F-01
+2	kg
+5
+10/11/2026
+Sous	le	seuil
+[OISEAU]	Spray	Anti-parasites	Plumes
+BIRD-S-02
+7	sprays
+3
+25/09/2028
+Disponible
+[OISEAU]	Complément	Vitamines	(Dwa)
+BIRD-M-03
+1	flacon
+3
+20/10/2026
+Sous	le	seuil
+[POISSON]	Flocons	Alimentaires	TetraMin
+FISH-F-01
+20	boîtes
+10
+01/01/2029
+Disponible
+[POISSON]	Traitement	Eau	Anti-chlore
+FISH-M-02
+4	flacons
+5
+15/07/2027
+Sous	le	seuil
+[POISSON]	Gouttes	Anti-fongiques	(Dwa)
+FISH-M-03
+12	flacons
+4
+22/03/2028
+Disponible
+[HAMSTER]	Mélange	complet	Rongeurs
+HAM-F-01
+10	sacs
+5
+18/06/2027
+Disponible
+[HAMSTER]	Shampooing	poudre
+HAM-S-02
+6	boîtes
+3
+11/04/2028
+Disponible
+[HAMSTER]	Vitamines	en	gouttes	(Dwa)
+HAM-M-03
+15	flacons
+5
+09/09/2027
+Disponible
+[MATÉRIEL]	Compresses	stériles
+CP-2606
+30	sachets
+20
+31/10/2026
+Échéance	proche
+[MATÉRIEL]	Seringues	5ml
+SER-05
+200	unités
+50
+31/12/2029
+Disponible
+19	article(s)	affiché(s).
+ANIWORLD		|		1	/	1

@@ -28,8 +28,7 @@ void AppController::openServices(const QString &username)
         connect(m_main.get(), &MainWindow::logoutRequested, this, &AppController::logout);
     }
     m_signedIn = true;
-    m_main->setSignedInUser(username);
-    m_main->navigate(1);
+    m_main->setSession(username,m_login->authenticatedRole());
     // Keep a visible window throughout the handoff (quitOnLastWindowClosed).
     if (m_main->isMinimized()) m_main->showNormal();
     else m_main->show();
@@ -44,7 +43,7 @@ void AppController::logout()
     m_signedIn = false;
     m_login->showAfterLogout();
     m_main->hide();
-    m_main->setSignedInUser({});
+    m_main->setSession({},Accounts::Role::None);
     m_login->raise();
     m_login->activateWindow();
 }

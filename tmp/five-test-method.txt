@@ -1,0 +1,63 @@
+    void oracleFiveTablesIntegration() {
+        if(qEnvironmentVariable("ANIWORLD_FIVE_TESTS")!="1")QSKIP("Five-table Oracle tests opt-in.");
+        const auto appName=qApp->applicationName(),org=qApp->organizationName();qApp->setApplicationName("ANIWORLD");qApp->setOrganizationName("ANIWORLD");
+        auto &manager=DatabaseManager::instance();
+        const auto restore=qScopeGuard([&]{manager.initialize(":memory:");qApp->setApplicationName(appName);qApp->setOrganizationName(org);});
+        QVERIFY2(manager.initializeOracle(),qPrintable(manager.lastError()));auto db=QSqlDatabase::database("aniworld-services");QSqlQuery q(db);
+        QVERIFY(q.exec("SELECT COUNT(*) FROM user_tables"));QVERIFY(q.next());QCOMPARE(q.value(0).toInt(),5);q.finish();
+        QString error;QList<int> services;int localId=0;MedicalRecord record;
+        const auto cleanup=qScopeGuard([&]{
+            db.rollback();db.transaction();QSqlQuery c(db);
+            c.exec("DELETE FROM stock_lots WHERE lot='FIVE-INTEGRATION-TEST'");
+            if(record.storageId)c.exec(QString("DELETE FROM medical_records WHERE id=%1").arg(record.storageId));
+            if(localId)c.exec(QString("DELETE FROM locaux WHERE id=%1").arg(localId));
+            for(int id:services)c.exec(QString("DELETE FROM employes WHERE id_service=%1").arg(id));
+            for(int id:services)c.exec(QString("DELETE FROM services WHERE id=%1").arg(id));
+            if(!db.commit())qFatal("Five-table test cleanup failed");
+        });
+        QCOMPARE(Accounts::authenticate("admin","admin123"),Accounts::Role::Admin);
+        Service a;a.name="FIVE_TEST A";a.clientName="Client test";a.employeeId=-1;a.newEmployeeNom="Test";a.newEmployeePrenom="Premier";a.dateTime=QDateTime(QDate(2035,1,8),QTime(9,0));a.duration=60;
+        QVERIFY2(manager.addService(a),qPrintable(manager.lastError()));a.id=manager.lastInsertedId();services<<a.id;
+        QVERIFY(q.exec(QString("SELECT id_employe FROM services WHERE id=%1").arg(a.id)));QVERIFY(q.next());int first=q.value(0).toInt();q.finish();a.employeeId=first;a.responsible="Test Premier";
+        a.name="FIVE_TEST A modifie";QVERIFY2(manager.updateService(a),qPrintable(manager.lastError()));
+        Service b=a;b.id=0;b.name="FIVE_TEST B";b.employeeId=-1;b.newEmployeePrenom="Deuxieme";b.dateTime=a.dateTime.addSecs(1800);
+        QVERIFY2(manager.addService(b),qPrintable(manager.lastError()));b.id=manager.lastInsertedId();services<<b.id;
+        QList<QVariant> employee={"Test","Equipe","test@example.test","12345678","Vétérinaire","2035-01-01",1,0,35,"Soins"};
+        QVERIFY2(FiveTableStore::saveEmployee(0,a.id,employee,&error),qPrintable(error));
+        QVERIFY(q.exec("SELECT employes_seq.CURRVAL FROM dual"));QVERIFY(q.next());int team=q.value(0).toInt();q.finish();
+        QVERIFY(!FiveTableStore::saveEmployee(team,b.id,employee,&error));QVERIFY(error.contains("occupé"));
+        QVERIFY(!q.exec(QString("UPDATE employes SET id_service=%1 WHERE id=%2").arg(b.id).arg(team)));QVERIFY(q.lastError().text().contains("20051"));
+        QVERIFY(q.exec(QString("SELECT id_employe FROM services WHERE id=%1").arg(b.id)));QVERIFY(q.next());b.employeeId=q.value(0).toInt();q.finish();b.responsible="Test Deuxieme";
+        b.dateTime=a.dateTime.addSecs(3600);QVERIFY2(manager.updateService(b),qPrintable(manager.lastError()));
+        QVERIFY2(FiveTableStore::saveEmployee(team,b.id,employee,&error),qPrintable(error));QCOMPARE(FiveTableStore::employeeService(team),b.id);
+        QVERIFY(!FiveTableStore::saveEmployee(first,b.id,employee,&error)); // old service cannot lose its last member
+        QVERIFY(db.transaction());QVERIFY(q.exec(QString("DELETE FROM employes WHERE id=%1").arg(first)));QVERIFY(!db.commit());db.rollback();
+        LocalRepository locals(nullptr,"oracle:");QVERIFY2(locals.lastError().isEmpty(),qPrintable(locals.lastError()));
+        Local room;room.name="FIVE_TEST local";room.type="Consultation";room.capacity=2;room.serviceId=a.id;
+        localId=locals.add(room);QVERIFY2(localId>0,qPrintable(locals.lastError()));
+        room=*locals.find(localId);room.capacity=3;QVERIFY2(locals.update(room),qPrintable(locals.lastError()));
+        OracleCollection::Rows stock; qint64 revision;QVERIFY2(OracleCollection::read("stock",&stock,&revision,&error),qPrintable(error));
+        const auto oldStock=stock;const auto stale=revision;
+        stock<<QVariantList{"FIVE-INTEGRATION-TEST","Produit test","Soins",2,"unité",1,"2036-01-01",localId};
+        QVERIFY2(OracleCollection::save("stock",stock,&revision,&error),qPrintable(error));
+        auto staleCopy=stale;QVERIFY(!OracleCollection::save("stock",oldStock,&staleCopy,&error));QVERIFY(error.contains("autre session"));
+        stock.last()[3]=4;QVERIFY2(OracleCollection::save("stock",stock,&revision,&error),qPrintable(error));
+        QVERIFY(!locals.remove(localId)); // parent protected while stock exists
+        record=MedicalStore::examples().first();record.storageId=0;record.medical.employeeId=first;record.animal.animalId="FIVE_TEST";
+        QVERIFY2(MedicalStore::save(record,&error),qPrintable(error));record.medical.reason="Modification test";QVERIFY2(MedicalStore::save(record,&error),qPrintable(error));
+        auto medical=MedicalStore::all(&error);QVERIFY2(error.isEmpty(),qPrintable(error));bool found=false;for(const auto &r:medical)if(r.storageId==record.storageId){found=true;QCOMPARE(r.medical.employeeId,first);}QVERIFY(found);
+        QVERIFY(!q.exec(QString("UPDATE locaux SET id_service=NULL WHERE id=%1").arg(localId)));
+        QVERIFY(!q.exec("UPDATE stock_lots SET id_local=99999999 WHERE lot='FIVE-INTEGRATION-TEST'"));
+        QVERIFY(!q.exec(QString("UPDATE medical_records SET id_employe=99999999 WHERE id=%1").arg(record.storageId)));
+        const auto appointments=ServicePlanning::appointments(&error);QVERIFY2(error.isEmpty(),qPrintable(error));int teamRows=0;for(const auto &r:appointments)if(r.serviceId==b.id)++teamRows;QCOMPARE(teamRows,2);
+        QVERIFY(q.exec(QString("SELECT COUNT(*) FROM planning_affectations WHERE responsable_id=%1").arg(team)));QVERIFY(q.next());QCOMPARE(q.value(0).toInt(),1);q.finish();
+        Service invoice;QVERIFY2(Invoice::loadStored(a,&invoice,&error),qPrintable(error));QCOMPARE(invoice.name,a.name);
+        ServiceDialog form(a,false);form.show();QTest::qWait(50);QVERIFY(form.findChild<QComboBox *>("serviceLocal")->isHidden());
+        ServiceDialog newForm;newForm.findChild<QComboBox *>("serviceEmployee")->setCurrentIndex(newForm.findChild<QComboBox *>("serviceEmployee")->findData(-1));newForm.show();QTest::qWait(50);
+        QVERIFY(newForm.findChild<QLineEdit *>("serviceNewEmployeeNom")->isVisible());
+        ServicePlanningDialog planner(a.dateTime.date());planner.showEmployee(team,true);planner.resize(1160,700);planner.show();QTest::qWait(60);
+        const auto output=qEnvironmentVariable("ANIWORLD_CAPTURE_DIR");if(!output.isEmpty()){newForm.grab().save(output+"/five-new-service.png");planner.grab().save(output+"/five-planning.png");}
+        QVERIFY2(MedicalStore::remove(record.storageId,&error),qPrintable(error));record.storageId=0;
+        QVERIFY2(OracleCollection::save("stock",oldStock,&revision,&error),qPrintable(error));
+        locals.reload();QVERIFY2(locals.remove(localId),qPrintable(locals.lastError()));localId=0;
+    }

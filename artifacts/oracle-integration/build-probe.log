@@ -1,0 +1,6 @@
+C:/Qt/Tools/mingw1120_64/bin/mingw32-make -f Makefile.Release
+mingw32-make[1]: Entering directory 'C:/Users/malek/Documents/gestion_service/build_oracle_probe'
+g++ -c -fno-keep-inline-dllexport -O2 -std=gnu++1z -Wall -Wextra -Wextra -fexceptions -mthreads -DUNICODE -D_UNICODE -DWIN32 -DMINGW_HAS_SECURE_API=1 -DQT_NO_DEBUG -DQT_SQL_LIB -DQT_CORE_LIB -I../tools -I. -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtSql -IC:/Qt/6.7.3/mingw_64/include/QtCore -Irelease -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++  -o release\oracle_probe.o ..\tools\oracle_probe.cpp
+g++ -c -fno-keep-inline-dllexport -O2 -std=gnu++1z -Wall -Wextra -Wextra -fexceptions -mthreads -DUNICODE -D_UNICODE -DWIN32 -DMINGW_HAS_SECURE_API=1 -DQT_NO_DEBUG -DQT_SQL_LIB -DQT_CORE_LIB -I../tools -I. -IC:/Qt/6.7.3/mingw_64/include -IC:/Qt/6.7.3/mingw_64/include/QtSql -IC:/Qt/6.7.3/mingw_64/include/QtCore -Irelease -IC:/Qt/6.7.3/mingw_64/mkspecs/win32-g++  -o release\oracleconnection.o ..\src\database\oracleconnection.cpp
+g++ -Wl,-s -Wl,-subsystem,console -mthreads -o release\oracle_probe.exe release/oracle_probe.o release/oracleconnection.o -lcrypt32 C:\Qt\6.7.3\mingw_64\lib\libQt6Sql.a C:\Qt\6.7.3\mingw_64\lib\libQt6Core.a   
+mingw32-make[1]: Leaving directory 'C:/Users/malek/Documents/gestion_service/build_oracle_probe'

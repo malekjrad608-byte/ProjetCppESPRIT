@@ -1,0 +1,1 @@
+Packaged application started successfully with native Windows platform; demo test closed.

@@ -1,0 +1,23 @@
+45:7A657A667A667A
+OWNER renomme en PROPRIETAIRE ; valeurs conservees.
+
+PL/SQL procedure successfully completed.
+
+
+PL/SQL procedure successfully completed.
+
+
+COLUMN_NAME															 DATA_TYPE															  N
+-------------------------------------------------------------------------------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------- -
+PROPRIETAIRE															 VARCHAR2															  N
+
+1 row selected.
+
+45:7A657A667A667A
+
+OBJETS_INVALIDES
+----------------
+	       0
+
+1 row selected.
+

@@ -1,0 +1,6 @@
+mingw32-make: Entering directory 'C:/Users/malek/Documents/gestion_service/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug'
+C:/Qt/Tools/mingw1120_64/bin/mingw32-make -f Makefile.Debug
+mingw32-make[1]: Entering directory 'C:/Users/malek/Documents/gestion_service/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug'
+mingw32-make[1]: Nothing to be done for 'first'.
+mingw32-make[1]: Leaving directory 'C:/Users/malek/Documents/gestion_service/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug'
+mingw32-make: Leaving directory 'C:/Users/malek/Documents/gestion_service/build/Desktop_Qt_6_7_3_MinGW_64_bit_Debug'

@@ -1,0 +1,17 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+QWARN  : ServiceTests::filteredReportPreviewAndSave() QFontDatabase: Cannot find font directory C:/Qt/6.7.3/mingw_64/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+QWARN  : ServiceTests::filteredReportPreviewAndSave() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filteredReportPreviewAndSave() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filteredReportPreviewAndSave() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filteredReportPreviewAndSave() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filteredReportPreviewAndSave() This plugin does not support propagateSizeHints()
+QDEBUG : ServiceTests::filteredReportPreviewAndSave() Selected QList("C:/Users/malek/AppData/Local/Temp/service_tests-owkOgQ/ANIWORLD-services-2026-10-10.pdf")
+QDEBUG : ServiceTests::filteredReportPreviewAndSave() Report notice "Rapport PDF enregistré : C:/Users/malek/AppData/Local/Temp/service_tests-owkOgQ/ANIWORLD-services-2026-10-10.pdf" target "C:/Users/malek/AppData/Local/Temp/service_tests-owkOgQ/rapport.pdf"
+FAIL!  : ServiceTests::filteredReportPreviewAndSave() 'saved' returned FALSE. ()
+..\tests\service_tests.cpp(764) : failure location
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 2 passed, 1 failed, 0 skipped, 0 blacklisted, 351ms
+********* Finished testing of ServiceTests *********

@@ -1,0 +1,137 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+QWARN  : ServiceTests::medicalCreatesServiceForOwner() QFontDatabase: Cannot find font directory C:/Qt/6.7.3/mingw_64/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+PASS   : ServiceTests::medicalCreatesServiceForOwner()
+PASS   : ServiceTests::atelierModelCrudAndValidation()
+PASS   : ServiceTests::atelierEmbeddedFormKeepsInputOnError()
+SKIP   : ServiceTests::oracleFiveTablesScreens() Five-table Oracle UI opt-in.
+..\tests\service_tests.cpp(167) : failure location
+SKIP   : ServiceTests::oracleFiveTablesIntegration() Five-table Oracle tests opt-in.
+..\tests\service_tests.cpp(192) : failure location
+PASS   : ServiceTests::scheduleConflictValidation()
+SKIP   : ServiceTests::oracleScheduleGuards() Oracle development schema opt-in.
+..\tests\service_tests.cpp(299) : failure location
+PASS   : ServiceTests::servicePlanningBoundaries()
+QWARN  : ServiceTests::servicePlanningFiltersAndEntry() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::servicePlanningFiltersAndEntry() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::servicePlanningFiltersAndEntry() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::servicePlanningFiltersAndEntry()
+SKIP   : ServiceTests::oracleServicePlanningAssignment() Oracle development schema opt-in.
+..\tests\service_tests.cpp(378) : failure location
+SKIP   : ServiceTests::oracleFreshRawand() Fresh RAWAND schema opt-in.
+..\tests\service_tests.cpp(400) : failure location
+SKIP   : ServiceTests::oracleCommonRelations() Oracle development schema opt-in.
+..\tests\service_tests.cpp(420) : failure location
+SKIP   : ServiceTests::oracleLocalLinks() Oracle development schema opt-in.
+..\tests\service_tests.cpp(478) : failure location
+SKIP   : ServiceTests::oracleEndToEnd() Opt-in: uses the local Oracle development schema.
+..\tests\service_tests.cpp(535) : failure location
+PASS   : ServiceTests::medicalReferenceImportOnce()
+PASS   : ServiceTests::medicalPersistenceAndHistory()
+QWARN  : ServiceTests::medicalIntegratedCrudAndScreens() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::medicalIntegratedCrudAndScreens() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::medicalIntegratedCrudAndScreens()
+QWARN  : ServiceTests::loginSessionAndSavedServices() This plugin does not support raise()
+FAIL!  : ServiceTests::loginSessionAndSavedServices() 'dialogOpened' returned FALSE. ()
+..\tests\service_tests.cpp(754) : failure location
+QWARN  : ServiceTests::loginSessionAndSavedServices() QTemporaryDir: Unable to remove "C:\\Users\\malek\\AppData\\Local\\Temp\\service_tests-wKVXVB" most likely due to the presence of read-only files.
+QWARN  : ServiceTests::logoutMotionAndImmediateReturn() This plugin does not support raise()
+QWARN  : ServiceTests::logoutMotionAndImmediateReturn() This plugin does not support raise()
+QWARN  : ServiceTests::logoutMotionAndImmediateReturn() This plugin does not support raise()
+QWARN  : ServiceTests::logoutMotionAndImmediateReturn() This plugin does not support raise()
+QWARN  : ServiceTests::logoutMotionAndImmediateReturn() This plugin does not support raise()
+QWARN  : ServiceTests::logoutMotionAndImmediateReturn() This plugin does not support raise()
+QWARN  : ServiceTests::logoutMotionAndImmediateReturn() This plugin does not support raise()
+QWARN  : ServiceTests::logoutMotionAndImmediateReturn() This plugin does not support raise()
+PASS   : ServiceTests::logoutMotionAndImmediateReturn()
+PASS   : ServiceTests::loginRecoveryAndTransitions()
+PASS   : ServiceTests::loginRememberUsernameOnly()
+SKIP   : ServiceTests::captureLoginIntegration() Set ANIWORLD_CAPTURE_DIR for login captures.
+..\tests\service_tests.cpp(889) : failure location
+QWARN  : ServiceTests::stockColorsIgnoreSystemAccent() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::stockColorsIgnoreSystemAccent()
+QWARN  : ServiceTests::stockFiltersAndMovements() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockFiltersAndMovements() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockFiltersAndMovements() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::stockFiltersAndMovements()
+QWARN  : ServiceTests::stockCrudExpiryAndStatistics() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockCrudExpiryAndStatistics() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockCrudExpiryAndStatistics() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockCrudExpiryAndStatistics() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::stockCrudExpiryAndStatistics() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::stockCrudExpiryAndStatistics()
+QWARN  : ServiceTests::stockIntegratedNavigationAndLogout() This plugin does not support raise()
+QWARN  : ServiceTests::stockIntegratedNavigationAndLogout() This plugin does not support raise()
+QWARN  : ServiceTests::stockIntegratedNavigationAndLogout() This plugin does not support raise()
+PASS   : ServiceTests::stockIntegratedNavigationAndLogout()
+PASS   : ServiceTests::invoiceMigrationPersistenceAndPdf()
+QWARN  : ServiceTests::invoicePreviewAndRemovedFeatures() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::invoicePreviewAndRemovedFeatures()
+PASS   : ServiceTests::tariffAndDurationOrdering()
+PASS   : ServiceTests::storageCrudAndPersistence()
+QWARN  : ServiceTests::formValidation() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::formValidation() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::formValidation()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::filterSortAndRefresh() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::filterSortAndRefresh()
+QWARN  : ServiceTests::interfaceCrud() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::interfaceCrud() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::interfaceCrud()
+QWARN  : ServiceTests::dateFiltersAndCards() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::dateFiltersAndCards()
+QWARN  : ServiceTests::quickStatusWithoutDuplication() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::quickStatusWithoutDuplication() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::quickStatusWithoutDuplication()
+PASS   : ServiceTests::metricsAndPdfReport()
+PASS   : ServiceTests::logoHoverAnimation()
+PASS   : ServiceTests::pageAndCardMotion()
+PASS   : ServiceTests::dashboardPaintsOpaqueDuringNavigation()
+PASS   : ServiceTests::motionControlsAndInteractions()
+PASS   : ServiceTests::orangeHoverPreservesInteraction()
+PASS   : ServiceTests::locauxPersistenceAndBusinessRules()
+QWARN  : ServiceTests::locauxNavigationCrudAndScreens() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::locauxNavigationCrudAndScreens()
+PASS   : ServiceTests::moduleAccountsAndPersistence()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+QWARN  : ServiceTests::moduleLoginRoutingAndIsolation() This plugin does not support raise()
+PASS   : ServiceTests::moduleLoginRoutingAndIsolation()
+QWARN  : ServiceTests::integratedEmployeeCrudPlanningAndScreens() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::integratedEmployeeCrudPlanningAndScreens() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::integratedEmployeeCrudPlanningAndScreens() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::integratedEmployeeCrudPlanningAndScreens() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::integratedEmployeeCrudPlanningAndScreens() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::integratedEmployeeCrudPlanningAndScreens() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::integratedEmployeeCrudPlanningAndScreens() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::integratedEmployeeCrudPlanningAndScreens() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::integratedEmployeeCrudPlanningAndScreens() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::integratedEmployeeCrudPlanningAndScreens()
+QWARN  : ServiceTests::employeeLeavePdfAndPasswordDialog() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::employeeLeavePdfAndPasswordDialog() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::employeeLeavePdfAndPasswordDialog() This plugin does not support propagateSizeHints()
+QWARN  : ServiceTests::employeeLeavePdfAndPasswordDialog() This plugin does not support propagateSizeHints()
+PASS   : ServiceTests::employeeLeavePdfAndPasswordDialog()
+SKIP   : ServiceTests::renderScreens() Set ANIWORLD_CAPTURE_DIR to capture screens.
+..\tests\service_tests.cpp(1704) : failure location
+SKIP   : ServiceTests::captureMotionPreview() Set ANIWORLD_CAPTURE_DIR to capture motion.
+..\tests\service_tests.cpp(1741) : failure location
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 39 passed, 1 failed, 11 skipped, 0 blacklisted, 120651ms
+********* Finished testing of ServiceTests *********

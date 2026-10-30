@@ -1,0 +1,2 @@
+Checked 39 view files; SQL confined to model/connection sources.
+PASS: no SQL in views; prepared queries; entity CRUD methods present.

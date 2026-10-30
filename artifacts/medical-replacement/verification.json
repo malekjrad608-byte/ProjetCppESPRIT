@@ -1,0 +1,13 @@
+{
+  "database_tables_preserved": [
+    "services",
+    "sqlite_sequence",
+    "employes",
+    "planning_affectations",
+    "integration_migrations",
+    "accounts",
+    "medical_records"
+  ],
+  "packaged_executable_matches_release": true,
+  "packaged_startup": "passed"
+}

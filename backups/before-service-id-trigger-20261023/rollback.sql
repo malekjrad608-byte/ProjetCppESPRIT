@@ -1,0 +1,1 @@
+ALTER TRIGGER services_trg ENABLE;

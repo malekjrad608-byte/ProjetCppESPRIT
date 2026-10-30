@@ -1,0 +1,18 @@
+OK : IDs automatiques des cinq tables, insertion sans aucune cle primaire
+fournie.
+OK : toutes les lignes de test annulees.
+
+PL/SQL procedure successfully completed.
+
+
+GESTION      LIGNES
+-------- ----------
+SERVICE 	  3
+LOCAL		  0
+STOCK		  0
+EMPLOYER	  3
+MEDICAL 	  2
+
+
+no rows selected
+

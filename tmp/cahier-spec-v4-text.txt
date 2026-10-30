@@ -1,0 +1,566 @@
+PROJET C++ 2A  
+Année universitaire 2025/2026 
+ 
+ 
+Groupe DevCore 
+ 
+ANIWORLD 
+Cahier de spécification  
+Application de gestion  
+d’un centre de soins animaliers  
+Services  •  Employés  •  Stock 
+Locaux  •  Dossiers médicaux  •  Adoptions 
+Identification du projet Informations 
+Établissement À compléter 
+Groupe DevCore 
+Réalisé par Équipe DevCore 
+Encadré par À compléter 
+Version et date Version 1.4  |  1 octobre 2026 
+ 
+Document de référence pour la conception, le développement et la validation du projet. 
+ 
+
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 2 / 14 
+Sommaire 
+ANIWORLD regroupe les activités et les ressources d’un centre de soins animaliers. Ce cahier précise le périmètre 
+fonctionnel, les règles de gestion, les qualités attendues et les interfaces de l’application C++ et Qt. 
+1 Contexte général .................................................................................................................................................................... 3 
+1.1 Étude de l’existant .......................................................................................................................................................... 3 
+1.2 Problématique ................................................................................................................................................................ 3 
+2 La solution proposée et ses exigences ................................................................................................................................... 4 
+2.1 Exigences fonctionnelles ................................................................................................................................................. 4 
+2.1.1 Gestion des Services ................................................................................................................................................ 5 
+2.1.2 Gestion des Employés ............................................................................................................................................. 5 
+2.1.3 Gestion du Stock ...................................................................................................................................................... 6 
+2.1.4 Gestion des Locaux .................................................................................................................................................. 6 
+2.1.5 Gestion des dossiers médicaux ............................................................................................................................... 7 
+2.1.6 Gestion des Adoptions ............................................................................................................................................ 8 
+2.1.7 Échanges entre les modules .................................................................................................................................... 8 
+2.2 Exigences non fonctionnelles ......................................................................................................................................... 9 
+2.3 Liste des ODDs touchés ................................................................................................................................................ 10 
+3 Conception graphique .......................................................................................................................................................... 10 
+3.1 Le logo de l’application ................................................................................................................................................. 10 
+3.2 La charte graphique ...................................................................................................................................................... 10 
+3.3 Les interfaces graphiques GUI ...................................................................................................................................... 11 
+3.3.1 Tableau de bord .................................................................................................................................................... 11 
+3.3.2 Gestion des Services .............................................................................................................................................. 11 
+3.3.3 Gestion des Employés ........................................................................................................................................... 12 
+3.3.4 Gestion du Stock .................................................................................................................................................... 12 
+3.3.5 Gestion des Locaux ................................................................................................................................................ 13 
+3.3.6 Gestion des dossiers médicaux ............................................................................................................................. 13 
+3.3.7 Gestion des Adoptions .......................................................................................................................................... 14 
+ 
+Les identifiants SER, EMP, STK, LOC, DM et ADOP relient les exigences aux six modules. Les critères de recette décrivent les résultats 
+attendus lors de la démonstration. 
+ 
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 3 / 14 
+1 Contexte général 
+Le groupe DevCore propose ANIWORLD à M. Sami Ben Salem, responsable du centre de soins animaliers « Les 
+Compagnons ». Ce client et son établissement sont fictifs : ils servent de scénario de référence au projet 
+pédagogique. 
+1.1 Étude de l’existant 
+Dans ce scénario, Les Compagnons accueille des chiens et des chats pour des consultations, du toilettage, de la 
+pension et de l’éducation. M. Ben Salem coordonne une équipe pluridisciplinaire et plusieurs espaces ; le centre 
+accompagne aussi des adoptions. L’accueil organise les rendez-vous ; les employés réalisent les prestations ; le 
+vétérinaire assure le suivi médical. 
+Le centre utilise un agenda pour les réservations, des fichiers séparés pour les employés et le stock, ainsi que des 
+dossiers papier pour les animaux. Les disponibilités des salles sont souvent communiquées oralement ; les 
+candidatures à l’adoption sont suivies dans des échanges séparés. Une même information doit être recherchée ou 
+recopiée à plusieurs endroits, sans vue commune de l’activité. 
+1.2 Problématique 
+M. Ben Salem perd du temps à vérifier qui est disponible, quelle salle peut accueillir un animal et quels produits 
+restent en stock. Une absence peut désorganiser les rendez-vous ; un oubli de nettoyage retarde une prestation ; un 
+dossier introuvable complique le suivi vétérinaire. Il manque aussi d’indicateurs fiables pour préparer sa journée, 
+répartir le travail et suivre les demandes d’adoption après le départ d’un animal. 
+Question centrale. Comment permettre à M. Ben Salem de gérer son centre depuis un seul outil, de limiter les 
+oublis et les erreurs et de consacrer davantage de temps aux animaux et à leurs propriétaires ? 
+Difficulté du client Réponse apportée par ANIWORLD Bénéfice attendu 
+Services dispersés dans 
+l’agenda et tarifs à recalculer. 
+Planning commun, suivi des statuts, recherche de créneaux 
+compatibles et estimation détaillée d’une prestation. 
+Préparer un rendez-vous plus 
+facilement et limiter les conflits de 
+réservation. 
+Compétences, absences et 
+charge des employés peu 
+visibles. 
+Annuaire, disponibilités, comparaison des compétences et 
+suggestion de réaffectation vers un profil moins chargé. 
+Choisir une personne adaptée et 
+mieux répartir les tâches. 
+Produits manquants ou lots 
+oubliés jusqu’à leur 
+péremption. 
+Traçabilité des entrées et sorties, alertes de seuil, sortie par 
+péremption et proposition de réapprovisionnement. 
+Anticiper les achats et réduire les 
+ruptures et le gaspillage. 
+Occupation, nettoyage et 
+entretien des espaces mal 
+coordonnés. 
+Vue des capacités et réservations, validation du nettoyage 
+et planification de la maintenance. 
+Prévoir un local disponible et prêt 
+pour la prochaine prestation. 
+Historique d’un animal difficile 
+à retrouver et suivis à préparer. 
+Dossier centralisé avec consultations, allergies, vaccins, 
+rappels à valider et évolution du poids. 
+Retrouver les informations utiles et 
+faciliter le travail du vétérinaire. 
+Candidatures à l’adoption 
+dispersées et suivi après départ 
+irrégulier. 
+Dossier de candidature, comparaison animal–foyer, 
+décision validée et suivi à J+7 / J+30. 
+Organiser les placements et garder 
+une trace des échanges avec les 
+adoptants. 
+Le tableau de bord, la recherche, les tris, les statistiques et les exports donnent au responsable une vue rapide de 
+l’activité. Les comptes par rôle, les sauvegardes et l’historique des opérations soutiennent une utilisation organisée. 
+ANIWORLD doit ainsi rendre le quotidien du client plus simple ; ces bénéfices seront vérifiés lors de la 
+démonstration, sans gain chiffré présumé. 
+ 
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 4 / 14 
+2 La solution proposée et ses exigences 
+Notre solution est ANIWORLD, une application de bureau qui réunit les six gestions du centre Les Compagnons dans 
+une base commune. M. Ben Salem consulte les priorités depuis le tableau de bord, puis accède au module concerné. 
+Une donnée enregistrée peut être réutilisée dans la planification et le suivi, ce qui limite les ressaisies. 
+2.1 Exigences fonctionnelles 
+Le tableau reprend les rubriques imposées par le plan. Chaque module comprend le CRUD, le tri, la recherche, 
+l’export et des statistiques graphiques, complétés par deux métiers innovants. Les fiches suivantes précisent les 
+règles et les résultats attendus. 
+Module Entité X Caractéristiques Y Utilisateur Fonctionnalités et méthodes 
+Gestion des 
+Services Service 
+ID, libellé, catégorie, date, 
+durée, tarif, statut, animal, 
+employé, local. 
+Accueil, 
+responsable, 
+soigneur. 
+CRUD ; tri date/tarif ; recherche ; export PDF/CSV ; 
+graphiques par catégorie/statut. 
+SER-I1 : créneaux compatibles. 
+SER-I2 : estimation de prestation. 
+Gestion des 
+Employés Employé 
+ID, nom, prénom, courriel, 
+poste, compétences, 
+disponibilités, état. 
+Responsable et 
+administrateur. 
+CRUD ; tri nom/poste ; recherche ; export PDF/CSV ; 
+graphiques par poste/charge. 
+EMP-I1 : adéquation des compétences. 
+EMP-I2 : équilibrage de charge. 
+Gestion du 
+Stock Article 
+ID, référence, désignation, 
+catégorie, unité, seuil, prix ; 
+lots et mouvements. 
+Responsable du 
+stock. 
+CRUD ; tri quantité/échéance ; recherche ; export 
+PDF/CSV ; graphiques de consommation. 
+STK-I1 : sortie par péremption. 
+STK-I2 : réapprovisionnement. 
+Gestion des 
+Locaux Local 
+ID, nom, type, capacité, 
+équipements, état ; 
+réservations et entretien. 
+Référent des 
+locaux, 
+responsable. 
+CRUD ; tri nom/capacité ; recherche ; export 
+PDF/CSV ; graphiques d’occupation. 
+LOC-I1 : remise en service. 
+LOC-I2 : maintenance préventive. 
+Gestion des 
+DM 
+Dossier 
+médical 
+ID, animal, propriétaire, 
+antécédents, allergies, 
+consultations, poids, vaccins. 
+Vétérinaire ; 
+accès limité pour 
+l’accueil. 
+CRUD encadré ; tri visite/animal ; recherche ; export 
+PDF ; graphiques de suivi. 
+DM-I1 : rappels vaccinaux. 
+DM-I2 : alerte sur le poids. 
+Gestion des 
+Adoptions Adoption 
+ID, animal, candidat, foyer, 
+date, statut, référent ; 
+validation et suivi. 
+Référent 
+adoption ; 
+responsable. 
+CRUD ; tri date/statut ; recherche ; export PDF/CSV 
+; statistiques par statut. 
+ADOP-I1 : compatibilité avec le foyer. 
+ADOP-I2 : suivi après adoption. 
+Périmètre et accès 
+L’accueil planifie les prestations ; les soigneurs suivent leur exécution ; le responsable organise les ressources ; le 
+magasinier gère les stocks ; le référent des locaux valide leur entretien. Le vétérinaire consulte et complète le 
+contenu clinique. Le référent adoption instruit les candidatures ; le responsable valide le placement. 
+L’administrateur gère les comptes, paramètres et sauvegardes ; un rôle médical explicite reste nécessaire pour 
+accéder au dossier clinique. 
+Les animaux et propriétaires appartiennent aux données de référence du module DM ; les rendez-vous relèvent des 
+Services. La paie, la comptabilité, la vente en ligne, le diagnostic automatique et l’envoi automatique de messages 
+sont hors périmètre. Les propositions métier sont validées par un utilisateur. 
+Conventions communes 
+CRUD : créer, consulter, modifier et supprimer. Une fiche sans historique peut être supprimée après confirmation ; 
+une fiche liée est archivée. Les observations médicales validées et mouvements de stock se corrigent sans effacer 
+leur historique. Les listes, statistiques et exports partagent les filtres et les droits d’accès. 
+Chaque objet possède un identifiant, des dates de création et modification et un état actif ou archivé. Affichage : 
+dates jour/mois/année, heures sur 24 heures, montants en TND à trois décimales. La première version utilise C++, Qt 
+Widgets, Qt SQL et une base SQLite locale sur un poste Windows, utilisé successivement par des comptes 
+nominatifs. 
+ 
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 5 / 14 
+2.1.1 Gestion des Services 
+Service : idService, libellé, catégorie, dateHeureDébut, duréeMinutes, tarifTND, statut, notes, idAnimal, idEmployé, 
+idLocal. Les catégories comprennent consultation, soins, toilettage, pension et éducation.  
+Exigence Fonctionnalité attendue 
+SER-01  CRUD Ajouter une prestation ; consulter sa fiche ; modifier les informations autorisées ; supprimer une fiche 
+sans historique ou l’archiver. 
+SER-02  Trier Trier par date et heure, libellé, durée ou tarif, dans les deux sens. 
+SER-03  Rechercher Rechercher par libellé, animal ou responsable ; filtrer par catégorie, période et statut. 
+SER-04  Exporter Produire un planning PDF et une liste CSV respectant les filtres actifs. 
+SER-05  Statistiques Afficher un histogramme par catégorie et un graphique de répartition par statut sur une période 
+donnée. 
+SER-I1 Créneaux compatibles. Proposer jusqu’à trois créneaux selon la durée, les disponibilités de l’employé, les 
+réservations du local et sa remise en état. Recontrôler ces contraintes à la confirmation. 
+SER-I2 Estimation de prestation. Calculer le prix à partir du tarif de base, des options et d’une remise autorisée ; 
+afficher le détail, exporter l’estimation en PDF et conserver les paramètres validés. 
+Règles. Libellé, animal et durée positive obligatoires ; tarif positif ou nul. Cycle : Planifié, En cours, Terminé ; 
+annulation motivée. Un service terminé conserve ses ressources et consommations. 
+Recette. Salle réservée de 10 h à 11 h : refuser une demande à 10 h 30. Base de 50 TND + option de 10 TND, remise 
+de 10 % : résultat 54,000 TND. 
+2.1.2 Gestion des Employés 
+Employé : idEmployé, nom, prénom, courriel, téléphone, poste, dateEmbauche, étatActif. Données associées : 
+compétences, créneaux de disponibilité, absences et compte utilisateur éventuel.  
+Exigence Fonctionnalité attendue 
+EMP-01  CRUD Créer et consulter une fiche ; modifier les coordonnées, le poste et les disponibilités ; supprimer sans 
+référence ou archiver. 
+EMP-02  Trier Trier par nom, poste, date d’embauche ou charge planifiée. 
+EMP-03  Rechercher Rechercher par identifiant, nom ou courriel ; filtrer par poste, compétence et état actif. 
+EMP-04  Exporter Exporter l’annuaire autorisé et le planning en PDF ou CSV, sans données d’authentification. 
+EMP-05  Statistiques Présenter les effectifs par poste et un histogramme des heures planifiées par employé. 
+EMP-I1 Adéquation des compétences. Comparer le besoin d’une prestation aux habilitations des employés actifs. 
+Proposer les profils satisfaisant tous les critères et expliquer le choix ; réserver le créneau reste une étape distincte. 
+EMP-I2 Équilibrage de charge. Calculer le rapport hebdomadaire entre temps planifié et temps disponible hors 
+absences. Au-delà du seuil configuré, suggérer une réaffectation vers un profil habilité moins chargé, à valider par le 
+responsable. 
+Règles. Courriel unique et contrôlé s’il est renseigné. Une absence bloque l’affectation ; une disponibilité nulle exclut 
+le calcul de charge. Traiter les services futurs avant archivage. 
+Recette. Exclure un profil sans compétence requise. Pour 24 h planifiées sur 30 h disponibles, afficher 80 %. Refuser 
+une affectation à 15 h pendant une absence de 14 h à 17 h. 
+ 
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 6 / 14 
+2.1.3 Gestion du Stock 
+Article : idArticle, référence, désignation, catégorie, unité, seuilAlerte, prixUnitaireTND, fournisseur. Lot : idLot, numéro , 
+quantité, datePéremption, état. Mouvement : type, quantité, date, auteur, motif et service associé.  
+Exigence Fonctionnalité attendue 
+STK-01  CRUD Créer et consulter un article ; modifier sa fiche ; supprimer un article sans mouvement ou l’archiver. 
+Enregistrer les entrées et sorties. 
+STK-02  Trier Trier par désignation, quantité disponible, seuil ou date de péremption des lots. 
+STK-03  Rechercher Rechercher par référence, désignation ou lot ; filtrer par catégorie et état d’alerte. 
+STK-04  Exporter Exporter un inventaire PDF et les mouvements filtrés en CSV. 
+STK-05  Statistiques Tracer les consommations par article et par mois ; comparer la valeur du stock par catégorie. 
+STK-I1 Sortie selon la péremption. Appliquer FEFO : proposer le lot utilisable dont l’échéance est la plus proche. 
+Exclure les lots expirés, bloqués ou vides et présenter leur quantité avant validation. 
+STK-I2 Réapprovisionnement. À partir de la consommation moyenne des 30 derniers jours, proposer une quantité 
+couvrant le délai fournisseur et le stock de sécurité, après déduction du disponible. Sans historique, utiliser le seuil 
+manuel ; aucune commande automatique. 
+Règles. Quantité positive et stock jamais négatif. Sortie atomique, datée et liée à son auteur ; une correction crée un 
+mouvement inverse justifié. Le disponible est calculé par lot. 
+Recette. Préférer un lot valide expirant le 31/10 à un lot du 31/12. Refuser 6 unités pour 5 disponibles. À 2/jour × 7 
+jours + 6 de sécurité − 10 disponibles : proposer 10 unités. 
+2.1.4 Gestion des Locaux 
+Local : idLocal, nom, type, capacitéAnimaux, surfaceM2, équipements, état, actif. Données associées : réservations, 
+capacités engagées, fiches de nettoyage et interventions de maintenance. 
+Exigence Fonctionnalité attendue 
+LOC-01  CRUD Créer, consulter et modifier un local ; supprimer sans historique ou archiver après traitement des 
+réservations futures. 
+LOC-02  Trier Trier par nom, type, capacité ou taux d’occupation. 
+LOC-03  Rechercher Rechercher par nom ou identifiant ; filtrer par type, équipement, état et disponibilité sur une période. 
+LOC-04  Exporter Exporter les fiches des locaux et le planning d’occupation en PDF ou CSV. 
+LOC-05  Statistiques Afficher les heures occupées par local et la répartition des indisponibilités par motif. 
+LOC-I1 Remise en service après nettoyage. Après une prestation concernée, passer le local à À nettoyer et bloquer 
+la prise en charge suivante. Exiger la validation de la liste de contrôle par un agent habilité, avec auteur et heure. 
+LOC-I2 Maintenance selon l’usage. Cumuler les heures d’utilisation ou passages, alerter au seuil configuré et 
+planifier une intervention avec indisponibilité. Réinitialiser le compteur après validation de l’intervention. 
+Règles. Capacité entière positive ; les occupations simultanées ne la dépassent pas. Un local à nettoyer ou en 
+maintenance ne peut accueillir un service. Inclure le nettoyage dans les contrôles de disponibilité. 
+Recette. Pour une capacité de 2 déjà engagée à 2, refuser une réservation simultanée. Interdire la remise en service 
+sans contrôle validé. Déclencher l’alerte à 100 h pour un seuil de 100 h. 
+ 
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 7 / 14 
+2.1.5 Gestion des dossiers médicaux 
+Dossier : idDossier, idAnimal, dateOuverture, antécédents, allergies, état. Animal : nom, espèce, race, sexe, dateNaissance, 
+identifiant éventuel, idPropriétaire. Consultation : date, vétérinaire, observation, traitement, poidsKg. Vaccination : 
+produit, date, prochaineÉchéance. 
+Exigence Fonctionnalité attendue 
+DM-01  CRUD Ouvrir et consulter un dossier ; compléter les données ; supprimer un brouillon sans acte validé ou 
+archiver. Une observation validée se corrige par addendum daté. 
+DM-02  Trier Trier par animal, date d’ouverture, dernière consultation ou prochaine échéance. 
+DM-03  Rechercher Rechercher par numéro, animal ou propriétaire ; filtrer par espèce, vétérinaire et période. 
+DM-04  Exporter Générer une synthèse médicale PDF pour un utilisateur autorisé, avec auteur, date et périmètre de 
+l’export. 
+DM-05  Statistiques Afficher les consultations par période et espèce ainsi que la répartition des dossiers actifs. 
+DM-I1 Rappels vaccinaux. Repérer les échéances saisies par le vétérinaire arrivant dans les 7 jours et les retards. 
+Préparer une liste et un texte de rappel à valider ; aucun calendrier médical n’est calculé automatiquement. 
+DM-I2 Variation de poids. Comparer les deux dernières pesées valides et signaler une variation absolue dépassant le 
+seuil du vétérinaire. Afficher les mesures et leurs dates pour vérification, sans produire de diagnostic. 
+Règles. Un dossier actif unique par animal ; poids strictement positif. Conserver auteur et date des observations 
+validées. L’accueil voit l’identité, tandis que le contenu clinique exige une habilitation médicale. 
+Recette. Refuser l’ouverture et l’export clinique à l’accueil. Avec un seuil de 10 %, passer de 10 kg à 8,5 kg donne −15 
+% et une alerte. Une seule pesée ne déclenche rien. 
+ 
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 8 / 14 
+2.1.6 Gestion des Adoptions 
+Adoption : idAdoption, idAnimal, idCandidat, dateDemande, statut, idRéférent, dateDécision, datePlacement. Candidat : 
+identité, contact, logement, expérience et composition du foyer. Données associées : pièces, rencontre, décision et suivis.  
+Exigence Fonctionnalité attendue 
+ADOP-01 CRUD Créer une demande ; consulter le dossier ; modifier avant décision ; supprimer un brouillon ou 
+archiver une demande traitée. 
+ADOP-02 Trier Trier par date de demande, animal, candidat ou statut, dans les deux sens. 
+ADOP-03 Rechercher Rechercher par dossier, animal ou candidat ; filtrer par espèce, référent, période et statut. 
+ADOP-04 Exporter Exporter un dossier autorisé en PDF et une liste filtrée en CSV ; limiter les données personnelles au 
+besoin du destinataire. 
+ADOP-05 Statistiques Présenter les demandes par statut, les placements par période et la part de suivis réalisés à échéance. 
+ADOP-I1 Compatibilité avec le foyer. Comparer les besoins renseignés de l’animal aux caractéristiques du candidat : 
+logement, activité, enfants et autres animaux. Afficher les critères concordants, manquants et leur proportion ; le 
+responsable prend la décision. 
+ADOP-I2 Suivi après adoption. À la date de placement, créer deux actions à J+7 et J+30. Enregistrer contact, réponse 
+et résultat ; signaler les actions en retard au référent, qui décide de la suite à donner. 
+Règles. Cycle : En étude, Validée, Refusée ou Annulée. Une seule adoption validée et active par animal ; décision et 
+placement datés. Vérifier pièces, rencontre et accord du responsable avant validation. Le référent voit une synthèse 
+autorisée sans accès clinique. 
+Recette. Pour 3 critères concordants sur 4 évaluables, afficher 75 % et le critère restant. Bloquer une seconde 
+adoption active ; pour un placement le 05/10, créer des suivis les 12/10 et 04/11. 
+2.1.7 Échanges entre les modules 
+Échange Règle partagée 
+Services ↔ Employés Affecter un employé actif, compétent et disponible ; respecter ses absences. 
+Services ↔ Locaux Vérifier capacité, réservation et temps de remise en état avant confirmation. 
+Services ↔ Stock Relier chaque consommation au service ; ne pas la déduire une seconde fois à la clôture. 
+Services ↔ DM Lier la prestation à l’animal. Une prestation clinique peut référencer une consultation ; aucun 
+acte médical automatique. 
+Locaux ↔ Employés Identifier l’agent ayant effectué ou validé le nettoyage et la maintenance. 
+Adoptions ↔ DM / 
+Employés 
+Réutiliser l’identité de l’animal, une synthèse autorisée et le référent ; limiter l’accès clinique. 
+Une adoption validée change l’état de placement. 
+Parcours de M. Ben Salem. L’accueil retrouve l’animal et crée une prestation. Le responsable confirme l’employé et 
+le local compatibles. L’équipe enregistre le service et ses consommations, puis clôture la prestation et valide le 
+nettoyage. Le vétérinaire complète séparément les éléments cliniques. Le référent suit les candidatures à l’adoption 
+puis les contacts après placement. Le tableau de bord actualise l’activité ; le journal conserve les actions. 
+Chaque métier innovant reste porté par son module : créneaux et estimation (Services), compétences et charge (Employés), 
+péremption et achats (Stock), nettoyage et maintenance (Locaux), rappels et poids (DM), compatibilité et suivi après placement 
+(Adoptions). 
+ 
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 9 / 14 
+2.2 Exigences non fonctionnelles 
+Ces exigences visent une utilisation simple et fiable pour Les Compagnons. Les performances indiquées sont des 
+objectifs de recette, pas des résultats déjà mesurés. 
+Qualité Solution et justification Vérification attendue 
+NF-01 
+Ergonomie 
+Navigation commune, champs libellés et erreurs 
+près du champ : limiter les manipulations et les 
+erreurs de saisie. 
+Créer un service en 5 actions au plus après 
+ouverture du formulaire, hors saisie et choix des 
+valeurs. 
+NF-02 
+Accessibilité 
+Parcours clavier, focus visible, contraste et statuts 
+textuels : ne pas dépendre de la couleur seule. 
+Utiliser les fonctions essentielles au clavier ; vérifier 
+l’affichage à 100 % et 125 %. 
+NF-03 
+Performance 
+Index sur identifiants et dates, filtres et pagination 
+: limiter le volume traité et affiché. 
+Windows 64 bits, 8 Go RAM, SSD : 95 % des 
+recherches < 2 s sur 10 000 services ; export de 1 
+000 lignes < 10 s. 
+NF-04 
+Authentification 
+Comptes nominatifs, mots de passe hachés avec 
+sel via une bibliothèque adaptée, temporisation et 
+verrouillage. 
+Aucun mot de passe en clair ; temporisation après 5 
+échecs ; verrouillage après 15 min d’inactivité. 
+NF-05 
+Autorisations 
+Vérifier le rôle dans les traitements et exports, en 
+plus de l’interface : réserver le contenu clinique 
+aux profils habilités. 
+Un compte d’accueil ne peut ni ouvrir ni exporter le 
+contenu clinique, même par appel direct. 
+NF-06 
+Intégrité 
+Requêtes préparées, types contrôlés, clés 
+étrangères et transactions : une opération réussit 
+entièrement ou est annulée. 
+En cas d’identifiant absent, de stock insuffisant ou 
+d’erreur d’écriture, aucune modification partielle. 
+NF-07 
+Sauvegarde 
+Copie cohérente de la base et des pièces à la 
+fermeture ; sauvegarde manuelle protégée ; 
+garder les 7 dernières copies valides. 
+Restaurer en environnement de test en moins de 10 
+min, avec les mêmes fiches et totaux. 
+NF-08 
+Confidentialité 
+Restreindre fichiers et exports aux comptes 
+Windows autorisés ; exclure le texte clinique des 
+journaux techniques. 
+Contrôler les droits du dossier de stockage et 
+l’absence de mot de passe ou texte clinique dans les 
+journaux. 
+NF-09 
+Traçabilité 
+Journal horodaté avec auteur, action et objet ; 
+conserver les corrections des observations pour 
+expliquer leur évolution. 
+Retrouver la version précédente d’une observation 
+validée et son addendum. 
+NF-10 
+Maintenabilité 
+Séparer interface Qt, services métier et accès aux 
+données ; modèles partagés et tests des règles 
+critiques. 
+Tester stock et affectations sans ouvrir l’interface ; 
+vérifier les conventions des six modules. 
+NF-11 
+Déploiement 
+Exécutable Windows avec dépendances Qt et 
+dossier de données séparé : usage local autonome. 
+Sur un poste de test, créer une fiche hors 
+connexion, fermer et rouvrir avec les données 
+conservées. 
+Recette du projet 
+Utiliser une base fictive distincte et consigner, pour chaque exigence, les données, le résultat attendu et le résultat 
+obtenu. Prévoir un cas nominal et un cas de refus ou de limite pour chaque CRUD et métier innovant, y compris une 
+adoption incomplète ou déjà validée. Couvrir conflits d’affectation, absences, stock insuffisant, lots expirés, capacité, 
+archivage et accès refusés. 
+La démonstration est recevable lorsque les fonctions de base, les douze métiers innovants, les exports et statistiques 
+sont vérifiés, sans anomalie bloquante sur la cohérence des données ou les droits d’accès. 
+ 
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 10 / 14 
+2.3 Liste des ODDs touchés 
+Les contributions ci-dessous sont envisagées pour le centre fictif ; elles ne prouvent pas un impact déjà obtenu.  
+ODD Lien avec ANIWORLD Indicateur à suivre 
+12 · Consommation et 
+production durables 
+Suivi des lots, péremption et achats proposés pour 
+limiter les produits jetés. 
+Quantité et valeur des produits périmés ; 
+nombre de ruptures. 
+8 · Travail décent et croissance 
+économique 
+Visibilité des compétences, absences et charges ; 
+traçabilité du nettoyage. 
+Conflits d’affectation et écarts de charge 
+entre profils comparables. 
+9 · Industrie, innovation et 
+infrastructure 
+Centralisation numérique et automatisation des 
+contrôles du centre. 
+Part des prestations suivies ; nombre de 
+ressaisies évitées. 
+Comparer une période initiale et une période d’utilisation de même activité. Aucun objectif chiffré n’est fixé avant cette mesure. 
+Référence : objectifs 12, 8 et 9 des Nations Unies ; les rapprochements sont l’analyse du projet. 
+ODD 12  ·  ODD 8  ·  ODD 9 
+3 Conception graphique 
+3.1 Le logo de l’application 
+     
+ANIWORLD utilise le logo chien–chat entouré de mains, de feuilles et d’une croix orange, accompagné du nom ANIWORLD. Le 
+logo bleu et blanc fourni représente le groupe DevCore sur la couverture. Conserver les proportions et les couleurs de chaque  
+identité, avec un espace libre autour. 
+3.2 La charte graphique 
+Couleur Code Usage 
+Bleu pétrole #397F8D Repères de marque et navigation. 
+Bleu profond #225A64 Titres et boutons principaux. 
+Anthracite #263B42 Texte courant et informations essentielles. 
+Gris très clair #F4F7F8 Fond général. 
+Blanc #FFFFFF Tableaux, formulaires et cartes. 
+Bleu pâle #E4F0F3 Sélection et surfaces de synthèse. 
+Orange ambré #E8A13F Croix du logo et encarts de suivi. 
+Rouge brique #AE5751 Erreurs et actions nécessitant une attention. 
+Typographie : Segoe UI ; titres 28 px, zones 15–17 px, texte 13–14 px, mentions 11–12 px. Navigation commune aux six modules, 
+libellés de statut explicites et focus clavier visible. Les formulaires conservent les saisies en cas d’erreur ; toute suppre ssion exige 
+une confirmation. 
+ 
+
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 11 / 14 
+3.3 Les interfaces graphiques GUI 
+Écrans avec données de démonstration. Services, Employés, Stock et Locaux reprennent les images fournies ; Tableau de bord, Dossiers 
+médicaux et Adoptions sont des maquettes Qt. 
+3.3.1 Tableau de bord 
+ 
+Les compteurs, les services du jour et les priorités donnent à M. Ben Salem une vue rapide du centre. Nouveau service ouvre la 
+création ; les données visibles dépendent du rôle. 
+3.3.2 Gestion des Services 
+ 
+La vue en cartes présente les prestations, dates, durées et statuts. Les filtres ouvrent la fiche sélectionnée avec son responsable, 
+son tarif et les actions de consultation, modification et démarrage. 
+ 
+
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 12 / 14 
+3.3.3 Gestion des Employés 
+ 
+Les cartes présentent les employés, leurs disponibilités, compétences et heures planifiées. Le panneau détaille la fiche choisie ; 
+recherche, filtres, modification et statistiques facilitent la répartition du travail. 
+3.3.4 Gestion du Stock 
+ 
+L’inventaire affiche lots, quantités, seuils et échéances. Les panneaux expliquent la sortie FEFO et le réapprovisionnement ;  
+chaque mouvement est validé et tracé. 
+ 
+
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 13 / 14 
+3.3.5 Gestion des Locaux 
+ 
+Les cartes présentent les types, capacités et états des locaux. Le panneau du local sélectionné regroupe affectation, libérat ion, 
+modification et suppression ; la vue d’occupation complète la recherche et les filtres. 
+3.3.6 Gestion des dossiers médicaux 
+ 
+Le vétérinaire retrouve l’animal, les consultations, les pesées et les échéances. Les rappels restent à valider ; le signal de poids 
+demande une vérification clinique. 
+ 
+
+ANIWORLD   /   CAHIER DE SPÉCIFICATION 
+Projet C++ 2A   •   Version 1.4 14 / 14 
+3.3.7 Gestion des Adoptions 
+ 
+Les cartes relient un animal à sa candidature. Le panneau affiche les critères de compatibilité, les étapes de validation et le suivi à 
+J+7 / J+30 ; le responsable confirme le placement. 
+Parcours illustré de l’adoption 
+Étape Action et résultat attendu 
+1 · Demande L’accueil enregistre le candidat et l’animal ; le dossier passe à En étude. 
+2 · Vérification Le référent vérifie les pièces, la rencontre et les critères de compatibilité. 
+3 · Décision Le responsable valide ou refuse avec motif ; une adoption validée conserve son historique. 
+4 · Suivi La date de placement déclenche les contacts à J+7 et J+30 ; chaque réponse est tracée. 
+Cette maquette illustre un dossier encore en étude : la validation est inactive tant que la rencontre et l’accord du responsa ble ne 
+sont pas enregistrés. 

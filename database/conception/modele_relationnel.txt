@@ -1,0 +1,111 @@
+ANIWORLD - MODELE RELATIONNEL COMMUN S5
+PK = cle primaire ; # = cle etrangere ; ? = nullable ; UQ = unique.
+
+CLIENT(id_client [PK], nom, prenom?, telephone?, email?, adresse?, cree_le, modifie_le, archive)
+Personne de référence, propriétaire ou payeur. Une personne peut aussi avoir un profil adoptant.
+
+ANIMAL(id_animal [PK], #id_client?, nom, espece, race?, sexe, date_naissance?, identifiant_puce?, besoins_foyer?, statut_placement, cree_le, modifie_le, archive)
+Identité partagée entre Services, Dossiers médicaux et Adoptions. Propriétaire facultatif pour les animaux du centre.
+  UNIQUE : identifiant_puce
+  id_client -> CLIENT(id_client)
+
+EMPLOYE(id_employe [PK], nom, prenom, email?, telephone?, poste, date_embauche?, heures_hebdo, habilitation_medicale, cree_le, modifie_le, archive)
+Annuaire et disponibilité hebdomadaire de référence ; la charge est calculée depuis les services planifiés.
+
+COMPTE(id_compte [PK], #id_employe [UQ]?, login, role, sel, empreinte, iterations, cree_le, modifie_le, archive)
+Authentification applicative. Le compte technique Oracle reste extérieur au modèle métier.
+  id_employe -> EMPLOYE(id_employe)
+
+COMPETENCE(id_competence [PK], libelle, cree_le, modifie_le, archive)
+Référentiel des compétences exigées par les services.
+  UNIQUE : libelle
+
+EMPLOYE_COMPETENCE(#id_employe [PK], #id_competence [PK], date_validation?, valide_jusquau?)
+Association plusieurs-à-plusieurs entre employés et compétences.
+  id_employe -> EMPLOYE(id_employe)
+  id_competence -> COMPETENCE(id_competence)
+
+CRENEAU_EMPLOYE(id_creneau_employe [PK], #id_employe, debut, fin, type_creneau, motif?, cree_le, modifie_le, archive)
+Disponibilités et absences datées pour contrôler les affectations.
+  id_employe -> EMPLOYE(id_employe)
+
+LOCAL(id_local [PK], nom, type_local, etage, capacite, surface_m2?, equipements?, etat, seuil_entretien_h, cree_le, modifie_le, archive)
+Local partagé : capacité, équipements et état de remise en service.
+
+INTERVENTION_LOCAL(id_intervention_local [PK], #id_local, #id_employe, type_intervention, debut, fin?, statut, controle_valide, observations?, cree_le, modifie_le, archive)
+Nettoyage ou maintenance, avec auteur, période et validation du contrôle.
+  id_local -> LOCAL(id_local)
+  id_employe -> EMPLOYE(id_employe)
+
+SERVICE(id_service [PK], #id_animal, #id_employe?, #id_local?, libelle, categorie, debut, duree_minutes, tarif_tnd, statut, motif_annulation?, notes?, cree_le, modifie_le, archive)
+Prestation planifiée, conforme au cahier : animal, employé, local, date, durée et tarif. Ce n’est pas un catalogue abstrait.
+  id_animal -> ANIMAL(id_animal)
+  id_employe -> EMPLOYE(id_employe)
+  id_local -> LOCAL(id_local)
+
+SERVICE_COMPETENCE(#id_service [PK], #id_competence [PK])
+Compétences requises pour une prestation, sans liste de valeurs dans une cellule.
+  id_service -> SERVICE(id_service)
+  id_competence -> COMPETENCE(id_competence)
+
+DOSSIER_MEDICAL(id_dossier_medical [PK], #id_animal [UQ], date_ouverture, antecedents?, allergies?, observations?, cree_le, modifie_le, archive)
+Un dossier longitudinal unique par animal ; les consultations sont des lignes distinctes.
+  id_animal -> ANIMAL(id_animal)
+
+CONSULTATION(id_consultation [PK], #id_dossier_medical, #id_service [UQ], #id_employe, date_consultation, motif?, diagnostic?, traitement?, poids_kg?, observations?, validee, cree_le, modifie_le, archive)
+Acte clinique d’un dossier, associé à une prestation et à son vétérinaire. Poids facultatif mais strictement positif si renseigné.
+  id_dossier_medical -> DOSSIER_MEDICAL(id_dossier_medical)
+  id_service -> SERVICE(id_service)
+  id_employe -> EMPLOYE(id_employe)
+
+VACCINATION(id_vaccination [PK], #id_dossier_medical, #id_employe, produit, date_vaccination, prochaine_echeance?, numero_lot?, observations?, cree_le, modifie_le, archive)
+Événement vaccinal daté ; échéance saisie par le vétérinaire, sans calendrier médical automatique.
+  id_dossier_medical -> DOSSIER_MEDICAL(id_dossier_medical)
+  id_employe -> EMPLOYE(id_employe)
+
+FACTURE(id_facture [PK], #id_consultation [UQ], #id_client, numero, date_emission, nom_client_facture, adresse_client_facture?, statut, date_paiement?, cree_le, modifie_le, archive)
+Au plus une facture par consultation ; créée en brouillon, puis émise après validation. Identité du client figée à l’émission.
+  UNIQUE : numero
+  id_consultation -> CONSULTATION(id_consultation)
+  id_client -> CLIENT(id_client)
+
+LIGNE_FACTURE(#id_facture [PK], numero_ligne [PK], designation, quantite, prix_unitaire_tnd)
+Détail historique : désignation, quantité et prix unitaire figés ; aucune dépendance au tarif courant du service.
+  id_facture -> FACTURE(id_facture)
+
+STOCK(id_stock [PK], #id_local?, nom, description?, cree_le, modifie_le, archive)
+Emplacement d’inventaire ; un local peut accueillir plusieurs zones de stock.
+  UNIQUE : nom
+  id_local -> LOCAL(id_local)
+
+ARTICLE(id_article [PK], reference, designation, categorie, unite, seuil_alerte, prix_unitaire_tnd, fournisseur?, delai_fournisseur_j, cree_le, modifie_le, archive)
+Référence produit commune à plusieurs lots et emplacements. Quantité et péremption appartiennent au lot.
+  UNIQUE : reference
+
+LOT_STOCK(id_lot_stock [PK], #id_article, #id_stock, numero_lot, quantite, date_peremption?, bloque, cree_le, modifie_le, archive)
+Lot d’un article dans un stock, avec quantité courante et échéance. Les sorties sont atomiques et journalisées.
+  UNIQUE : id_article + id_stock + numero_lot
+  id_article -> ARTICLE(id_article)
+  id_stock -> STOCK(id_stock)
+
+MOUVEMENT_STOCK(id_mouvement_stock [PK], #id_lot_stock, #id_compte, #id_service?, type_mouvement, quantite, date_mouvement, motif)
+Historique immuable des entrées et sorties ; une correction se fait par mouvement inverse motivé.
+  id_lot_stock -> LOT_STOCK(id_lot_stock)
+  id_compte -> COMPTE(id_compte)
+  id_service -> SERVICE(id_service)
+
+ADOPTANT(id_adoptant [PK], #id_client [UQ], logement, espace_exterieur, nombre_enfants, autres_animaux?, experience?, disponibilite?, cree_le, modifie_le, archive)
+Profil de candidature d’une personne CLIENT ; identité non dupliquée.
+  id_client -> CLIENT(id_client)
+
+ADOPTION(id_adoption [PK], #id_animal, #id_adoptant, #id_employe, date_demande, statut, date_decision?, date_placement?, pieces_verifiees, rencontre_effectuee, accord_responsable, observations?, cree_le, modifie_le, archive)
+Demande pour un animal, instruite par un référent. Une seule demande validée active par animal.
+  id_animal -> ANIMAL(id_animal)
+  id_adoptant -> ADOPTANT(id_adoptant)
+  id_employe -> EMPLOYE(id_employe)
+
+SUIVI_ADOPTION(id_suivi_adoption [PK], #id_adoption, #id_compte?, jalon_jours, date_prevue, date_contact?, statut, resultat?, cree_le, modifie_le, archive)
+Actions de suivi J+7 et J+30, contact et résultat ; validation humaine.
+  UNIQUE : id_adoption + jalon_jours
+  id_adoption -> ADOPTION(id_adoption)
+  id_compte -> COMPTE(id_compte)

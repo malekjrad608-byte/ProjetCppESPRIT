@@ -1,0 +1,45 @@
+;;; 
+Export: Release 21.0.0.0.0 - Production on Fri Oct 16 22:01:03 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle and/or its affiliates.  All rights reserved.
+;;; 
+Connected to: Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Starting "SYS"."ANIWORLD_FIVE_EXPORT2":  "/******** AS SYSDBA" schemas=RAWAND directory=DATA_PUMP_DIR dumpfile=rawand_before_five_20261016.dmp logfile=rawand_before_five_20261016.log job_name=ANIWORLD_FIVE_EXPORT2 
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_BODY
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/FUNCTIONAL_INDEX/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/SEQUENCE/SEQUENCE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/IDENTITY_COLUMN
+Processing object type SCHEMA_EXPORT/PACKAGE/PACKAGE_SPEC
+Processing object type SCHEMA_EXPORT/PACKAGE/COMPILE_PACKAGE/PACKAGE_SPEC/ALTER_PACKAGE_SPEC
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/FUNCTIONAL_INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/TRIGGER
+. . exported "RAWAND"."FACTURES"                         11.51 KB       1 rows
+. . exported "RAWAND"."SERVICES"                         11.50 KB       1 rows
+. . exported "RAWAND"."EMPLOYES"                         9.625 KB       1 rows
+. . exported "RAWAND"."ACCOUNTS"                         7.710 KB       6 rows
+. . exported "RAWAND"."LIGNES_FACTURE"                   7.445 KB       1 rows
+. . exported "RAWAND"."CLIENTS"                          6.023 KB       2 rows
+. . exported "RAWAND"."COLLECTION_VERSIONS"              5.562 KB       2 rows
+. . exported "RAWAND"."SCHEMA_VERSION"                   5.585 KB       1 rows
+. . exported "RAWAND"."INTEGRATION_MIGRATIONS"           5.140 KB       3 rows
+. . exported "RAWAND"."LOCAUX"                               0 KB       0 rows
+. . exported "RAWAND"."MEDICAL_RECORDS"                      0 KB       0 rows
+. . exported "RAWAND"."PLANNING_AFFECTATIONS"                0 KB       0 rows
+. . exported "RAWAND"."STOCK_LOTS"                           0 KB       0 rows
+. . exported "RAWAND"."STOCK_MOVEMENTS"                      0 KB       0 rows
+Master table "SYS"."ANIWORLD_FIVE_EXPORT2" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.ANIWORLD_FIVE_EXPORT2 is:
+  C:\APP\MALEK\PRODUCT\21C\ADMIN\XE\DPDUMP\RAWAND_BEFORE_FIVE_20261016.DMP
+Job "SYS"."ANIWORLD_FIVE_EXPORT2" successfully completed at Fri Oct 16 22:02:12 2026 elapsed 0 00:01:07

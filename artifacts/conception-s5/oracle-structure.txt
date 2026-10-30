@@ -1,0 +1,33 @@
+
+Session altered.
+
+
+OBJECT_TYPE			NB
+----------------------- ----------
+INDEX				82
+LOB				17
+SEQUENCE			20
+TABLE				23
+TRIGGER 			20
+VIEW				 2
+
+6 rows selected.
+
+
+C	  NB
+- ----------
+R	  33
+C	 242
+P	  23
+U	  12
+
+
+OBJETS_INVALIDES
+----------------
+	       0
+
+
+TABLES_APPLICATION
+------------------
+		11
+

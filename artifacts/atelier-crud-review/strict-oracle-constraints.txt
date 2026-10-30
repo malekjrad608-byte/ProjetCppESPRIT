@@ -1,0 +1,46 @@
+
+TABLE_NAME
+--------------------------------------------------------------------------------------------------------------------------------
+EMPLOYES
+LOCAUX
+MEDICAL_RECORDS
+SERVICES
+STOCK_LOTS
+
+
+TABLE_NAME															 C STATUS   VALIDATED	       TOTAL
+-------------------------------------------------------------------------------------------------------------------------------- - -------- ------------- ----------
+EMPLOYES															 C ENABLED  VALIDATED		   6
+EMPLOYES															 P ENABLED  VALIDATED		   1
+EMPLOYES															 R ENABLED  VALIDATED		   1
+EMPLOYES															 U ENABLED  VALIDATED		   1
+LOCAUX																 C ENABLED  VALIDATED		  12
+LOCAUX																 P ENABLED  VALIDATED		   1
+LOCAUX																 R ENABLED  VALIDATED		   1
+MEDICAL_RECORDS 														 C ENABLED  VALIDATED		  13
+MEDICAL_RECORDS 														 P ENABLED  VALIDATED		   1
+MEDICAL_RECORDS 														 R ENABLED  VALIDATED		   1
+PLANNING_AFFECTATIONS														 O ENABLED  NOT VALIDATED	   1
+SERVICES															 C ENABLED  VALIDATED		  12
+SERVICES															 P ENABLED  VALIDATED		   1
+SERVICES															 R ENABLED  VALIDATED		   1
+SERVICES															 U ENABLED  VALIDATED		   1
+STOCK_LOTS															 C ENABLED  VALIDATED		   9
+STOCK_LOTS															 P ENABLED  VALIDATED		   1
+STOCK_LOTS															 R ENABLED  VALIDATED		   1
+
+18 rows selected.
+
+
+no rows selected
+
+
+SERVICES_SANS_EMPLOYE
+---------------------
+		    0
+
+
+MAUVAIS_REFERENT
+----------------
+	       0
+

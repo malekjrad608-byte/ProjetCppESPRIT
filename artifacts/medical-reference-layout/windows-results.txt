@@ -1,0 +1,10 @@
+********* Start testing of ServiceTests *********
+Config: Using QtTest library 6.7.3, Qt 6.7.3 (x86_64-little_endian-llp64 shared (dynamic) release build; by GCC 11.2.0), windows 11
+PASS   : ServiceTests::initTestCase()
+PASS   : ServiceTests::medicalReferenceImportOnce()
+QWARN  : ServiceTests::medicalIntegratedCrudAndScreens() setGeometry: Unable to set geometry 2188x1406+9+38 (frame: 2206x1453+0+0) on QWidgetWindow/"MainWindowClassWindow" on "\\.\DISPLAY1". Resulting geometry: 1924x1094+9+38 (frame: 1942x1141+0+0) margins: 9, 38, 9, 9 minimum size: 1100x700 MINMAXINFO(maxSize=POINT(x=0, y=0), maxpos=POINT(x=0, y=0), maxtrack=POINT(x=0, y=0), mintrack=POINT(x=1737, y=1141)))
+PASS   : ServiceTests::medicalIntegratedCrudAndScreens()
+PASS   : ServiceTests::stockColorsIgnoreSystemAccent()
+PASS   : ServiceTests::cleanupTestCase()
+Totals: 5 passed, 0 failed, 0 skipped, 0 blacklisted, 10475ms
+********* Finished testing of ServiceTests *********

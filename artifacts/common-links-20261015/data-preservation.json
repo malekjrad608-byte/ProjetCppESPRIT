@@ -1,0 +1,22 @@
+{
+  "LOCAUX": {
+    "before": 14,
+    "after": 14,
+    "original_rows_changed_or_missing": []
+  },
+  "SERVICES": {
+    "before": 3,
+    "after": 3,
+    "original_rows_changed_or_missing": []
+  },
+  "MEDICAL_RECORDS": {
+    "before": 8,
+    "after": 8,
+    "original_rows_changed_or_missing": []
+  },
+  "STOCK_LOTS": {
+    "before": 19,
+    "after": 19,
+    "original_rows_changed_or_missing": []
+  }
+}

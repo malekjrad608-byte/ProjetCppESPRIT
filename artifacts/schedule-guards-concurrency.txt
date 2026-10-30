@@ -1,0 +1,3 @@
+PASS: concurrent overlap waited for COMMIT, then was rejected (ORA-20051).
+PASS: concurrent overlap waited for ROLLBACK, then was accepted and rolled back.
+Temporary employee and tasks removed.

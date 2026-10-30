@@ -1,0 +1,92 @@
+
+TABLE_NAME	     COLUMN_NAME	       DATA_TYPE	    DATA_LENGTH N
+-------------------- ------------------------- -------------------- ----------- -
+EMPLOYES	     ID 		       NUMBER			     22 N
+EMPLOYES	     NOM		       VARCHAR2 		    480 N
+EMPLOYES	     PRENOM		       VARCHAR2 		    480 N
+EMPLOYES	     COURRIEL		       VARCHAR2 		   1000 Y
+EMPLOYES	     TELEPHONE		       VARCHAR2 		    240 Y
+EMPLOYES	     POSTE		       VARCHAR2 		    600 Y
+EMPLOYES	     DATE_EMBAUCHE	       VARCHAR2 		     40 Y
+EMPLOYES	     DISPONIBLE 	       NUMBER			     22 Y
+EMPLOYES	     CHARGE_HEBDO	       NUMBER			     22 Y
+EMPLOYES	     DISPO_HEBDO	       NUMBER			     22 Y
+EMPLOYES	     COMPETENCES	       VARCHAR2 		   4000 Y
+EMPLOYES	     ID_SERVICE 	       NUMBER			     22 N
+LOCAUX		     ID 		       NUMBER			     22 N
+LOCAUX		     NAME		       VARCHAR2 		    600 N
+LOCAUX		     TYPE		       VARCHAR2 		    400 N
+LOCAUX		     FLOOR		       NUMBER			     22 N
+LOCAUX		     CAPACITY		       NUMBER			     22 N
+LOCAUX		     OCCUPANCY		       NUMBER			     22 N
+LOCAUX		     SPECIALTY		       VARCHAR2 		   1000 Y
+LOCAUX		     OUT_OF_SERVICE	       NUMBER			     22 N
+LOCAUX		     CLEANING		       NUMBER			     22 N
+LOCAUX		     LAST_CLEANED	       VARCHAR2 		    140 Y
+LOCAUX		     DIRTY_SINCE	       VARCHAR2 		    140 Y
+LOCAUX		     ID_SERVICE 	       NUMBER			     22 N
+MEDICAL_RECORDS      ID 		       NUMBER			     22 N
+MEDICAL_RECORDS      ANIMAL_ID		       VARCHAR2 		    480 N
+MEDICAL_RECORDS      NAME		       VARCHAR2 		    480 N
+MEDICAL_RECORDS      SPECIES		       VARCHAR2 		    120 N
+MEDICAL_RECORDS      BREED		       VARCHAR2 		    480 Y
+MEDICAL_RECORDS      AGE		       NUMBER			     22 N
+MEDICAL_RECORDS      SEX		       VARCHAR2 		     80 N
+MEDICAL_RECORDS      PROPRIETAIRE	       VARCHAR2 		    480 N
+MEDICAL_RECORDS      CONSULTATION_DATE	       VARCHAR2 		     40 N
+MEDICAL_RECORDS      REASON		       CLOB			   4000 Y
+MEDICAL_RECORDS      DIAGNOSIS		       CLOB			   4000 Y
+MEDICAL_RECORDS      TREATMENT		       CLOB			   4000 Y
+MEDICAL_RECORDS      VACCINATIONS	       CLOB			   4000 Y
+MEDICAL_RECORDS      ALLERGIES		       CLOB			   4000 Y
+MEDICAL_RECORDS      WEIGHT		       NUMBER			     22 N
+MEDICAL_RECORDS      OBSERVATIONS	       CLOB			   4000 Y
+MEDICAL_RECORDS      VACCINATION_STATUS        VARCHAR2 		    120 N
+MEDICAL_RECORDS      ID_EMPLOYE 	       NUMBER			     22 N
+SERVICES	     ID 		       NUMBER			     22 N
+SERVICES	     NAME		       VARCHAR2 		    480 N
+SERVICES	     DESCRIPTION	       CLOB			   4000 Y
+SERVICES	     RESPONSIBLE	       VARCHAR2 		   1000 Y
+SERVICES	     CATEGORY		       VARCHAR2 		    480 N
+SERVICES	     DATETIME		       VARCHAR2 		    140 N
+SERVICES	     STATUS		       VARCHAR2 		    120 N
+SERVICES	     DURATION		       NUMBER			     22 N
+SERVICES	     PRICE		       NUMBER			     22 N
+STOCK_LOTS	     LOT		       VARCHAR2 		    480 N
+STOCK_LOTS	     ARTICLE		       VARCHAR2 		   1000 N
+STOCK_LOTS	     CATEGORY		       VARCHAR2 		    400 N
+STOCK_LOTS	     QUANTITY		       NUMBER			     22 N
+STOCK_LOTS	     UNIT		       VARCHAR2 		    240 N
+STOCK_LOTS	     THRESHOLD		       NUMBER			     22 N
+STOCK_LOTS	     EXPIRY		       VARCHAR2 		     40 N
+STOCK_LOTS	     ID_LOCAL		       NUMBER			     22 N
+
+59 rows selected.
+
+
+TABLE_NAME		 LIGNES
+-------------------- ----------
+SERVICES		      3
+LOCAUX			      0
+STOCK_LOTS		      0
+EMPLOYES		      3
+MEDICAL_RECORDS 	      2
+
+
+no rows selected
+
+
+no rows selected
+
+
+OWNER
+--------------------------------------------------------------------------------------------------------------------------------
+DIRECTORY_NAME
+--------------------------------------------------------------------------------------------------------------------------------
+DIRECTORY_PATH
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SYS
+DATA_PUMP_DIR
+C:\app\malek\product\21c\admin\xe\dpdump/
+
+

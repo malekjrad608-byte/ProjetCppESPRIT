@@ -1,0 +1,3 @@
+connection.cpp: identical to configured teacher file; original archive identical apart from the three DB parameters; SHA256 d303fb6822ea6780717ec09b1a65fa7c7fc64ff9c9cea867057932dff7b3b3e9
+connection.h: identical to configured teacher file; original archive identical apart from the three DB parameters; SHA256 6789312db13681d46b5bb022b7866d7fca6a1cbc883d4d261ebee6f7db835c47
+Original Downloads project untouched. Production OracleConnection::open invokes Connection::createInstance().createConnection().

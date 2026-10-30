@@ -1,0 +1,551 @@
+SLIDE 1
+1
+Projet C++
+Atelier 2 : Connexion QT/Oracle 
+ Elaboré par :
+Mme. Soumaya Argoubi & 
+Mme. Soumaya 
+Nheri
+AU : 
+2025
+ -
+2026
+
+SLIDE 2
+Plan:
+ Installation du Driver ODBC
+ Création d’un nouvel utilisateur (BD)
+ Création d’une nouvelle source de données ODBC
+ Test de la connexion QT/
+ base de données
+ Etablissement de la connexion entre votre projet QT et votre source de    données
+ Création d’une nouvelle table
+Le Patron Singleton en QT
+Créer une connexion à la base de données avec le patron Singleton 
+2
+
+SLIDE 3
+Environnement utilisé dans l’atelier :
+ 
+Windows 11
+ QT Creator 4.11
+ Oracle 11g 
+3
+Si oracle n’est pas installé il faut l’installer avant de commencer l’atelier 
+Rappelez-vous de ce mot de passe associé au compte system
+
+SLIDE 4
+I- Installation du Driver ODBC
+ODBC (Open Database Connectivity) est une API (interface de programmation) universelle qui permet a une application, de manipuler une variété de bases de données.
+La communication entre l’application QT et une base de données se fait par le biais de l’API ODBC.
+4
+
+SLIDE 5
+5
+II- Création d’un nouvel utilisateur
+system est l’utilisateur créé par défaut lors de l’installation d’oracle (voir slide 3)
+Le mot de passe est celui saisi lors de l’installation d’oracle (voir slide 3)
+Utilisateur créé : Soumaya
+Mot de passe du Soumaya :  esprit18
+
+SLIDE 6
+6
+II- Création d’un nouvel utilisateur
+Si vous avez oublié votre mot de passe system créé lors de l’installation d’oracle il suffit d'écrire dans le nom d'utilisateur "
+sys
+ as 
+sysdba
+". 
+Pour le mot de passe il suffit de cliquer sur entrer sans rien écrire.  
+
+SLIDE 7
+7
+III- Création d’une nouvelle source de données ODBC
+Aller à : 
+Panneau de configuration\Système et sécurité\Outils d’administration
+Cliquer sur « source de données ODBC (
+64 bits
+) »                         
+
+SLIDE 8
+8
+III- Création d’une nouvelle source de données ODBC
+Cliquer sur ajouter pour avoir une nouvelle source de données.
+Dans l’interface qui apparaît, choisir le pilote qui vient d’être installé. 
+
+SLIDE 9
+9
+III- Création d’une nouvelle source de données ODBC
+Dans l’interface suivante, choisir « 
+XE »
+ à partir de la liste de choix « 
+TNS Service Name »
+.
+Créer une nouvelle source de données appelée : 
+Source_Projet2A.
+Procéder à tester la connexion (utilisateur et mot de passe qu’on vient de créer).
+Nom d’utilisateur et mot de passe créés au niveau du slide 14 (soumaya & esprit18)
+
+SLIDE 10
+10
+III- Création d’une nouvelle source de données ODBC
+La connexion à la nouvelle source se fait correctement.
+Les mêmes paramètres (nom d’utilisateur et mot de passe) seront utilisés, plus tard, pour créer des tables au niveau de la base de données via 
+sqlplus
+ ,  
+sql
+ 
+Developer
+ 
+ou bien directement via 
+la page web de configuration de Oracle express 10g/11g
+.
+
+SLIDE 11
+11
+ IV- Test de la Connexion QT / base de données
+Télécharger et exécutez le code source que vos tuteurs ont partagé avec vous.
+Dans le fichier connection.cpp saisissez  :  le nom de la source de données, le nom d’utilisateur et le mot de passe 
+Compiler et exécuter pour vérifier si la connexion est établie.
+N.B : Il faut avoir déjà : 
+           - configuré un compilateur 64 bit
+           - installé oracle 64 bit 
+           - créé une source de données 
+odbc
+ 64 bit
+Nom d’utilisateur et mot de passe créés au niveau du slide 14 (soumaya & esprit18)
+Source de données créée au niveau du slide 19
+
+SLIDE 12
+12
+ V- Etablissement de Connexion entre votre projet  QT et votre source de données 
+Pour établir la connexion entre le projet de votre module et la base de données Oracle, il faut modifier le fichier d’extension 
+.pro 
+(Project File) afin de permettre à l’application de prendre en considération les classes incluses dans le « 
+namespace
+ » 
+SQL
+  telles que : 
+QsqlQuery
+, 
+QSqlDatabase
+ et bien d’autres. 
+Éditer le fichier d’extension 
+.pro 
+en ajoutant la ligne  
+
+SLIDE 13
+13
+Afin de  permettre à l’application de se connecter à la base il faut instancier un 
+Objet
+ de la classe 
+QsqlDatabase
+ via la syntaxe suivante: 
+L’instance
+ « db » que nous venons de créer, permettra de donner les paramètres d’accès à la base de données via les méthodes spécifiques de la classe 
+QsqlDatabase
+ : 
+ V- Etablissement de Connexion entre votre projet  QT et votre source de données 
+Nom d’utilisateur et mot de passe créés au niveau du slide 14 (soumaya & esprit18)
+Source de données créée au niveau du slide 19
+
+SLIDE 14
+14
+Le code source permettant la connexion à la base sera réalisé dans une nouvelle classe 
+c++
+ appelé par exemple « 
+Connexion
+ ».
+Un objet sera instancié  à partir de cette classe au niveau du « main » afin de permettre la connexion à la base.
+Pour tester la connexion entre QT et la base de données nous aurons besoin d’afficher des messages significatifs, pour ce faire on vous propose 2 méthodes:
+ V- Etablissement de Connexion entre votre projet  QT et votre source de données 
+
+SLIDE 15
+15
+  Utiliser le débogage en mode console:
+Classe 
+QDebug
+  
+(#include<QDebug>)      
+Ecrire les messages de débogage sur un périphérique, un fichier, une chaîne ou une  console.     
+L’écriture de sortie de débogage peut se faire directement dans l’onglet «Application Output» de QT 
+creator
+ ou bien sur une console lors de l’exécution de l’application.
+Pour pouvoir utiliser la console, il faut ajouter cette ligne dans le fichier .pro: 
+ V- Etablissement de Connexion entre votre projet  QT et votre source de données 
+
+SLIDE 16
+16
+Exemple: 
+ V- Etablissement de Connexion entre votre projet  QT et votre source de données 
+
+SLIDE 17
+17
+En utilisant la classe 
+QMessageBox:    
+(#include< QMessageBox>)
+ V- Etablissement de Connexion entre votre projet  QT et votre source de données 
+
+SLIDE 18
+ VI-Création d’une nouvelle table avec SQL 
+Developer
+: (1/3) 
+18
+Nom d’utilisateur et mot de passe créés au niveau du slide 14 (soumaya & esprit18)
+NB: 
+Téléchargez
+ la version 64 bits de SQL Developer à 
+partir
+ de la 
+ressource
+ 
+partagée
+ sur Blackboard, 
+extrayez
+ le 
+fichier
+, 
+puis
+ 
+exécutez
+-le pour commencer à 
+l'utiliser
+.
+
+SLIDE 19
+VI- Création d’une nouvelle table: (2/3) 
+19
+
+SLIDE 20
+20
+VI- Création d’une nouvelle table: (3/3) 
+
+SLIDE 21
+  Bonne pratique : 
+clé
+ 
+primaire
+ avec 
+autoincrémentation
+L'implémentation
+ 
+d'une
+ 
+clé
+ 
+primaire
+ avec 
+autoincrémentation
+ 
+garantit
+ 
+l'unicité
+ des 
+enregistrements
+ et 
+simplifie
+ 
+l'ajout
+ de 
+nouvelles
+ 
+lignes
+, 
+une
+ 
+approche
+ 
+recommandée
+ dans SQL Developer, 
+comme
+ 
+illustré
+ ci-dessous.
+21
+
+SLIDE 22
+ 
+VII.
+Le Patron Singleton 
+en
+ Qt
+22
+Objectif
+ :
+Garantir
+ 
+qu'une
+ 
+classe
+ 
+possède
+ 
+une
+ 
+seule
+ et 
+unique instance.
+Fournir
+ un point 
+d'accès
+ global
+ à 
+cette
+ instance.
+Utilité
+ :
+Lorsque
+ 
+une
+ 
+seule
+ instance
+ 
+est
+ 
+nécessaire
+ (base de données, 
+fichier
+ de configuration).
+Lorsque
+ 
+cette
+ instance doit 
+être
+ accessible 
+globalement
+.
+Avantages
+:
+Économie
+ de 
+ressources
+.
+Consistance
+ dans les données 
+partagées
+.
+Facilité
+ 
+d'accès
+.
+
+SLIDE 23
+ 
+VII.
+Le Patron Singleton 
+en
+ Qt
+23
+Singleton Class
+ avec :
+Private
+ 
+Constructor
+ → empêche de créer des objets depuis l’extérieur. (
+expl
+ : dans main.cpp)
+Static
+ Object
+ → l’instance unique du singleton est stockée 
+en tant que variable statique de la classe 
+(variable dans la méthode 
+createInstance
+()).
+Static
+ Method
+ → méthode d’accès (
+createInstance
+()
+) qui retourne la référence vers cette instance.
+La méthode statique agit comme 
+une porte d’entrée contrôlée
+ vers l’objet Singleton.
+
+SLIDE 24
+VII.Créer
+ une connexion à la base de données avec le patron Singleton 
+«1/3»
+ 
+24
+  Fichier “ 
+connection.h 
+”
+
+SLIDE 25
+VII.Créer
+ une connexion à la base de données avec le patron Singleton 
+«2/3»
+ 
+25
+Fichier “ 
+connection.cpp 
+” 
+
+SLIDE 26
+Vérifier
+ 
+que
+ 
+tout
+ 
+au
+ 
+long
+ 
+de
+ 
+votre
+ 
+projet
+ 
+,
+vous
+ 
+allez
+ 
+manipuler
+ 
+une
+ 
+seule
+ 
+instance
+ 
+de
+la
+ 
+classe
+ 
+Connection
+VII. Créer une connexion à la base de données avec le patron Singleton 
+                                                             
+«3/3»
+ 
+26
+
+SLIDE 27
+ 
+VII.
+Le Patron Singleton 
+en
+ Qt
+27
+Le constructeur est privé donc comment peut on créer une instance de la classe Connection ?
+On va passer par une méthode « 
+public
+ » de la classe Connection qui permet de créer une instance unique : 
+static
+ Connection& 
+createInstance
+() ;  
+La méthode est 
+static
+ car on a besoin de faire l’appel sans objet.
+Si la méthode  n’était pas 
+static
+, tu aurais besoin d’un objet pour appeler la méthode, mais 
+le but du singleton est justement d’avoir cet objet unique
+.
+Donc sans 
+static
+, tu ne pourrais jamais accéder à l’instance 
+avant qu’elle existe
+ → paradoxe.
+Cette méthode va créer un objet via : 
+static
+ Connection instance ; 
+qui
+ 
+fait en sorte que 
+l’instance créée reste vivante après la sortie de la fonction car elle est « 
+static
+ »
+Sans 
+static
+, 
+instance
+ serait une variable 
+locale normale
+, détruite à la fin de la fonction.
+
+L’objet 
+instance
+ 
+vit pendant toute la durée du programme
+.
+
+SLIDE 28
+ 
+VII.
+Le Patron Singleton 
+en
+ Qt
+28
+Connection
+&
+ 
+createInstance
+() ; 
+on retourne une référence pour éviter la copie et garantir que tout le programme utilise exactement la même instance du Singleton (Si pas référence : Chaque appel retourne 
+une copie
+ de 
+instance
+ → ce n’est plus le même objet → singleton brisé.)
+La référence crée un 
+alias
+ vers un objet 
+existant
+.
+Si tu retournais une 
+référence
+ vers une variable non statique, tu aurais une 
+référence vers un objet détruit
+ → comportement indéfini.
+L’objet « instance » est 
+static
+ 
+
+ 
+n’est pas détruit
+ à la fin de la fonction. On peut donc retourner une référence vers lui 
+en toute sécurité
+.
+✅ Conclusion : 
+static
+ est nécessaire pour que la référence soit 
+valide après la fin de la fonction
+.
+
+SLIDE 29
+29
+ 
+ 
+VII.
+Le Patron Singleton 
+en
+ Qt
+Élément
+Rôle dans le Singleton
+Pourquoi c’est nécessaire
+Constructeur privé (
+Private
+ 
+Constructor
+)
+Empêche la création d’objets depuis l’extérieur de la classe
+Garantit qu’aucune autre instance ne peut être créée en dehors de la classe, assurant l’unicité
+Objet statique (Static Object)
+Stocke l’instance unique du singleton
+L’instance reste vivante après la sortie de la fonction.
+Méthode statique (Static Method)
+Fournit un point d’accès à l’instance unique
+Permet d’obtenir l’instance sans avoir besoin d’un objet existant (puisque le constructeur est privé) : appel de la méthode sans objet car elle est 
+static
+Référence (Return by Reference)
+Retourne l’instance unique par référence plutôt que par copie
+Évite la création d’instances temporaires et garantit que tous utilisent exactement le même objet
+Connection(const&) = delete;
+Connection& operator= = delete;
+Évite la duplication d’instance
+Empêcher copie et affectation

@@ -1,0 +1,36 @@
+ANIWORLD
+Centre	de	soins
+Une	attention	à	chaque	patte.
+Facture	de	paiement
+	
+FAC-2026-000042
+Émise	le	10/10/2026
+DÉMONSTRATION	-	DONNÉES	FICTIVES
+	
+CLIENT
+Inès	Ben	Salah	&	famille
+CONSULTATION
+SRV-042
+10/10/2027	à	10:30
+Service	:
+	Consultation
+Catégorie	:
+	Soins	&	bien-être
+Responsable	:
+	Dr.	Amara
+Durée	:
+	30	min	
+Détail	des	prestations
+Montant
+Consultation
+Bilan	général
+Contrôle	des	griffes
+Conseils	de	prévention
+50,50	DT
+TOTAL	À	PAYER
+50,50	DT
+Montant	de	la	prestation	en	dinars	tunisiens	(DT).
+Cette	facture	ne	constitue	pas	une	preuve	de	paiement.	
+Merci	de	votre	confiance.
+ANIWORLD	-	Centre	de	soins	
+ANIWORLD		|		1	/	1

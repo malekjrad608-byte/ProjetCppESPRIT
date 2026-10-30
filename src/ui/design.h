@@ -4,6 +4,7 @@
 #include <QFrame>
 #include <QPushButton>
 #include <QTableWidget>
+class QPainter;
 
 namespace Design {
 QLabel *label(const QString &text, const char *role = nullptr, QWidget *parent = nullptr);
@@ -15,6 +16,8 @@ QWidget *badge(const QString &status);
 QString money(double amount);
 void setupTable(QTableWidget *table, const QStringList &headers);
 void applyTheme();
+void paintWorkspace(QPainter &painter, const QRect &bounds);
+void paintSidebarArt(QPainter &painter, const QRect &bounds);
 QStringList categories();
 QStringList statuses();
 }

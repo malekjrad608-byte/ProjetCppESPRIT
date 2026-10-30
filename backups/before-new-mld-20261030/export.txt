@@ -1,0 +1,38 @@
+
+Export: Release 21.0.0.0.0 - Production on Fri Oct 30 10:42:42 2026
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle and/or its affiliates.  All rights reserved.
+
+Connected to: Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+
+Warning: Oracle Data Pump operations are not typically needed when connected to the root or seed of a container database.
+
+Starting "RAWAND"."SYS_EXPORT_SCHEMA_01":  rawand/********@//localhost:1521/XE schemas=RAWAND directory=DATA_PUMP_DIR dumpfile=BEFORE_NEW_MLD_20261030.dmp logfile=BEFORE_NEW_MLD_20261030.log 
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/FUNCTIONAL_INDEX/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/SEQUENCE/SEQUENCE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/FUNCTIONAL_INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/TRIGGER
+. . exported "RAWAND"."MEDICAL_RECORDS"                  13.15 KB       2 rows
+. . exported "RAWAND"."EMPLOYES"                         10.18 KB       3 rows
+. . exported "RAWAND"."SERVICES"                             9 KB       3 rows
+. . exported "RAWAND"."LOCAUX"                               0 KB       0 rows
+. . exported "RAWAND"."STOCK_LOTS"                           0 KB       0 rows
+Master table "RAWAND"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for RAWAND.SYS_EXPORT_SCHEMA_01 is:
+  C:\APP\MALEK\PRODUCT\21C\ADMIN\XE\DPDUMP\BEFORE_NEW_MLD_20261030.DMP
+Job "RAWAND"."SYS_EXPORT_SCHEMA_01" successfully completed at Fri Oct 30 10:44:03 2026 elapsed 0 00:01:15
+

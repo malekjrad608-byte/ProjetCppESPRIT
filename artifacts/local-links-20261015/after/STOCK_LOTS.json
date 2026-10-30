@@ -1,0 +1,192 @@
+[
+  {
+    "LOT": "DOG-F-01",
+    "ARTICLE": "[CHIEN] Croquettes Royal Canin Adulte",
+    "CATEGORY": "Chiens",
+    "QUANTITY": 15,
+    "UNIT": "sacs",
+    "THRESHOLD": 5,
+    "EXPIRY": "2027-11-22",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "DOG-S-02",
+    "ARTICLE": "[CHIEN] Shampooing Poils Longs",
+    "CATEGORY": "Chiens",
+    "QUANTITY": 8,
+    "UNIT": "flacons",
+    "THRESHOLD": 5,
+    "EXPIRY": "2028-05-10",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "DOG-V-03",
+    "ARTICLE": "[CHIEN] Vaccin Rage/Parvovirose",
+    "CATEGORY": "Chiens",
+    "QUANTITY": 2,
+    "UNIT": "doses",
+    "THRESHOLD": 10,
+    "EXPIRY": "2026-10-15",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "DOG-M-04",
+    "ARTICLE": "[CHIEN] Vermifuge comprimés (Dwa)",
+    "CATEGORY": "Chiens",
+    "QUANTITY": 45,
+    "UNIT": "boîtes",
+    "THRESHOLD": 15,
+    "EXPIRY": "2028-01-05",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "CAT-F-01",
+    "ARTICLE": "[CHAT] Pâtée Saumon (Chat Stérilisé)",
+    "CATEGORY": "Chats",
+    "QUANTITY": 24,
+    "UNIT": "boîtes",
+    "THRESHOLD": 10,
+    "EXPIRY": "2027-08-30",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "CAT-S-02",
+    "ARTICLE": "[CHAT] Shampooing Sec Mousse",
+    "CATEGORY": "Chats",
+    "QUANTITY": 5,
+    "UNIT": "flacons",
+    "THRESHOLD": 5,
+    "EXPIRY": "2028-02-14",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "CAT-V-03",
+    "ARTICLE": "[CHAT] Vaccin Typhus/Coryza",
+    "CATEGORY": "Chats",
+    "QUANTITY": 12,
+    "UNIT": "doses",
+    "THRESHOLD": 10,
+    "EXPIRY": "2026-12-20",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "CAT-M-04",
+    "ARTICLE": "[CHAT] Gouttes anti-puces (Dwa)",
+    "CATEGORY": "Chats",
+    "QUANTITY": 3,
+    "UNIT": "pipettes",
+    "THRESHOLD": 8,
+    "EXPIRY": "2026-11-01",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "BIRD-F-01",
+    "ARTICLE": "[OISEAU] Mélange Graines Canaris",
+    "CATEGORY": "Oiseaux",
+    "QUANTITY": 2,
+    "UNIT": "kg",
+    "THRESHOLD": 5,
+    "EXPIRY": "2026-11-10",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "BIRD-S-02",
+    "ARTICLE": "[OISEAU] Spray Anti-parasites Plumes",
+    "CATEGORY": "Oiseaux",
+    "QUANTITY": 7,
+    "UNIT": "sprays",
+    "THRESHOLD": 3,
+    "EXPIRY": "2028-09-25",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "BIRD-M-03",
+    "ARTICLE": "[OISEAU] Complément Vitamines (Dwa)",
+    "CATEGORY": "Oiseaux",
+    "QUANTITY": 1,
+    "UNIT": "flacon",
+    "THRESHOLD": 3,
+    "EXPIRY": "2026-10-20",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "FISH-F-01",
+    "ARTICLE": "[POISSON] Flocons Alimentaires TetraMin",
+    "CATEGORY": "Poissons",
+    "QUANTITY": 20,
+    "UNIT": "boîtes",
+    "THRESHOLD": 10,
+    "EXPIRY": "2029-01-01",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "FISH-M-02",
+    "ARTICLE": "[POISSON] Traitement Eau Anti-chlore",
+    "CATEGORY": "Poissons",
+    "QUANTITY": 4,
+    "UNIT": "flacons",
+    "THRESHOLD": 5,
+    "EXPIRY": "2027-07-15",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "FISH-M-03",
+    "ARTICLE": "[POISSON] Gouttes Anti-fongiques (Dwa)",
+    "CATEGORY": "Poissons",
+    "QUANTITY": 12,
+    "UNIT": "flacons",
+    "THRESHOLD": 4,
+    "EXPIRY": "2028-03-22",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "HAM-F-01",
+    "ARTICLE": "[HAMSTER] Mélange complet Rongeurs",
+    "CATEGORY": "Rongeurs",
+    "QUANTITY": 10,
+    "UNIT": "sacs",
+    "THRESHOLD": 5,
+    "EXPIRY": "2027-06-18",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "HAM-S-02",
+    "ARTICLE": "[HAMSTER] Shampooing poudre",
+    "CATEGORY": "Rongeurs",
+    "QUANTITY": 6,
+    "UNIT": "boîtes",
+    "THRESHOLD": 3,
+    "EXPIRY": "2028-04-11",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "HAM-M-03",
+    "ARTICLE": "[HAMSTER] Vitamines en gouttes (Dwa)",
+    "CATEGORY": "Rongeurs",
+    "QUANTITY": 15,
+    "UNIT": "flacons",
+    "THRESHOLD": 5,
+    "EXPIRY": "2027-09-09",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "CP-2606",
+    "ARTICLE": "[MATÉRIEL] Compresses stériles",
+    "CATEGORY": "Matériel Clinique",
+    "QUANTITY": 30,
+    "UNIT": "sachets",
+    "THRESHOLD": 20,
+    "EXPIRY": "2026-10-31",
+    "ID_LOCAL": null
+  },
+  {
+    "LOT": "SER-05",
+    "ARTICLE": "[MATÉRIEL] Seringues 5ml",
+    "CATEGORY": "Matériel Clinique",
+    "QUANTITY": 200,
+    "UNIT": "unités",
+    "THRESHOLD": 50,
+    "EXPIRY": "2029-12-31",
+    "ID_LOCAL": null
+  }
+]

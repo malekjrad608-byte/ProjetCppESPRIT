@@ -1,0 +1,4 @@
+LOCAUX: 14 rows, every original value preserved
+SERVICES: 3 rows, every original value preserved
+MEDICAL_RECORDS: 8 rows, every original value preserved
+STOCK_LOTS: 19 rows, every original value preserved

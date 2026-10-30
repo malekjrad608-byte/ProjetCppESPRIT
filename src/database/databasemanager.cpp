@@ -1,17 +1,38 @@
 #include "databasemanager.h"
+#include "oracleconnection.h"
+#include "../models/service.h"
+
+#include <QStandardPaths>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QVariant>
+#include <QSqlRecord>
+#include <cmath>
+#include "../auth/accounts.h"
+#include "../medical/medicalrecord.h"
+#include "../employees/employe.h"
 
 DatabaseManager &DatabaseManager::instance() { static DatabaseManager manager; return manager; }
+bool DatabaseManager::initializeOracle(const QString &configPath) {
+    if(m_db.isValid()) m_db.close();
+    m_db=QSqlDatabase();
+    // Remove only the demo connection; the teacher Singleton owns the Oracle handle.
+    if(QSqlDatabase::contains("aniworld-services")) QSqlDatabase::removeDatabase("aniworld-services");
+    m_localPath=QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)+"/services.sqlite";
+    return OracleConnection::open(m_db,&m_error,configPath);
+}
 bool DatabaseManager::initialize(const QString &path) {
+    m_localPath=path;
     m_lastInsertedId = 0;
     if (m_db.isValid()) m_db.close();
-    else m_db = QSqlDatabase::addDatabase("QSQLITE", "aniworld-services");
+    if(m_db.driverName()!="QSQLITE") {
+        m_db=QSqlDatabase(); QSqlDatabase::removeDatabase("aniworld-services");
+        m_db = QSqlDatabase::addDatabase("QSQLITE", "aniworld-services");
+    }
     m_db.setDatabaseName(path);
     if (!m_db.open()) { m_error = m_db.lastError().text(); return false; }
     QSqlQuery query(m_db);
-    if (!query.exec(R"(CREATE TABLE IF NOT EXISTS services (
+    if (!(query.prepare(R"(CREATE TABLE IF NOT EXISTS services (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL CHECK(length(trim(name)) > 0),
         description TEXT NOT NULL DEFAULT '', responsible TEXT NOT NULL DEFAULT '',
@@ -19,54 +40,37 @@ bool DatabaseManager::initialize(const QString &path) {
         status TEXT NOT NULL CHECK(status IN ('Planifié','En cours','Terminé','Annulé')),
         duration INTEGER NOT NULL CHECK(duration BETWEEN 5 AND 1440),
         price REAL NOT NULL CHECK(price >= 0)
-    ))")) { m_error = query.lastError().text(); return false; }
+    ))") && query.exec())) { m_error = query.lastError().text(); return false; }
+    // Additive migration: preserve all existing consultations and their IDs.
+    const auto columns=m_db.record("services");
+    if (!m_db.transaction()) { m_error=m_db.lastError().text(); return false; }
+    const QStringList additions={"id_employe INTEGER", "id_client INTEGER", "id_local INTEGER", "clientName TEXT NOT NULL DEFAULT ''", "invoiceNumber TEXT NOT NULL DEFAULT ''", "invoiceDate TEXT NOT NULL DEFAULT ''"};
+    for (const auto &column:additions) {
+        if (!columns.contains(column.section(' ',0,0)) && !(query.prepare("ALTER TABLE services ADD COLUMN "+column) && query.exec())) {
+            m_error=query.lastError().text(); m_db.rollback(); return false;
+        }
+    }
+    // Identity is allocated once; editing the consultation never renumbers it.
+    const QStringList migration={
+        "UPDATE services SET invoiceNumber=printf('FAC-%s-%06d',substr(dateTime,1,4),id), invoiceDate=strftime('%Y-%m-%dT%H:%M:%S','now','localtime') WHERE invoiceNumber=''",
+        "CREATE UNIQUE INDEX IF NOT EXISTS service_invoice_number ON services(invoiceNumber)",
+        "CREATE TRIGGER IF NOT EXISTS service_invoice_created AFTER INSERT ON services BEGIN UPDATE services SET invoiceNumber=printf('FAC-%s-%06d',substr(NEW.dateTime,1,4),NEW.id), invoiceDate=strftime('%Y-%m-%dT%H:%M:%S','now','localtime') WHERE id=NEW.id; END"
+    };
+    for (const auto &sql:migration) if (!(query.prepare(sql) && query.exec())) { m_error=query.lastError().text(); m_db.rollback(); return false; }
+    if (!m_db.commit()) { m_error=m_db.lastError().text(); return false; }
+    if(!Employe::initialize(m_db,&m_error) || !Accounts::initialize(m_db,&m_error) || !MedicalRecord::initialize(m_db,&m_error)) return false;
     m_error.clear(); return true;
 }
-QList<Service> DatabaseManager::getAllServices() {
-    QList<Service> result;
-    QSqlQuery query(m_db);
-    if (!query.exec("SELECT id,name,description,responsible,category,dateTime,status,duration,price FROM services ORDER BY dateTime DESC,id DESC")) {
-        m_error = query.lastError().text(); return result;
-    }
-    m_error.clear();
-    while (query.next()) {
-        Service s;
-        s.id=query.value(0).toInt(); s.name=query.value(1).toString();
-        s.description=query.value(2).toString(); s.responsible=query.value(3).toString();
-        s.category=query.value(4).toString();
-        s.dateTime=QDateTime::fromString(query.value(5).toString(),Qt::ISODate);
-        s.status=query.value(6).toString(); s.duration=query.value(7).toInt(); s.price=query.value(8).toDouble();
-        result.append(s);
-    }
-    return result;
-}
-bool DatabaseManager::save(const Service &s, bool update) {
-    if (s.name.trimmed().isEmpty() || s.name.trimmed().size()>120 || !s.dateTime.isValid()) {
-        m_error="Vérifiez le nom et la date du service."; return false;
-    }
-    QSqlQuery query(m_db);
-    query.prepare(update
-        ? "UPDATE services SET name=?,description=?,responsible=?,category=?,dateTime=?,status=?,duration=?,price=? WHERE id=?"
-        : "INSERT INTO services(name,description,responsible,category,dateTime,status,duration,price) VALUES(?,?,?,?,?,?,?,?)");
-    query.addBindValue(s.name.trimmed());
-    query.addBindValue(s.description.isNull()?QStringLiteral(""):s.description.trimmed());
-    query.addBindValue(s.responsible.isNull()?QStringLiteral(""):s.responsible.trimmed());
-    query.addBindValue(s.category); query.addBindValue(s.dateTime.toString(Qt::ISODate));
-    query.addBindValue(s.status); query.addBindValue(s.duration); query.addBindValue(s.price);
-    if(update) query.addBindValue(s.id);
-    if(!query.exec()) { m_error=query.lastError().text(); return false; }
-    if(update && query.numRowsAffected()!=1) { m_error="Ce service n'existe plus."; return false; }
-    if (!update) m_lastInsertedId = query.lastInsertId().toInt();
-    m_error.clear(); return true;
+QList<Service> DatabaseManager::getAllServices() { return Service::afficherListe(&m_error); }
+bool DatabaseManager::save(const Service &s,bool update) {
+    Service entity=s;
+    const bool ok=update?entity.modifier(&m_error):entity.ajouter(&m_error);
+    if(ok)m_lastInsertedId=entity.getId();
+    return ok;
 }
 bool DatabaseManager::addService(const Service &s) { return save(s,false); }
 bool DatabaseManager::updateService(const Service &s) { return save(s,true); }
-bool DatabaseManager::deleteService(int id) {
-    QSqlQuery query(m_db); query.prepare("DELETE FROM services WHERE id=?"); query.addBindValue(id);
-    if(!query.exec()) { m_error=query.lastError().text(); return false; }
-    if(query.numRowsAffected()!=1) { m_error="Ce service n'existe plus."; return false; }
-    m_error.clear(); return true;
-}
+bool DatabaseManager::deleteService(int id) { return Service::supprimer(id,&m_error); }
 bool DatabaseManager::addExamples() {
     if(!getAllServices().isEmpty()) return true;
     if(!m_error.isEmpty()) return false;
@@ -82,10 +86,11 @@ bool DatabaseManager::addExamples() {
     };
     if(!m_db.transaction()) { m_error=m_db.lastError().text(); return false; }
     for(const auto &e:examples) {
-        Service s; s.name=QString::fromUtf8(e.name); s.category=QString::fromUtf8(e.category);
-        s.responsible=QString::fromUtf8(e.person); s.status=QString::fromUtf8(e.status);
-        s.dateTime=QDateTime(QDate::currentDate().addDays(e.day),QTime(e.hour,0));
-        s.duration=e.duration; s.price=e.price; s.description=QString::fromUtf8(e.description);
+        Service s; s.setName(QString::fromUtf8(e.name)); s.setCategory(QString::fromUtf8(e.category));
+        s.setResponsible(QString::fromUtf8(e.person)); s.setStatus(QString::fromUtf8(e.status));
+        s.setDateTime(QDateTime(QDate::currentDate().addDays(e.day),QTime(e.hour,0)));
+        s.setDuration(e.duration); s.setPrice(e.price); s.setDescription(QString::fromUtf8(e.description));
+        s.setClientName(QStringList{"Nour Ben Salah","Ahmed Trabelsi","Inès Mansouri"}.at((e.hour+e.day+3)%3));
         if(!addService(s)) { m_db.rollback(); return false; }
     }
     if(!m_db.commit()) { m_error=m_db.lastError().text(); return false; }

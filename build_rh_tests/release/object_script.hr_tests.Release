@@ -1,0 +1,17 @@
+release/hrdashboard.o
+release/hrdesign.o
+release/hrdialogs.o
+release/hrschedule.o
+release/hrstore.o
+release/hrwidget.o
+release/hr_tests.o
+release/motion.o
+release/qrc_rh.o
+release/qrc_resources.o
+release/moc_hrdashboard.o
+release/moc_hrdesign.o
+release/moc_hrdialogs.o
+release/moc_hrschedule.o
+release/moc_hrstore.o
+release/moc_hrwidget.o
+release/moc_motion.o

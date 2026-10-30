@@ -1,0 +1,7 @@
+Connexion Qt QODBC : RAWAND / CDB$ROOT
+services : 1
+employes : 0
+medical_records : 0
+accounts : 6
+locaux : 0
+stock_lots : 0

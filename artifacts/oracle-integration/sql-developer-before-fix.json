@@ -1,0 +1,1 @@
+{"connections":[{"info":{"customUrl":"jdbc:oracle:thin:@//localhost:1521/XEPDB1","NoPasswordConnection":"FALSE","hostname":"localhost","role":"","driver":"oracle.jdbc.OracleDriver","port":"1521","SavePassword":"false","OracleConnectionType":"BASIC","RaptorConnectionType":"Oracle","serviceName":"XEPDB1","user":"ANIWORLD_APP"},"name":"ANIWORLD - XEPDB1","type":"jdbc"}]}

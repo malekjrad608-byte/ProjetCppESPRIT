@@ -1,0 +1,2402 @@
+{
+  "columns": [
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "COLUMN_NAME": "USERNAME",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "COLUMN_NAME": "ROLE",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 20,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "COLUMN_NAME": "SALT",
+      "COLUMN_ID": 3,
+      "DATA_TYPE": "RAW",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "COLUMN_NAME": "PASSWORD_HASH",
+      "COLUMN_ID": 4,
+      "DATA_TYPE": "RAW",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "COLUMN_NAME": "ITERATIONS",
+      "COLUMN_ID": 5,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 7,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "COLLECTION_VERSIONS",
+      "COLUMN_NAME": "NAME",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 30,
+      "CHAR_USED": "B",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "COLLECTION_VERSIONS",
+      "COLUMN_NAME": "REVISION",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 10,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "ID",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 10,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "NOM",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "PRENOM",
+      "COLUMN_ID": 3,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "COURRIEL",
+      "COLUMN_ID": 4,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 250,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "TELEPHONE",
+      "COLUMN_ID": 5,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 60,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "POSTE",
+      "COLUMN_ID": 6,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 150,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "DATE_EMBAUCHE",
+      "COLUMN_ID": 7,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 10,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "DISPONIBLE",
+      "COLUMN_ID": 8,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 1,
+      "DATA_SCALE": 0,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "CHARGE_HEBDO",
+      "COLUMN_ID": 9,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 8,
+      "DATA_SCALE": 2,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "DISPO_HEBDO",
+      "COLUMN_ID": 10,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 8,
+      "DATA_SCALE": 2,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "COLUMN_NAME": "COMPETENCES",
+      "COLUMN_ID": 11,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 2000,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "INTEGRATION_MIGRATIONS",
+      "COLUMN_NAME": "NAME",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "ID",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 10,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "NAME",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 150,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "TYPE",
+      "COLUMN_ID": 3,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 100,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "FLOOR",
+      "COLUMN_ID": 4,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 3,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "CAPACITY",
+      "COLUMN_ID": 5,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 6,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "OCCUPANCY",
+      "COLUMN_ID": 6,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 6,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "SPECIALTY",
+      "COLUMN_ID": 7,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 250,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "OUT_OF_SERVICE",
+      "COLUMN_ID": 8,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 1,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "CLEANING",
+      "COLUMN_ID": 9,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 1,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "LAST_CLEANED",
+      "COLUMN_ID": 10,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 35,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "COLUMN_NAME": "DIRTY_SINCE",
+      "COLUMN_ID": 11,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 35,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "ID",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 10,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "ANIMAL_ID",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "NAME",
+      "COLUMN_ID": 3,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "SPECIES",
+      "COLUMN_ID": 4,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 30,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "BREED",
+      "COLUMN_ID": 5,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "AGE",
+      "COLUMN_ID": 6,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 2,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "SEX",
+      "COLUMN_ID": 7,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 20,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "OWNER",
+      "COLUMN_ID": 8,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "CONSULTATION_DATE",
+      "COLUMN_ID": 9,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 10,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "REASON",
+      "COLUMN_ID": 10,
+      "DATA_TYPE": "CLOB",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "DIAGNOSIS",
+      "COLUMN_ID": 11,
+      "DATA_TYPE": "CLOB",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "TREATMENT",
+      "COLUMN_ID": 12,
+      "DATA_TYPE": "CLOB",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "VACCINATIONS",
+      "COLUMN_ID": 13,
+      "DATA_TYPE": "CLOB",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "ALLERGIES",
+      "COLUMN_ID": 14,
+      "DATA_TYPE": "CLOB",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "WEIGHT",
+      "COLUMN_ID": 15,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 6,
+      "DATA_SCALE": 2,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "OBSERVATIONS",
+      "COLUMN_ID": 16,
+      "DATA_TYPE": "CLOB",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "COLUMN_NAME": "VACCINATION_STATUS",
+      "COLUMN_ID": 17,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 30,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "COLUMN_NAME": "ID",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 10,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "COLUMN_NAME": "TITRE",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 250,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "COLUMN_NAME": "COMPETENCE_REQUISE",
+      "COLUMN_ID": 3,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 250,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "COLUMN_NAME": "DEBUT",
+      "COLUMN_ID": 4,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 19,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "COLUMN_NAME": "FIN",
+      "COLUMN_ID": 5,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 19,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "COLUMN_NAME": "CHARGE_HEURES",
+      "COLUMN_ID": 6,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 8,
+      "DATA_SCALE": 2,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "COLUMN_NAME": "RESPONSABLE_ID",
+      "COLUMN_ID": 7,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 10,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "COLUMN_NAME": "CREATED_AT",
+      "COLUMN_ID": 8,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 35,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "SCHEMA_VERSION",
+      "COLUMN_NAME": "ID",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 1,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "SCHEMA_VERSION",
+      "COLUMN_NAME": "VERSION",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 5,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "ID",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 10,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "NAME",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "DESCRIPTION",
+      "COLUMN_ID": 3,
+      "DATA_TYPE": "CLOB",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "RESPONSIBLE",
+      "COLUMN_ID": 4,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 250,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "CATEGORY",
+      "COLUMN_ID": 5,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "DATETIME",
+      "COLUMN_ID": 6,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 35,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "STATUS",
+      "COLUMN_ID": 7,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 30,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "DURATION",
+      "COLUMN_ID": 8,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 4,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "PRICE",
+      "COLUMN_ID": 9,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 10,
+      "DATA_SCALE": 2,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "CLIENTNAME",
+      "COLUMN_ID": 10,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "INVOICENUMBER",
+      "COLUMN_ID": 11,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 60,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "COLUMN_NAME": "INVOICEDATE",
+      "COLUMN_ID": 12,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 35,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "COLUMN_NAME": "LOT",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "COLUMN_NAME": "ARTICLE",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 250,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "COLUMN_NAME": "CATEGORY",
+      "COLUMN_ID": 3,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 100,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "COLUMN_NAME": "QUANTITY",
+      "COLUMN_ID": 4,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 6,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "COLUMN_NAME": "UNIT",
+      "COLUMN_ID": 5,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 60,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "COLUMN_NAME": "THRESHOLD",
+      "COLUMN_ID": 6,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 6,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "COLUMN_NAME": "EXPIRY",
+      "COLUMN_ID": 7,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 10,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "COLUMN_NAME": "ID",
+      "COLUMN_ID": 1,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "COLUMN_NAME": "LOT",
+      "COLUMN_ID": 2,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "COLUMN_NAME": "ARTICLE",
+      "COLUMN_ID": 3,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 250,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "COLUMN_NAME": "QUANTITY_BEFORE",
+      "COLUMN_ID": 4,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 6,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "COLUMN_NAME": "QUANTITY_AFTER",
+      "COLUMN_ID": 5,
+      "DATA_TYPE": "NUMBER",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": 6,
+      "DATA_SCALE": 0,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "COLUMN_NAME": "ACTION",
+      "COLUMN_ID": 6,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 40,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "COLUMN_NAME": "CHANGED_AT",
+      "COLUMN_ID": 7,
+      "DATA_TYPE": "TIMESTAMP(6)",
+      "CHAR_LENGTH": 0,
+      "CHAR_USED": null,
+      "DATA_PRECISION": null,
+      "DATA_SCALE": 6,
+      "NULLABLE": "N"
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "COLUMN_NAME": "CHANGED_BY",
+      "COLUMN_ID": 8,
+      "DATA_TYPE": "VARCHAR2",
+      "CHAR_LENGTH": 120,
+      "CHAR_USED": "C",
+      "DATA_PRECISION": null,
+      "DATA_SCALE": null,
+      "NULLABLE": "Y"
+    }
+  ],
+  "constraints": [
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008223",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"ROLE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008224",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"SALT\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008225",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"PASSWORD_HASH\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008226",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"ITERATIONS\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008227",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "role IN ('admin','services','stock','employes','locaux','medical')"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008228",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "iterations BETWEEN 10000 AND 1000000"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008229",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "COLLECTION_VERSIONS",
+      "CONSTRAINT_NAME": "SYS_C008270",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"REVISION\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "COLLECTION_VERSIONS",
+      "CONSTRAINT_NAME": "SYS_C008271",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008241",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"NOM\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008242",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"PRENOM\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008243",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "disponible IN (0,1)"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008244",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "charge_hebdo>=0"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008245",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "dispo_hebdo>=0"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008246",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "INTEGRATION_MIGRATIONS",
+      "CONSTRAINT_NAME": "SYS_C008222",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008272",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"NAME\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008273",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"TYPE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008274",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"FLOOR\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008275",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"CAPACITY\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008276",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"OCCUPANCY\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008277",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"OUT_OF_SERVICE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008278",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"CLEANING\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008279",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "capacity>=1"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008280",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "out_of_service IN (0,1)"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008281",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "cleaning IN (0,1,2)"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008282",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "occupancy BETWEEN 0 AND capacity"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008283",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008257",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"ANIMAL_ID\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008258",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"NAME\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008259",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"SPECIES\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008260",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"AGE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008261",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"SEX\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008262",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"OWNER\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008263",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"CONSULTATION_DATE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008264",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"WEIGHT\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008265",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"VACCINATION_STATUS\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008266",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "age BETWEEN 0 AND 30"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008267",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "weight BETWEEN 0 AND 100"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008268",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "vaccination_status IN ('À jour','À renouveler')"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008269",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008247",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"TITRE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008248",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"COMPETENCE_REQUISE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008249",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"DEBUT\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008250",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"FIN\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008251",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"CHARGE_HEURES\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008252",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"RESPONSABLE_ID\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008253",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "charge_heures>0"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008254",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "fin>debut"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008255",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008256",
+      "CONSTRAINT_TYPE": "R",
+      "R_OWNER": "ANIWORLD_APP",
+      "R_CONSTRAINT_NAME": "SYS_C008246",
+      "DELETE_RULE": "CASCADE",
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SCHEMA_VERSION",
+      "CONSTRAINT_NAME": "SYS_C008220",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"VERSION\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SCHEMA_VERSION",
+      "CONSTRAINT_NAME": "SYS_C008221",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008230",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"NAME\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008231",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"CATEGORY\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008232",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"DATETIME\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008233",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"STATUS\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008234",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"DURATION\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008235",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"PRICE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008236",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "status IN ('Planifié','En cours','Terminé','Annulé')"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008237",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "duration BETWEEN 5 AND 1440"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008238",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "price BETWEEN 0 AND 99999.99"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008239",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008240",
+      "CONSTRAINT_TYPE": "U",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008284",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"ARTICLE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008285",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"CATEGORY\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008286",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"QUANTITY\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008287",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"UNIT\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008288",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"THRESHOLD\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008289",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"EXPIRY\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008290",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "quantity BETWEEN 0 AND 999999"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008291",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "threshold BETWEEN 1 AND 999999"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008292",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008293",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"ID\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008294",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"LOT\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008295",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"ARTICLE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008296",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"QUANTITY_BEFORE\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008297",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"QUANTITY_AFTER\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008298",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"ACTION\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008299",
+      "CONSTRAINT_TYPE": "C",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": "\"CHANGED_AT\" IS NOT NULL"
+    },
+    {
+      "OWNER": "ANIWORLD_APP",
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008300",
+      "CONSTRAINT_TYPE": "P",
+      "R_OWNER": null,
+      "R_CONSTRAINT_NAME": null,
+      "DELETE_RULE": null,
+      "STATUS": "ENABLED",
+      "VALIDATED": "VALIDATED",
+      "SEARCH_CONDITION_VC": null
+    }
+  ],
+  "constraint_columns": [
+    {
+      "TABLE_NAME": "SCHEMA_VERSION",
+      "CONSTRAINT_NAME": "SYS_C008220",
+      "COLUMN_NAME": "VERSION",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SCHEMA_VERSION",
+      "CONSTRAINT_NAME": "SYS_C008221",
+      "COLUMN_NAME": "ID",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "INTEGRATION_MIGRATIONS",
+      "CONSTRAINT_NAME": "SYS_C008222",
+      "COLUMN_NAME": "NAME",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008223",
+      "COLUMN_NAME": "ROLE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008224",
+      "COLUMN_NAME": "SALT",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008225",
+      "COLUMN_NAME": "PASSWORD_HASH",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008226",
+      "COLUMN_NAME": "ITERATIONS",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008227",
+      "COLUMN_NAME": "ROLE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008228",
+      "COLUMN_NAME": "ITERATIONS",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "ACCOUNTS",
+      "CONSTRAINT_NAME": "SYS_C008229",
+      "COLUMN_NAME": "USERNAME",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008230",
+      "COLUMN_NAME": "NAME",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008231",
+      "COLUMN_NAME": "CATEGORY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008232",
+      "COLUMN_NAME": "DATETIME",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008233",
+      "COLUMN_NAME": "STATUS",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008234",
+      "COLUMN_NAME": "DURATION",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008235",
+      "COLUMN_NAME": "PRICE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008236",
+      "COLUMN_NAME": "STATUS",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008237",
+      "COLUMN_NAME": "DURATION",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008238",
+      "COLUMN_NAME": "PRICE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008239",
+      "COLUMN_NAME": "ID",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "SERVICES",
+      "CONSTRAINT_NAME": "SYS_C008240",
+      "COLUMN_NAME": "INVOICENUMBER",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008241",
+      "COLUMN_NAME": "NOM",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008242",
+      "COLUMN_NAME": "PRENOM",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008243",
+      "COLUMN_NAME": "DISPONIBLE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008244",
+      "COLUMN_NAME": "CHARGE_HEBDO",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008245",
+      "COLUMN_NAME": "DISPO_HEBDO",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "EMPLOYES",
+      "CONSTRAINT_NAME": "SYS_C008246",
+      "COLUMN_NAME": "ID",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008247",
+      "COLUMN_NAME": "TITRE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008248",
+      "COLUMN_NAME": "COMPETENCE_REQUISE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008249",
+      "COLUMN_NAME": "DEBUT",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008250",
+      "COLUMN_NAME": "FIN",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008251",
+      "COLUMN_NAME": "CHARGE_HEURES",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008252",
+      "COLUMN_NAME": "RESPONSABLE_ID",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008253",
+      "COLUMN_NAME": "CHARGE_HEURES",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008254",
+      "COLUMN_NAME": "DEBUT",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008254",
+      "COLUMN_NAME": "FIN",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008255",
+      "COLUMN_NAME": "ID",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "PLANNING_AFFECTATIONS",
+      "CONSTRAINT_NAME": "SYS_C008256",
+      "COLUMN_NAME": "RESPONSABLE_ID",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008257",
+      "COLUMN_NAME": "ANIMAL_ID",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008258",
+      "COLUMN_NAME": "NAME",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008259",
+      "COLUMN_NAME": "SPECIES",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008260",
+      "COLUMN_NAME": "AGE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008261",
+      "COLUMN_NAME": "SEX",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008262",
+      "COLUMN_NAME": "OWNER",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008263",
+      "COLUMN_NAME": "CONSULTATION_DATE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008264",
+      "COLUMN_NAME": "WEIGHT",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008265",
+      "COLUMN_NAME": "VACCINATION_STATUS",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008266",
+      "COLUMN_NAME": "AGE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008267",
+      "COLUMN_NAME": "WEIGHT",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008268",
+      "COLUMN_NAME": "VACCINATION_STATUS",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "MEDICAL_RECORDS",
+      "CONSTRAINT_NAME": "SYS_C008269",
+      "COLUMN_NAME": "ID",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "COLLECTION_VERSIONS",
+      "CONSTRAINT_NAME": "SYS_C008270",
+      "COLUMN_NAME": "REVISION",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "COLLECTION_VERSIONS",
+      "CONSTRAINT_NAME": "SYS_C008271",
+      "COLUMN_NAME": "NAME",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008272",
+      "COLUMN_NAME": "NAME",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008273",
+      "COLUMN_NAME": "TYPE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008274",
+      "COLUMN_NAME": "FLOOR",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008275",
+      "COLUMN_NAME": "CAPACITY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008276",
+      "COLUMN_NAME": "OCCUPANCY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008277",
+      "COLUMN_NAME": "OUT_OF_SERVICE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008278",
+      "COLUMN_NAME": "CLEANING",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008279",
+      "COLUMN_NAME": "CAPACITY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008280",
+      "COLUMN_NAME": "OUT_OF_SERVICE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008281",
+      "COLUMN_NAME": "CLEANING",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008282",
+      "COLUMN_NAME": "CAPACITY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008282",
+      "COLUMN_NAME": "OCCUPANCY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "LOCAUX",
+      "CONSTRAINT_NAME": "SYS_C008283",
+      "COLUMN_NAME": "ID",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008284",
+      "COLUMN_NAME": "ARTICLE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008285",
+      "COLUMN_NAME": "CATEGORY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008286",
+      "COLUMN_NAME": "QUANTITY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008287",
+      "COLUMN_NAME": "UNIT",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008288",
+      "COLUMN_NAME": "THRESHOLD",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008289",
+      "COLUMN_NAME": "EXPIRY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008290",
+      "COLUMN_NAME": "QUANTITY",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008291",
+      "COLUMN_NAME": "THRESHOLD",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_LOTS",
+      "CONSTRAINT_NAME": "SYS_C008292",
+      "COLUMN_NAME": "LOT",
+      "POSITION": 1
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008293",
+      "COLUMN_NAME": "ID",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008294",
+      "COLUMN_NAME": "LOT",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008295",
+      "COLUMN_NAME": "ARTICLE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008296",
+      "COLUMN_NAME": "QUANTITY_BEFORE",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008297",
+      "COLUMN_NAME": "QUANTITY_AFTER",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008298",
+      "COLUMN_NAME": "ACTION",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008299",
+      "COLUMN_NAME": "CHANGED_AT",
+      "POSITION": null
+    },
+    {
+      "TABLE_NAME": "STOCK_MOVEMENTS",
+      "CONSTRAINT_NAME": "SYS_C008300",
+      "COLUMN_NAME": "ID",
+      "POSITION": 1
+    }
+  ]
+}
