@@ -382,7 +382,7 @@
                 <rect><x>0</x><y>147</y><width>514</width><height>45</height></rect>
               </property>
               <property name="placeholderText">
-                <string>Rechercher un dossier…</string>
+                <string>Rechercher (réf. animal, nom, propriétaire, diagnostic…)</string>
               </property>
               <property name="clearButtonEnabled">
                 <bool>true</bool>

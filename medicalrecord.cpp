@@ -1,129 +1,259 @@
 #include "medicalrecord.h"
-#include <QSqlQuery>
 #include <QSqlError>
-#include <QVariant>
+#include <QSqlDatabase>
+#include <QMap>
+#include <QVector>
+#include <QStringList>
+#include <QSqlQuery>
+#include <QRegularExpression>
 #include <QDebug>
 
-MedicalRecord::MedicalRecord()
-{
-    animal.age = 0;
-    medical.weight = 0.0;
-}
-
-MedicalRecord::MedicalRecord(const AnimalInfo& animalInfo, const MedicalInfo& medicalInfo)
-    : animal(animalInfo), medical(medicalInfo)
-{
-}
-
-QString MedicalRecord::getFullName() const
-{
-    return animal.name;
-}
-
-QString MedicalRecord::getVaccinationStatus() const
-{
-    return medical.vaccinationStatus;
-}
-
-bool MedicalRecord::operator==(const MedicalRecord& other) const
-{
-    return medical.recordId == other.medical.recordId;
-}
-
-// ------------------------------------------------------------ Base de données
-
 namespace {
-void bindRecord(QSqlQuery &q, const MedicalRecord &r)
+QString g_derniereErreur;
+
+void memoriserErreur(const char *contexte, const QSqlError &erreur)
 {
-    q.bindValue(":record_id", r.medical.recordId);
-    q.bindValue(":animal_id", r.animal.animalId);
-    q.bindValue(":name", r.animal.name);
-    q.bindValue(":species", r.animal.species);
-    q.bindValue(":breed", r.animal.breed);
-    q.bindValue(":age", r.animal.age);
-    q.bindValue(":sex", r.animal.sex);
-    q.bindValue(":owner", r.animal.owner);
-    q.bindValue(":consult_date", r.medical.consultationDate);
-    q.bindValue(":reason", r.medical.reason);
-    q.bindValue(":diagnosis", r.medical.diagnosis);
-    q.bindValue(":treatment", r.medical.treatment);
-    q.bindValue(":vaccinations", r.medical.vaccinations);
-    q.bindValue(":allergies", r.medical.allergies);
-    q.bindValue(":weight", r.medical.weight);
-    q.bindValue(":observations", r.medical.observations);
-    q.bindValue(":vacc_status", r.medical.vaccinationStatus);
+    g_derniereErreur = QString("%1\n[driver : %2 | base : %3 | code : %4]")
+                           .arg(erreur.text().trimmed(), erreur.driverText().trimmed(),
+                                erreur.databaseText().trimmed(), erreur.nativeErrorCode());
+    qDebug() << contexte << ":" << g_derniereErreur;
 }
 
-bool run(QSqlQuery &q, const char *what)
+// valeur SQL NULL typée (évite les erreurs de liaison avec un QVariant vide)
+QVariant nullDate()   { return QVariant(QMetaType(QMetaType::QDate)); }
+}
+
+MedicalRecord::MedicalRecord(QString idDossier, QDate dateConsultation, QString motif, QString diagnostic,
+                             QString idAnimal, QString nomAnimal, QString espece, QString race,
+                             int age, double poids, QString proprietaire, QString idEmployes)
 {
-    if (q.exec())
+    this->idDossier = idDossier;
+    this->dateConsultation = dateConsultation;
+    this->motif = motif;
+    this->diagnostic = diagnostic;
+    this->idAnimal = idAnimal;
+    this->nomAnimal = nomAnimal;
+    this->espece = espece;
+    this->race = race;
+    this->age = age;
+    this->poids = poids;
+    this->proprietaire = proprietaire;
+    this->idEmployes = idEmployes;
+}
+
+// ---------------------------------------------------------------- conversions / utilitaires
+QVariant MedicalRecord::versNombre(const QString &identifiant)
+{
+    // On prend le nombre final : "MED-012" -> 12, "ANI-005" -> 5, "7" -> 7. Sans nombre : NULL.
+    static const QRegularExpression fin("(\\d+)\\s*$");
+    const QRegularExpressionMatch m = fin.match(identifiant);
+    if (!m.hasMatch() || m.captured(1).size() > 18)
+        return QVariant(QMetaType(QMetaType::LongLong));
+    return QVariant(m.captured(1).toLongLong());
+}
+
+QString MedicalRecord::versTexte(const QVariant &nombre, const QString &prefixe)
+{
+    if (!nombre.isValid() || nombre.isNull())
+        return QString();
+    return QString("%1-%2").arg(prefixe).arg(nombre.toLongLong(), 3, 10, QChar('0'));
+}
+
+QString MedicalRecord::derniereErreur()
+{
+    return g_derniereErreur;
+}
+
+bool MedicalRecord::colonneExiste(const QString &colonne)
+{
+    // Le nom vient du code (SEXE, TRAITEMENT), jamais de l'utilisateur. Test sans lire de données.
+    static QMap<QString, bool> cache;
+    if (!QSqlDatabase::database().isOpen())
+        return false;
+    if (cache.contains(colonne))
+        return cache.value(colonne);
+    QSqlQuery query;
+    const bool existe = query.exec(QString("SELECT %1 FROM MEDICAL WHERE 1 = 0").arg(colonne));
+    if (!existe)
+        qDebug() << "Colonne MEDICAL." << colonne << "absente : champ gardé en mémoire seulement";
+    cache.insert(colonne, existe);
+    return existe;
+}
+
+qlonglong MedicalRecord::prochainIdDossier()
+{
+    QSqlQuery query;
+    if (query.exec("SELECT NVL(MAX(ID_DOSSIER), 0) + 1 FROM MEDICAL") && query.next())
+        return query.value(0).toLongLong();
+    memoriserErreur("MAX(ID_DOSSIER)", query.lastError());
+    return -1;
+}
+
+// ---------------------------------------------------------------- champs communs INSERT / UPDATE
+// Les valeurs sont envoyées au driver QODBC sous forme de texte converti côté Oracle (TO_NUMBER, TO_DATE, TO_CLOB) :
+// le driver ODBC d'Oracle gère mal les types BIGINT, TIMESTAMP et CLOB liés directement ("QODBC: unknown error").
+namespace {
+struct Champ {
+    QString nom;          // nom du paramètre (sans :)
+    QString colonne;      // colonne Oracle
+    QString expr;         // expression SQL avec le paramètre lié
+    QVariant valeur;      // valeur liée
+    QString litteral;     // même valeur écrite en littéral SQL (repli si la liaison échoue)
+};
+
+QString chaineSql(const QString &t)
+{
+    QString e = t;
+    e.replace('\'', "''");
+    return "'" + e + "'";
+}
+
+QString clobSql(const QString &t)
+{
+    if (t.isEmpty())
+        return "NULL";
+    QStringList morceaux;                      // un littéral Oracle est limité à 4000 octets : on découpe
+    for (int i = 0; i < t.size(); i += 1000)
+        morceaux << "TO_CLOB(" + chaineSql(t.mid(i, 1000)) + ")";
+    return morceaux.join(" || ");
+}
+
+QString nombreSql(const QVariant &v)
+{
+    return v.isNull() ? QString("NULL") : QString::number(v.toLongLong());
+}
+
+QVector<Champ> champsDe(const MedicalRecord &r, bool avecSexe, bool avecTraitement)
+{
+    QVector<Champ> c;
+    const QVariant idD = MedicalRecord::versNombre(r.getIdDossier());
+    const QVariant ref = MedicalRecord::versNombre(r.getIdAnimal());
+    const QVariant emp = MedicalRecord::versNombre(r.getIdEmployes());
+    const QString date = r.getDateConsultation().isValid() ? r.getDateConsultation().toString("yyyy-MM-dd") : QString();
+
+    c << Champ{"id_dossier", "ID_DOSSIER", "TO_NUMBER(:id_dossier)", idD.isNull() ? QString() : QString::number(idD.toLongLong()), nombreSql(idD)};
+    c << Champ{"date_consultation", "DATE_CONSULTATION", "TO_DATE(:date_consultation, 'YYYY-MM-DD')", date,
+               date.isEmpty() ? QString("NULL") : "TO_DATE('" + date + "', 'YYYY-MM-DD')"};
+    c << Champ{"motif", "MOTIF", ":motif", r.getMotif(), chaineSql(r.getMotif())};
+    c << Champ{"diagnostic", "DIAGNOSTIC", "TO_CLOB(:diagnostic)", r.getDiagnostic(), clobSql(r.getDiagnostic())};
+    c << Champ{"ref_animal", "REF_ANIMAL", "TO_NUMBER(:ref_animal)", ref.isNull() ? QString() : QString::number(ref.toLongLong()), nombreSql(ref)};
+    c << Champ{"nom_animal", "NOM_ANIMAL", ":nom_animal", r.getNomAnimal(), chaineSql(r.getNomAnimal())};
+    c << Champ{"espece", "ESPECE", ":espece", r.getEspece(), chaineSql(r.getEspece())};
+    c << Champ{"race", "RACE", ":race", r.getRace(), chaineSql(r.getRace())};
+    c << Champ{"age", "AGE", ":age", r.getAge(), QString::number(r.getAge())};
+    c << Champ{"poids", "POIDS", ":poids", r.getPoids(), QString::number(r.getPoids(), 'f', 2)};
+    c << Champ{"proprietaire", "PROPRIETAIRE", ":proprietaire", r.getProprietaire(), chaineSql(r.getProprietaire())};
+    c << Champ{"id_employes", "ID_EMPLOYES", "TO_NUMBER(:id_employes)", emp.isNull() ? QString() : QString::number(emp.toLongLong()), nombreSql(emp)};
+    if (avecSexe)
+        c << Champ{"sexe", "SEXE", ":sexe", r.getSexe(), chaineSql(r.getSexe())};
+    if (avecTraitement)
+        c << Champ{"traitement", "TRAITEMENT", ":traitement", r.getTraitement(), chaineSql(r.getTraitement())};
+    return c;
+}
+
+// Exécute l'ordre avec paramètres liés ; si le driver refuse, deuxième essai avec des littéraux SQL
+// (toutes les valeurs sont échappées : apostrophes doublées).
+bool executer(const QString &sqlLie, const QString &sqlLitteral, const QVector<Champ> &champs, const char *contexte)
+{
+    QSqlQuery query;
+    query.prepare(sqlLie);
+    for (const Champ &ch : champs)
+        query.bindValue(":" + ch.nom, ch.valeur);
+    if (query.exec())
         return true;
-    qDebug() << what << "a échoué :" << q.lastError().text();
+    const QSqlError premiere = query.lastError();
+    qDebug() << contexte << "liaison refusée :" << premiere.text() << "-> essai en littéraux";
+
+    QSqlQuery q2;
+    if (q2.exec(sqlLitteral))
+        return true;
+    memoriserErreur(contexte, q2.lastError().text().trimmed().isEmpty() ? premiere : q2.lastError());
     return false;
 }
 }
 
-QVector<MedicalRecord> MedicalRecord::afficher()
+// ---------------------------------------------------------------- AJOUT (create)
+bool MedicalRecord::ajouter()
 {
-    QVector<MedicalRecord> list;
-    QSqlQuery q;
-    q.prepare("SELECT RECORD_ID, ANIMAL_ID, NAME, SPECIES, BREED, AGE, SEX, OWNER, "
-              "CONSULT_DATE, REASON, DIAGNOSIS, TREATMENT, VACCINATIONS, ALLERGIES, "
-              "WEIGHT, OBSERVATIONS, VACC_STATUS FROM MEDICAL_RECORD ORDER BY CONSULT_DATE DESC");
-    if (!run(q, "SELECT"))
-        return list;
-    while (q.next()) {
-        MedicalRecord r;
-        r.medical.recordId = q.value(0).toString();
-        r.animal.animalId = q.value(1).toString();
-        r.animal.name = q.value(2).toString();
-        r.animal.species = q.value(3).toString();
-        r.animal.breed = q.value(4).toString();
-        r.animal.age = q.value(5).toInt();
-        r.animal.sex = q.value(6).toString();
-        r.animal.owner = q.value(7).toString();
-        r.medical.consultationDate = q.value(8).toDate();
-        r.medical.reason = q.value(9).toString();
-        r.medical.diagnosis = q.value(10).toString();
-        r.medical.treatment = q.value(11).toString();
-        r.medical.vaccinations = q.value(12).toString();
-        r.medical.allergies = q.value(13).toString();
-        r.medical.weight = q.value(14).toDouble();
-        r.medical.observations = q.value(15).toString();
-        r.medical.vaccinationStatus = q.value(16).toString();
-        list.append(r);
+    const bool avecSexe = colonneExiste("SEXE");
+    const bool avecTraitement = colonneExiste("TRAITEMENT");
+    g_derniereErreur.clear();
+
+    const QVector<Champ> champs = champsDe(*this, avecSexe, avecTraitement);
+    QStringList cols, lies, lits;
+    for (const Champ &ch : champs) {
+        cols << ch.colonne;
+        lies << ch.expr;
+        lits << ch.litteral;
     }
-    return list;
+    const QString debut = "INSERT INTO MEDICAL (" + cols.join(", ") + ") VALUES (";
+    return executer(debut + lies.join(", ") + ")", debut + lits.join(", ") + ")", champs, "INSERT MEDICAL");
 }
 
-bool MedicalRecord::ajouter() const
+// ---------------------------------------------------------------- AFFICHAGE (read)
+QSqlQueryModel * MedicalRecord::afficher()
 {
-    QSqlQuery q;
-    q.prepare("INSERT INTO MEDICAL_RECORD (RECORD_ID, ANIMAL_ID, NAME, SPECIES, BREED, AGE, SEX, OWNER, "
-              "CONSULT_DATE, REASON, DIAGNOSIS, TREATMENT, VACCINATIONS, ALLERGIES, WEIGHT, "
-              "OBSERVATIONS, VACC_STATUS) VALUES (:record_id, :animal_id, :name, :species, :breed, "
-              ":age, :sex, :owner, :consult_date, :reason, :diagnosis, :treatment, :vaccinations, "
-              ":allergies, :weight, :observations, :vacc_status)");
-    bindRecord(q, *this);
-    return run(q, "INSERT");
+    QSqlQueryModel * model = new QSqlQueryModel();
+
+    // SEXE et TRAITEMENT : colonnes lues seulement si elles existent (sinon NULL, valeurs gardées en mémoire)
+    const QString sexe = colonneExiste("SEXE") ? "SEXE" : "CAST(NULL AS VARCHAR2(10)) AS SEXE";
+    const QString traitement = colonneExiste("TRAITEMENT") ? "TRAITEMENT" : "CAST(NULL AS VARCHAR2(500)) AS TRAITEMENT";
+
+    model->setQuery("SELECT ID_DOSSIER, DATE_CONSULTATION, MOTIF, DIAGNOSTIC, REF_ANIMAL, NOM_ANIMAL, "
+                    "ESPECE, RACE, AGE, POIDS, PROPRIETAIRE, ID_EMPLOYES, " + sexe + ", " + traitement + " "
+                    "FROM MEDICAL ORDER BY DATE_CONSULTATION DESC");
+    if (model->lastError().isValid())
+        memoriserErreur("SELECT MEDICAL", model->lastError());
+    model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID dossier"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Date consultation"));
+    model->setHeaderData(2, Qt::Horizontal, QObject::tr("Motif"));
+    model->setHeaderData(3, Qt::Horizontal, QObject::tr("Diagnostic"));
+    model->setHeaderData(4, Qt::Horizontal, QObject::tr("Réf. animal"));
+    model->setHeaderData(5, Qt::Horizontal, QObject::tr("Nom animal"));
+    model->setHeaderData(6, Qt::Horizontal, QObject::tr("Espèce"));
+    model->setHeaderData(7, Qt::Horizontal, QObject::tr("Race"));
+    model->setHeaderData(8, Qt::Horizontal, QObject::tr("Âge"));
+    model->setHeaderData(9, Qt::Horizontal, QObject::tr("Poids"));
+    model->setHeaderData(10, Qt::Horizontal, QObject::tr("Propriétaire"));
+    model->setHeaderData(11, Qt::Horizontal, QObject::tr("ID employé"));
+    model->setHeaderData(12, Qt::Horizontal, QObject::tr("Sexe"));
+    model->setHeaderData(13, Qt::Horizontal, QObject::tr("Traitement"));
+
+    return model;
 }
 
-bool MedicalRecord::modifier() const
+// ---------------------------------------------------------------- SUPPRESSION (delete)
+bool MedicalRecord::supprimer(QString idDossier)
 {
-    QSqlQuery q;
-    q.prepare("UPDATE MEDICAL_RECORD SET ANIMAL_ID=:animal_id, NAME=:name, SPECIES=:species, "
-              "BREED=:breed, AGE=:age, SEX=:sex, OWNER=:owner, CONSULT_DATE=:consult_date, "
-              "REASON=:reason, DIAGNOSIS=:diagnosis, TREATMENT=:treatment, VACCINATIONS=:vaccinations, "
-              "ALLERGIES=:allergies, WEIGHT=:weight, OBSERVATIONS=:observations, "
-              "VACC_STATUS=:vacc_status WHERE RECORD_ID=:record_id");
-    bindRecord(q, *this);
-    return run(q, "UPDATE");
+    g_derniereErreur.clear();
+    QSqlQuery query;
+
+    const QVariant n = versNombre(idDossier);
+    query.prepare("DELETE FROM MEDICAL WHERE ID_DOSSIER = TO_NUMBER(:id_dossier)");
+    query.bindValue(":id_dossier", n.isNull() ? QString() : QString::number(n.toLongLong()));
+
+    const bool test = query.exec();
+    if (!test)
+        memoriserErreur("DELETE MEDICAL", query.lastError());
+    return test;
 }
 
-bool MedicalRecord::supprimer(const QString &recordId)
+// ---------------------------------------------------------------- MODIFICATION (update)
+bool MedicalRecord::modifier()
 {
-    QSqlQuery q;
-    q.prepare("DELETE FROM MEDICAL_RECORD WHERE RECORD_ID=:record_id");
-    q.bindValue(":record_id", recordId);
-    return run(q, "DELETE");
+    const bool avecSexe = colonneExiste("SEXE");
+    const bool avecTraitement = colonneExiste("TRAITEMENT");
+    g_derniereErreur.clear();
+
+    const QVector<Champ> champs = champsDe(*this, avecSexe, avecTraitement);
+    QStringList lies, lits;
+    QString idLie, idLit;
+    for (const Champ &ch : champs) {
+        if (ch.nom == "id_dossier") { idLie = ch.expr; idLit = ch.litteral; continue; }
+        lies << ch.colonne + " = " + ch.expr;
+        lits << ch.colonne + " = " + ch.litteral;
+    }
+    return executer("UPDATE MEDICAL SET " + lies.join(", ") + " WHERE ID_DOSSIER = " + idLie,
+                    "UPDATE MEDICAL SET " + lits.join(", ") + " WHERE ID_DOSSIER = " + idLit,
+                    champs, "UPDATE MEDICAL");
 }

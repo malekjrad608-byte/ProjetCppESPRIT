@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QVector>
+#include <QStringList>
 #include "medicalrecord.h"
 
 namespace Ui {
@@ -19,6 +20,9 @@ class QScrollArea;
 class QProgressBar;
 class QStackedWidget;
 class RecordCard;
+class SmsService;
+class MedicalRecordDialog;
+class QTimer;
 
 class MainWindow : public QMainWindow
 {
@@ -44,7 +48,13 @@ private slots:
     void onResetFiltersClicked();
     void onShowStatisticsClicked();
     void onExportCsvClicked();
+    void onExportPdfClicked();       // fiche PDF de l'animal sélectionné
+    void onRdvClicked();             // fenêtre des rendez-vous
+    void checkAppointments();
+    void onWatchClicked();           // veille sanitaire        // SMS automatiques (rappel la veille / rendez-vous manqué)
     void onCardClicked(const QString &recordId);
+    void onRemindersClicked();     // DM-I1 : rappels vaccinaux
+    void onLogoutClicked();        // bouton « Se déconnecter » de la barre du haut
 
 private:
     Ui::MainWindow *ui = nullptr;
@@ -53,6 +63,15 @@ private:
     void setupUI();
     void loadStylesheet();
     void loadStaticData();
+    void syncVaccinationStatus();   // statut À jour / À renouveler d'après les rappels
+    void showStartupReminders();
+    void updateReminderButton();
+    void updateRdvButton(int pending);
+    void updateWatchButton();
+    void checkHealthWatch(bool popup);   // alertes automatiques pour le médecin
+    void exportAnimalPdf(const QString &idAnimal);
+    void applyRdv(const MedicalRecordDialog &dialog, const MedicalRecord &record);
+    void actualiser();   // Refresh : relance Mtmp.afficher() (comme l'atelier)
 
     // Data / view
     void refreshView();
@@ -88,6 +107,23 @@ private:
     QComboBox *m_filterVaccination = nullptr;
     QComboBox *m_sortCombo = nullptr;
 
+    // Barre du haut et en-tête de page
+    QPushButton *m_btnLogout = nullptr;
+    QLabel *m_titleIcon = nullptr;
+
+    // Panneau « Dossier sélectionné » : lignes libellé / valeur
+    QVector<QLabel *> m_detailKeys;
+    QVector<QLabel *> m_detailVals;
+    QStringList m_detailValues;
+    QFrame *m_detailSep = nullptr;
+
+    // Boutons Veille et Rappels
+    QPushButton *m_btnReminders = nullptr;
+    QPushButton *m_btnWatch = nullptr;
+    int m_rdvPending = 0;            // SMS de rendez-vous en attente (compté dans le badge Rappels)
+    QTimer *m_rdvTimer = nullptr;
+    SmsService *m_sms = nullptr;
+
     // Cards grid
     QScrollArea *m_scroll = nullptr;
     QWidget *m_cardsContainer = nullptr;
@@ -117,6 +153,10 @@ private:
     QVector<MedicalRecord> m_filteredRecords;
     QString m_selectedId;
     bool m_db = false;   // true si les données viennent de la base
+
+    // Attribut de la classe MedicalRecord (comme "Etudiant Etmp;" dans l'atelier)
+    // pour pouvoir faire appel aux méthodes afficher() et supprimer()
+    MedicalRecord Mtmp;
 };
 
 #endif // MAINWINDOW_H

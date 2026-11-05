@@ -1,4 +1,5 @@
 #include "medicalrecorddetailsdialog.h"
+#include "lookupdata.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -103,28 +104,33 @@ void MedicalRecordDetailsDialog::setupUI()
     m_labelRecordId->setObjectName("detailValue");
     consultationGrid->addWidget(m_labelRecordId, 0, 1);
 
-    consultationGrid->addWidget(new QLabel("Date:"), 0, 2);
+    consultationGrid->addWidget(new QLabel("Employé:"), 0, 2);
+    m_labelEmployeeId = new QLabel();
+    m_labelEmployeeId->setObjectName("detailValue");
+    consultationGrid->addWidget(m_labelEmployeeId, 0, 3);
+
+    consultationGrid->addWidget(new QLabel("Date:"), 1, 0);
     m_labelConsultationDate = new QLabel();
     m_labelConsultationDate->setObjectName("detailValue");
-    consultationGrid->addWidget(m_labelConsultationDate, 0, 3);
+    consultationGrid->addWidget(m_labelConsultationDate, 1, 1);
 
-    consultationGrid->addWidget(new QLabel("Motif:"), 1, 0);
+    consultationGrid->addWidget(new QLabel("Motif:"), 2, 0);
     m_labelReason = new QLabel();
     m_labelReason->setObjectName("detailValue");
     m_labelReason->setWordWrap(true);
-    consultationGrid->addWidget(m_labelReason, 1, 1, 1, 3);
+    consultationGrid->addWidget(m_labelReason, 2, 1, 1, 3);
 
-    consultationGrid->addWidget(new QLabel("Diagnostic:"), 2, 0);
+    consultationGrid->addWidget(new QLabel("Diagnostic:"), 3, 0);
     m_labelDiagnosis = new QLabel();
     m_labelDiagnosis->setObjectName("detailValue");
     m_labelDiagnosis->setWordWrap(true);
-    consultationGrid->addWidget(m_labelDiagnosis, 2, 1, 1, 3);
+    consultationGrid->addWidget(m_labelDiagnosis, 3, 1, 1, 3);
 
-    consultationGrid->addWidget(new QLabel("Traitement:"), 3, 0);
+    consultationGrid->addWidget(new QLabel("Traitement:"), 4, 0);
     m_labelTreatment = new QLabel();
     m_labelTreatment->setObjectName("detailValue");
     m_labelTreatment->setWordWrap(true);
-    consultationGrid->addWidget(m_labelTreatment, 3, 1, 1, 3);
+    consultationGrid->addWidget(m_labelTreatment, 4, 1, 1, 3);
 
     consultationCardLayout->addLayout(consultationGrid);
     scrollLayout->addWidget(consultationCard);
@@ -206,6 +212,11 @@ void MedicalRecordDetailsDialog::setupUI()
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->addStretch();
 
+    auto *btnPdf = new QPushButton(QString::fromUtf8("📄  Fiche PDF"));
+    btnPdf->setObjectName("primaryButton");
+    connect(btnPdf, &QPushButton::clicked, this, &MedicalRecordDetailsDialog::pdfRequested);
+    buttonLayout->addWidget(btnPdf);
+
     m_btnClose = new QPushButton("Fermer");
     m_btnClose->setObjectName("secondaryButton");
     connect(m_btnClose, &QPushButton::clicked, this, &MedicalRecordDetailsDialog::onCloseClicked);
@@ -222,25 +233,30 @@ void MedicalRecordDetailsDialog::setMedicalRecord(const MedicalRecord& record)
 
 void MedicalRecordDetailsDialog::displayRecord(const MedicalRecord& record)
 {
-    m_labelAnimalId->setText(record.animal.animalId);
-    m_labelAnimalName->setText(record.animal.name);
-    m_labelSpecies->setText(record.animal.species);
-    m_labelBreed->setText(record.animal.breed);
-    m_labelAge->setText(QString::number(record.animal.age) + " ans");
-    m_labelSex->setText(record.animal.sex);
-    m_labelOwner->setText(record.animal.owner);
+    m_labelAnimalId->setText(record.getIdAnimal());
+    m_labelAnimalName->setText(record.getNomAnimal());
+    m_labelSpecies->setText(record.getEspece());
+    m_labelBreed->setText(record.getRace());
+    m_labelAge->setText(QString::number(record.getAge()) + " ans");
+    m_labelSex->setText(record.getSexe());
+    m_labelOwner->setText(record.getProprietaire());
 
-    m_labelRecordId->setText(record.medical.recordId);
-    m_labelConsultationDate->setText(record.medical.consultationDate.toString("dd/MM/yyyy"));
-    m_labelReason->setText(record.medical.reason);
-    m_labelDiagnosis->setText(record.medical.diagnosis);
-    m_labelTreatment->setText(record.medical.treatment);
+    m_labelRecordId->setText(record.getIdDossier());
+    // Affiche le nom de l'employé (au lieu de son identifiant) quand il est connu
+    QString employee = record.getIdEmployes();
+    for (const LookupItem &e : LookupData::employes())
+        if (e.id == record.getIdEmployes()) { employee = e.label; break; }
+    m_labelEmployeeId->setText(employee);
+    m_labelConsultationDate->setText(record.getDateConsultation().toString("dd/MM/yyyy"));
+    m_labelReason->setText(record.getMotif());
+    m_labelDiagnosis->setText(record.getDiagnostic());
+    m_labelTreatment->setText(record.getTraitement());
 
-    m_labelVaccinations->setText(record.medical.vaccinations);
-    m_labelAllergies->setText(record.medical.allergies);
-    m_labelWeight->setText(QString::number(record.medical.weight) + " kg");
-    m_labelVaccinationStatus->setText(record.medical.vaccinationStatus);
-    m_labelObservations->setText(record.medical.observations);
+    m_labelVaccinations->setText(record.getVaccinations());
+    m_labelAllergies->setText(record.getAllergies());
+    m_labelWeight->setText(QString::number(record.getPoids()) + " kg");
+    m_labelVaccinationStatus->setText(record.getStatutVaccination());
+    m_labelObservations->setText(record.getObservations());
 }
 
 void MedicalRecordDetailsDialog::displayMedicalHistory(const MedicalRecord& record)
@@ -250,26 +266,26 @@ void MedicalRecordDetailsDialog::displayMedicalHistory(const MedicalRecord& reco
     // Add current consultation
     int row = 0;
     m_historyTable->insertRow(row);
-    m_historyTable->setItem(row, 0, new QTableWidgetItem(record.medical.consultationDate.toString("dd/MM/yyyy")));
+    m_historyTable->setItem(row, 0, new QTableWidgetItem(record.getDateConsultation().toString("dd/MM/yyyy")));
     m_historyTable->setItem(row, 1, new QTableWidgetItem("Consultation"));
-    m_historyTable->setItem(row, 2, new QTableWidgetItem(record.medical.diagnosis));
+    m_historyTable->setItem(row, 2, new QTableWidgetItem(record.getDiagnostic()));
 
     // Add fictitious previous visits (static data for demonstration)
-    QDate previousDate1 = record.medical.consultationDate.addMonths(-6);
+    QDate previousDate1 = record.getDateConsultation().addMonths(-6);
     row++;
     m_historyTable->insertRow(row);
     m_historyTable->setItem(row, 0, new QTableWidgetItem(previousDate1.toString("dd/MM/yyyy")));
     m_historyTable->setItem(row, 1, new QTableWidgetItem("Vaccination"));
     m_historyTable->setItem(row, 2, new QTableWidgetItem("Rappel vaccination annuelle"));
 
-    QDate previousDate2 = record.medical.consultationDate.addMonths(-12);
+    QDate previousDate2 = record.getDateConsultation().addMonths(-12);
     row++;
     m_historyTable->insertRow(row);
     m_historyTable->setItem(row, 0, new QTableWidgetItem(previousDate2.toString("dd/MM/yyyy")));
     m_historyTable->setItem(row, 1, new QTableWidgetItem("Consultation"));
     m_historyTable->setItem(row, 2, new QTableWidgetItem("Examen de routine -良好"));
 
-    QDate previousDate3 = record.medical.consultationDate.addMonths(-18);
+    QDate previousDate3 = record.getDateConsultation().addMonths(-18);
     row++;
     m_historyTable->insertRow(row);
     m_historyTable->setItem(row, 0, new QTableWidgetItem(previousDate3.toString("dd/MM/yyyy")));

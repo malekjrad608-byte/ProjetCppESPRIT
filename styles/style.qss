@@ -1111,3 +1111,129 @@ QPushButton#btnReset {
     border: 2px solid #D5E8ED; border-radius: 10px;
     background: #FFFFFF; color: #174B5A; font-weight: 700;
 }
+
+/* ===== Formulaire dossier : flèches des listes et du calendrier ===== */
+QDateEdit::drop-down {
+    subcontrol-origin: padding; subcontrol-position: center right;
+    width: 28px; border: none; background: transparent;
+}
+QDateEdit::down-arrow { image: url(:/arrow.svg); width: 12px; height: 12px; }
+QComboBox:disabled { background: #F2F6F8; color: #9AAEB5; }
+QComboBox QLineEdit { border: none; background: transparent; padding: 0px; }
+
+/* ===== Statistiques : onglets ===== */
+QTabWidget#statisticsTabs::pane { border: none; background: transparent; }
+QTabWidget#statisticsTabs QTabBar::tab {
+    background: #E3F0F3; color: #176078; padding: 9px 22px; margin-right: 6px;
+    border-top-left-radius: 10px; border-top-right-radius: 10px; font-weight: 700;
+}
+QTabWidget#statisticsTabs QTabBar::tab:selected { background: #176078; color: #FFFFFF; }
+
+
+/* ======================================================================
+   MAQUETTE « Dossiers médicaux » — alignement exact sur la capture
+   (ces règles sont placées en dernier : elles l'emportent sur les précédentes)
+   ====================================================================== */
+
+/* --- Barre du haut ---------------------------------------------------- */
+QLabel#crumb, QLabel#crumbCurrent { color: #6F8791; font-size: 12px; background: transparent; }
+QLabel#demoBadge {
+    background-color: #5FA7B8; color: #10404C;
+    border-radius: 9px; font-size: 11px; font-weight: 800; padding: 0 10px;
+}
+QPushButton#topButton {
+    background-color: #FFFFFF; color: #174B5A; border: 1px solid #D5E8ED;
+    border-radius: 9px; padding: 3px 22px 3px 12px; font-size: 11px; font-weight: 800; min-height: 0px;
+}
+QPushButton#topButton:hover { background-color: #EAF4F6; border-color: #8FC7D2; }
+QPushButton#topButton::menu-indicator { subcontrol-origin: padding; subcontrol-position: center right; right: 8px; }
+QLabel#dbStatus {
+    background-color: #E3F4E8; color: #1E8A4C; border: 1px solid #C4E6D0;
+    border-radius: 9px; font-size: 11px; font-weight: 800; padding: 0 8px;
+}
+QLabel#dbStatus[tone="warn"] { background-color: #FFF0D9; color: #9A6721; border-color: #F2D9AE; }
+QPushButton#logoutButton {
+    background-color: #FFFFFF; color: #174B5A; border: 1px solid #D5E8ED;
+    border-radius: 9px; padding: 3px 12px; font-size: 11px; font-weight: 800; min-height: 0px;
+}
+QPushButton#logoutButton:hover { background-color: #FDECEC; border-color: #E6A4A4; color: #A33B3B; }
+
+/* --- Titre de page ---------------------------------------------------- */
+QLabel#pageTitle { color: #1B5A73; font-size: 26px; font-weight: 800; background: transparent; }
+QLabel#pageSubtitle { color: #6C8791; font-size: 12px; background: transparent; }
+QLabel#titleIcon { background: transparent; }
+
+/* --- Cartes de dossiers ----------------------------------------------- */
+QFrame#recordCard {
+    background: #FFFFFF;
+    border: 1px solid #D7E8EC;
+    border-radius: 12px;
+}
+QFrame#recordCard:hover { border: 1px solid #8BC5D0; background: #FFFFFF; }
+QFrame#recordCard[selected="true"] {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:1 #FFF1DA);
+    border: 2px solid #F0A030;
+    border-radius: 12px;
+}
+QLabel#recordTitle { color: #1B5A73; font-size: 15px; font-weight: 800; background: transparent; }
+QLabel#recordSub { color: #6F8791; font-size: 12px; background: transparent; }
+QLabel#recordMeta { color: #6F8791; font-size: 11px; background: transparent; }
+QLabel#cardBadge {
+    background-color: #E3F5E8; color: #1E8A4C;
+    border-radius: 9px; padding: 3px 9px; font-size: 11px; font-weight: 700;
+}
+QLabel#cardBadge[tone="warn"] { background-color: #FFF0D9; color: #A8671A; }
+
+/* --- Panneau « Dossier sélectionné » ---------------------------------- */
+QFrame#panelCard { background-color: #FFFFFF; border: 1px solid #D7E8EC; border-radius: 12px; }
+QLabel#eyebrow { color: #5B7885; font-size: 11px; font-weight: 800; letter-spacing: 1px; background: transparent; }
+QFrame#detailSep { background-color: #E2EDF0; border: none; }
+QLabel#detailKey { color: #6F8791; font-size: 11px; background: transparent; }
+QLabel#detailVal { color: #1F3F4A; font-size: 11px; font-weight: 600; background: transparent; }
+QLabel#placeholderText { color: #6F8791; font-size: 12px; background: transparent; }
+
+QPushButton#actionEditButton, QPushButton#actionToggleButton, QPushButton#actionDeleteButton {
+    color: #FFFFFF; border: none; border-radius: 8px;
+    padding: 4px 10px; font-size: 12px; font-weight: 800; min-height: 0px;
+}
+QPushButton#actionEditButton {
+    background: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #4A9BAA,stop:1 #2B6F7E);
+}
+QPushButton#actionEditButton:hover { background: #2B6F7E; }
+QPushButton#actionToggleButton {
+    background: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #5DBA6C,stop:1 #3E9B53);
+}
+QPushButton#actionToggleButton:hover { background: #3E9B53; }
+QPushButton#actionDeleteButton {
+    background: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0 #D8625C,stop:1 #B83C3C);
+}
+QPushButton#actionDeleteButton:hover { background: #B83C3C; }
+
+
+/* --- Tailles lisibles (texte plus grand, rien n'est rogné) ------------ */
+QLabel#crumb, QLabel#crumbCurrent { font-size: 13px; }
+QLabel#demoBadge, QLabel#dbStatus { font-size: 13px; border-radius: 10px; }
+QPushButton#topButton, QPushButton#logoutButton { font-size: 13px; border-radius: 10px; padding: 4px 24px 4px 14px; }
+QPushButton#logoutButton { padding: 4px 14px; }
+QLabel#pageTitle { font-size: 30px; }
+QLabel#pageSubtitle { font-size: 13px; }
+QPushButton#btnAdd { font-size: 15px; font-weight: 800; border-radius: 13px; max-height: 60px; }
+QPushButton#btnStatsTop {
+    font-size: 13px; font-weight: 800; padding: 4px 8px; border-width: 1px;
+    border-radius: 11px; max-height: 60px;
+}
+QLineEdit#searchEdit { font-size: 13px; padding: 4px 12px; border-width: 1px; border-radius: 12px; max-height: 60px; }
+QComboBox#filterSpecies, QComboBox#filterVaccination, QComboBox#sortCombo {
+    font-size: 13px; padding: 4px 28px 4px 12px; border-width: 1px; border-radius: 12px; max-height: 60px;
+}
+QPushButton#btnReset { font-size: 13px; padding: 4px 12px; border-width: 1px; border-radius: 12px; max-height: 60px; }
+QLabel#recordTitle { font-size: 17px; }
+QLabel#recordSub { font-size: 13px; }
+QLabel#recordMeta { font-size: 12px; }
+QLabel#cardBadge { font-size: 12px; padding: 4px 10px; }
+QLabel#eyebrow { font-size: 12px; }
+QLabel#detailKey, QLabel#detailVal { font-size: 13px; }
+QLabel#placeholderText { font-size: 13px; }
+QPushButton#actionEditButton, QPushButton#actionToggleButton, QPushButton#actionDeleteButton {
+    font-size: 13px; border-radius: 10px; max-height: 60px;
+}

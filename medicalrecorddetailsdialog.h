@@ -15,6 +15,9 @@ public:
     explicit MedicalRecordDetailsDialog(QWidget *parent = nullptr);
     void setMedicalRecord(const MedicalRecord& record);
 
+signals:
+    void pdfRequested();     // l'utilisateur demande la fiche PDF de l'animal
+
 private slots:
     void onCloseClicked();
 
@@ -32,6 +35,7 @@ private:
     QLabel *m_labelOwner;
 
     QLabel *m_labelRecordId;
+    QLabel *m_labelEmployeeId;
     QLabel *m_labelConsultationDate;
     QLabel *m_labelReason;
     QLabel *m_labelDiagnosis;

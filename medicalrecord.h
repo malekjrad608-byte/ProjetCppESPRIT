@@ -1,52 +1,91 @@
 #ifndef MEDICALRECORD_H
 #define MEDICALRECORD_H
-
 #include <QString>
 #include <QDate>
-#include <QVector>
+#include <QSqlQuery>
+#include <QSqlQueryModel>
+#include <QVariant>
 
-struct AnimalInfo {
-    QString animalId;
-    QString name;
-    QString species;
-    QString breed;
-    int age;
-    QString sex;
-    QString owner;
-};
-
-struct MedicalInfo {
-    QString recordId;
-    QDate consultationDate;
-    QString reason;
-    QString diagnosis;
-    QString treatment;
-    QString vaccinations;
-    QString allergies;
-    double weight;
-    QString observations;
-    QString vaccinationStatus; // "À jour" or "À renouveler"
-};
-
+// Classe purement C++ (Modèle) relative à l'entité "Dossier médical"
+// -> table MEDICAL de la base Oracle (comme la classe Etudiant de l'atelier)
 class MedicalRecord
 {
+private:
+    // Attributs = colonnes de la table MEDICAL
+    QString idDossier;
+    QDate dateConsultation;
+    QString motif, diagnostic;
+    QString idAnimal, nomAnimal, espece, race;
+    int age;
+    double poids;
+    QString proprietaire, idEmployes;
+
+    // Informations affichées dans l'interface (pas de colonne dans MEDICAL)
+    QString sexe, traitement, vaccinations, allergies, observations, statutVaccination;
+
 public:
-    MedicalRecord();
-    MedicalRecord(const AnimalInfo& animal, const MedicalInfo& medical);
+    //Constructeurs
+    MedicalRecord(){ age = 0; poids = 0; }
+    MedicalRecord(QString idDossier, QDate dateConsultation, QString motif, QString diagnostic,
+                  QString idAnimal, QString nomAnimal, QString espece, QString race,
+                  int age, double poids, QString proprietaire, QString idEmployes);
 
-    AnimalInfo animal;
-    MedicalInfo medical;
+    //Getters
+    QString getIdDossier() const { return idDossier; }
+    QDate getDateConsultation() const { return dateConsultation; }
+    QString getMotif() const { return motif; }
+    QString getDiagnostic() const { return diagnostic; }
+    QString getIdAnimal() const { return idAnimal; }
+    QString getNomAnimal() const { return nomAnimal; }
+    QString getEspece() const { return espece; }
+    QString getRace() const { return race; }
+    int getAge() const { return age; }
+    double getPoids() const { return poids; }
+    QString getProprietaire() const { return proprietaire; }
+    QString getIdEmployes() const { return idEmployes; }
+    QString getSexe() const { return sexe; }
+    QString getTraitement() const { return traitement; }
+    QString getVaccinations() const { return vaccinations; }
+    QString getAllergies() const { return allergies; }
+    QString getObservations() const { return observations; }
+    QString getStatutVaccination() const { return statutVaccination; }
 
-    QString getFullName() const;
-    QString getVaccinationStatus() const;
+    //Setters
+    void setIdDossier(QString id){ idDossier = id; }
+    void setDateConsultation(QDate d){ dateConsultation = d; }
+    void setMotif(QString m){ motif = m; }
+    void setDiagnostic(QString d){ diagnostic = d; }
+    void setIdAnimal(QString id){ idAnimal = id; }
+    void setNomAnimal(QString n){ nomAnimal = n; }
+    void setEspece(QString e){ espece = e; }
+    void setRace(QString r){ race = r; }
+    void setAge(int a){ age = a; }
+    void setPoids(double p){ poids = p; }
+    void setProprietaire(QString p){ proprietaire = p; }
+    void setIdEmployes(QString id){ idEmployes = id; }
+    void setSexe(QString s){ sexe = s; }
+    void setTraitement(QString t){ traitement = t; }
+    void setVaccinations(QString v){ vaccinations = v; }
+    void setAllergies(QString a){ allergies = a; }
+    void setObservations(QString o){ observations = o; }
+    void setStatutVaccination(QString s){ statutVaccination = s; }
 
-    // --- Persistance base de données (table MEDICAL_RECORD) ---
-    static QVector<MedicalRecord> afficher();      // SELECT *
-    bool ajouter() const;                          // INSERT
-    bool modifier() const;                         // UPDATE (clé : RECORD_ID)
-    static bool supprimer(const QString& recordId); // DELETE
+    // Fonctionnalités de Base relatives à l'entité MedicalRecord
+    bool ajouter();
+    QSqlQueryModel * afficher();
+    bool supprimer(QString);
+    bool modifier();
 
-    bool operator==(const MedicalRecord& other) const;
+    // ---- Adaptation à la table MEDICAL réelle d'Oracle -----------------------------------------
+    // Dans la base : ID_DOSSIER, REF_ANIMAL et ID_EMPLOYES sont des NUMBER ; dans l'application les
+    // identifiants s'affichent "MED-012" / "ANI-005". Conversion faite ici, à la frontière de la base.
+    static QVariant versNombre(const QString &identifiant);                    // "MED-012" -> 12 (NULL si pas de nombre)
+    static QString versTexte(const QVariant &nombre, const QString &prefixe);  // 12, "MED" -> "MED-012"
+    static qlonglong prochainIdDossier();                                      // MAX(ID_DOSSIER)+1, -1 si échec
+    // Colonnes facultatives (SEXE, TRAITEMENT) : utilisées seulement si elles existent dans la table
+    static bool colonneExiste(const QString &colonne);
+    // Dernier message d'erreur Oracle renvoyé par ajouter() / modifier() / supprimer() / afficher()
+    static QString derniereErreur();
 };
 
 #endif // MEDICALRECORD_H

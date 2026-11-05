@@ -112,9 +112,19 @@ ANIWORLD/
 
 ## Données
 
-Les données sont **statiques et en mémoire uniquement**. Aucune base de données n'est utilisée.
+Les données viennent de la table **MEDICAL** (Oracle, via ODBC). Architecture Modèle-Vue de l'atelier CRUD :
 
-Lorsque l'application se ferme, les modifications ne sont pas sauvegardées.
+| Couche | Fichiers | Rôle |
+|---|---|---|
+| Modèle | medicalrecord.h, medicalrecord.cpp | Gère les données et les requêtes (ajouter, afficher, modifier, supprimer) |
+| Vue | mainwindow.ui, mainwindow.h, mainwindow.cpp | Affiche les données, gère l'interface et les interactions |
+
+- Attributs `private`, méthodes `public` dans la classe `MedicalRecord`.
+- Toutes les requêtes sont des **requêtes préparées** (`prepare()` + `bindValue()` + `exec()`) dans `medicalrecord.cpp` : protection contre l'injection SQL.
+- Aucune requête derrière un bouton : `mainwindow.cpp` appelle `M.ajouter()`, `Mtmp.supprimer(id)`, `M.modifier()` et `Mtmp.afficher()`, puis actualise l'affichage.
+- Une seule connexion à la BD (Singleton `Connection`).
+
+Si la connexion échoue, l'application démarre en mode hors ligne avec des données d'exemple en mémoire.
 
 ## Données initiales
 
@@ -177,8 +187,32 @@ cmake --build .
 - Framework: Qt 6.5+
 - Build system: CMake
 - Style: QSS (Qt Style Sheets)
-- Données: In-memory (QVector<MedicalRecord>)
+- Données: table MEDICAL (Oracle / QODBC), requêtes préparées
 
 ## Auteur
 
 Projet académique pour le module "Gestion des dossiers médicaux" de l'application ANIWORLD.
+
+
+## Nouvelles fonctionnalités
+
+### DM-I1 — Rappels vaccinaux (+ SMS)
+- Table `VACCINATION` (voir `schema.sql`) : un vaccin = une ligne, la plus récente par (animal, vaccin) donne l'échéance.
+- Bouton **🔔 Rappels (N)** + alerte automatique au démarrage : animaux en retard (rouge) ou à renouveler sous 30 jours (orange).
+- **SMS** au propriétaire (cochés ou tous). Téléphone modifiable dans le tableau (sera repris du module Clients : `LookupData::telephoneProprietaire`).
+- Passerelle SMS : Twilio. Variables d'environnement `ANIWORLD_SMS_SID`, `ANIWORLD_SMS_TOKEN`, `ANIWORLD_SMS_FROM`.
+  Sans elles : mode **simulation** (rien n'est envoyé).
+- Option « envoi automatique à l'ouverture » (désactivée par défaut, pas de nouveau SMS avant 7 jours).
+- « Vaccin fait » renouvelle l'échéance ; « Nouveau vaccin » enregistre un vaccin. Le statut À jour / À renouveler des dossiers en découle.
+
+### Diagnostic intelligent
+- Dans le formulaire du dossier, carte **💡 Assistant diagnostic** : état de l'animal (âge, poids et variation, allergies, historique, vaccins)
+  et traitements les plus utilisés pour le diagnostic saisi (statistiques sur les dossiers existants, même espèce prioritaire).
+- Les traitements en conflit avec une allergie sont signalés et classés en dernier ; le stock disponible est affiché.
+- Rien n'est appliqué automatiquement : le vétérinaire coche puis clique « Ajouter les traitements cochés ».
+
+### Coupes / toilettage
+- Bouton **✂ Coupes** : coupes adaptées à l'espèce et à la race (nom, description, durée, étapes, matériel, précautions, avertissement si déconseillée).
+- Photos : dossier `coupes/` (voir `coupes/LISEZMOI.txt`). Photo de l'animal affichable à côté du modèle.
+
+Nouveau module Qt requis : `Qt6::Network` (déjà ajouté dans CMakeLists.txt et dossier_medical.pro).

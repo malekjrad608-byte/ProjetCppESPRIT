@@ -4,55 +4,62 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QMouseEvent>
+#include <QSizePolicy>
 #include <QStyle>
 
+// Carte compacte (même présentation que la maquette) :
+//   [                         ✔ Vaccins à jour ]
+//   Nom de l'animal
+//   Espèce · Race
+//   🕒 date de consultation              Propriétaire
 RecordCard::RecordCard(const MedicalRecord &record, QWidget *parent)
-    : QFrame(parent), m_recordId(record.medical.recordId)
+    : QFrame(parent), m_recordId(record.getIdDossier())
 {
     setObjectName("recordCard");
     setProperty("selected", false);
     setCursor(Qt::PointingHandCursor);
-    setMinimumHeight(186);
 
     auto *root = new QVBoxLayout(this);
-    root->setContentsMargins(20, 18, 20, 18);
-    root->setSpacing(6);
+    root->setContentsMargins(16, 12, 16, 12);
+    root->setSpacing(3);
 
-    // Top row: icon + vaccination badge
+    // Ligne du haut : badge de statut à droite
     auto *top = new QHBoxLayout();
-    auto *icon = new QLabel();
-    icon->setObjectName("cardGlyph");
-    icon->setPixmap(QPixmap(":/icons/paw.svg").scaled(22, 22, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    top->addWidget(icon);
+    top->setContentsMargins(0, 0, 0, 0);
     top->addStretch();
-
-    const bool upToDate = record.medical.vaccinationStatus == "À jour";
-    auto *badge = new QLabel(upToDate ? "Vaccins à jour" : "À renouveler");
+    const bool upToDate = record.getStatutVaccination() == "À jour";
+    auto *badge = new QLabel(upToDate ? QString::fromUtf8("✔  Vaccins à jour")
+                                      : QString::fromUtf8("⚠  À renouveler"));
     badge->setObjectName("cardBadge");
     badge->setProperty("tone", upToDate ? "ok" : "warn");
     top->addWidget(badge);
     root->addLayout(top);
 
-    auto *title = new QLabel(record.animal.name);
+    auto *title = new QLabel(record.getNomAnimal());
     title->setObjectName("recordTitle");
+    title->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     root->addWidget(title);
 
-    auto *sub = new QLabel(QString("%1 · %2").arg(record.animal.species, record.animal.breed));
+    auto *sub = new QLabel(QString("%1 · %2").arg(record.getEspece(), record.getRace()));
     sub->setObjectName("recordSub");
+    sub->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     root->addWidget(sub);
 
-    auto *pillRow = new QHBoxLayout();
-    auto *pill = new QLabel(record.medical.consultationDate.toString("dd/MM/yyyy"));
-    pill->setObjectName("statusPill");
-    pill->setProperty("tone", "ok");
-    pillRow->addWidget(pill);
-    pillRow->addStretch();
-    root->addLayout(pillRow);
-
-    auto *owner = new QLabel(QString("Propriétaire : %1").arg(record.animal.owner));
-    owner->setObjectName("recordMeta");
-    root->addWidget(owner);
     root->addStretch();
+
+    // Ligne du bas : date de consultation à gauche, propriétaire à droite
+    auto *bottom = new QHBoxLayout();
+    bottom->setContentsMargins(0, 0, 0, 0);
+    auto *date = new QLabel(QString::fromUtf8("🕒 ") + record.getDateConsultation().toString("dd/MM/yyyy"));
+    date->setObjectName("recordMeta");
+    bottom->addWidget(date);
+    bottom->addStretch();
+    auto *owner = new QLabel(record.getProprietaire());
+    owner->setObjectName("recordMeta");
+    owner->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    owner->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    bottom->addWidget(owner, 1);
+    root->addLayout(bottom);
 
     for (QLabel *l : findChildren<QLabel *>())
         l->setAttribute(Qt::WA_TransparentForMouseEvents);
