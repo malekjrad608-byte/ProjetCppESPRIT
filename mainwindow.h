@@ -9,6 +9,9 @@
 #include <QEasingCurve>
 
 class GestionEmployes;
+class MedicalWindow;
+class QLabel;
+class QVBoxLayout;
 
 class MainWindow : public QMainWindow
 {
@@ -35,6 +38,9 @@ private:
 
     QStackedWidget *m_stack;
     GestionEmployes *m_gestionEmployes = nullptr;
+    QWidget *m_dossiersPage = nullptr;        // conteneur de la page Dossiers médicaux
+    QLabel *m_breadcrumb = nullptr;
+    MedicalWindow *m_medical = nullptr;       // créée à la première ouverture
     QPushButton *m_btnEmployes;
     QPushButton *m_btnServices;
     QPushButton *m_btnStock;

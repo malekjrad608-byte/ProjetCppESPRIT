@@ -21,6 +21,8 @@ void chargerStyle()
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setApplicationName("ANIWORLD");        // nécessaire aux réglages enregistrés (SMS, alertes de veille sanitaire)
+    a.setOrganizationName("ANIWORLD");
 
     QApplication::setStyle("Fusion");
     chargerStyle();

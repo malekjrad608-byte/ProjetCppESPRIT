@@ -3,6 +3,7 @@
 #include "gestionemployes.h"
 #include "employe.h"
 #include "connection.h"
+#include "medicalwindow.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -65,8 +66,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
                                             "Inventaire, traçabilité des lots et réapprovisionnement"));            // 2
     m_stack->addWidget(creerPagePlaceholder("Locaux", "🏠",
                                             "Occupation, nettoyage et disponibilité des espaces"));                 // 3
-    m_stack->addWidget(creerPagePlaceholder("Dossiers médicaux", "📋",
-                                            "Historique clinique et suivi des animaux"));                           // 4
+    m_dossiersPage = new QWidget;                                               // 4 : Dossiers médicaux (module vétérinaire)
+    auto *dossiersLayout = new QVBoxLayout(m_dossiersPage);
+    dossiersLayout->setContentsMargins(0, 0, 0, 0);
+    dossiersLayout->setSpacing(0);
+    m_stack->addWidget(m_dossiersPage);
 
     zoneLayout->addWidget(m_stack, 1);
     main->addWidget(zone, 1);
@@ -84,6 +88,7 @@ QFrame *MainWindow::creerTopBar()
     layout->setSpacing(15);
 
     QLabel *breadcrumb = new QLabel("Gestion   /   <b>Employés</b>");
+    m_breadcrumb = breadcrumb;
     breadcrumb->setObjectName("breadcrumb");
     breadcrumb->setTextFormat(Qt::RichText);
     layout->addWidget(breadcrumb);
@@ -553,6 +558,7 @@ void MainWindow::fadeInPage(QWidget *page)
 void MainWindow::afficherEmployes()
 {
     m_stack->setCurrentIndex(0);
+    if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Employés</b>");
     if (m_gestionEmployes)
         m_gestionEmployes->actualiserStats();
     m_btnServices->setChecked(false);
@@ -565,6 +571,7 @@ void MainWindow::afficherEmployes()
 void MainWindow::afficherServices()
 {
     m_stack->setCurrentIndex(1);
+    if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Services</b>");
     fadeInPage(m_stack->currentWidget());
     m_btnServices->setChecked(true);
     m_btnEmployes->setChecked(false);
@@ -576,6 +583,7 @@ void MainWindow::afficherServices()
 void MainWindow::afficherStock()
 {
     m_stack->setCurrentIndex(2);
+    if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Stock</b>");
     fadeInPage(m_stack->currentWidget());
     m_btnServices->setChecked(false);
     m_btnEmployes->setChecked(false);
@@ -587,6 +595,7 @@ void MainWindow::afficherStock()
 void MainWindow::afficherLocaux()
 {
     m_stack->setCurrentIndex(3);
+    if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Locaux</b>");
     fadeInPage(m_stack->currentWidget());
     m_btnServices->setChecked(false);
     m_btnEmployes->setChecked(false);
@@ -597,7 +606,16 @@ void MainWindow::afficherLocaux()
 
 void MainWindow::afficherDossiers()
 {
+    if (!m_medical) {
+        // Le module est créé à la première ouverture : sa liste d'employés lit alors la table EMPLOYES
+        // de ce projet, et ses alertes de démarrage ne s'affichent pas sur la page Employés.
+        m_medical = new MedicalWindow(m_dossiersPage);
+        m_medical->setWindowFlags(Qt::Widget);          // page intégrée, pas une fenêtre séparée
+        m_medical->setMinimumSize(0, 0);
+        m_dossiersPage->layout()->addWidget(m_medical);
+    }
     m_stack->setCurrentIndex(4);
+    if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Dossiers médicaux</b>");
     fadeInPage(m_stack->currentWidget());
     m_btnServices->setChecked(false);
     m_btnEmployes->setChecked(false);
