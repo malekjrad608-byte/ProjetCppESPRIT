@@ -1,11 +1,10 @@
 #include "pagelocaux.h"
 #include "cardgrid.h"
 #include "clinicmap.h"
-#include "confirmdialog.h"
 #include "detailpanel.h"
 #include "hoverglow.h"
 #include "icons.h"
-#include "localdialog.h"
+#include "localform.h"
 #include "localrepository.h"
 #include "pdfreport.h"
 #include "plandialog.h"
@@ -56,8 +55,22 @@ PageLocaux::PageLocaux(LocalRepository *repo, QWidget *parent)
     root->setContentsMargins(26, 22, 26, 10);
     root->setSpacing(14);
     root->addLayout(buildHeader());
-    root->addLayout(buildTools());
-    root->addLayout(buildBody(), 1);
+    m_toolsBox = new QWidget;
+    m_toolsBox->setLayout(buildTools());
+    m_toolsBox->layout()->setContentsMargins(0, 0, 0, 0);
+    root->addWidget(m_toolsBox);
+
+    // corps : (0) cartes / liste + panneau de droite, (1) formulaire d'ajout / modification
+    m_bodyStack = new QStackedWidget;
+    auto *bodyPage = new QWidget;
+    bodyPage->setLayout(buildBody());
+    bodyPage->layout()->setContentsMargins(0, 0, 0, 0);
+    m_formHost = new QWidget;
+    auto *fh = new QVBoxLayout(m_formHost);
+    fh->setContentsMargins(0, 0, 0, 0);
+    m_bodyStack->addWidget(bodyPage);
+    m_bodyStack->addWidget(m_formHost);
+    root->addWidget(m_bodyStack, 1);
 
     // le plan et la liste se mettent a jour a chaque changement des donnees
     connect(m_repo, &LocalRepository::changed, this, [this] {
@@ -308,7 +321,7 @@ QLayout *PageLocaux::buildBody()
     rightScroll->setWidgetResizable(true);
     rightScroll->setFrameShape(QFrame::NoFrame);
     rightScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    rightScroll->setFixedWidth(356);
+    rightScroll->setFixedWidth(410);
 
     auto *rightWidget = new QWidget;
     auto *rv = new QVBoxLayout(rightWidget);
@@ -648,31 +661,60 @@ void PageLocaux::selectRoom(int id)
 
 void PageLocaux::addLocal()
 {
-    LocalDialog dlg(nullptr, m_repo, this);
-    if (dlg.exec() != QDialog::Accepted)
-        return;
-    const int id = m_repo->add(dlg.result());
-    if (id == 0) {
-        m_toast->showMessage(QStringLiteral("Ajout non effectué : ") + m_repo->lastDbError());
-        return;
-    }
-    selectRoom(id);
-    m_toast->showMessage(QStringLiteral("Local ajouté — visible sur le plan"));
+    openForm(nullptr);
 }
 
 void PageLocaux::editSelected()
 {
     const Local *cur = m_repo->find(m_selectedId);
-    if (!cur)
-        return;
-    LocalDialog dlg(cur, m_repo, this);
-    if (dlg.exec() != QDialog::Accepted)
-        return;
-    if (!m_repo->update(dlg.result())) {
-        m_toast->showMessage(QStringLiteral("Modification non effectuée : ") + m_repo->lastDbError());
-        return;
+    if (cur)
+        openForm(cur);
+}
+
+// Le formulaire remplace les cartes / la liste dans la page (pas de fenetre de dialogue)
+void PageLocaux::openForm(const Local *existing)
+{
+    if (m_form) {
+        m_formHost->layout()->removeWidget(m_form);
+        m_form->deleteLater();
     }
-    m_toast->showMessage(QStringLiteral("Local modifié"));
+    m_form = new LocalForm(existing, m_repo);
+    m_formHost->layout()->addWidget(m_form);
+
+    connect(m_form, &LocalForm::cancelled, this, [this] { closeForm(); });
+    connect(m_form, &LocalForm::saved, this, [this] {
+        const Local l = m_form->result();
+        if (m_form->isEditing()) {
+            if (!m_repo->update(l)) {                 // Update (Local::modifier)
+                m_form->showSaveError(m_repo->lastDbError());
+                return;                               // le formulaire reste ouvert
+            }
+            closeForm();
+            selectRoom(l.getId());
+            m_toast->showMessage(QStringLiteral("Local modifié"));
+        } else {
+            const int id = m_repo->add(l);            // Create (Local::ajouter)
+            if (id == 0) {
+                m_form->showSaveError(m_repo->lastDbError());
+                return;
+            }
+            closeForm();
+            selectRoom(id);
+            m_toast->showMessage(QStringLiteral("Local ajouté — visible sur le plan"));
+        }
+    });
+
+    m_toolsBox->hide();
+    m_bodyStack->setCurrentIndex(1);
+    m_form->setFocus();
+}
+
+void PageLocaux::closeForm()
+{
+    m_bodyStack->setCurrentIndex(0);
+    m_toolsBox->show();
+    if (m_form)
+        m_form->deleteLater();
 }
 
 void PageLocaux::deleteSelected()
@@ -680,12 +722,8 @@ void PageLocaux::deleteSelected()
     const Local *cur = m_repo->find(m_selectedId);
     if (!cur)
         return;
+    // la confirmation a deja ete demandee dans le panneau de droite
     const QString name = cur->getName();
-    QString text = QStringLiteral("« %1 » sera retiré de la liste et du plan de la clinique.").arg(name);
-    if (cur->getOccupancy() > 0)
-        text += QStringLiteral("\n\nAttention : %1 animal(aux) y sont encore affecté(s).").arg(cur->getOccupancy());
-    if (!Confirm::ask(this, QStringLiteral("Supprimer ce local ?"), text, QStringLiteral("Supprimer")))
-        return;
     const int id = m_selectedId;
     if (!m_repo->remove(id)) {
         m_toast->showMessage(QStringLiteral("Suppression non effectuée : ") + m_repo->lastDbError());

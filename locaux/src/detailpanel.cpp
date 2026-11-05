@@ -272,28 +272,36 @@ DetailPanel::DetailPanel(QWidget *parent) : QFrame(parent)
     auto *names = new QVBoxLayout;
     names->setSpacing(2);
     m_name = new QLabel;
-    m_name->setObjectName("panelName");
+    m_name->setObjectName("detailName");
     m_name->setWordWrap(true);
     m_sub = new QLabel;
     m_sub->setObjectName("sub");
+    m_sub->setWordWrap(true);
+    m_badge = new QLabel;
+    auto *badgeRow = new QHBoxLayout;
+    badgeRow->setContentsMargins(0, 4, 0, 0);
+    badgeRow->addWidget(m_badge);
+    badgeRow->addStretch();
     names->addWidget(m_name);
     names->addWidget(m_sub);
-    m_badge = new QLabel;
+    names->addLayout(badgeRow);
     hh->addWidget(m_icon, 0, Qt::AlignTop);
     hh->addLayout(names, 1);
-    hh->addWidget(m_badge, 0, Qt::AlignTop);
     cv->addWidget(m_head);
 
     // occupation
     auto *occRow = new QHBoxLayout;
     occRow->setSpacing(14);
     m_ring = new OccupancyRing;
+    m_ring->setFixedSize(84, 84);
     auto *occText = new QVBoxLayout;
     occText->setSpacing(2);
     m_occTitle = new QLabel;
     m_occTitle->setStyleSheet(QStringLiteral("font-weight:700;color:#1d3b44;"));
+    m_occTitle->setWordWrap(true);
     m_occLine1 = new QLabel;
     m_occLine1->setObjectName("sub");
+    m_occLine1->setWordWrap(true);
     m_occLine2 = new QLabel;
     m_occLine2->setObjectName("sub");
     m_occLine2->setWordWrap(true);
@@ -350,6 +358,35 @@ DetailPanel::DetailPanel(QWidget *parent) : QFrame(parent)
     cv->addSpacing(4);
     cv->addLayout(bl);
 
+    // confirmation de suppression (dans le panneau)
+    m_confirm = new QFrame;
+    m_confirm->setObjectName("confirmBox");
+    auto *cfl = new QVBoxLayout(m_confirm);
+    cfl->setContentsMargins(14, 12, 14, 12);
+    cfl->setSpacing(8);
+    auto *cfTitle = new QLabel(QStringLiteral("Supprimer ce local ?"));
+    cfTitle->setObjectName("confirmTitle");
+    m_confirmText = new QLabel;
+    m_confirmText->setWordWrap(true);
+    m_confirmText->setObjectName("confirmText");
+    auto *cfBtns = new QHBoxLayout;
+    cfBtns->setSpacing(8);
+    auto *cfNo = makeButton(QStringLiteral("Annuler"), "", "ghost");
+    auto *cfYes = makeButton(QStringLiteral("Oui, supprimer"), "trash", "danger");
+    cfYes->setIcon(Icons::icon("trash", Qt::white, 16));
+    cfBtns->addWidget(cfNo, 1);
+    cfBtns->addWidget(cfYes, 1);
+    cfl->addWidget(cfTitle);
+    cfl->addWidget(m_confirmText);
+    cfl->addLayout(cfBtns);
+    m_confirm->hide();
+    cv->addWidget(m_confirm);
+    connect(cfNo, &QPushButton::clicked, m_confirm, &QWidget::hide);
+    connect(cfYes, &QPushButton::clicked, this, [this] {
+        m_confirm->hide();
+        emit deleteRequested();
+    });
+
     v->addWidget(m_content);
     v->addStretch();
 
@@ -362,7 +399,9 @@ DetailPanel::DetailPanel(QWidget *parent) : QFrame(parent)
     connect(m_btnFree, &QPushButton::clicked, this, &DetailPanel::freeRequested);
     connect(m_btnClean, &QPushButton::clicked, this, &DetailPanel::cleanRequested);
     connect(m_btnEdit, &QPushButton::clicked, this, &DetailPanel::editRequested);
-    connect(m_btnDelete, &QPushButton::clicked, this, &DetailPanel::deleteRequested);
+    connect(m_btnDelete, &QPushButton::clicked, this, [this] {
+        m_confirm->show();            // on demande confirmation dans le panneau
+    });
 
     setLocal(nullptr);
 }
@@ -370,6 +409,7 @@ DetailPanel::DetailPanel(QWidget *parent) : QFrame(parent)
 void DetailPanel::setLocal(const Local *l)
 {
     const bool has = (l != nullptr);
+    m_confirm->hide();                // nouvelle selection : on annule une confirmation en cours
     m_empty->setVisible(!has);
     m_content->setVisible(has);
     if (!has)
@@ -448,6 +488,12 @@ void DetailPanel::setLocal(const Local *l)
     m_btnFree->setEnabled(occ > 0);
     m_btnFree->setToolTip(occ > 0 ? QStringLiteral("Retire un animal ; quand le local est vide il passe « À nettoyer »")
                                   : QStringLiteral("Aucun animal dans ce local"));
+
+    // texte de la confirmation de suppression
+    QString ct = QStringLiteral("« %1 » sera retiré de la liste et du plan de la clinique.").arg(l->getName());
+    if (occ > 0)
+        ct += QStringLiteral("\nAttention : %1 animal(aux) y sont encore affecté(s).").arg(occ);
+    m_confirmText->setText(ct);
 
     m_btnClean->setEnabled(etat == Local::Disponible);
     m_btnClean->setToolTip(etat == Local::Disponible ? QStringLiteral("Le local passe « À nettoyer »")

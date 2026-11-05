@@ -6,14 +6,13 @@ INCLUDEPATH += $$PWD/src $$PWD/..
 SOURCES += \
     $$PWD/src/cardgrid.cpp \
     $$PWD/src/clinicmap.cpp \
-    $$PWD/src/confirmdialog.cpp \
     $$PWD/src/detailpanel.cpp \
     $$PWD/src/espacelocaux.cpp \
     $$PWD/src/flatmap.cpp \
     $$PWD/src/hoverglow.cpp \
     $$PWD/src/icons.cpp \
     $$PWD/src/local.cpp \
-    $$PWD/src/localdialog.cpp \
+    $$PWD/src/localform.cpp \
     $$PWD/src/localrepository.cpp \
     $$PWD/src/pagelocaux.cpp \
     $$PWD/src/pdfreport.cpp \
@@ -28,14 +27,13 @@ SOURCES += \
 HEADERS += \
     $$PWD/src/cardgrid.h \
     $$PWD/src/clinicmap.h \
-    $$PWD/src/confirmdialog.h \
     $$PWD/src/detailpanel.h \
     $$PWD/src/espacelocaux.h \
     $$PWD/src/flatmap.h \
     $$PWD/src/hoverglow.h \
     $$PWD/src/icons.h \
     $$PWD/src/local.h \
-    $$PWD/src/localdialog.h \
+    $$PWD/src/localform.h \
     $$PWD/src/localrepository.h \
     $$PWD/src/pagelocaux.h \
     $$PWD/src/pdfreport.h \

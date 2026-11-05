@@ -12,6 +12,7 @@
 class CardGrid;
 class ClinicMap;
 class DetailPanel;
+class LocalForm;
 class LocalRepository;
 class QComboBox;
 class QLabel;
@@ -61,6 +62,8 @@ private:
     void addLocal();
     void editSelected();
     void deleteSelected();
+    void openForm(const Local *existing);   // formulaire dans la page (ajout / modification)
+    void closeForm();
     void modifySelected(const std::function<bool(Local &)> &fn);
 
     // fonctionnalites avancees
@@ -92,6 +95,10 @@ private:
     QPushButton *m_btnList;
 
     // corps
+    QWidget *m_toolsBox;              // barre de recherche (cachee pendant la saisie)
+    QStackedWidget *m_bodyStack;      // 0 = cartes/liste + panneau, 1 = formulaire
+    QWidget *m_formHost;
+    QPointer<LocalForm> m_form;
     QStackedWidget *m_views;
     CardGrid *m_grid;
     QTableWidget *m_table;

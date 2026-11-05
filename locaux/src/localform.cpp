@@ -1,4 +1,4 @@
-#include "localdialog.h"
+#include "localform.h"
 #include "hoverglow.h"
 #include "icons.h"
 #include "localrepository.h"
@@ -15,6 +15,8 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPushButton>
+#include <QScrollArea>
+#include <QShortcut>
 #include <QStyle>
 #include <QVBoxLayout>
 #include <QVariantAnimation>
@@ -257,16 +259,19 @@ private:
 
 // ===================================================================== formulaire
 
-LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *parent)
-    : QDialog(parent), m_repo(repo), m_editing(existing != nullptr)
+LocalForm::LocalForm(const Local *existing, LocalRepository *repo, QWidget *parent)
+    : QWidget(parent), m_repo(repo), m_editing(existing != nullptr)
 {
-    setObjectName("localForm");
-    setWindowTitle(m_editing ? QStringLiteral("Modifier le local") : QStringLiteral("Ajouter un local"));
-    setMinimumWidth(900);
     if (existing)
         m_base = *existing;
 
-    auto *root = new QVBoxLayout(this);
+    // carte arrondie qui remplace les cartes / la liste pendant la saisie
+    auto *outer = new QVBoxLayout(this);
+    outer->setContentsMargins(0, 0, 0, 0);
+    auto *card = new QFrame;
+    card->setObjectName("formCard");
+    outer->addWidget(card);
+    auto *root = new QVBoxLayout(card);
     root->setContentsMargins(0, 0, 0, 0);
     root->setSpacing(0);
 
@@ -462,7 +467,16 @@ LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *
 
     body->addLayout(form, 1);
     body->addLayout(pv);
-    root->addLayout(body, 1);
+    // le formulaire peut etre plus haut que la page : on le fait defiler
+    auto *bodyWidget = new QWidget;
+    bodyWidget->setObjectName("formBody");
+    bodyWidget->setLayout(body);
+    auto *bodyScroll = new QScrollArea;
+    bodyScroll->setWidgetResizable(true);
+    bodyScroll->setFrameShape(QFrame::NoFrame);
+    bodyScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    bodyScroll->setWidget(bodyWidget);
+    root->addWidget(bodyScroll, 1);
 
     // ---------------------------------------------------------------- pied
     auto *foot = new QFrame;
@@ -475,7 +489,6 @@ LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *
     auto *cancel = roleButton(QStringLiteral("Annuler"), "ghost");
     m_save = roleButton(m_editing ? QStringLiteral("Enregistrer les modifications")
                                   : QStringLiteral("Enregistrer le local"), "primary");
-    m_save->setDefault(true);
     HoverGlow::attach(cancel);
     HoverGlow::attach(m_save);
     fl->addWidget(hint);
@@ -484,8 +497,18 @@ LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *
     fl->addWidget(m_save);
     root->addWidget(foot);
 
-    connect(cancel, &QPushButton::clicked, this, &QDialog::reject);
-    connect(m_save, &QPushButton::clicked, this, &LocalDialog::accept);
+    connect(cancel, &QPushButton::clicked, this, &LocalForm::cancelled);
+    connect(m_save, &QPushButton::clicked, this, [this] { trySave(); });
+
+    // Entree = enregistrer, Echap = annuler (comme dans une fenetre)
+    for (const QKeySequence &k : { QKeySequence(Qt::Key_Return), QKeySequence(Qt::Key_Enter) }) {
+        auto *sc = new QShortcut(k, this);
+        sc->setContext(Qt::WidgetWithChildrenShortcut);
+        connect(sc, &QShortcut::activated, this, [this] { trySave(); });
+    }
+    auto *esc = new QShortcut(QKeySequence(Qt::Key_Escape), this);
+    esc->setContext(Qt::WidgetWithChildrenShortcut);
+    connect(esc, &QShortcut::activated, this, &LocalForm::cancelled);
 
     // tout changement met a jour les controles et l'apercu
     connect(m_name, &QLineEdit::textChanged, this, [this] { refresh(); });
@@ -506,7 +529,7 @@ LocalDialog::LocalDialog(const Local *existing, LocalRepository *repo, QWidget *
 
 // ===================================================================== logique
 
-Local LocalDialog::buildLocal() const
+Local LocalForm::buildLocal() const
 {
     Local r = m_base;
     r.setName(m_name->text().trimmed());
@@ -520,7 +543,7 @@ Local LocalDialog::buildLocal() const
     return r;
 }
 
-QString LocalDialog::nameProblem() const
+QString LocalForm::nameProblem() const
 {
     const QString name = m_name->text().trimmed();
     if (name.isEmpty())
@@ -532,7 +555,7 @@ QString LocalDialog::nameProblem() const
     return QString();
 }
 
-void LocalDialog::setCapacity(int v)
+void LocalForm::setCapacity(int v)
 {
     const int minCap = qMax(1, m_base.getOccupancy());   // jamais moins que les animaux presents
     m_capacity = qBound(minCap, v, 50);
@@ -545,7 +568,7 @@ void LocalDialog::setCapacity(int v)
     refresh();
 }
 
-void LocalDialog::refreshSuggestions()
+void LocalForm::refreshSuggestions()
 {
     while (QLayoutItem *it = m_suggestRow->takeAt(0)) {
         if (it->widget())
@@ -570,7 +593,7 @@ void LocalDialog::refreshSuggestions()
     m_suggestRow->addStretch();
 }
 
-void LocalDialog::refresh()
+void LocalForm::refresh()
 {
     // nom : compteur + message vert / rouge
     const QString problem = nameProblem();
@@ -601,7 +624,14 @@ void LocalDialog::refresh()
     m_preview->setData(l, checks);
 }
 
-void LocalDialog::accept()
+void LocalForm::showSaveError(const QString &message)
+{
+    setStyleProp(m_name, "check", "err");
+    m_nameMsg->setStyleSheet(QStringLiteral("color:#c0504d;font-size:11px;"));
+    m_nameMsg->setText(QStringLiteral("✗ Enregistrement refusé par Oracle : ") + message);
+}
+
+void LocalForm::trySave()
 {
     m_triedSave = true;
     refresh();
@@ -621,5 +651,5 @@ void LocalDialog::accept()
         m_nameMsg->setText(QStringLiteral("✗ ") + err);
         return;
     }
-    QDialog::accept();
+    emit saved();
 }

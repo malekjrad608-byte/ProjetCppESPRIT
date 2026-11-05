@@ -51,5 +51,9 @@ private:
     QPushButton *m_btnClean;
     QPushButton *m_btnEdit;
     QPushButton *m_btnDelete;
+
+    // confirmation de suppression affichee DANS le panneau (pas de fenetre)
+    QFrame *m_confirm;
+    QLabel *m_confirmText;
     bool m_mainCleans = false; // true : le bouton principal termine le nettoyage
 };
