@@ -1,0 +1,10 @@
+release/connection.o
+release/main.o
+release/mainwindow.o
+release/employe.o
+release/planning.o
+release/gestionemployes.o
+release/loginvisuals.o
+release/qrc_resources.o
+release/moc_mainwindow.o
+release/moc_gestionemployes.o
