@@ -69,3 +69,6 @@ FORMS += \
 RESOURCES += \
     resources.qrc \
     medical.qrc
+
+# Module "Gestion des locaux" (Emna) : sources, ressources et style dans le dossier locaux/
+include(locaux/locaux.pri)

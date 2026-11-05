@@ -37,6 +37,7 @@ private:
     void fadeInPage(QWidget *page);
 
     QStackedWidget *m_stack;
+    QFrame *m_topBar = nullptr;               // bande du haut (cachee sur la page Locaux)
     GestionEmployes *m_gestionEmployes = nullptr;
     QWidget *m_dossiersPage = nullptr;        // conteneur de la page Dossiers médicaux
     QLabel *m_breadcrumb = nullptr;

@@ -1,3 +1,4 @@
+#include "espacelocaux.h"   // module Gestion des locaux
 #include "loginvisuals.h"
 #include "mainwindow.h"
 #include "gestionemployes.h"
@@ -56,7 +57,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     zoneLayout->setContentsMargins(0, 0, 0, 0);
     zoneLayout->setSpacing(0);
 
-    zoneLayout->addWidget(creerTopBar());
+    m_topBar = creerTopBar();
+    zoneLayout->addWidget(m_topBar);
 
     m_stack = new QStackedWidget;
     m_stack->addWidget(creerPageEmployes());                                    // 0
@@ -64,8 +66,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
                                             "Planning et gestion des prestations"));                                // 1
     m_stack->addWidget(creerPagePlaceholder("Stock", "📦",
                                             "Inventaire, traçabilité des lots et réapprovisionnement"));            // 2
-    m_stack->addWidget(creerPagePlaceholder("Locaux", "🏠",
-                                            "Occupation, nettoyage et disponibilité des espaces"));                 // 3
+    m_stack->addWidget(new EspaceLocaux);                                       // 3 : Gestion des locaux (module d'Emna, avec sa propre bande)
     m_dossiersPage = new QWidget;                                               // 4 : Dossiers médicaux (module vétérinaire)
     auto *dossiersLayout = new QVBoxLayout(m_dossiersPage);
     dossiersLayout->setContentsMargins(0, 0, 0, 0);
@@ -558,6 +559,7 @@ void MainWindow::fadeInPage(QWidget *page)
 void MainWindow::afficherEmployes()
 {
     m_stack->setCurrentIndex(0);
+    m_topBar->setVisible(true);
     if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Employés</b>");
     if (m_gestionEmployes)
         m_gestionEmployes->actualiserStats();
@@ -571,6 +573,7 @@ void MainWindow::afficherEmployes()
 void MainWindow::afficherServices()
 {
     m_stack->setCurrentIndex(1);
+    m_topBar->setVisible(true);
     if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Services</b>");
     fadeInPage(m_stack->currentWidget());
     m_btnServices->setChecked(true);
@@ -583,6 +586,7 @@ void MainWindow::afficherServices()
 void MainWindow::afficherStock()
 {
     m_stack->setCurrentIndex(2);
+    m_topBar->setVisible(true);
     if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Stock</b>");
     fadeInPage(m_stack->currentWidget());
     m_btnServices->setChecked(false);
@@ -595,6 +599,7 @@ void MainWindow::afficherStock()
 void MainWindow::afficherLocaux()
 {
     m_stack->setCurrentIndex(3);
+    m_topBar->setVisible(false);   // le module Locaux affiche sa propre bande
     if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Locaux</b>");
     fadeInPage(m_stack->currentWidget());
     m_btnServices->setChecked(false);
@@ -615,6 +620,7 @@ void MainWindow::afficherDossiers()
         m_dossiersPage->layout()->addWidget(m_medical);
     }
     m_stack->setCurrentIndex(4);
+    m_topBar->setVisible(true);
     if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Dossiers médicaux</b>");
     fadeInPage(m_stack->currentWidget());
     m_btnServices->setChecked(false);
