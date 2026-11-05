@@ -246,13 +246,15 @@ void SmartAssignDialog::rebuild()
         const int id = s.localId;
         connect(go, &QPushButton::clicked, this, [this, id] {
             const Local *cur = m_repo->find(id);
-            if (!cur || cur->getOutOfService() || cur->getOccupancy() >= cur->getCapacity())
+            if (!cur)
                 return;
             Local l = *cur;
-            l.setOccupancy(l.getOccupancy() + 1);
+            if (!l.ajouterAnimal())          // +1 et etat "Occupé"
+                return;
+            if (!m_repo->update(l))           // enregistre ETAT + OCCUPATION dans Oracle
+                return;
             m_assignedId = id;
             m_assignedName = l.getName();
-            m_repo->update(l);
             accept();
         });
         h->addWidget(go, 0, Qt::AlignVCenter);

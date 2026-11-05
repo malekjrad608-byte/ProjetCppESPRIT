@@ -40,6 +40,7 @@ bool LocalRepository::charger()
     Local l;
     QSqlQueryModel *model = l.afficher();
     const bool ok = !model->lastError().isValid();
+    m_loadError = ok ? QString() : Local::derniereErreur();
     if (ok) {
         while (model->canFetchMore())
             model->fetchMore();
@@ -68,7 +69,6 @@ void LocalRepository::seed()
         l.setSpecialty(spec);
         l.setFloor(floor);
         l.setIdService(service);
-        l.setLastCleaned(QDateTime::currentDateTime());
         m_items.append(l);
     };
     add("Consultation 1", "Consultation", 1, "Généraliste", 0);
@@ -82,21 +82,16 @@ void LocalRepository::seed()
     add("Pension A", "Pension", 20, "Chiens", 0);
     add("Isolement", "Isolement", 4, "Maladies contagieuses", 1);
 
-    // quelques etats pour voir les alertes et les couleurs du plan
-    const QDateTime now = QDateTime::currentDateTime();
+    // quelques etats pour voir les couleurs du plan (toujours via les methodes metier)
     for (Local &l : m_items) {
-        if (l.getName() == "Bloc A") {
-            l.setCleaning(CleaningState::ToClean);
-            l.setDirtySince(now.addSecs(-95 * 60));
-        } else if (l.getName() == "Consultation 3") {
-            l.setCleaning(CleaningState::ToClean);
-            l.setDirtySince(now.addSecs(-200 * 60));
+        if (l.getName() == "Bloc A" || l.getName() == "Consultation 3") {
+            l.signalerANettoyer();
         } else if (l.getName() == "Consultation 1") {
-            l.setOccupancy(1);
+            l.ajouterAnimal();
         } else if (l.getName() == "Pension A") {
-            l.setOccupancy(19);
+            for (int i = 0; i < 19; ++i) l.ajouterAnimal();
         } else if (l.getName() == "Hospitalisation 1") {
-            l.setOccupancy(8);
+            for (int i = 0; i < 8; ++i) l.ajouterAnimal();
         } else if (l.getName() == "Radiologie") {
             l.setOutOfService(true);
         }
@@ -105,6 +100,9 @@ void LocalRepository::seed()
 
 int LocalRepository::nextId() const
 {
+    const int fromDb = Local::prochainId();   // l'identifiant vient de la base
+    if (fromDb > 0)
+        return fromDb;
     int m = 100;
     for (const Local &l : m_items)
         m = qMax(m, l.getId());

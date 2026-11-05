@@ -43,7 +43,7 @@ QList<AssignSuggestion> suggest(const QList<Local> &all, const AssignQuery &q, i
     for (const Local &l : all) {
         if (l.getType() != type)
             continue;
-        if (l.getOutOfService() || l.getOccupancy() >= l.getCapacity())
+        if (!l.peutRecevoirAnimal())     // hors service, a nettoyer ou complet
             continue;
 
         AssignSuggestion s;
@@ -53,21 +53,10 @@ QList<AssignSuggestion> suggest(const QList<Local> &all, const AssignQuery &q, i
         s.floorText = l.floorText();
         int score = 50;
 
-        // proprete
-        switch (l.getCleaning()) {
-        case CleaningState::Clean:
+        // un local vide et propre est prefere a un local deja occupe
+        if (l.getEtat() == Local::Disponible) {
             score += 20;
-            s.reasons << QStringLiteral("Local propre");
-            break;
-        case CleaningState::InProgress:
-            score -= 15;
-            s.warnings << QStringLiteral("Nettoyage en cours");
-            break;
-        case CleaningState::ToClean:
-            score -= l.isUrgentType() ? 50 : 25;
-            s.warnings << (l.isUrgentType() ? QStringLiteral("À nettoyer avant usage (stérilité)")
-                                            : QStringLiteral("À nettoyer avant usage"));
-            break;
+            s.reasons << QStringLiteral("Local propre et vide");
         }
 
         // places libres
@@ -152,20 +141,22 @@ QList<AssignSuggestion> suggest(const QList<Local> &all, const AssignQuery &q, i
 QString explainNone(const QList<Local> &all, const AssignQuery &q)
 {
     const QString type = typeForNeed(q.need);
-    int rooms = 0, oos = 0, full = 0;
+    int rooms = 0, oos = 0, dirty = 0;
     for (const Local &l : all) {
         if (l.getType() != type)
             continue;
         ++rooms;
         if (l.getOutOfService())
             ++oos;
-        else if (l.getOccupancy() >= l.getCapacity())
-            ++full;
+        else if (l.getEtat() == Local::ANettoyer)
+            ++dirty;
     }
     if (rooms == 0)
         return QStringLiteral("Aucun local de type « %1 » n'existe dans la clinique.").arg(type);
     if (oos == rooms)
         return QStringLiteral("Tous les locaux « %1 » sont hors service.").arg(type);
+    if (dirty > 0)
+        return QStringLiteral("Aucun local « %1 » libre : %2 local(aux) à nettoyer d'abord.").arg(type).arg(dirty);
     return QStringLiteral("Tous les locaux « %1 » sont complets ou hors service.").arg(type);
 }
 

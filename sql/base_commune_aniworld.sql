@@ -58,20 +58,17 @@ CREATE TABLE EMPLOYES (
 -- 3) LOCAUX  (chaque local accueille 1 service)
 CREATE TABLE LOCAUX (
     ID_LOCAL          NUMBER(10)     CONSTRAINT PK_LOCAUX PRIMARY KEY,
-    NOM_LOCAL         VARCHAR2(150)  NOT NULL UNIQUE,
+    NOM_LOCAL         VARCHAR2(150)  NOT NULL CONSTRAINT UQ_LOCAUX_NOM UNIQUE,
     TYPE_LOCAL        VARCHAR2(100)  NOT NULL,
     ETAGE             NUMBER(3)      DEFAULT 0 NOT NULL,             -- 0 = rez-de-chaussee
-    CAPACITE          NUMBER(6)      NOT NULL CHECK (CAPACITE >= 1),
+    CAPACITE          NUMBER(4)      NOT NULL,
     SPECIALITE        VARCHAR2(250),
-    HORS_SERVICE      NUMBER(1)      DEFAULT 0 NOT NULL CHECK (HORS_SERVICE IN (0, 1)),
-    -- colonnes utilisees par les metiers du module Locaux (occupation + suivi du nettoyage)
-    OCCUPATION        NUMBER(6)      DEFAULT 0 NOT NULL,
-    NETTOYAGE         NUMBER(1)      DEFAULT 0 NOT NULL CHECK (NETTOYAGE IN (0, 1, 2)), -- propre / a nettoyer / en cours
-    DERNIER_NETTOYAGE VARCHAR2(35),
-    SALE_DEPUIS       VARCHAR2(35),
-    ID_SERV           NUMBER(10)     NOT NULL,
-    CONSTRAINT CK_LOCAUX_OCCUPATION CHECK (OCCUPATION BETWEEN 0 AND CAPACITE),
-    CONSTRAINT FK_LOCAUX_SERVICES FOREIGN KEY (ID_SERV) REFERENCES SERVICES (ID_SERV)
+    ETAT              VARCHAR2(20)   DEFAULT 'Disponible' NOT NULL,  -- Disponible / Occupé / À nettoyer / Hors service (controle fait en C++)
+    OCCUPATION        NUMBER(2)      DEFAULT 0 NOT NULL,             -- nombre d'animaux presents
+    ID_SERV           NUMBER(10),
+    CONSTRAINT CK_LOCAUX_CAP   CHECK (CAPACITE > 0),
+    CONSTRAINT CK_LOCAUX_ETAGE CHECK (ETAGE >= 0),
+    CONSTRAINT FK_LOCAUX_SERV  FOREIGN KEY (ID_SERV) REFERENCES SERVICES (ID_SERV) ON DELETE SET NULL
 );
 
 -- 4) STOCK  (chaque article est range dans 1 local)

@@ -22,9 +22,8 @@ SOURCES += \
     src/cardgrid.cpp \
     src/detailpanel.cpp \
     src/statsdialog.cpp \
-    src/alerts.cpp \
-    src/alertsdialog.cpp \
     src/clinicmap.cpp \
+    src/flatmap.cpp \
     src/confirmdialog.cpp \
     src/localdialog.cpp \
     src/pdfreport.cpp \
@@ -49,9 +48,8 @@ HEADERS += \
     src/cardgrid.h \
     src/detailpanel.h \
     src/statsdialog.h \
-    src/alerts.h \
-    src/alertsdialog.h \
     src/clinicmap.h \
+    src/flatmap.h \
     src/confirmdialog.h \
     src/localdialog.h \
     src/pdfreport.h \

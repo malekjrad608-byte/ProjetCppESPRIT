@@ -23,6 +23,7 @@ public:
     bool reconnect();                 // retente la connexion Oracle
     QString lastDbError() const;      // derniere erreur Oracle (pour l'afficher)
     bool usesDatabase() const;        // true si la connexion Oracle est ouverte
+    QString loadError() const { return m_loadError; }   // erreur de lecture de LOCAUX ("" = OK)
 
 signals:
     void changed();
@@ -33,4 +34,5 @@ private:
     int nextId() const;
 
     QList<Local> m_items;
+    QString m_loadError;
 };

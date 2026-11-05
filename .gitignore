@@ -1,10 +1,4 @@
 build/
-*.exe
-*.o
-*.obj
-.vscode/
-.vs/
-Debug/
-Release/
-*.log
+build_*/
 *.user
+*.pro.user*

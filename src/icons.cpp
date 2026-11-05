@@ -37,6 +37,7 @@ QString body(const QString &name)
         { "check",     "<path d='M5 12l5 5 9-10'/>" },
         { "brain",     "<path d='M9 4a3 3 0 00-3 3 3 3 0 00-2 5 3 3 0 002 5 3 3 0 006 0V4a3 3 0 00-3 0zM15 4a3 3 0 013 3 3 3 0 012 5 3 3 0 01-2 5 3 3 0 01-6 0'/>" },
         { "list",      "<path d='M8 6h13M8 12h13M8 18h13M3 6h.5M3 12h.5M3 18h.5'/>" },
+        { "refresh",   "<path d='M20 12a8 8 0 1 1-2.34-5.66'/><path d='M20 4v5h-5'/>" },
         { "grid",      "<rect x='3' y='3' width='7' height='7' rx='1'/><rect x='14' y='3' width='7' height='7' rx='1'/><rect x='3' y='14' width='7' height='7' rx='1'/><rect x='14' y='14' width='7' height='7' rx='1'/>" },
     };
     return map.value(name, map.value("rooms"));

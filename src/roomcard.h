@@ -21,7 +21,6 @@ public:
 
     int localId() const { return m_local.getId(); }
     void setSelected(bool on);
-    void setAlertLevel(int level);   // 0 aucune, 1 attention, 2 critique
     void playIntro(int delayMs);
 
     qreal hover() const { return m_hover; }
@@ -46,7 +45,6 @@ private:
     Local m_local;
     bool m_selected = false;
     bool m_pressed = false;
-    int m_alert = 0;
     qreal m_hover = 0.0;
     qreal m_intro = 1.0;
     QPointF m_mouse;

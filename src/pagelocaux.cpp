@@ -1,6 +1,4 @@
 #include "pagelocaux.h"
-#include "alerts.h"
-#include "alertsdialog.h"
 #include "cardgrid.h"
 #include "clinicmap.h"
 #include "confirmdialog.h"
@@ -51,7 +49,6 @@ PageLocaux::PageLocaux(LocalRepository *repo, QWidget *parent)
 {
     setObjectName("page");
     m_toast = new Toast(this);
-    m_alertTimer = new QTimer(this);
 
     auto *root = new QVBoxLayout(this);
     root->setContentsMargins(26, 22, 26, 10);
@@ -65,13 +62,6 @@ PageLocaux::PageLocaux(LocalRepository *repo, QWidget *parent)
         m_miniMap->setLocaux(m_repo->all());
         refresh(false);
     });
-
-    // alertes : re-evaluees toutes les 20 secondes (le temps passe !)
-    connect(m_alertTimer, &QTimer::timeout, this, [this] {
-        computeAlerts(true);
-        applyAlerts();
-    });
-    m_alertTimer->start(20000);
 
     auto *find = new QShortcut(QKeySequence::Find, this);
     connect(find, &QShortcut::activated, this, [this] {
@@ -153,7 +143,6 @@ QLayout *PageLocaux::buildHeader()
     connect(m_chipDirty, &QPushButton::clicked, this, [this] { toggleChip(int(SmartSearch::Kw::Dirty)); });
 
     // droite : deux rangees de boutons
-    m_btnAlerts = makeButton(QStringLiteral("Alertes"), "bell", "ghost");
     m_btnSmart = makeButton(QStringLiteral("Affectation intelligente"), "sparkle", "ghost");
     m_btnAdd = makeButton(QStringLiteral("Ajouter un local"), "plus", "primary");
     m_btnPdf = makeButton(QStringLiteral("Rapport nettoyage PDF"), "download", "ghost");
@@ -163,7 +152,6 @@ QLayout *PageLocaux::buildHeader()
     auto *r1 = new QHBoxLayout;
     r1->setSpacing(10);
     r1->addStretch();
-    r1->addWidget(m_btnAlerts);
     r1->addWidget(m_btnSmart);
     r1->addWidget(m_btnAdd);
     auto *r2 = new QHBoxLayout;
@@ -178,7 +166,6 @@ QLayout *PageLocaux::buildHeader()
     btnCol->addLayout(r2);
     btnCol->addStretch();
 
-    connect(m_btnAlerts, &QPushButton::clicked, this, [this] { openAlerts(); });
     connect(m_btnSmart, &QPushButton::clicked, this, [this] { openSmartAssign(); });
     connect(m_btnAdd, &QPushButton::clicked, this, [this] { addLocal(); });
     connect(m_btnPdf, &QPushButton::clicked, this, [this] { exportPdf(); });
@@ -202,7 +189,7 @@ QLayout *PageLocaux::buildTools()
 
     m_search = new QLineEdit;
     m_search->setPlaceholderText(QStringLiteral(
-        "Recherche intelligente : « chirurgie dispo », « sale étage 1 », « plein », « alerte »…"));
+        "Recherche intelligente : « chirurgie dispo », « sale étage 1 », « plein »…"));
     m_search->setClearButtonEnabled(true);
     m_search->addAction(Icons::icon("search", Theme::Muted, 16), QLineEdit::LeadingPosition);
 
@@ -211,7 +198,7 @@ QLayout *PageLocaux::buildTools()
                             QStringLiteral("Trier : nom A → Z"),
                             QStringLiteral("Trier : remplissage") });
     m_sortCombo->setToolTip(QStringLiteral(
-        "Priorité : alertes, puis locaux à nettoyer (blocs d'abord), puis les plus remplis.\n"
+        "Priorité : locaux à nettoyer (blocs d'abord), puis les plus remplis.\n"
         "En vue Liste, clique sur les en-têtes du tableau pour trier par colonne."));
 
     auto *reset = new QPushButton(QStringLiteral("Réinitialiser"));
@@ -267,8 +254,8 @@ QLayout *PageLocaux::buildBody()
     scroll->setWidget(m_grid);
     m_views->addWidget(scroll);
 
-    m_table = new QTableWidget(0, 7);
-    m_table->setHorizontalHeaderLabels({ "ID", "Local", "Type", "Étage", "Occupation", "État", "Nettoyage" });
+    m_table = new QTableWidget(0, 6);
+    m_table->setHorizontalHeaderLabels({ "ID", "Local", "Type", "Étage", "Occupation", "État" });
     m_table->verticalHeader()->setVisible(false);
     m_table->verticalHeader()->setDefaultSectionSize(42);
     m_table->horizontalHeader()->setHighlightSections(false);
@@ -353,8 +340,8 @@ QLayout *PageLocaux::buildBody()
     auto *legend = new QLabel(QStringLiteral(
         "<span style='color:#4aa57a'>■</span> Dispo &nbsp; "
         "<span style='color:#5b76c9'>■</span> Occupé &nbsp; "
-        "<span style='color:#d9972f'>■</span> H.S. &nbsp; "
-        "<span style='color:#c0504d'>●</span> À nettoyer"));
+        "<span style='color:#d05a55'>■</span> À nettoyer &nbsp; "
+        "<span style='color:#a9b4b8'>■</span> H.S."));
     legend->setTextFormat(Qt::RichText);
     legend->setStyleSheet(QStringLiteral("font-size:11px;color:#6f8a92;"));
     pv->addWidget(legend);
@@ -362,26 +349,6 @@ QLayout *PageLocaux::buildBody()
     connect(enlarge, &QPushButton::clicked, this, [this] { openPlan(); });
     connect(m_miniMap, &ClinicMap::roomClicked, this, [this](int id) { onCardClicked(id); });
 
-    // occupation globale
-    auto *global = new QFrame;
-    global->setObjectName("panel");
-    auto *gv = new QVBoxLayout(global);
-    gv->setContentsMargins(20, 16, 20, 16);
-    gv->setSpacing(6);
-    auto *gt = new QLabel(QStringLiteral("Occupation globale"));
-    gt->setObjectName("panelTitle");
-    m_pct = new QLabel(QStringLiteral("0 %"));
-    m_pct->setObjectName("big");
-    m_bar = new QProgressBar;
-    m_bar->setRange(0, 100);
-    m_bar->setTextVisible(false);
-    m_globalText = new QLabel;
-    m_globalText->setObjectName("sub");
-    gv->addWidget(gt);
-    gv->addWidget(m_pct);
-    gv->addWidget(m_bar);
-    gv->addWidget(m_globalText);
-    rv->addWidget(global);
     rv->addStretch();
 
     rightScroll->setWidget(rightWidget);
@@ -390,20 +357,18 @@ QLayout *PageLocaux::buildBody()
     // ---------------------------------------------------- actions du panneau de detail
     connect(m_detail, &DetailPanel::assignRequested, this, [this] {
         modifySelected([this](Local &l) {
-            if (l.getOutOfService() || l.getOccupancy() >= l.getCapacity())
+            if (!l.ajouterAnimal())
                 return false;
-            l.setOccupancy(l.getOccupancy() + 1);
-            m_toast->showMessage(QStringLiteral("Animal affecté à ") + l.getName());
+            m_toast->showMessage(QStringLiteral("Animal affecté à %1 (%2 / %3)")
+                                     .arg(l.getName()).arg(l.getOccupancy()).arg(l.getCapacity()));
             return true;
         });
     });
     connect(m_detail, &DetailPanel::freeRequested, this, [this] {
         modifySelected([this](Local &l) {
-            if (l.getOccupancy() <= 0)
+            if (!l.retirerAnimal())                    // un animal a la fois (-1)
                 return false;
-            l.setOccupancy(l.getOccupancy() - 1);                       // un animal à la fois (-1)
-            if (l.getOccupancy() == 0) {              // dernier animal parti : le local est vide -> à nettoyer
-                l.markToClean();
+            if (l.getOccupancy() == 0) {               // dernier animal parti -> "À nettoyer"
                 m_toast->showMessage(l.getName() + QStringLiteral(" est vide — à nettoyer"));
             } else {
                 m_toast->showMessage(QStringLiteral("Animal retiré de %1 (%2 / %3)")
@@ -414,21 +379,15 @@ QLayout *PageLocaux::buildBody()
     });
     connect(m_detail, &DetailPanel::cleanRequested, this, [this] {
         modifySelected([this](Local &l) {
-            switch (l.getCleaning()) {
-            case CleaningState::Clean:
-                l.markToClean();
-                m_toast->showMessage(QStringLiteral("Signalé à nettoyer"));
-                break;
-            case CleaningState::ToClean:
-                l.startCleaning();
-                m_toast->showMessage(QStringLiteral("Nettoyage démarré"));
-                break;
-            case CleaningState::InProgress:
-                l.markClean();
-                m_toast->showMessage(QStringLiteral("Local propre"));
-                break;
+            if (l.terminerNettoyage()) {
+                m_toast->showMessage(l.getName() + QStringLiteral(" est propre — disponible"));
+                return true;
             }
-            return true;
+            if (l.signalerANettoyer()) {
+                m_toast->showMessage(l.getName() + QStringLiteral(" signalé à nettoyer"));
+                return true;
+            }
+            return false;
         });
     });
     connect(m_detail, &DetailPanel::editRequested, this, [this] { editSelected(); });
@@ -444,7 +403,7 @@ QList<Local> PageLocaux::filteredSorted() const
 
     QList<Local> out;
     for (const Local &l : m_repo->all())
-        if (q.matches(l, m_alertLevel.value(l.getId())))
+        if (q.matches(l))
             out.append(l);
 
     QCollator coll;
@@ -463,18 +422,13 @@ QList<Local> PageLocaux::filteredSorted() const
             return ra > rb;
         });
         break;
-    default:    // priorite : alertes > a nettoyer (urgent d'abord, le plus ancien d'abord) > remplissage
-        std::stable_sort(out.begin(), out.end(), [this](const Local &a, const Local &b) {
-            const int la = m_alertLevel.value(a.getId()), lb = m_alertLevel.value(b.getId());
-            if (la != lb)
-                return la > lb;
+    default:    // priorite : a nettoyer (urgent d'abord) > remplissage
+        std::stable_sort(out.begin(), out.end(), [](const Local &a, const Local &b) {
             const bool da = a.getCleaning() == CleaningState::ToClean, db = b.getCleaning() == CleaningState::ToClean;
             if (da != db)
                 return da;
             if (da && a.isUrgentType() != b.isUrgentType())
                 return a.isUrgentType();
-            if (da && a.dirtyMinutes() != b.dirtyMinutes())
-                return a.dirtyMinutes() > b.dirtyMinutes();
             const double ra = a.getCapacity() > 0 ? double(a.getOccupancy()) / a.getCapacity() : 0.0;
             const double rb = b.getCapacity() > 0 ? double(b.getOccupancy()) / b.getCapacity() : 0.0;
             return ra > rb;
@@ -486,7 +440,6 @@ QList<Local> PageLocaux::filteredSorted() const
 
 void PageLocaux::refresh(bool playIntro)
 {
-    computeAlerts(true);
     if (playIntro) {
         m_tableSortCol = -1;
         m_table->horizontalHeader()->setSortIndicatorShown(false);
@@ -499,7 +452,6 @@ void PageLocaux::refresh(bool playIntro)
     for (const Local &l : list) {
         auto *c = new RoomCard(l);
         c->setSelected(l.getId() == m_selectedId);
-        c->setAlertLevel(m_alertLevel.value(l.getId()));
         connect(c, &RoomCard::clicked, this, &PageLocaux::onCardClicked);
         if (playIntro)
             c->playIntro(qMin(i, 14) * 35);
@@ -508,6 +460,14 @@ void PageLocaux::refresh(bool playIntro)
     }
     m_grid->setCards(cards);
     updateTable(list);
+    // liste vide : soit la recherche ne trouve rien, soit la table LOCAUX n'a pas pu etre lue
+    if (!m_repo->loadError().isEmpty())
+        m_empty->setText(QStringLiteral("Impossible de lire la table LOCAUX :\n") + m_repo->loadError());
+    else if (m_repo->all().isEmpty())
+        m_empty->setText(QStringLiteral("Aucun local pour le moment : clique sur « Ajouter un local »"));
+    else
+        m_empty->setText(QStringLiteral("Aucun local ne correspond à la recherche"));
+    m_empty->setWordWrap(true);
     m_empty->setVisible(list.isEmpty());
     updateQueryHint();
     m_count->setText(QStringLiteral("%1 / %2 locaux").arg(list.size()).arg(m_repo->all().size()));
@@ -519,7 +479,6 @@ void PageLocaux::refresh(bool playIntro)
         m_plan->setSelected(m_selectedId);
     showDetail();
     updateChips();
-    updateGlobal();
 }
 
 void PageLocaux::updateTable(const QList<Local> &list)
@@ -551,18 +510,12 @@ void PageLocaux::updateTable(const QList<Local> &list)
         state->setForeground(fg);
         state->setFont(bold);
 
-        auto *clean = new QTableWidgetItem(l.cleaningText());
-        Theme::cleaningColors(l.getCleaning(), bg, fg);
-        clean->setForeground(fg);
-        clean->setFont(bold);
-
         m_table->setItem(r, 0, idItem);
         m_table->setItem(r, 1, name);
         m_table->setItem(r, 2, type);
         m_table->setItem(r, 3, floor);
         m_table->setItem(r, 4, occ);
         m_table->setItem(r, 5, state);
-        m_table->setItem(r, 6, clean);
     }
     if (m_tableSortCol >= 0)
         m_table->sortItems(m_tableSortCol, m_tableSortOrder);
@@ -583,9 +536,8 @@ void PageLocaux::updateChips()
         case RoomState::Available:    ++avail; break;
         case RoomState::Occupied:     ++occ;   break;
         case RoomState::OutOfService: ++oos;   break;
+        case RoomState::ToClean:      ++dirty; break;
         }
-        if (l.getCleaning() == CleaningState::ToClean)
-            ++dirty;
     }
     m_chipAvail->setText(QStringLiteral("%1 disponible(s)").arg(avail));
     m_chipOcc->setText(QStringLiteral("%1 occupé(s)").arg(occ));
@@ -619,31 +571,6 @@ void PageLocaux::updateQueryHint()
     m_queryHint->show();
 }
 
-void PageLocaux::updateGlobal()
-{
-    int cap = 0, occ = 0;
-    for (const Local &l : m_repo->all()) {
-        if (l.getOutOfService())
-            continue;
-        cap += l.getCapacity();
-        occ += l.getOccupancy();
-    }
-    const int pct = cap > 0 ? qRound(100.0 * occ / cap) : 0;
-    m_pct->setText(QStringLiteral("%1 %").arg(pct));
-    m_globalText->setText(QStringLiteral("%1 animaux pour %2 places disponibles").arg(occ).arg(cap));
-
-    if (Theme::animations) {
-        auto *a = new QPropertyAnimation(m_bar, "value", this);
-        a->setDuration(500);
-        a->setStartValue(m_bar->value());
-        a->setEndValue(pct);
-        a->setEasingCurve(QEasingCurve::OutCubic);
-        a->start(QAbstractAnimation::DeleteWhenStopped);
-    } else {
-        m_bar->setValue(pct);
-    }
-}
-
 void PageLocaux::setView(int index)
 {
     m_views->setCurrentIndex(index);
@@ -674,7 +601,7 @@ void PageLocaux::toggleChip(int kw)
 void PageLocaux::showDetail()
 {
     const Local *l = m_repo->find(m_selectedId);
-    m_detail->setLocal(l, l ? m_alertTexts.value(m_selectedId) : QStringList());
+    m_detail->setLocal(l);
 }
 
 void PageLocaux::onCardClicked(int id)
@@ -791,16 +718,6 @@ void PageLocaux::openPlan()
     m_plan->show();
 }
 
-void PageLocaux::openAlerts()
-{
-    AlertsDialog dlg(m_repo->all(), this);
-    const bool accepted = (dlg.exec() == QDialog::Accepted);
-    computeAlerts(false);     // le seuil a peut-etre change
-    applyAlerts();
-    if (accepted && dlg.selectedLocalId() > 0)
-        selectRoom(dlg.selectedLocalId());
-}
-
 void PageLocaux::openSmartAssign()
 {
     SmartAssignDialog dlg(m_repo, this);
@@ -827,63 +744,4 @@ void PageLocaux::exportPdf()
     }
     m_toast->showMessage(QStringLiteral("Rapport PDF généré"));
     QDesktopServices::openUrl(QUrl::fromLocalFile(path));
-}
-
-// ================================================================ alertes automatiques
-
-void PageLocaux::computeAlerts(bool notify)
-{
-    const QList<Alert> alerts = AlertEngine::evaluate(m_repo->all());
-    m_alertLevel.clear();
-    m_alertTexts.clear();
-
-    QSet<QString> keys;
-    QStringList newTitles;
-    int crit = 0, warn = 0;
-    for (const Alert &a : alerts) {
-        keys.insert(a.key);
-        if (a.level == Alert::Critical)
-            ++crit;
-        else if (a.level == Alert::Warning)
-            ++warn;
-        if (a.localId > 0) {
-            m_alertLevel[a.localId] = qMax(m_alertLevel.value(a.localId), int(a.level));
-            m_alertTexts[a.localId] << a.shortText;
-        }
-        if (a.level >= Alert::Warning && !m_knownAlertKeys.contains(a.key))
-            newTitles << a.title;
-    }
-
-    if (notify) {
-        if (!m_alertsReady) {
-            if (crit + warn > 0)
-                m_toast->showMessage(QStringLiteral("%1 alerte(s) à traiter — clique sur « Alertes »").arg(crit + warn));
-        } else if (!newTitles.isEmpty()) {
-            QString msg = QStringLiteral("Nouvelle alerte : ") + newTitles.first();
-            if (newTitles.size() > 1)
-                msg += QStringLiteral(" (+%1)").arg(newTitles.size() - 1);
-            m_toast->showMessage(msg);
-        }
-    }
-    m_alertsReady = true;
-    m_knownAlertKeys = keys;
-
-    // bouton "Alertes" : rouge s'il y a du critique, orange sinon
-    const int n = crit + warn;
-    m_btnAlerts->setText(n > 0 ? QStringLiteral("Alertes (%1)").arg(n) : QStringLiteral("Alertes"));
-    const QString level = crit > 0 ? QStringLiteral("critical") : warn > 0 ? QStringLiteral("warning") : QStringLiteral("none");
-    if (m_btnAlerts->property("alert").toString() != level) {
-        m_btnAlerts->setProperty("alert", level);
-        const QColor ic = crit > 0 ? Theme::Red : warn > 0 ? Theme::OrangeText : Theme::TealDark;
-        m_btnAlerts->setIcon(Icons::icon("bell", ic, 16));
-        m_btnAlerts->style()->unpolish(m_btnAlerts);
-        m_btnAlerts->style()->polish(m_btnAlerts);
-    }
-}
-
-void PageLocaux::applyAlerts()
-{
-    for (RoomCard *c : m_grid->cards())
-        c->setAlertLevel(m_alertLevel.value(c->localId()));
-    showDetail();
 }

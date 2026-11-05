@@ -46,7 +46,6 @@ private:
     void updateTable(const QList<Local> &list);
     void updateChips();
     void updateQueryHint();
-    void updateGlobal();
     void setView(int index);          // 0 = cartes, 1 = liste
 
     // filtres
@@ -66,13 +65,8 @@ private:
 
     // fonctionnalites avancees
     void openPlan();
-    void openAlerts();
     void openSmartAssign();
     void exportPdf();
-
-    // alertes automatiques
-    void computeAlerts(bool notify);
-    void applyAlerts();
 
     LocalRepository *m_repo;
     int m_selectedId = 0;
@@ -82,7 +76,6 @@ private:
     QPushButton *m_chipOcc;
     QPushButton *m_chipOos;
     QPushButton *m_chipDirty;
-    QPushButton *m_btnAlerts;
     QPushButton *m_btnSmart;
     QPushButton *m_btnAdd;
     QPushButton *m_btnPdf;
@@ -105,9 +98,6 @@ private:
     QLabel *m_empty;
     DetailPanel *m_detail;
     ClinicMap *m_miniMap;
-    QLabel *m_pct;
-    QProgressBar *m_bar;
-    QLabel *m_globalText;
     Toast *m_toast;
     QPointer<PlanDialog> m_plan;
 
@@ -115,11 +105,4 @@ private:
     bool m_updatingTable = false;
     int m_tableSortCol = -1;
     Qt::SortOrder m_tableSortOrder = Qt::AscendingOrder;
-
-    // alertes
-    QTimer *m_alertTimer;
-    QHash<int, int> m_alertLevel;
-    QHash<int, QStringList> m_alertTexts;
-    QSet<QString> m_knownAlertKeys;
-    bool m_alertsReady = false;
 };

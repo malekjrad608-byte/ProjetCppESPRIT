@@ -1,5 +1,5 @@
 ANIWORLD - Gestion des locaux (Qt 6.7.3, C++ / Widgets)
-Version complete : CRUD + plan + statistiques + PDF + affectation intelligente + alertes automatiques
+Version complete : CRUD + plan + statistiques + PDF + affectation intelligente
 
 COMMENT LANCER
 1. Qt Creator > Fichier > Ouvrir un fichier ou projet... > GestionLocaux_ANIWORLD.pro
@@ -16,29 +16,28 @@ CRUD
   - Supprimer : fenetre de confirmation
   - Affichage en Cartes ou en Liste (tableau triable en cliquant sur les en-tetes)
 1. Recherche intelligente + tri : UNE seule barre qui comprend des mots-cles
-     "chirurgie dispo", "sale etage 1", "hors service", "plein", "alerte", "consultation 3"
+     "chirurgie dispo", "sale etage 1", "hors service", "plein", "consultation 3"
      (ce qui est compris s'affiche sous la barre). Les pastilles du haut sont des raccourcis.
-     Tri : Priorite (alertes > a nettoyer, blocs d'abord > remplis) / Nom A-Z / Remplissage ;
+     Tri : Priorite (a nettoyer, blocs d'abord > remplis) / Nom A-Z / Remplissage ;
      en vue Liste : clic sur les en-tetes du tableau.
 2. PDF : "Rapport nettoyage PDF" -> locaux a nettoyer classes par priorite, case "Fait", remarques,
-   agent, signatures, alertes actives, puis liste des locaux propres
+   agent, signatures, puis la liste des autres locaux
 3. Statistiques : bouton "Voir les statistiques" (tuiles, tableau par type, nettoyage, resume)
-4. Plan de la clinique (metier avance 1) : mini-map "en direct" dans la page + grand plan (bouton ou
-   "Agrandir"). Il se modifie tout seul quand on ajoute / modifie / supprime un local.
-   Les locaux a nettoyer clignotent.
-5. Suivi du nettoyage (metier avance 2) : Propre > A nettoyer > En cours > Propre, avec chronometre.
-   "Retirer un animal (-1)" enleve un animal a la fois ; quand le dernier part, le local passe "A nettoyer".
+4. Plan 2.5D de la clinique (metier avance 1) : vue isometrique dessinee avec QPainter.
+   Chaque etage est une dalle, chaque local une boite coloree selon son ETAT
+   (vert Disponible, bleu Occupe, rouge A nettoyer qui clignote, gris Hors service).
+   Glisser = tourner le batiment ; boutons "Tourner" et "Vue eclatee" dans le grand plan ;
+   survol = la boite se souleve ; clic = selection. Il se met a jour en direct (ajout / suppression).
+   Dans la fenetre "Plan de la clinique" : boutons "Vue 2.5D" / "Vue plan" pour passer a la vue a plat
+   (un bloc par etage). Fichiers : src/clinicmap.* (2.5D) et src/flatmap.* (plan).
+5. Cycle de vie d'un local : Disponible -> (+1 animal) Occupe -> (-1, dernier animal) A nettoyer
+   -> (Nettoyage termine) Disponible. Hors service seulement si le local est vide.
 6. Affectation intelligente (metier avance 3) : on choisit l'espece et le besoin de l'animal, ANIWORLD
    classe les locaux (proprete, places, specialite, urgence) et propose le meilleur avec les raisons.
-7. Alertes automatiques (bonus) : verifiees toutes les 20 secondes
-   - local sale depuis trop longtemps (seuil reglable dans la fenetre Alertes, 60 min par defaut,
-     moitie moins pour les blocs et l'isolement)
-   - local sature / presque plein, clinique occupee a 70 % et plus, plus aucun local d'un type important
-   - bouton "Alertes (n)" qui change de couleur, pastille ! sur les cartes, message en bas a l'ecran
-     quand une NOUVELLE alerte apparait
 
 DONNEES
-  Base Oracle uniquement (table LOCAUX de la base commune, schema rawand). Au premier lancement, si la table est vide,
+  Base Oracle uniquement (table LOCAUX de la base commune, schema rawand) :
+  ID_LOCAL, NOM_LOCAL, TYPE_LOCAL, ETAGE, CAPACITE, SPECIALITE, ETAT, OCCUPATION, ID_SERV. Au premier lancement, si la table est vide,
   l'application ajoute 10 locaux d'exemple.
 
 STRUCTURE
@@ -50,12 +49,11 @@ STRUCTURE
   src/localdialog.*         formulaire ajout / modification
   src/confirmdialog.*       confirmation (suppression...)
   src/roomcard.*, cardgrid.*, detailpanel.*   cartes et panneau de details
-  src/clinicmap.*, plandialog.*               plan de la clinique
+  src/clinicmap.*, flatmap.*, plandialog.*    plan de la clinique (2.5D + vue plan)
   src/statsdialog.*                           statistiques
   src/pdfreport.*                             rapport PDF
   src/smartassign.*, smartassigndialog.*      affectation intelligente
   src/smartsearch.*                           recherche intelligente (mots-cles)
-  src/alerts.*, alertsdialog.*                alertes automatiques
   src/hoverglow, toast, pawburst, spinlogo, icons, theme.h   effets visuels et outils
 
 INTEGRATION (etape finale)

@@ -162,17 +162,16 @@ StatsDialog::StatsDialog(const QList<Local> &all, QWidget *parent) : QDialog(par
 
     // ------------------------------------------------------------ calculs
     QSet<int> floors;
-    int cap = 0, occ = 0, avail = 0, busy = 0, clean = 0, prog = 0, dirty = 0;
+    int cap = 0, occ = 0, avail = 0, busy = 0, clean = 0, dirty = 0;
     QMap<QString, TypeRow> byType;
     for (const Local &l : all) {
         floors.insert(l.getFloor());
         if (l.state() == RoomState::Available) ++avail;
         if (l.state() == RoomState::Occupied) ++busy;
-        switch (l.getCleaning()) {
-        case CleaningState::Clean:      ++clean; break;
-        case CleaningState::InProgress: ++prog;  break;
-        case CleaningState::ToClean:    ++dirty; break;
-        }
+        if (l.getCleaning() == CleaningState::ToClean)
+            ++dirty;
+        else
+            ++clean;
         TypeRow &r = byType[l.getType()];
         r.type = l.getType();
         r.rooms++;
@@ -308,13 +307,12 @@ StatsDialog::StatsDialog(const QList<Local> &all, QWidget *parent) : QDialog(par
 
     // nettoyage
     root->addWidget(sectionTitle("sparkle", QStringLiteral("État du nettoyage"),
-        QStringLiteral("Combien de locaux sont propres, en cours ou à nettoyer")));
-    auto *cleanBar = new CleanBar(clean, prog, dirty);
+        QStringLiteral("Combien de locaux sont propres ou à nettoyer")));
+    auto *cleanBar = new CleanBar(clean, 0, dirty);
     root->addWidget(cleanBar);
     auto *legend = new QLabel(QStringLiteral(
         "<span style='color:#4aa57a'>●</span> Propre <b>%1</b> &nbsp;&nbsp;&nbsp; "
-        "<span style='color:#e09b3d'>●</span> En cours <b>%2</b> &nbsp;&nbsp;&nbsp; "
-        "<span style='color:#c0504d'>●</span> À nettoyer <b>%3</b>").arg(clean).arg(prog).arg(dirty));
+        "<span style='color:#c0504d'>●</span> À nettoyer <b>%2</b>").arg(clean).arg(dirty));
     legend->setTextFormat(Qt::RichText);
     root->addWidget(legend);
 

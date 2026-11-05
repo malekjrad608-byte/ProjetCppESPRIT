@@ -68,6 +68,7 @@ inline void stateColors(RoomState s, QColor &bg, QColor &fg)
     case RoomState::Available:    bg = GreenLight;  fg = Green;      break;
     case RoomState::Occupied:     bg = BlueLight;   fg = Blue;       break;
     case RoomState::OutOfService: bg = OrangeLight; fg = OrangeText; break;
+    case RoomState::ToClean:      bg = RedLight;    fg = Red;        break;
     }
 }
 
@@ -76,7 +77,6 @@ inline void cleaningColors(CleaningState s, QColor &bg, QColor &fg)
     switch (s) {
     case CleaningState::Clean:      bg = GreenLight;  fg = Green;      break;
     case CleaningState::ToClean:    bg = RedLight;    fg = Red;        break;
-    case CleaningState::InProgress: bg = OrangeLight; fg = OrangeText; break;
     }
 }
 

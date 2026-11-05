@@ -29,14 +29,6 @@ void RoomCard::setSelected(bool on)
     update();
 }
 
-void RoomCard::setAlertLevel(int level)
-{
-    if (m_alert == level)
-        return;
-    m_alert = level;
-    update();
-}
-
 void RoomCard::setHover(qreal v)
 {
     m_hover = v;
@@ -211,7 +203,7 @@ void RoomCard::paintEvent(QPaintEvent *)
         p.drawText(QRectF(left, cr.top() + 82, textW, 18), Qt::AlignVCenter | Qt::AlignLeft,
                    m_local.getType());
     }
-    // etat + nettoyage
+    // etat
     {
         const QFont f = Theme::font(8.5, true);
         QColor bg, fg;
@@ -219,11 +211,6 @@ void RoomCard::paintEvent(QPaintEvent *)
         const QString st = m_local.stateText();
         Theme::drawPill(p, QRectF(left, cr.top() + 108, Theme::pillWidth(st, f, true), 24),
                         st, bg, fg, f, true);
-
-        Theme::cleaningColors(m_local.getCleaning(), bg, fg);
-        const QString cl = m_local.cleaningText();
-        const qreal w = Theme::pillWidth(cl, f, true);
-        Theme::drawPill(p, QRectF(cr.right() - 14 - w, cr.top() + 108, w, 24), cl, bg, fg, f, true);
     }
     // specialite + etage
     {
@@ -235,15 +222,5 @@ void RoomCard::paintEvent(QPaintEvent *)
             info = m_local.getSpecialty() + QStringLiteral("  ·  ") + info;
         p.drawText(QRectF(left, cr.top() + 134, textW, 16), Qt::AlignVCenter | Qt::AlignLeft,
                    QFontMetricsF(f).elidedText(info, Qt::ElideRight, textW));
-    }
-    // pastille d'alerte (coin haut droit)
-    if (m_alert > 0) {
-        const QPointF c(cr.right() - 4, cr.top() + 2);
-        p.setPen(QPen(Qt::white, 2));
-        p.setBrush(m_alert >= 2 ? Theme::Red : Theme::Orange);
-        p.drawEllipse(c, 10, 10);
-        p.setPen(Qt::white);
-        p.setFont(Theme::font(10, true));
-        p.drawText(QRectF(c.x() - 10, c.y() - 10, 20, 20), Qt::AlignCenter, QStringLiteral("!"));
     }
 }

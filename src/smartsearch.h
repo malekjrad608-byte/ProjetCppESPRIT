@@ -5,7 +5,7 @@
 #include "local.h"
 
 // Recherche intelligente : une seule barre comprend des mots-cles
-//   "chirurgie dispo"   "sale etage 1"   "hors service"   "plein"   "alerte"   "consultation 3"
+//   "chirurgie dispo"   "sale etage 1"   "hors service"   "plein"   "consultation 3"
 // Les mots reconnus deviennent des filtres, le reste est cherche dans le nom / type / specialite.
 struct SmartQuery
 {
@@ -14,12 +14,11 @@ struct SmartQuery
     QSet<QString> types;     // types de local (texte d'origine)
     QSet<int> floors;
     bool full = false;       // local complet
-    bool alertsOnly = false; // local avec une alerte active
     QStringList terms;       // mots libres (sans accents, minuscules)
     QStringList understood;  // ce qui a ete compris, pour l'affichage
 
     bool isEmpty() const;
-    bool matches(const Local &l, int alertLevel) const;
+    bool matches(const Local &l) const;
 };
 
 namespace SmartSearch

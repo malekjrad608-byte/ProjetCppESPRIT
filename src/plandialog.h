@@ -2,6 +2,8 @@
 #include <QDialog>
 
 class ClinicMap;
+class FlatMap;
+class QStackedWidget;
 class LocalRepository;
 class QLabel;
 class QPushButton;
@@ -20,9 +22,17 @@ signals:
 
 private:
     void updateInfo();
+    void setView(int index);         // 0 = vue 2.5D, 1 = vue plan
 
     LocalRepository *m_repo;
-    ClinicMap *m_map;
+    ClinicMap *m_map;                // vue 2.5D
+    FlatMap *m_flat;                 // vue plan (a plat)
+    QStackedWidget *m_views;
+    QPushButton *m_btn3d;
+    QPushButton *m_btnFlat;
+    QPushButton *m_rotate;
+    QPushButton *m_explode;
+    QLabel *m_sub;
     QLabel *m_info;
     QPushButton *m_goto;
     int m_selected = 0;

@@ -4,15 +4,21 @@
 
 class QLabel;
 class QPushButton;
+class OccupancyRing;
+class LifeStepper;
 
-// Panneau de droite : details du local selectionne + boutons d'action
+// Panneau de droite : fiche du local selectionne
+//  - entete colore selon l'ETAT (icone du type, nom, type · etage · id, badge)
+//  - anneau d'occupation anime + phrases d'aide
+//  - cycle de vie : Disponible -> Occupé -> À nettoyer
+//  - boutons qui s'adaptent a l'etat (une action impossible est grisee avec une explication)
 class DetailPanel : public QFrame
 {
     Q_OBJECT
 public:
     explicit DetailPanel(QWidget *parent = nullptr);
-    // nullptr = aucune selection ; alerts = textes courts des alertes de ce local
-    void setLocal(const Local *l, const QStringList &alerts = QStringList());
+    // nullptr = aucune selection
+    void setLocal(const Local *l);
 
 signals:
     void assignRequested();
@@ -22,16 +28,28 @@ signals:
     void deleteRequested();
 
 private:
+    QWidget *m_empty;          // message "clique sur un local"
+    QWidget *m_content;        // fiche complete
+
+    QFrame *m_head;
+    QLabel *m_icon;
     QLabel *m_name;
+    QLabel *m_sub;
     QLabel *m_badge;
-    QLabel *m_hint;
-    QLabel *m_alerts;
-    QWidget *m_info;
-    QWidget *m_buttons;
-    QLabel *m_values[7];
-    QPushButton *m_btnAssign;
+
+    OccupancyRing *m_ring;
+    QLabel *m_occTitle;
+    QLabel *m_occLine1;
+    QLabel *m_occLine2;
+
+    LifeStepper *m_stepper;
+    QLabel *m_specialty;
+    QLabel *m_service;
+
+    QPushButton *m_btnMain;    // "Affecter un animal" ou "Nettoyage terminé"
     QPushButton *m_btnFree;
-    QPushButton *m_btnEdit;
     QPushButton *m_btnClean;
+    QPushButton *m_btnEdit;
     QPushButton *m_btnDelete;
+    bool m_mainCleans = false; // true : le bouton principal termine le nettoyage
 };

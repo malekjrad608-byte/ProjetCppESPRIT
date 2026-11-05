@@ -71,20 +71,14 @@ SmartQuery parse(const QString &text)
             q.states.insert(int(RoomState::Occupied));
             q.understood << QStringLiteral("Occupé");
         } else if (kw(t, "sale") || kw(t, "nettoyer")) {
-            q.cleanings.insert(int(CleaningState::ToClean));
+            q.states.insert(int(RoomState::ToClean));
             q.understood << QStringLiteral("À nettoyer");
         } else if (kw(t, "propre")) {
             q.cleanings.insert(int(CleaningState::Clean));
             q.understood << QStringLiteral("Propre");
-        } else if (t == "cours" || t == "encours") {
-            q.cleanings.insert(int(CleaningState::InProgress));
-            q.understood << QStringLiteral("Nettoyage en cours");
         } else if (kw(t, "plein") || kw(t, "sature") || kw(t, "complet")) {
             q.full = true;
             q.understood << QStringLiteral("Complet");
-        } else if (kw(t, "alerte")) {
-            q.alertsOnly = true;
-            q.understood << QStringLiteral("Avec alerte");
         } else {
             bool isType = false;
             if (t.size() >= 3) {
@@ -112,7 +106,7 @@ bool isActive(const SmartQuery &q, Kw k)
     case Kw::Available:    return q.states.contains(int(RoomState::Available));
     case Kw::Occupied:    return q.states.contains(int(RoomState::Occupied));
     case Kw::OutOfService:return q.states.contains(int(RoomState::OutOfService));
-    case Kw::Dirty:       return q.cleanings.contains(int(CleaningState::ToClean));
+    case Kw::Dirty:       return q.states.contains(int(RoomState::ToClean));
     }
     return false;
 }
@@ -143,10 +137,10 @@ QString toggle(const QString &text, Kw k)
 bool SmartQuery::isEmpty() const
 {
     return states.isEmpty() && cleanings.isEmpty() && types.isEmpty() && floors.isEmpty()
-           && !full && !alertsOnly && terms.isEmpty();
+           && !full && terms.isEmpty();
 }
 
-bool SmartQuery::matches(const Local &l, int alertLevel) const
+bool SmartQuery::matches(const Local &l) const
 {
     if (!states.isEmpty() && !states.contains(int(l.state())))
         return false;
@@ -157,8 +151,6 @@ bool SmartQuery::matches(const Local &l, int alertLevel) const
     if (!floors.isEmpty() && !floors.contains(l.getFloor()))
         return false;
     if (full && !(!l.getOutOfService() && l.getCapacity() > 0 && l.getOccupancy() >= l.getCapacity()))
-        return false;
-    if (alertsOnly && alertLevel <= 0)
         return false;
 
     if (!terms.isEmpty()) {
