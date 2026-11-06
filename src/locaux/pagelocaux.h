@@ -29,6 +29,7 @@ class Toast;
 class PageLocaux : public QWidget
 {
     Q_OBJECT
+    friend class ServiceTests;
 public:
     explicit PageLocaux(LocalRepository *repo, QWidget *parent = nullptr);
 
@@ -39,12 +40,8 @@ protected:
     void paintEvent(QPaintEvent *) override;
     void hideEvent(QHideEvent *) override;
 private:
-    // construction
-    QLayout *buildHeader();
-    QLayout *buildTools();
-    QLayout *buildBody();
-    QPushButton *makeButton(const QString &text, const QString &icon, const char *role);
-    QPushButton *makeChip(const char *tone);
+    // Interface commune : src/mainwindow.ui
+    void setupUi();
 
     // donnees affichees
     QList<Local> filteredSorted() const;

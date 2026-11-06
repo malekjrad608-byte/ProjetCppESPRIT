@@ -7,7 +7,7 @@ for directory in ('ui', 'dialogs', 'widgets'):
     view_files += list((root / 'src' / directory).glob('*.cpp'))
     view_files += list((root / 'src' / directory).glob('*.h'))
 view_files += [root / p for p in (
-    'src/employees/gestionemployes.cpp', 'src/stock/stockwidget.cpp',
+    'src/employees/gestionemployes.cpp', 'src/stock/stockwidget.cpp', 'src/stock/inventoryfeatures.cpp',
     'src/medical/medicalwidget.cpp', 'src/locaux/pagelocaux.cpp', 'src/mainwindow.cpp')]
 errors = []
 for path in view_files:

@@ -13,6 +13,7 @@
 
 class ServiceWidget : public QWidget {
     Q_OBJECT
+    friend class ServiceTests;
 public:
     explicit ServiceWidget(QWidget *parent = nullptr);
     void refresh();
@@ -29,7 +30,6 @@ private:
     void openEditor(const Service &service, bool readOnly = false);
     QStackedWidget *m_pages;
     QWidget *m_listPage;
-    void setupDetailPanel(QHBoxLayout *body);
     void filter();
     void populate();
     void rebuildCards();

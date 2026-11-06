@@ -8,7 +8,7 @@
 #include <QStatusBar>
 #include <QSignalBlocker>
 #include <QTextBrowser>
-#include "ui_medicalwidget.h"
+#include "ui_integrated_pages.h"
 #include "recordcard.h"
 #include "medicalrecorddialog.h"
 #include "medicalrecorddetailsdialog.h"

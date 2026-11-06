@@ -14,6 +14,7 @@ class GestionEmployes;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
+    friend class ServiceTests;
 public:
     explicit MainWindow(bool demo=false,QWidget *parent=nullptr);
     void setSignedInUser(const QString &username);

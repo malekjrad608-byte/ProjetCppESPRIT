@@ -18,6 +18,7 @@ class QStandardItemModel;
 
 class StockWidget : public QWidget {
     Q_OBJECT
+    friend class ServiceTests;
 
 public:
     explicit StockWidget(QWidget *parent = nullptr);
@@ -37,6 +38,9 @@ private slots:
     void deleteSelectedItem();
     void showStatistics();
     void manageExpiryItems();
+    void openPurchasesModule();
+    void openAlertsModule();
+    void openReplenishmentModule();
 
 private:
     void setupUi();
@@ -48,6 +52,7 @@ private:
     QVector<StockRecord> persistedItems;
     void refreshTable();
     void updateFooter();
+    void updateAlertNavigation();
     QString statusFor(const StockRecord &item) const;
     int countBelowThreshold() const;
     int countExpiryAlerts() const;
@@ -61,6 +66,7 @@ private:
     QComboBox *sortFilter = nullptr;
     QComboBox *stateFilter = nullptr;
     QLabel *footerLabel = nullptr;
+    QPushButton *alertsNavButton=nullptr;
     QVector<StockRecord> items;
 };
 

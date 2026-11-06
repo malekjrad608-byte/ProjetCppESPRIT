@@ -408,6 +408,7 @@ Makefile: ../../gestion_service.pro C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmake
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/yacc.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/lex.prf \
 		../../gestion_service.pro \
+		C:/Qt/6.7.3/mingw_64/lib/Qt6PrintSupport.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Widgets.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Pdf.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Svg.prl \
@@ -417,7 +418,8 @@ Makefile: ../../gestion_service.pro C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmake
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Core.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6EntryPoint.prl \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/build_pass.prf \
-		../../resources/resources.qrc
+		../../resources/resources.qrc \
+		../../resources/designer.qrc
 	$(QMAKE) -o Makefile ..\..\gestion_service.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 C:/Qt/6.7.3/mingw_64/mkspecs/features/spec_pre.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/device_config.prf:
@@ -757,6 +759,7 @@ C:/Qt/6.7.3/mingw_64/mkspecs/features/exceptions.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/yacc.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/lex.prf:
 ../../gestion_service.pro:
+C:/Qt/6.7.3/mingw_64/lib/Qt6PrintSupport.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Widgets.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Pdf.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Svg.prl:
@@ -767,6 +770,7 @@ C:/Qt/6.7.3/mingw_64/lib/Qt6Core.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6EntryPoint.prl:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/build_pass.prf:
 ../../resources/resources.qrc:
+../../resources/designer.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ..\..\gestion_service.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 

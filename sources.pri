@@ -109,7 +109,18 @@ SOURCES += $$PWD/src/medical/medicalwidget.cpp
 HEADERS += $$PWD/src/medical/medicalwidget.h
 SOURCES += $$PWD/src/medical/medicalexamples.cpp
 
-FORMS += $$PWD/src/medical/medicalwidget.ui
+# === INTERFACE COMMUNE : les cinq gestions dans un seul fichier Designer ===
+FORMS += $$PWD/src/mainwindow.ui
+RESOURCES += $$PWD/resources/designer.qrc
+INCLUDEPATH += $$PWD $$OUT_PWD
+ui_pages.input = FORMS
+ui_pages.output = ui_integrated_pages.h
+ui_pages.commands = python $$shell_quote($$PWD/tools/generate_integrated_ui.py) --input ${QMAKE_FILE_IN} --output ${QMAKE_FILE_OUT} --uic $$shell_quote($$[QT_INSTALL_BINS]/uic.exe)
+ui_pages.depends = $$PWD/tools/generate_integrated_ui.py
+ui_pages.CONFIG += target_predeps no_link
+ui_pages.variable_out = GENERATED_FILES
+QMAKE_EXTRA_COMPILERS += ui_pages
+DISTFILES += $$PWD/tools/generate_integrated_ui.py
 
 SOURCES += $$PWD/src/database/oracleconnection.cpp
 SOURCES += $$PWD/src/database/connection.cpp
@@ -129,3 +140,8 @@ HEADERS += $$PWD/src/models/relationmodel.h
 
 SOURCES += $$PWD/src/models/invoicemodel.cpp $$PWD/src/stock/stockrecord.cpp
 HEADERS += $$PWD/src/models/invoicemodel.h $$PWD/src/stock/stockrecord.h
+
+# === MODULE STOCK : modele et fonctionnalites du module integre ===
+QT += printsupport
+SOURCES += $$PWD/src/stock/stock.cpp $$PWD/src/stock/stockjournal.cpp $$PWD/src/stock/inventoryfeatures.cpp
+HEADERS += $$PWD/src/stock/stock.h $$PWD/src/stock/stockjournal.h $$PWD/src/stock/inventoryfeatures.h

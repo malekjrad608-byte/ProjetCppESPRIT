@@ -17,6 +17,7 @@ class ClinicMap : public QWidget
     Q_OBJECT
 public:
     explicit ClinicMap(bool compact, QWidget *parent = nullptr);
+    explicit ClinicMap(QWidget *parent = nullptr) : ClinicMap(true,parent) {}
 
     void setLocaux(const QList<Local> &list);
     void setSelected(int id);

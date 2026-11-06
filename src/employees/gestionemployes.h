@@ -14,6 +14,7 @@ class QPushButton;
 class GestionEmployes : public QWidget
 {
     Q_OBJECT
+    friend class ServiceTests;
 public:
     explicit GestionEmployes(QWidget *parent = nullptr);
     void actualiserStats();
@@ -71,11 +72,7 @@ private:
 
     // ---- Méthodes ----
     void construireUI();
-    QWidget *construireHeader();
-    QWidget *construireStatsPills();
-    QWidget *construireBarreRecherche();
-    QWidget *construireGrid();
-    QWidget *construireDetailPanel();
+    void showStatistics();
     QWidget *creerCard(const Employe &e);
 
     void chargerEmployes(const QString &filtre = "", const QString &tri = "date",

@@ -402,6 +402,7 @@ Makefile: ../tests/service_tests.pro C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmak
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/testlib_defines.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/win32/opengl.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/uic.prf \
+		C:/Qt/6.7.3/mingw_64/mkspecs/features/designer_defines.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/qmake_use.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/file_copies.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/testcase_targets.prf \
@@ -409,16 +410,22 @@ Makefile: ../tests/service_tests.pro C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmak
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/yacc.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/lex.prf \
 		../tests/service_tests.pro \
+		C:/Qt/6.7.3/mingw_64/lib/Qt6PrintSupport.prl \
+		C:/Qt/6.7.3/mingw_64/lib/Qt6Designer.prl \
+		C:/Qt/6.7.3/mingw_64/lib/Qt6OpenGLWidgets.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Widgets.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Pdf.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Svg.prl \
+		C:/Qt/6.7.3/mingw_64/lib/Qt6OpenGL.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Gui.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Sql.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Test.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Network.prl \
+		C:/Qt/6.7.3/mingw_64/lib/Qt6Xml.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Core.prl \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/build_pass.prf \
-		../resources/resources.qrc
+		../resources/resources.qrc \
+		../resources/designer.qrc
 	$(QMAKE) -o Makefile ..\tests\service_tests.pro
 C:/Qt/6.7.3/mingw_64/mkspecs/features/spec_pre.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/device_config.prf:
@@ -752,6 +759,7 @@ C:/Qt/6.7.3/mingw_64/mkspecs/features/moc.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/testlib_defines.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/win32/opengl.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/uic.prf:
+C:/Qt/6.7.3/mingw_64/mkspecs/features/designer_defines.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/qmake_use.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/file_copies.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/testcase_targets.prf:
@@ -759,16 +767,22 @@ C:/Qt/6.7.3/mingw_64/mkspecs/features/exceptions.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/yacc.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/lex.prf:
 ../tests/service_tests.pro:
+C:/Qt/6.7.3/mingw_64/lib/Qt6PrintSupport.prl:
+C:/Qt/6.7.3/mingw_64/lib/Qt6Designer.prl:
+C:/Qt/6.7.3/mingw_64/lib/Qt6OpenGLWidgets.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Widgets.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Pdf.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Svg.prl:
+C:/Qt/6.7.3/mingw_64/lib/Qt6OpenGL.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Gui.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Sql.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Test.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Network.prl:
+C:/Qt/6.7.3/mingw_64/lib/Qt6Xml.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Core.prl:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/build_pass.prf:
 ../resources/resources.qrc:
+../resources/designer.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ..\tests\service_tests.pro
 

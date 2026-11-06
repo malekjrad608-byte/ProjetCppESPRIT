@@ -4,3 +4,5 @@ CONFIG -= app_bundle
 TARGET = service_tests
 include(../sources.pri)
 SOURCES += service_tests.cpp
+
+QT += designer

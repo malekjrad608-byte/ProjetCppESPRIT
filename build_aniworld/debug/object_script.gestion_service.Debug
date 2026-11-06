@@ -53,6 +53,9 @@ debug/employeequeries.o
 debug/relationmodel.o
 debug/invoicemodel.o
 debug/stockrecord.o
+debug/stock.o
+debug/stockjournal.o
+debug/inventoryfeatures.o
 debug/main.o
 debug/qrc_resources.o
 debug/moc_mainwindow.o

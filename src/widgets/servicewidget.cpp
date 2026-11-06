@@ -1,3 +1,4 @@
+#include "ui_integrated_pages.h"
 #include "../database/oracleconnection.h"
 #include "servicewidget.h"
 #include "servicecard.h"
@@ -52,138 +53,66 @@ QString hours(int minutes) {
 }
 
 ServiceWidget::ServiceWidget(QWidget *parent) : QWidget(parent) {
-    setObjectName("servicesPage");
-    auto *outer = new QVBoxLayout(this);
-    outer->setContentsMargins(0,0,0,0);
-    m_pages = new QStackedWidget(this);
-    m_pages->setObjectName("servicePages");
-    outer->addWidget(m_pages);
-    m_listPage = new QWidget(m_pages);
-    m_pages->addWidget(m_listPage);
-    auto *root = new QVBoxLayout(m_listPage);
-    root->setContentsMargins(24,20,24,16);
-    root->setSpacing(12);
-    auto *head = new QHBoxLayout;
-    auto *titles = new QVBoxLayout;
-    titles->setSpacing(4);
-    auto *titleRow=new QHBoxLayout; titleRow->setSpacing(9);
-    auto *titleIcon=Design::label(""); titleIcon->setPixmap(Design::icon("services",QColor("#8268AE")).pixmap(24,24));
-    titleRow->addWidget(titleIcon); titleRow->addWidget(Design::label("Services","title")); titleRow->addStretch(); titles->addLayout(titleRow);
-    titles->addWidget(Design::label("Prestations, suivi et organisation des soins", "muted"));
-    head->addLayout(titles);
-    head->addStretch();
-    auto *planning = Design::button("Planning des employés", "calendar");
-    planning->setObjectName("servicePlanning");
-    planning->setToolTip("Voir les affectations des employés par service et par semaine.");
-    connect(planning,&QPushButton::clicked,this,&ServiceWidget::showPlanning);
-    head->addWidget(planning);
-    auto *add = Design::button("Ajouter un service", "plus", "primary");
-    add->setObjectName("addService");
-    add->setToolTip("Ajouter une prestation · Ctrl+N");
-    connect(add, &QPushButton::clicked, this, &ServiceWidget::onAdd);
-    head->addWidget(add);
-    root->addLayout(head);
-
-    auto *summary = new QHBoxLayout;
-    summary->setSpacing(10);
-    const QStringList backgrounds = {"#E8EAF8", "#FFF0D9", "#E5F2E9", "#E7F0F4"};
-    const QStringList colors = {"#706BA7", "#AC7B30", "#4C896A", "#4D7989"};
-    for (int i=0; i<4; ++i) {
-        auto *chip = Design::label("");
-        chip->setStyleSheet(QString("background:%1;color:%2;border-radius:14px;padding:6px 12px;font-size:11px;").arg(backgrounds[i],colors[i]));
-        m_summary.append(chip);
-        summary->addWidget(chip);
-    }
-    summary->addStretch();
-    auto *statistics = Design::button("Voir les statistiques", "grid");
-    statistics->setObjectName("serviceStatistics");
-    connect(statistics, &QPushButton::clicked, this, &ServiceWidget::showStatistics);
-    summary->addWidget(statistics);
-    root->addLayout(summary);
-
-    m_notice = Design::label("");
-    m_notice->setObjectName("serviceNotice");
-    m_notice->setWordWrap(true);
-    m_notice->hide();
-    root->addWidget(m_notice);
-    m_noticeTimer=new QTimer(this); m_noticeTimer->setSingleShot(true);
+    Ui::ServicePage ui;ui.setupUi(this);setObjectName("servicesPage");
+    m_advance=ui.Service_m_advance;
+    m_attention=ui.Service_m_attention;
+    m_category=ui.Service_m_category;
+    m_count=ui.Service_m_count;
+    m_delete=ui.Service_m_delete;
+    m_detailContent=ui.Service_m_detailContent;
+    m_detailName=ui.Service_m_detailName;
+    m_detailNotes=ui.Service_m_detailNotes;
+    m_detailReference=ui.Service_m_detailReference;
+    m_edit=ui.Service_m_edit;
+    m_emptyDetailSpacer=ui.Service_m_emptyDetailSpacer;
+    m_emptyText=ui.Service_m_emptyText;
+    m_emptyTitle=ui.Service_m_emptyTitle;
+    m_grid=ui.Service_m_grid;
+    m_gridScroll=ui.Service_m_gridScroll;
+    m_invoice=ui.Service_m_invoice;
+    m_listPage=ui.Service_m_listPage;
+    m_notice=ui.Service_m_notice;
+    m_pages=ui.Service_m_pages;
+    m_period=ui.Service_m_period;
+    m_search=ui.Service_m_search;
+    m_sort=ui.Service_m_sort;
+    m_status=ui.Service_m_status;
+    m_statusLayout=ui.Service_m_statusLayout;
+    m_table=ui.Service_m_table;
+    m_view=ui.Service_m_view;
+    m_views=ui.Service_m_views;
+    m_summary.append(ui.Service_summary_0);
+    m_summary.append(ui.Service_summary_1);
+    m_summary.append(ui.Service_summary_2);
+    m_summary.append(ui.Service_summary_3);
+    m_detailValues.append(ui.Service_detailValue_0);
+    m_detailValues.append(ui.Service_detailValue_1);
+    m_detailValues.append(ui.Service_detailValue_2);
+    m_detailValues.append(ui.Service_detailValue_3);
+    m_detailValues.append(ui.Service_detailValue_4);
+    m_detailValues.append(ui.Service_detailValue_5);
+    m_detailValues.append(ui.Service_detailValue_6);
+    m_detailValues.append(ui.Service_detailValue_7);
+    m_grid->setAlignment(Qt::AlignTop);m_grid->setSizeConstraint(QLayout::SetMinimumSize);
+    m_gridScroll->widget()->setAutoFillBackground(false);m_gridScroll->viewport()->setAutoFillBackground(false);
+    m_search->addAction(Design::icon("search"),QLineEdit::LeadingPosition);
+    m_notice->hide();m_attention->hide();
+    m_noticeTimer=new QTimer(this);m_noticeTimer->setSingleShot(true);
     connect(m_noticeTimer,&QTimer::timeout,m_notice,&QWidget::hide);
-
-    auto *filters = new QHBoxLayout;
-    filters->setSpacing(10);
-    m_search = new QLineEdit;
-    m_search->setObjectName("serviceSearch");
-    m_search->setPlaceholderText("Rechercher par service, client ou référence…");
-    m_search->setClearButtonEnabled(true);
-    m_search->addAction(Design::icon("search"), QLineEdit::LeadingPosition);
-    filters->addWidget(m_search, 1);
-    m_category = new QComboBox;
-    m_category->setObjectName("categoryFilter");
-    m_category->addItem("Toutes les catégories");
-    m_category->addItems(Design::categories());
-    filters->addWidget(m_category);
-    m_status = new QComboBox;
-    m_status->setObjectName("statusFilter");
-    m_status->addItem("Tous les statuts");
-    m_status->addItems(Design::statuses());
-    filters->addWidget(m_status);
-    root->addLayout(filters);
-
-    auto *tools = new QHBoxLayout;
-    tools->setSpacing(10);
-    m_period = new QComboBox;
-    m_period->setObjectName("periodFilter");
-    m_period->addItems({"Toutes les dates", "Aujourd'hui", "7 prochains jours", "À replanifier"});
-    tools->addWidget(m_period);
-    m_sort = new QComboBox;
-    m_sort->setObjectName("sortServices");
-    m_sort->addItems({"Plus récents", "Plus anciens", "Nom : A → Z", "Tarif croissant", "Tarif décroissant", "Durée croissante", "Durée décroissante"});
-    m_sort->setAccessibleName("Trier les services par date, tarif ou durée");
-    tools->addWidget(Design::label("Trier par", "muted"));
-    tools->addWidget(m_sort);
-    auto *reset = Design::button("Réinitialiser", {}, "link");
-    reset->setObjectName("resetFilters");
-    tools->addWidget(reset);
-    tools->addStretch();
-    m_count = Design::label("", "muted");
-    m_count->setObjectName("serviceCount");
-    tools->addWidget(m_count);
-    auto *viewGroup = new QButtonGroup(this);
-    const QStringList viewNames = {"Cartes", "Liste"};
-    for (int i=0; i<2; ++i) {
-        auto *toggle = Design::button(viewNames[i], i==0 ? "grid" : "services", "toggle");
-        toggle->setObjectName(i==0 ? "cardsView" : "tableView");
-        toggle->setCheckable(true);
-        toggle->setChecked(i==0);
-        viewGroup->addButton(toggle,i);
-        tools->addWidget(toggle);
-        connect(toggle,&QPushButton::clicked,this,[this,i] {
-            m_viewMode = i;
-            m_views->setCurrentIndex(m_filtered.isEmpty() ? 2 : i);
-            Motion::reveal(m_views,QColor("#F3F7F8"));
-        });
+    connect(ui.servicePlanning,&QPushButton::clicked,this,&ServiceWidget::showPlanning);
+    connect(ui.addService,&QPushButton::clicked,this,&ServiceWidget::onAdd);
+    connect(ui.serviceFirstAdd,&QPushButton::clicked,this,&ServiceWidget::onAdd);
+    connect(ui.serviceStatistics,&QPushButton::clicked,this,&ServiceWidget::showStatistics);
+    connect(m_edit,&QPushButton::clicked,this,&ServiceWidget::editSelected);
+    connect(m_view,&QPushButton::clicked,this,[this]{viewService(m_selectedId);});
+    connect(m_invoice,&QPushButton::clicked,this,&ServiceWidget::showInvoice);
+    connect(m_advance,&QPushButton::clicked,this,&ServiceWidget::advanceStatus);
+    connect(m_delete,&QPushButton::clicked,this,&ServiceWidget::deleteSelected);
+    auto *group=new QButtonGroup(this);int mode=0;
+    for(auto *toggle:{ui.cardsView,ui.tableView}){
+        const int index=mode++;group->addButton(toggle,index);
+        connect(toggle,&QPushButton::clicked,this,[this,index]{m_viewMode=index;m_views->setCurrentIndex(m_filtered.isEmpty()?2:index);Motion::reveal(m_views,QColor("#F3F7F8"));});
     }
-    root->addLayout(tools);
-
-    auto *body = new QHBoxLayout;
-    body->setSpacing(17);
-    m_views = new QStackedWidget;
-    m_gridScroll = new QScrollArea;
-    m_gridScroll->setWidgetResizable(true);
-    m_gridScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    auto *cards = new QWidget;
-    m_grid = new QGridLayout(cards);
-    m_grid->setContentsMargins(0,0,5,0);
-    m_grid->setSpacing(12);
-    m_grid->setAlignment(Qt::AlignTop);
-    m_grid->setSizeConstraint(QLayout::SetMinimumSize);
-    m_gridScroll->setWidget(cards);
-    cards->setAutoFillBackground(false);
-    m_gridScroll->viewport()->setAutoFillBackground(false);
-    m_views->addWidget(m_gridScroll);
-
-    m_table = new QTableView;
-    m_table->setObjectName("serviceTable");
     m_table->setModel(Stmp.afficher(this));
     m_table->setItemDelegate(new ServiceTableDelegate(m_table));
     m_table->verticalHeader()->hide();
@@ -211,153 +140,19 @@ ServiceWidget::ServiceWidget(QWidget *parent) : QWidget(parent) {
     m_table->setColumnWidth(5,155);
     m_table->setColumnWidth(6,108);
     m_table->setColumnWidth(8,85);
-    m_views->addWidget(m_table);
 
-    auto *emptyCard = Design::card();
-    auto *empty = new QVBoxLayout(emptyCard);
-    empty->setContentsMargins(30,30,30,30);
-    empty->setSpacing(12);
-    empty->addStretch();
-    auto *logo = Design::label("");
-    logo->setPixmap(Design::brand("logo",QSize(86,86)));
-    logo->setAlignment(Qt::AlignCenter);
-    empty->addWidget(logo);
-    m_emptyTitle = Design::label("", "section");
-    m_emptyTitle->setAlignment(Qt::AlignCenter);
-    m_emptyTitle->setWordWrap(true);
-    empty->addWidget(m_emptyTitle);
-    m_emptyText = Design::label("", "muted");
-    m_emptyText->setWordWrap(true);
-    m_emptyText->setAlignment(Qt::AlignCenter);
-    empty->addWidget(m_emptyText);
-    auto *first = Design::button("Ajouter un service", "plus", "primary");
-    empty->addWidget(first,0,Qt::AlignCenter);
-    connect(first,&QPushButton::clicked,this,&ServiceWidget::onAdd);
-    empty->addStretch();
-    m_views->addWidget(emptyCard);
-    body->addWidget(m_views,1);
-    setupDetailPanel(body);
-    root->addLayout(body,1);
-
-    auto *footer = new QHBoxLayout;
-    footer->addWidget(Design::label("ANIWORLD · Gestion des services", "muted"));
-    footer->addStretch();
-    footer->addWidget(Design::label("Ctrl+N  Ajouter   ·   Ctrl+F  Rechercher", "muted"));
-    root->addLayout(footer);
     connect(m_search,&QLineEdit::textChanged,this,&ServiceWidget::filter);
-    for (auto *combo : {m_status,m_category,m_sort,m_period})
-        connect(combo,&QComboBox::currentIndexChanged,this,&ServiceWidget::filter);
-    connect(reset,&QPushButton::clicked,this,[this] {
-        const QSignalBlocker a(m_search), b(m_status), c(m_category), d(m_period), e(m_sort);
-        m_search->clear(); m_status->setCurrentIndex(0); m_category->setCurrentIndex(0);
-        m_period->setCurrentIndex(0); m_sort->setCurrentIndex(0); filter();
+    for(auto *combo:{m_status,m_category,m_sort,m_period})connect(combo,&QComboBox::currentIndexChanged,this,&ServiceWidget::filter);
+    connect(ui.resetFilters,&QPushButton::clicked,this,[this]{
+        const QSignalBlocker a(m_search),b(m_status),c(m_category),d(m_period),e(m_sort);
+        m_search->clear();m_status->setCurrentIndex(0);m_category->setCurrentIndex(0);m_period->setCurrentIndex(0);m_sort->setCurrentIndex(0);filter();
     });
-    connect(m_table,&QTableView::doubleClicked,this,[this](const QModelIndex &index) {
-        viewService(index.siblingAtColumn(0).data().toInt());
-    });
-    auto *timer = new QTimer(this);
-    connect(timer,&QTimer::timeout,this,[this] {
-        updateSummary();
-        if (m_period->currentIndex()>0) filter(); else updateDetail();
-    });
-    timer->start(60000);
+    connect(m_table,&QTableView::doubleClicked,this,[this](const QModelIndex &index){viewService(index.siblingAtColumn(0).data().toInt());});
+    auto *timer=new QTimer(this);connect(timer,&QTimer::timeout,this,[this]{updateSummary();if(m_period->currentIndex()>0)filter();else updateDetail();});timer->start(60000);
     refresh();
 }
 
-void ServiceWidget::setupDetailPanel(QHBoxLayout *body) {
-    auto *panel = new QWidget;
-    panel->setFixedWidth(288);
-    auto *side = new QVBoxLayout(panel);
-    side->setContentsMargins(0,0,3,0);
-    side->setSpacing(14);
-    auto *detail = Design::card();
-    detail->setObjectName("serviceDetailPanel");
-    auto *layout = new QVBoxLayout(detail);
-    layout->setContentsMargins(18,17,18,17);
-    layout->setSpacing(8);
-    layout->addWidget(Design::label("SERVICE SÉLECTIONNÉ", "eyebrow"));
-    m_detailName = Design::label("Sélectionnez un service");
-    m_detailName->setObjectName("selectedServiceName");
-    m_detailName->setStyleSheet("color:#306C7B;font-size:20px;font-weight:650;");
-    m_detailName->setWordWrap(true);
-    layout->addWidget(m_detailName);
-    m_detailReference = Design::label("", "muted");
-    layout->addWidget(m_detailReference);
-    m_detailContent = new QWidget;
-    auto *content = new QVBoxLayout(m_detailContent);
-    content->setContentsMargins(0,0,0,0);
-    content->setSpacing(8);
-    m_statusLayout = new QVBoxLayout;
-    m_statusLayout->setContentsMargins(0,0,0,0);
-    content->addLayout(m_statusLayout);
-    auto *separator=new QFrame; separator->setFixedHeight(1); separator->setStyleSheet("background:#E0EDF1;border:none;"); content->addWidget(separator);
-    auto *infoScroll = new QScrollArea;
-    infoScroll->setObjectName("serviceInfoScroll");
-    infoScroll->setWidgetResizable(true);
-    infoScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    infoScroll->setMinimumHeight(40);
-    auto *info = new QWidget;
-    auto *infoLayout = new QVBoxLayout(info);
-    infoLayout->setContentsMargins(0,7,4,7);
-    infoLayout->setSpacing(12);
-    const QStringList fields = {"Catégorie", "Date", "Horaire", "Durée", "Responsable", "Client", "Tarif", "Facture"};
-    auto *grid = new QGridLayout;
-    grid->setHorizontalSpacing(10);
-    grid->setVerticalSpacing(10);
-    for (int i=0; i<fields.size(); ++i) {
-        auto *label=Design::label(fields[i],"muted");
-        grid->addWidget(label,i,0,Qt::AlignTop);
-        auto *value = Design::label("");
-        value->setWordWrap(true);
-        value->setStyleSheet("font-size:12px;color:#44636F;");
-        m_detailValues.append(value);
-        grid->addWidget(value,i,1);
-        if(OracleConnection::isOracle() && (i==4 || i==5 || i==7)){label->hide();value->hide();}
-    }
-    grid->setColumnStretch(1,1);
-    infoLayout->addLayout(grid);
-    m_detailNotes = Design::label("", "muted");
-    m_detailNotes->setWordWrap(true);
-    m_detailNotes->setMaximumHeight(72);
-    infoLayout->addWidget(m_detailNotes);
-    infoLayout->addStretch();
-    infoScroll->setWidget(info);
-    info->setStyleSheet("background: white;");
-    content->addWidget(infoScroll,1);
-    m_advance = Design::button("Démarrer le service", "check", "success");
-    m_advance->setObjectName("advanceService");
-    connect(m_advance,&QPushButton::clicked,this,&ServiceWidget::advanceStatus);
-    m_edit = Design::button("Modifier", "edit", "primary");
-    m_edit->setObjectName("editService");
-    m_edit->setIcon(Design::icon("edit",QColor("#FFB454")));
-    m_view = Design::button("Consulter", "eye");
-    m_view->setObjectName("viewService");
-    m_invoice = Design::button("Facture PDF", "export");
-    m_invoice->setObjectName("invoiceService");
-    m_invoice->setVisible(!OracleConnection::isOracle());
-    m_delete = Design::button("Supprimer", "trash", "danger");
-    m_delete->setObjectName("deleteService");
-    auto *documents=new QHBoxLayout; documents->setSpacing(7); documents->addWidget(m_view); documents->addWidget(m_invoice);
-    content->addLayout(documents);
-    content->addWidget(m_edit); content->addWidget(m_advance); content->addWidget(m_delete);
-    for(auto *button:{m_edit,m_advance,m_delete}) {
-        button->setProperty("detailAction",true); button->setMinimumHeight(40);
-    }
-    for(auto *button:{m_view,m_invoice}) button->setStyleSheet("padding:6px 8px;");
-    connect(m_edit,&QPushButton::clicked,this,&ServiceWidget::editSelected);
-    connect(m_view,&QPushButton::clicked,this,[this] { viewService(m_selectedId); });
-    connect(m_invoice,&QPushButton::clicked,this,&ServiceWidget::showInvoice);
-    connect(m_delete,&QPushButton::clicked,this,&ServiceWidget::deleteSelected);
-    layout->addWidget(m_detailContent,1);
-    m_emptyDetailSpacer = new QWidget;
-    layout->addWidget(m_emptyDetailSpacer,1);
-    side->addWidget(detail,1);
-    m_attention = Design::label("", "muted");
-    m_attention->setWordWrap(true);
-    m_attention->setStyleSheet("color:#947039;background:#FFF0D9;border-radius:8px;padding:12px;font-size:11px;");
-    side->addWidget(m_attention);
-    body->addWidget(panel);
-}
+
 
 void ServiceWidget::refresh() {
     // Actualisation de l'atelier : relire la base apres une operation reussie.
@@ -568,13 +363,18 @@ void ServiceWidget::editSelected() {
 }
 
 void ServiceWidget::showInvoice() {
-    const Service service=selectedService();
+    Service service=selectedService();
     if(!service.getId() || service.getStatus()=="Annulé") return;
     if(service.getClientName().trimmed().isEmpty()) {
         notify("Complétez le nom du client dans « Modifier » pour exporter sa facture.",true);
         return;
     }
     const bool demo=property("demoMode").toBool();
+    if(!demo && OracleConnection::isOracle()) {
+        Service stored;QString error;
+        if(!Invoice::loadStored(service,&stored,&error)){notify(error,true);return;}
+        service=stored;
+    }
     QDialog dialog(this); dialog.setObjectName("invoiceDialog");
     dialog.setWindowTitle("ANIWORLD — "+service.getInvoiceNumber()); dialog.resize(680,720);
     auto *layout=new QVBoxLayout(&dialog); layout->setContentsMargins(20,18,20,18); layout->setSpacing(12);
@@ -585,7 +385,7 @@ void ServiceWidget::showInvoice() {
     const bool loaded=demo || Invoice::loadStored(service,&invoice,&invoiceError);
     preview->setHtml(loaded?Invoice::html(invoice,demo):Invoice::escape(invoiceError)); preview->setStyleSheet("QTextBrowser { background:white; border:1px solid #dce9ed; border-radius:6px; padding:12px; }");
     layout->addWidget(preview,1);
-    auto *message=Design::label("L’export PDF valide la facture et fige ses informations. Elle ne constitue pas une preuve de paiement.","muted"); message->setObjectName("invoiceExportNotice"); message->setWordWrap(true); layout->addWidget(message);
+    auto *message=Design::label("Le PDF reprend les informations actuelles du service et les conserve dans le fichier exporté. Il ne constitue pas une preuve de paiement.","muted"); message->setObjectName("invoiceExportNotice"); message->setWordWrap(true); layout->addWidget(message);
     auto *buttons=new QHBoxLayout; buttons->addStretch();
     auto *close=Design::button("Fermer"); connect(close,&QPushButton::clicked,&dialog,&QDialog::reject); buttons->addWidget(close);
     auto *save=Design::button("Exporter PDF","export","primary"); save->setObjectName("exportInvoicePdf"); buttons->addWidget(save); layout->addLayout(buttons);

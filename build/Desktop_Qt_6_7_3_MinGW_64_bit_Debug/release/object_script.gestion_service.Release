@@ -53,8 +53,12 @@ release/employeequeries.o
 release/relationmodel.o
 release/invoicemodel.o
 release/stockrecord.o
+release/stock.o
+release/stockjournal.o
+release/inventoryfeatures.o
 release/main.o
 release/qrc_resources.o
+release/qrc_designer.o
 release/moc_mainwindow.o
 release/moc_stockwidget.o
 release/moc_appcontroller.o

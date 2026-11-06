@@ -1,3 +1,4 @@
+#include "ui_integrated_pages.h"
 #include "../database/oracleconnection.h"
 #include "../ui/localchoice.h"
 
@@ -8,6 +9,9 @@
 #include <QPainter>
 #include <QFileDialog>
 #include "stockwidget.h"
+#include "inventoryfeatures.h"
+#include "stock.h"
+#include "stockjournal.h"
 
 #include <QAbstractItemView>
 #include <QColor>
@@ -225,7 +229,7 @@ StockWidget::StockWidget(QWidget *parent) : QWidget(parent), tableModel(new QSta
 bool StockWidget::loadOracle() {
     QString error;
     QVector<StockRecord> loaded;
-    if(!StockRecord::afficher(&loaded,&m_revision,&error)) {
+    if(!Stock::afficher(&loaded,&m_revision,&error)) {
         m_storageReady=false;QMessageBox::critical(this,"Stock Oracle",error);return false;
     }
     m_storageReady=true;items=loaded;persistedItems=items;return true;
@@ -233,11 +237,11 @@ bool StockWidget::loadOracle() {
 bool StockWidget::persistStock() {
     if(!OracleConnection::isOracle()) return true;
     QString error;
-    if(!m_storageReady || !StockRecord::enregistrer(items,&m_revision,&error)) {
+    if(!m_storageReady || !Stock::enregistrer(items,&m_revision,&error)) {
         items=persistedItems;refreshTable();
         QMessageBox::critical(this,"Stock non enregistré",error.isEmpty()?"Connexion indisponible. Actualisez le stock.":error);return false;
     }
-    if(!StockRecord::afficher(&items,&m_revision,&error)) {m_storageReady=false;return false;}
+    if(!Stock::afficher(&items,&m_revision,&error)) {m_storageReady=false;return false;}
     persistedItems=items;return true;
 }
 
@@ -281,89 +285,20 @@ void StockWidget::loadDemoData() {
     add("[MATÉRIEL] Seringues 5ml", "Matériel Clinique", "SER-05", 200, "unités", 50, "31/12/2029");
 }
 
+// === MODULE STOCK : INTERFACE ET SIGNAUX / SLOTS ===
 void StockWidget::setupUi() {
-    contentWidget = this;
-    auto *contentLayout = new QVBoxLayout(this);
-    contentLayout->setContentsMargins(24, 18, 24, 12);
-    contentLayout->setSpacing(14);
-
-    QHBoxLayout *titleLayout = new QHBoxLayout;
-    QVBoxLayout *titleTexts = new QVBoxLayout;
-    titleTexts->setSpacing(2);
-    QLabel *title = new QLabel("Stock");
-    title->setStyleSheet(QStringLiteral("font-size: 23px; font-weight: 800; color: %1; background: transparent;").arg(kPrimaryDark));
-    QLabel *subtitle = new QLabel("Inventaire, traçabilité des lots et réapprovisionnement");
-    subtitle->setStyleSheet("font-size: 11px; color: #71878D; background: transparent;");
-    titleTexts->addWidget(title);
-    titleTexts->addWidget(subtitle);
-    titleLayout->addLayout(titleTexts);
-    titleLayout->addStretch(1);
-
-    QPushButton *statsButton = makeButton("Statistiques", "#FFFFFF", kPrimaryDark, "1px solid #BDD9DE");
-    statsButton->setIcon(Design::icon("grid"));
-    QPushButton *editButton = makeButton("Modifier", "#FFFFFF", kPrimaryDark, "1px solid #BDD9DE");
-    QPushButton *deleteButton = makeButton("Supprimer", "#FCEDEC", "#B94A48", "1px solid #E8C5C2");
-    QPushButton *movementButton = makeButton("Enregistrer un mouvement", kPrimary, "#FFFFFF");
-    movementButton->setIcon(Design::icon("plus",Qt::white));
-    auto *exportButton=Design::button("Exporter PDF", "export");
-    exportButton->setObjectName("stockExportButton");
-    connect(exportButton,&QPushButton::clicked,this,&StockWidget::exportInventory);
-    titleLayout->addWidget(exportButton);
-    titleLayout->addWidget(movementButton);
-    contentLayout->addLayout(titleLayout);
-    auto *actions=new QHBoxLayout;
-    actions->addWidget(statsButton); actions->addStretch();
-    actions->addWidget(editButton); actions->addWidget(deleteButton);
-    contentLayout->addLayout(actions);
-
-    // Search, category, sort-by-quantity/date and state filters.
-    QHBoxLayout *toolbar = new QHBoxLayout;
-    toolbar->setSpacing(10);
-    searchLineEdit = new QLineEdit;
-    searchLineEdit->setPlaceholderText("Rechercher un article, un lot, un état...");
-    searchLineEdit->addAction(Design::icon("search"),QLineEdit::LeadingPosition);
-    searchLineEdit->setClearButtonEnabled(true);
-    searchLineEdit->setMinimumHeight(37);
-
-    categoryFilter = new QComboBox;
-    categoryFilter->addItems({"Toutes les catégories", "Chiens", "Chats", "Oiseaux", "Poissons", "Rongeurs", "Matériel Clinique"});
-    categoryFilter->setMinimumHeight(37);
-    categoryFilter->setMinimumWidth(150);
-
-    sortFilter = new QComboBox;
-    sortFilter->addItem("Tri : par défaut", 0);
-    sortFilter->addItem("Quantité : croissante", 1);
-    sortFilter->addItem("Quantité : décroissante", 2);
-    sortFilter->addItem("Échéance : plus proche", 3);
-    sortFilter->addItem("Échéance : plus éloignée", 4);
-    sortFilter->setMinimumHeight(37);
-    sortFilter->setMinimumWidth(190);
-
-    stateFilter = new QComboBox;
-    stateFilter->addItems({"Tous les états", "Disponible", "Sous le seuil", "Échéance proche", "Périmé"});
-    stateFilter->setMinimumHeight(37);
-    stateFilter->setMinimumWidth(155);
-
-    toolbar->addWidget(searchLineEdit, 1);
-    toolbar->addWidget(categoryFilter);
-    toolbar->addWidget(sortFilter);
-    toolbar->addWidget(stateFilter);
-    contentLayout->addLayout(toolbar);
-
-    tableModel->setColumnCount(6);
-    tableModel->setHorizontalHeaderLabels({"ARTICLE", "LOT", "DISPONIBLE", "SEUIL", "ÉCHÉANCE", "ÉTAT"});
-    if(OracleConnection::isOracle())tableModel->setHorizontalHeaderLabels({"ID ARTICLE","ARTICLE","NOM ARTICLE","LOT","QUANTITÉ DISP.","TYPE ARTICLE","SEUIL MIN.","DATE ÉCHÉANCE","ID LOCAL"});
-
-    stockTable = new QTableView;
-    // Resolve every table color locally: the Windows palette can otherwise
-    // supply a dark AlternateBase even while the surrounding theme is light.
-    QPalette stockColors=stockTable->palette();
-    stockColors.setColor(QPalette::Base,QColor("#FFFFFF"));
-    stockColors.setColor(QPalette::AlternateBase,QColor("#F4F9FA"));
-    stockColors.setColor(QPalette::Text,QColor("#263B42"));
-    stockColors.setColor(QPalette::Highlight,QColor("#DDEEF1"));
-    stockColors.setColor(QPalette::HighlightedText,QColor("#243D45"));
-    stockTable->setPalette(stockColors);
+    Ui::StockPage ui;ui.setupUi(this);contentWidget=this;
+    alertsNavButton=ui.Stock_alertsNavButton;
+    categoryFilter=ui.Stock_categoryFilter;
+    footerLabel=ui.Stock_footerLabel;
+    searchLineEdit=ui.Stock_searchLineEdit;
+    sortFilter=ui.Stock_sortFilter;
+    stateFilter=ui.Stock_stateFilter;
+    stockTable=ui.Stock_stockTable;
+    for(int i=0;i<sortFilter->count();++i)sortFilter->setItemData(i,i);
+    tableModel->setHorizontalHeaderLabels(OracleConnection::isOracle()
+      ?QStringList{"ID ARTICLE","ARTICLE","NOM ARTICLE","LOT","QUANTITÉ DISP.","TYPE ARTICLE","SEUIL MIN.","DATE ÉCHÉANCE","ID LOCAL"}
+      :QStringList{"ARTICLE","LOT","DISPONIBLE","SEUIL","ÉCHÉANCE","ÉTAT"});
     stockTable->setModel(tableModel);
     stockTable->setAlternatingRowColors(true);
     stockTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -373,64 +308,46 @@ void StockWidget::setupUi() {
     stockTable->verticalHeader()->setVisible(false);
     stockTable->verticalHeader()->setDefaultSectionSize(38);
     stockTable->horizontalHeader()->setMinimumHeight(39);
-    stockTable->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    stockTable->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
-    stockTable->setMinimumHeight(230);
-    contentLayout->addWidget(stockTable, 1);
+    stockTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    stockTable->horizontalHeader()->setStretchLastSection(true);
+    stockTable->setColumnWidth(0, OracleConnection::isOracle()?90:300);
+    stockTable->setColumnWidth(1, 125);
+    stockTable->setColumnWidth(2, 140);
+    stockTable->setColumnWidth(3, 72);
+    stockTable->setColumnWidth(4, 130);
+    stockTable->setMinimumHeight(150);
 
-    // One action panel replaces the old FEFO and replenishment panels.
-    QFrame *expiryPanel = new QFrame;
-    expiryPanel->setObjectName("stockExpiryPanel");
-    expiryPanel->setStyleSheet("QFrame#stockExpiryPanel { background: #FFFFFF; border: 1px solid #D8E9EC; border-radius: 9px; }");
-    QHBoxLayout *expiryLayout = new QHBoxLayout(expiryPanel);
-    expiryLayout->setContentsMargins(16, 12, 16, 12);
-    expiryLayout->setSpacing(12);
-    QVBoxLayout *expiryTextLayout = new QVBoxLayout;
-    expiryTextLayout->setSpacing(4);
-    QLabel *expiryTitle = new QLabel("Gestion des articles périmés");
-    expiryTitle->setStyleSheet("color: #B94A48; font-weight: 700; background: transparent;");
-    QLabel *expirySub = new QLabel("Consultez les lots périmés ou à échéance proche, puis supprimez-les ou remplacez-les par un nouveau lot.");
-    expirySub->setWordWrap(true);
-    expirySub->setStyleSheet("color: #71878D; background: transparent;");
-    expiryTextLayout->addWidget(expiryTitle);
-    expiryTextLayout->addWidget(expirySub);
-    expiryLayout->addLayout(expiryTextLayout, 1);
-    QPushButton *expiryButton = makeButton("Afficher les articles périmés", kPrimary, "#FFFFFF");
-    expiryButton->setMinimumWidth(245);
-    expiryLayout->addWidget(expiryButton);
-    contentLayout->addWidget(expiryPanel);
-
-    QHBoxLayout *bottomInfo = new QHBoxLayout;
-    footerLabel = new QLabel;
-    footerLabel->setStyleSheet("color: #71878D; font-size: 10px; background: transparent;");
-    QLabel *dataNotice = new QLabel(OracleConnection::isOracle()?"Oracle · quantités et lots enregistrés":"Démo · modifications en mémoire uniquement");
-    dataNotice->setStyleSheet("color: #83979C; font-size: 10px; background: transparent;");
-    bottomInfo->addWidget(footerLabel);
-    bottomInfo->addStretch(1);
-    bottomInfo->addWidget(dataNotice);
-    contentLayout->addLayout(bottomInfo);
-
-
-    searchLineEdit->setObjectName("stockSearch");
-    categoryFilter->setObjectName("stockCategoryFilter");
-    sortFilter->setObjectName("stockSortFilter");
-    stateFilter->setObjectName("stockStateFilter");
-    stockTable->setObjectName("stockTable");
-    movementButton->setObjectName("stockMovementButton");
-    statsButton->setObjectName("stockStatisticsButton");
-    editButton->setObjectName("stockEditButton");
-    deleteButton->setObjectName("stockDeleteButton");
-    expiryButton->setObjectName("stockExpiryButton");
-    connect(statsButton, &QPushButton::clicked, this, &StockWidget::showStatistics);
-    connect(editButton, &QPushButton::clicked, this, &StockWidget::editSelectedItem);
-    connect(deleteButton, &QPushButton::clicked, this, &StockWidget::deleteSelectedItem);
-    connect(movementButton, &QPushButton::clicked, this, &StockWidget::openMovementDialog);
-    connect(expiryButton, &QPushButton::clicked, this, &StockWidget::manageExpiryItems);
-    connect(searchLineEdit, &QLineEdit::textChanged, this, &StockWidget::refreshTable);
-    connect(categoryFilter, &QComboBox::currentTextChanged, this, &StockWidget::refreshTable);
-    connect(sortFilter, qOverload<int>(&QComboBox::currentIndexChanged), this, &StockWidget::refreshTable);
-    connect(stateFilter, &QComboBox::currentTextChanged, this, &StockWidget::refreshTable);
+    connect(ui.stockMovementButton,&QPushButton::clicked,this,&StockWidget::openMovementDialog);
+    connect(ui.stockExportButton,&QPushButton::clicked,this,&StockWidget::exportInventory);
+    connect(ui.stockStatisticsButton,&QPushButton::clicked,this,&StockWidget::showStatistics);
+    connect(ui.stockEditButton,&QPushButton::clicked,this,&StockWidget::editSelectedItem);
+    connect(ui.stockDeleteButton,&QPushButton::clicked,this,&StockWidget::deleteSelectedItem);
+    connect(ui.stockExpiryButton,&QPushButton::clicked,this,&StockWidget::manageExpiryItems);
+    connect(ui.stockPurchasesButton,&QPushButton::clicked,this,&StockWidget::openPurchasesModule);
+    connect(alertsNavButton,&QPushButton::clicked,this,&StockWidget::openAlertsModule);
+    connect(ui.stockReplenishmentButton,&QPushButton::clicked,this,&StockWidget::openReplenishmentModule);
+    connect(searchLineEdit,&QLineEdit::textChanged,this,&StockWidget::refreshTable);
+    for(auto *combo:{categoryFilter,sortFilter,stateFilter})connect(combo,&QComboBox::currentIndexChanged,this,&StockWidget::refreshTable);
 }
+
+void StockWidget::openPurchasesModule() {
+    if (InventoryFeatures::showPurchases(this, items)) {
+        refresh();
+        refreshTable();
+    }
+}
+
+void StockWidget::openAlertsModule() {
+    if(OracleConnection::isOracle() && !loadOracle())return;
+    refreshTable();
+    InventoryFeatures::showAlerts(this, items);
+    refresh();
+}
+
+void StockWidget::openReplenishmentModule() {
+    InventoryFeatures::showSmartReplenishment(this, items);
+}
+
 
 QString StockWidget::statusFor(const StockRecord &item) const {
     const QDate today = QDate::currentDate();
@@ -440,7 +357,7 @@ QString StockWidget::statusFor(const StockRecord &item) const {
     if (item.expiry.isValid() && item.expiry <= today.addDays(30)) {
         return "Échéance proche";
     }
-    if (item.quantity < item.threshold) {
+    if (item.quantity <= item.threshold) {
         return "Sous le seuil";
     }
     return "Disponible";
@@ -449,7 +366,7 @@ QString StockWidget::statusFor(const StockRecord &item) const {
 int StockWidget::countBelowThreshold() const {
     int count = 0;
     for (const StockRecord &item : items) {
-        if (item.quantity < item.threshold) ++count;
+        if (item.quantity <= item.threshold) ++count;
     }
     return count;
 }
@@ -458,7 +375,7 @@ int StockWidget::countExpiryAlerts() const {
     int count = 0;
     const QDate limit = QDate::currentDate().addDays(30);
     for (const StockRecord &item : items) {
-        if (item.expiry.isValid() && item.expiry <= limit) ++count;
+        if (item.quantity > 0 && item.expiry.isValid() && item.expiry <= limit) ++count;
     }
     return count;
 }
@@ -523,6 +440,7 @@ void StockWidget::refreshTable() {
         tableModel->appendRow(row);
     }
     updateFooter();
+    updateAlertNavigation();
 }
 
 void StockWidget::updateFooter() {
@@ -596,11 +514,11 @@ void StockWidget::openMovementDialog() {
 
         const StockRecord newRecord = addDialog.result();
         // Append the new product and select it immediately for this movement.
-        const int newIndex = items.size();
         items.append(newRecord);
         if(!persistStock()) return;
-        itemBox->addItem(newRecord.article + " — " + newRecord.lot, newIndex);
-        itemBox->setCurrentIndex(itemBox->count() - 1);
+        itemBox->clear();int selected=0;
+        for(int i=0;i<items.size();++i){itemBox->addItem(items[i].article+" — "+items[i].lot,i);if(items[i].article==newRecord.article)selected=i;}
+        itemBox->setCurrentIndex(selected);
         refreshTable();
     });
 
@@ -619,9 +537,12 @@ void StockWidget::openMovementDialog() {
         if (!isOutput && items.at(sourceRow).quantity > 999999-amount) {
             QMessageBox::warning(&dialog,"Quantité maximale","Le stock ne peut pas dépasser 999 999 unités par lot."); return;
         }
+        const auto changed=items[sourceRow];
         if (isOutput) items[sourceRow].quantity -= amount;
         else items[sourceRow].quantity += amount;
         if(!persistStock()) return;
+        QString journalError;
+        if(!StockJournal::mouvement(changed.idArticle,isOutput?"SORTIE":"ENTREE",amount,changed.article,&journalError))QMessageBox::warning(&dialog,"Journal du stock",journalError);
         dialog.accept();
     });
     connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
@@ -753,7 +674,7 @@ void StockWidget::manageExpiryItems() {
 
     QHBoxLayout *buttonsRow = new QHBoxLayout;
     buttonsRow->addStretch(1);
-    QPushButton *deleteButton = makeButton("Supprimer les sélectionnés", "#FCEDEC", "#B94A48", "1px solid #E8C5C2");
+    QPushButton *deleteButton = makeButton("Retirer du stock disponible", "#FCEDEC", "#B94A48", "1px solid #E8C5C2");
     QPushButton *replaceButton = makeButton("Remplacer par un nouveau lot", kPrimary, "#FFFFFF");
     QPushButton *closeButton = makeButton("Fermer", "#FFFFFF", kInk, "1px solid #BDD9DE");
     buttonsRow->addWidget(deleteButton);
@@ -775,13 +696,15 @@ void StockWidget::manageExpiryItems() {
             QMessageBox::information(&dialog, "Aucune sélection", "Sélectionnez un lot dans la liste.");
             return;
         }
-        if (QMessageBox::question(&dialog, "Confirmer", "Supprimer les lots sélectionnés ?",
+        if (QMessageBox::question(&dialog, "Confirmer", "Mettre à zéro le disponible des lots sélectionnés en conservant leur traçabilité ?",
                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes) return;
-        std::sort(sourceRows.begin(), sourceRows.end(), std::greater<int>());
+        QVector<StockRecord> retired;
         for (const int index : sourceRows) {
-            if (index >= 0 && index < items.size()) items.removeAt(index);
+            if (index >= 0 && index < items.size()){retired<<items[index];items[index].quantity=0;}
         }
         if(!persistStock()) {refillTable();return;}
+        QString journalError;
+        for(const auto &r:retired)if(r.quantity>0 && !StockJournal::mouvement(r.idArticle,"PERTE_PEREMPTION",r.quantity,r.article,&journalError))QMessageBox::warning(&dialog,"Journal du stock",journalError);
         refreshTable();
         refillTable();
     });
@@ -803,16 +726,22 @@ void StockWidget::manageExpiryItems() {
         const int index = sourceRows.first();
         if (index < 0 || index >= items.size()) return;
         StockRecord proposed = items.at(index);
+        proposed.idArticle=0;
+        proposed.article=proposed.article.left(210)+"-"+QDateTime::currentDateTime().toString("yyyyMMddHHmmss");
         proposed.lot = "NOUVEAU-LOT";
         proposed.quantity = qMax(1, proposed.threshold);
         proposed.expiry = QDate::currentDate().addYears(1);
         ProductEditDialog editDialog(proposed, "Créer le nouveau lot", &dialog);
         if (editDialog.exec() == QDialog::Accepted) {
-            items[index] = editDialog.result();
+            auto replacement=editDialog.result();replacement.idArticle=0;
+            for(const auto &r:items)if(r.article==replacement.article){QMessageBox::warning(&dialog,"Référence unique","Le nouveau lot doit avoir une référence article distincte.");return;}
+            const auto previous=items[index];items[index].quantity=0;items.append(replacement);
             if(!persistStock()) {refillTable();return;}
+            QString journalError;
+            if(previous.quantity>0 && !StockJournal::mouvement(previous.idArticle,"PERTE_PEREMPTION",previous.quantity,previous.article,&journalError))QMessageBox::warning(&dialog,"Journal du stock",journalError);
             refreshTable();
             refillTable();
-            QMessageBox::information(&dialog, "Lot remplacé", OracleConnection::isOracle()?"Le lot a été remplacé et enregistré dans Oracle.":"Le lot a été remplacé dans la session en cours.");
+            QMessageBox::information(&dialog, "Lot remplacé", "L’ancien lot est conservé avec une quantité nulle. Le nouveau lot possède une référence et un ID distincts.");
         }
     });
     connect(closeButton, &QPushButton::clicked, &dialog, &QDialog::accept);
@@ -845,3 +774,21 @@ void StockWidget::exportInventory() {
     if(!exportInventoryPdf(path,&error)) { QMessageBox::warning(this,"Export impossible",error); return; }
     footerLabel->setText("Inventaire affiché exporté en PDF · démo");
 }
+
+void StockWidget::updateAlertNavigation() {
+    if (!alertsNavButton) return;
+    int activeAlertCount = countExpiryAlerts();
+    for (const StockRecord &record : items) {
+        if (record.quantity <= record.threshold) ++activeAlertCount;
+    }
+    alertsNavButton->setText(QString("⚠   Alertes de stock (%1)").arg(activeAlertCount));
+    alertsNavButton->setStyleSheet(QString(
+        "QPushButton { text-align:left; background:%1; color:%2; border:1px solid %3; border-radius:7px; padding:10px 14px; font-weight:%4; } "
+        "QPushButton:hover { background:%5; }")
+        .arg(activeAlertCount > 0 ? QString("#FBEAEA") : QString("#F8FCFC"),
+             activeAlertCount > 0 ? QString("#B94A48") : QString("#225A64"),
+             activeAlertCount > 0 ? QString("#F0CCCA") : QString("#D8E9EC"),
+             activeAlertCount > 0 ? QString("700") : QString("600"),
+             activeAlertCount > 0 ? QString("#F9DEDC") : QString("#EAF5F6")));
+}
+

@@ -1,3 +1,4 @@
+#include "ui_integrated_pages.h"
 #include "../database/oracleconnection.h"
 #include "employe.h"
 #include "../ui/relationchoices.h"
@@ -142,118 +143,45 @@ void GestionEmployes::actualiserStats()
 void GestionEmployes::paintEvent(QPaintEvent *) { QPainter painter(this); Design::paintWorkspace(painter,rect()); }
 void GestionEmployes::focusSearch() { m_editRecherche->setFocus(); m_editRecherche->selectAll(); }
 
-// ==================== UI PRINCIPALE ====================
-void GestionEmployes::construireUI()
-{
-    QVBoxLayout *main = new QVBoxLayout(this);
-    main->setContentsMargins(24, 24, 24, 20);
-    main->setSpacing(16);
-
-    main->addWidget(construireHeader());
-    main->addWidget(construireStatsPills());
-    main->addWidget(construireBarreRecherche());
-
-    QHBoxLayout *corps = new QHBoxLayout;
-    corps->setSpacing(20);
-    corps->addWidget(construireGrid(), 3);
-    corps->addWidget(construireDetailPanel(), 1);
-    main->addLayout(corps, 1);
+// === MODULE EMPLOYES : LIAISON AU FICHIER MAINWINDOW.UI ===
+void GestionEmployes::construireUI() {
+    Ui::EmployeesPage ui;ui.setupUi(this);
+    m_cardsContainer=ui.Employees_m_cardsContainer;
+    m_comboPoste=ui.Employees_m_comboPoste;
+    m_comboStatut=ui.Employees_m_comboStatut;
+    m_comboTri=ui.Employees_m_comboTri;
+    m_detailActions=ui.Employees_m_detailActions;
+    m_detailCharge=ui.Employees_m_detailCharge;
+    m_detailCompetences=ui.Employees_m_detailCompetences;
+    m_detailContent=ui.Employees_m_detailContent;
+    m_detailCourriel=ui.Employees_m_detailCourriel;
+    m_detailDate=ui.Employees_m_detailDate;
+    m_detailDispo=ui.Employees_m_detailDispo;
+    m_detailId=ui.Employees_m_detailId;
+    m_detailNom=ui.Employees_m_detailNom;
+    m_detailPlaceholder=ui.Employees_m_detailPlaceholder;
+    m_detailPoste=ui.Employees_m_detailPoste;
+    m_detailStatut=ui.Employees_m_detailStatut;
+    m_detailTelephone=ui.Employees_m_detailTelephone;
+    m_editRecherche=ui.Employees_m_editRecherche;
+    m_gridCards=ui.Employees_m_gridCards;
+    m_lblChargeTotale=ui.Employees_m_lblChargeTotale;
+    m_lblDisponibles=ui.Employees_m_lblDisponibles;
+    m_lblIndisponibles=ui.Employees_m_lblIndisponibles;
+    m_gridCards->setAlignment(Qt::AlignTop);
+    m_detailActions->hide();m_detailContent->hide();
+    m_editRecherche->addAction(Design::icon("search"),QLineEdit::LeadingPosition);
+    connect(ui.addEmployee,&QPushButton::clicked,this,&GestionEmployes::ajouterEmploye);
+    connect(ui.employeeLeavePdf,&QPushButton::clicked,this,&GestionEmployes::exportLeaveCertificate);
+    connect(ui.employeeStatistics,&QPushButton::clicked,this,&GestionEmployes::showStatistics);
+    connect(ui.editEmployee,&QPushButton::clicked,this,&GestionEmployes::modifierEmploye);
+    connect(ui.toggleEmployeeAvailability,&QPushButton::clicked,this,&GestionEmployes::basculerDisponibilite);
+    connect(ui.deleteEmployee,&QPushButton::clicked,this,&GestionEmployes::supprimerEmploye);
+    connect(m_editRecherche,&QLineEdit::textChanged,this,&GestionEmployes::onFiltresChange);
+    for(auto *combo:{m_comboPoste,m_comboStatut,m_comboTri})connect(combo,&QComboBox::currentTextChanged,this,&GestionEmployes::onFiltresChange);
 }
 
-// ==================== HEADER ====================
-QWidget *GestionEmployes::construireHeader()
-{
-    QWidget *w = new QWidget;
-    QHBoxLayout *layout = new QHBoxLayout(w);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    QVBoxLayout *titreL = new QVBoxLayout;
-    titreL->setSpacing(4);
-
-    QLabel *titre = new QLabel("Employés");
-    titre->setStyleSheet("font-size: 23px; font-weight: bold; color: #225A64;"
-                         "background: transparent;");
-    auto *titleRow=new QHBoxLayout; auto *titleIcon=Design::label(""); titleIcon->setPixmap(Design::icon("users",QColor("#8268AE")).pixmap(24,24)); titleRow->addWidget(titleIcon); titleRow->addWidget(titre); titleRow->addStretch(); titreL->addLayout(titleRow);
-
-    QLabel *sous = new QLabel("Annuaire, disponibilités et gestion de la charge");
-    sous->setStyleSheet("font-size: 13px; color: #7A8B8F; background: transparent;");
-    titreL->addWidget(sous);
-
-    layout->addLayout(titreL);
-    layout->addStretch();
-
-    QPushButton *btnNouveau = Design::button("Ajouter un employé","plus","primary");
-    btnNouveau->setObjectName("addEmployee"); btnNouveau->setProperty("role","primary");
-    btnNouveau->setMinimumHeight(36);
-    btnNouveau->setMinimumWidth(210);
-    btnNouveau->setCursor(Qt::PointingHandCursor);
-    connect(btnNouveau, &QPushButton::clicked, this, &GestionEmployes::ajouterEmploye);
-    auto *attestation=Design::button("Attestation PDF","export"); attestation->setObjectName("employeeLeavePdf");
-    connect(attestation,&QPushButton::clicked,this,&GestionEmployes::exportLeaveCertificate);
-    layout->addWidget(attestation);
-    layout->addWidget(btnNouveau);
-
-    return w;
-}
-
-// ==================== STATS PILLS (bla animation compteurs) ====================
-QWidget *GestionEmployes::construireStatsPills()
-{
-    QWidget *w = new QWidget;
-    QHBoxLayout *layout = new QHBoxLayout(w);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(12);
-
-    auto creerPill = [&](const QString &icone, const QString &bg, const QString &fg,
-                         QLabel *&valeur, const QString &texte, int idx) {
-        QFrame *pill = new QFrame;
-        pill->setStyleSheet(QString(
-                                "QFrame { background-color: %1; border-radius: 22px; border: none; }")
-                                .arg(bg));
-        pill->setFixedHeight(44);
-
-        QHBoxLayout *l = new QHBoxLayout(pill);
-        l->setContentsMargins(18, 5, 22, 5);
-        l->setSpacing(8);
-
-        QLabel *ico = new QLabel; ico->setPixmap(Design::icon(icone,QColor(fg)).pixmap(18,18));
-        ico->setStyleSheet("font-size: 15px; background: transparent; border: none;");
-        l->addWidget(ico);
-
-        valeur = new QLabel("0");
-        valeur->setStyleSheet(QString(
-                                  "font-size: 16px; font-weight: bold; color: %1; "
-                                  "background: transparent; border: none;").arg(fg));
-        l->addWidget(valeur);
-
-        QLabel *t = new QLabel(texte);
-        t->setStyleSheet(QString(
-                             "font-size: 12px; color: %1; background: transparent; border: none;")
-                             .arg(fg));
-        l->addWidget(t);
-
-        Q_UNUSED(idx);
-        return pill;
-    };
-
-    QFrame *p1 = creerPill("check", "#E6F4EA", "#2E7D32", m_lblDisponibles, "disponibles", 0);
-    QFrame *p2 = creerPill("users", "#FBE9E7", "#AE5751", m_lblIndisponibles, "indisponibles", 1);
-    QFrame *p3 = creerPill("clock", "#FDF3E3", "#B8741A", m_lblChargeTotale, "heures planifiées", 2);
-    m_lblChargeTotale->setObjectName("employeeTotalHours");
-
-    layout->addWidget(p1);
-    layout->addWidget(p2);
-    layout->addWidget(p3);
-
-    layout->addStretch();
-
-    //  Bouton stats (m3a pulse animation)
-    QPushButton *btnStats = Design::button("Voir les statistiques","grid","");
-    btnStats->setObjectName("employeeStatistics"); btnStats->setProperty("role","");
-    btnStats->setMinimumHeight(36);
-    btnStats->setCursor(Qt::PointingHandCursor);
-
-    connect(btnStats, &QPushButton::clicked, this, [this]() {
+void GestionEmployes::showStatistics() {
         QDialog dlg(this);
         dlg.setObjectName("employeeStatisticsDialog");
         dlg.setWindowTitle("Statistiques des employés");
@@ -521,78 +449,21 @@ QWidget *GestionEmployes::construireStatsPills()
         dialogLayout->addWidget(btns);
 
         dlg.exec();
-    });
-    layout->addWidget(btnStats);
+    }
 
-    //  MA7INA el animated counters — les valeurs ybanou direct
-    // (Mise à jour directe men mettreAJourStats())
 
-    return w;
-}
+
+// ==================== HEADER ====================
+
+
+// ==================== STATS PILLS (bla animation compteurs) ====================
+
 
 // ==================== BARRE RECHERCHE ====================
-QWidget *GestionEmployes::construireBarreRecherche()
-{
-    QWidget *w = new QWidget;
-    QHBoxLayout *layout = new QHBoxLayout(w);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(10);
 
-    m_editRecherche = new QLineEdit;
-    m_editRecherche->setObjectName("employeeSearch");
-    m_editRecherche->addAction(Design::icon("search"),QLineEdit::LeadingPosition);
-    m_editRecherche->setPlaceholderText("Rechercher par nom, ID ou poste...");
-    m_editRecherche->setMinimumHeight(34);
-    connect(m_editRecherche, &QLineEdit::textChanged,
-            this, &GestionEmployes::onFiltresChange);
-    layout->addWidget(m_editRecherche, 3);
-
-    m_comboPoste = new QComboBox; m_comboPoste->setObjectName("employeePostFilter"); m_comboPoste->setMinimumWidth(110); m_comboPoste->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-    m_comboPoste->setMinimumHeight(34);
-    m_comboPoste->addItems({"Tous les postes", "Vétérinaire",
-                            "Assistant(e) vétérinaire", "Auxiliaire vétérinaire",
-                            "Secrétaire / Réceptionniste", "Agent d'entretien",
-                            "Aide aux soins animaliers"});
-    connect(m_comboPoste, &QComboBox::currentTextChanged,
-            this, &GestionEmployes::onFiltresChange);
-    layout->addWidget(m_comboPoste, 1);
-
-    m_comboStatut = new QComboBox; m_comboStatut->setObjectName("employeeStatusFilter"); m_comboStatut->setMinimumWidth(110); m_comboStatut->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-    m_comboStatut->setMinimumHeight(34);
-    m_comboStatut->addItems({"Tous", "Disponible", "Non disponible"});
-    connect(m_comboStatut, &QComboBox::currentTextChanged,
-            this, &GestionEmployes::onFiltresChange);
-    layout->addWidget(m_comboStatut, 1);
-
-    m_comboTri = new QComboBox; m_comboTri->setObjectName("employeeSort"); m_comboTri->setMinimumWidth(110); m_comboTri->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-    m_comboTri->setMinimumHeight(34);
-    m_comboTri->addItems({"Tri par date", "Tri par charge"});
-    connect(m_comboTri, &QComboBox::currentTextChanged,
-            this, &GestionEmployes::onFiltresChange);
-    layout->addWidget(m_comboTri, 1);
-
-    return w;
-}
 
 // ==================== GRID ====================
-QWidget *GestionEmployes::construireGrid()
-{
-    m_cardsContainer = new QWidget;
-    m_gridCards = new QGridLayout(m_cardsContainer);
-    m_gridCards->setContentsMargins(0, 0, 0, 0);
-    m_gridCards->setSpacing(14);
-    m_gridCards->setAlignment(Qt::AlignTop);
 
-    QScrollArea *scroll = new QScrollArea;
-    scroll->setWidgetResizable(true);
-    scroll->setWidget(m_cardsContainer);
-    m_cardsContainer->setAutoFillBackground(false); scroll->viewport()->setAutoFillBackground(false);
-    scroll->setFrameShape(QFrame::NoFrame);
-    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scroll->setStyleSheet("QScrollArea { background: transparent; border: none; }"
-                          "QScrollArea > QWidget > QWidget { background: transparent; }");
-    return scroll;
-}
 
 // ==================== CARD ====================
 QWidget *GestionEmployes::creerCard(const Employe &e)
@@ -667,124 +538,7 @@ QWidget *GestionEmployes::creerCard(const Employe &e)
 }
 
 // ==================== DETAIL PANEL ====================
-QWidget *GestionEmployes::construireDetailPanel()
-{
-    QFrame *card = Design::card("employeeDetailPanel");
-    card->setMinimumWidth(284);
-    card->setMaximumWidth(306);
 
-    QVBoxLayout *layout = new QVBoxLayout(card);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-
-    QLabel *titre = new QLabel("EMPLOYÉ SÉLECTIONNÉ");
-    titre->setStyleSheet("font-size: 11px; font-weight: bold; color: #7A8B8F;"
-                         "letter-spacing: 1px; padding: 18px 18px 8px 18px;"
-                         "background: transparent;");
-    layout->addWidget(titre);
-
-    m_detailPlaceholder = new QLabel("Sélectionnez un employé\npour voir ses détails");
-    m_detailPlaceholder->setAlignment(Qt::AlignCenter);
-    m_detailPlaceholder->setStyleSheet("font-size: 13px; color: #7A8B8F; padding: 80px 20px;"
-                                       "background: transparent;");
-    layout->addWidget(m_detailPlaceholder);
-
-    QScrollArea *scroll = new QScrollArea;
-    scroll->setWidgetResizable(true);
-    scroll->setFrameShape(QFrame::NoFrame);
-    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    scroll->setStyleSheet("QScrollArea { background: transparent; border: none; }");
-
-    m_detailContent = new QWidget;
-    m_detailContent->setObjectName("detailContent");
-    m_detailContent->setStyleSheet("QWidget#detailContent { background: transparent; }");
-
-    QVBoxLayout *contentL = new QVBoxLayout(m_detailContent);
-    contentL->setContentsMargins(18, 5, 18, 12);
-    contentL->setSpacing(10);
-
-    m_detailNom = new QLabel; m_detailNom->setObjectName("employeeDetailName"); m_detailNom->setTextFormat(Qt::PlainText);
-    m_detailNom->setStyleSheet("font-size: 22px; font-weight: bold; color: #225A64;"
-                               "background: transparent;");
-    m_detailNom->setWordWrap(true);
-    contentL->addWidget(m_detailNom);
-
-    m_detailId = new QLabel;
-    m_detailId->setStyleSheet("font-size: 12px; color: #7A8B8F; background: transparent;");
-    contentL->addWidget(m_detailId);
-
-    m_detailStatut = new QLabel;
-    m_detailStatut->setAlignment(Qt::AlignCenter);
-    contentL->addWidget(m_detailStatut);
-
-    contentL->addSpacing(8);
-
-    QFrame *sep = new QFrame;
-    sep->setFrameShape(QFrame::HLine);
-    sep->setStyleSheet("background-color: #E4F0F3; max-height: 1px; border: none;");
-    contentL->addWidget(sep);
-
-    contentL->addSpacing(6);
-
-    auto creerRow = [](const QString &label, QLabel *&valeur) {
-        QHBoxLayout *row = new QHBoxLayout;
-        row->setSpacing(8);
-        QLabel *lbl = new QLabel(label);
-        lbl->setStyleSheet("font-size: 12px; color: #7A8B8F; background: transparent;");
-        lbl->setFixedWidth(95);
-        row->addWidget(lbl);
-        valeur = new QLabel("-"); valeur->setTextFormat(Qt::PlainText);
-        valeur->setStyleSheet("font-size: 12px; color: #263B42; font-weight: 500;"
-                              "background: transparent;");
-        valeur->setWordWrap(true);
-        row->addWidget(valeur, 1);
-        return row;
-    };
-
-    contentL->addLayout(creerRow("Poste", m_detailPoste));
-    contentL->addLayout(creerRow("Courriel", m_detailCourriel));
-    contentL->addLayout(creerRow("Téléphone", m_detailTelephone));
-    contentL->addLayout(creerRow("Embauche", m_detailDate));
-    contentL->addLayout(creerRow("Charge", m_detailCharge));
-    contentL->addLayout(creerRow("Dispo", m_detailDispo));
-    contentL->addLayout(creerRow("Compétences", m_detailCompetences));
-
-    m_detailActions=new QWidget;
-    auto *actions=new QVBoxLayout(m_detailActions); actions->setContentsMargins(18,8,18,18); actions->setSpacing(8);
-
-    QPushButton *btnModifier = Design::button("Modifier","edit","primary");
-    btnModifier->setObjectName("editEmployee"); btnModifier->setProperty("role","primary");
-    btnModifier->setMinimumHeight(34);
-    btnModifier->setCursor(Qt::PointingHandCursor);
-    connect(btnModifier, &QPushButton::clicked, this, &GestionEmployes::modifierEmploye);
-    actions->addWidget(btnModifier);
-
-    QPushButton *btnBasculer = Design::button("Basculer disponibilité","check","success");
-    btnBasculer->setObjectName("toggleEmployeeAvailability"); btnBasculer->setProperty("role","success");
-    btnBasculer->setMinimumHeight(34);
-    btnBasculer->setCursor(Qt::PointingHandCursor);
-    connect(btnBasculer, &QPushButton::clicked, this, &GestionEmployes::basculerDisponibilite);
-    actions->addWidget(btnBasculer);
-
-    QPushButton *btnSupprimer = Design::button("Supprimer","trash","danger");
-    btnSupprimer->setObjectName("deleteEmployee"); btnSupprimer->setProperty("role","danger");
-    btnSupprimer->setMinimumHeight(34);
-    btnSupprimer->setCursor(Qt::PointingHandCursor);
-    connect(btnSupprimer, &QPushButton::clicked, this, &GestionEmployes::supprimerEmploye);
-    actions->addWidget(btnSupprimer);
-
-    contentL->addStretch();
-
-    scroll->setWidget(m_detailContent);
-    m_detailContent->setAutoFillBackground(false); scroll->viewport()->setAutoFillBackground(false);
-    layout->addWidget(scroll, 1);
-    layout->addWidget(m_detailActions); m_detailActions->hide();
-
-    m_detailContent->hide();
-
-    return card;
-}
 
 // ==================== CHARGEMENT ====================
 void GestionEmployes::chargerEmployes(const QString &filtre, const QString &tri,

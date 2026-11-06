@@ -1,3 +1,13 @@
+#include <QJsonArray>
+#include <QFormBuilder>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include "../src/locaux/cardgrid.h"
+#include "../src/locaux/clinicmap.h"
+#include "../src/locaux/detailpanel.h"
+#include "../src/employees/gestionemployes.h"
+#include "../src/stock/stock.h"
+#include "../src/stock/stockjournal.h"
 #include "../src/employees/employe.h"
 #include "../src/locaux/localrepository.h"
 #include "../src/database/oracleconnection.h"
@@ -90,6 +100,131 @@ bool openMedicalService(MainWindow &window) {
 class ServiceTests : public QObject {
     Q_OBJECT
 private slots:
+    void exportIntegratedDesignerForms() {
+        QVERIFY(DatabaseManager::instance().initialize(":memory:"));
+        MainWindow main(true);
+        const QString dir=qEnvironmentVariable("ANIWORLD_CAPTURE_DIR")+"/designer";QDir().mkpath(dir);
+        QJsonObject mappings;
+        auto bind=[&](QObject *object,const QString &name){if(!object)return;QJsonObject info;info["oldName"]=object->objectName();info["class"]=object->metaObject()->className();info["text"]=object->property("text").toString();mappings[name]=info;object->setObjectName(name);};
+        auto capture=[&](QWidget *page,const QString &name){
+            QSet<QString> used;int counter=0;
+            for(auto *object:page->findChildren<QObject *>()){
+                if(!qobject_cast<QWidget *>(object)&&!qobject_cast<QLayout *>(object))continue;
+                QString current=object->objectName();
+                if(current.isEmpty()||used.contains(current))bind(object,name+"_control_"+QString::number(++counter));
+                used.insert(object->objectName());
+            }
+            QJsonObject meta;QDir().mkpath(dir+"/icons");
+            for(auto *w:page->findChildren<QWidget *>()){
+                QJsonObject item;item["hidden"]=w->isHidden();item["class"]=w->metaObject()->className();
+                if(auto *combo=qobject_cast<QComboBox *>(w)){QJsonArray entries;for(int i=0;i<combo->count();++i){QJsonObject entry;entry["text"]=combo->itemText(i);entry["data"]=QJsonValue::fromVariant(combo->itemData(i));entries.append(entry);}item["items"]=entries;}
+
+                QJsonObject props;for(const auto &key:w->dynamicPropertyNames())if(!key.startsWith("_q"))props[QString::fromUtf8(key)]=QJsonValue::fromVariant(w->property(key));item["props"]=props;
+                if(auto *area=qobject_cast<QScrollArea *>(w);area && area->widget())item["content"]=area->widget()->objectName();
+                if(auto *button=qobject_cast<QAbstractButton *>(w);button && !button->icon().isNull()){button->icon().pixmap(button->iconSize()*2).save(dir+"/icons/"+w->objectName()+".png");item["icon"]=true;}
+                if(auto *label=qobject_cast<QLabel *>(w);label && !label->pixmap().isNull()){label->pixmap().save(dir+"/icons/"+w->objectName()+".png");item["pixmap"]=true;}
+                meta[w->objectName()]=item;
+            }
+            for(auto *l:page->findChildren<QLayout *>()){
+                QJsonObject item;QJsonArray margins;const auto m=l->contentsMargins();for(int v:{m.left(),m.top(),m.right(),m.bottom()})margins.append(v);item["margins"]=margins;item["alignment"]=int(l->alignment());
+                if(auto *box=qobject_cast<QBoxLayout *>(l)){QJsonArray stretch;for(int i=0;i<box->count();++i)stretch.append(box->stretch(i));item["stretch"]=stretch;}
+                if(auto *grid=qobject_cast<QGridLayout *>(l)){QJsonArray cols,rows;for(int i=0;i<grid->columnCount();++i)cols.append(grid->columnStretch(i));for(int i=0;i<grid->rowCount();++i)rows.append(grid->rowStretch(i));item["columnstretch"]=cols;item["rowstretch"]=rows;}
+                meta[l->objectName()]=item;
+            }
+            QFile metadata(dir+"/"+name+".json");QVERIFY(metadata.open(QIODevice::WriteOnly));metadata.write(QJsonDocument(meta).toJson());
+            QFormBuilder builder;QFile file(dir+"/"+name+".ui");QVERIFY(file.open(QIODevice::WriteOnly));builder.save(&file,page);
+        };
+        bind(main.m_services->m_pages,"Service_m_pages");
+        bind(main.m_services->m_listPage,"Service_m_listPage");
+        bind(main.m_services->m_table,"Service_m_table");
+        bind(main.m_services->m_search,"Service_m_search");
+        bind(main.m_services->m_status,"Service_m_status");
+        bind(main.m_services->m_category,"Service_m_category");
+        bind(main.m_services->m_sort,"Service_m_sort");
+        bind(main.m_services->m_period,"Service_m_period");
+        bind(main.m_services->m_edit,"Service_m_edit");
+        bind(main.m_services->m_delete,"Service_m_delete");
+        bind(main.m_services->m_view,"Service_m_view");
+        bind(main.m_services->m_invoice,"Service_m_invoice");
+        bind(main.m_services->m_advance,"Service_m_advance");
+        bind(main.m_services->m_count,"Service_m_count");
+        bind(main.m_services->m_notice,"Service_m_notice");
+        bind(main.m_services->m_views,"Service_m_views");
+        bind(main.m_services->m_gridScroll,"Service_m_gridScroll");
+        bind(main.m_services->m_grid,"Service_m_grid");
+        bind(main.m_services->m_emptyTitle,"Service_m_emptyTitle");
+        bind(main.m_services->m_emptyText,"Service_m_emptyText");
+        bind(main.m_services->m_detailName,"Service_m_detailName");
+        bind(main.m_services->m_detailReference,"Service_m_detailReference");
+        bind(main.m_services->m_detailNotes,"Service_m_detailNotes");
+        bind(main.m_services->m_attention,"Service_m_attention");
+        bind(main.m_services->m_detailContent,"Service_m_detailContent");
+        bind(main.m_services->m_emptyDetailSpacer,"Service_m_emptyDetailSpacer");
+        bind(main.m_services->m_statusLayout,"Service_m_statusLayout");
+        for(int i=0;i<main.m_services->m_summary.size();++i)bind(main.m_services->m_summary[i],"Service_summary_"+QString::number(i));
+        for(int i=0;i<main.m_services->m_detailValues.size();++i)bind(main.m_services->m_detailValues[i],"Service_detailValue_"+QString::number(i));
+        capture(main.m_services,"Service");
+        bind(main.m_stock->stockTable,"Stock_stockTable");
+        bind(main.m_stock->searchLineEdit,"Stock_searchLineEdit");
+        bind(main.m_stock->categoryFilter,"Stock_categoryFilter");
+        bind(main.m_stock->sortFilter,"Stock_sortFilter");
+        bind(main.m_stock->stateFilter,"Stock_stateFilter");
+        bind(main.m_stock->footerLabel,"Stock_footerLabel");
+        bind(main.m_stock->alertsNavButton,"Stock_alertsNavButton");
+        capture(main.m_stock,"Stock");
+        bind(main.m_employees->m_lblDisponibles,"Employees_m_lblDisponibles");
+        bind(main.m_employees->m_lblIndisponibles,"Employees_m_lblIndisponibles");
+        bind(main.m_employees->m_lblChargeTotale,"Employees_m_lblChargeTotale");
+        bind(main.m_employees->m_editRecherche,"Employees_m_editRecherche");
+        bind(main.m_employees->m_comboPoste,"Employees_m_comboPoste");
+        bind(main.m_employees->m_comboStatut,"Employees_m_comboStatut");
+        bind(main.m_employees->m_comboTri,"Employees_m_comboTri");
+        bind(main.m_employees->m_gridCards,"Employees_m_gridCards");
+        bind(main.m_employees->m_cardsContainer,"Employees_m_cardsContainer");
+        bind(main.m_employees->m_detailPlaceholder,"Employees_m_detailPlaceholder");
+        bind(main.m_employees->m_detailContent,"Employees_m_detailContent");
+        bind(main.m_employees->m_detailActions,"Employees_m_detailActions");
+        bind(main.m_employees->m_detailNom,"Employees_m_detailNom");
+        bind(main.m_employees->m_detailId,"Employees_m_detailId");
+        bind(main.m_employees->m_detailStatut,"Employees_m_detailStatut");
+        bind(main.m_employees->m_detailPoste,"Employees_m_detailPoste");
+        bind(main.m_employees->m_detailCourriel,"Employees_m_detailCourriel");
+        bind(main.m_employees->m_detailTelephone,"Employees_m_detailTelephone");
+        bind(main.m_employees->m_detailDate,"Employees_m_detailDate");
+        bind(main.m_employees->m_detailCharge,"Employees_m_detailCharge");
+        bind(main.m_employees->m_detailDispo,"Employees_m_detailDispo");
+        bind(main.m_employees->m_detailCompetences,"Employees_m_detailCompetences");
+        capture(main.m_employees,"Employees");
+        bind(main.m_locaux->m_chipAvail,"Locaux_m_chipAvail");
+        bind(main.m_locaux->m_chipOcc,"Locaux_m_chipOcc");
+        bind(main.m_locaux->m_chipOos,"Locaux_m_chipOos");
+        bind(main.m_locaux->m_chipDirty,"Locaux_m_chipDirty");
+        bind(main.m_locaux->m_btnAlerts,"Locaux_m_btnAlerts");
+        bind(main.m_locaux->m_btnSmart,"Locaux_m_btnSmart");
+        bind(main.m_locaux->m_btnAdd,"Locaux_m_btnAdd");
+        bind(main.m_locaux->m_btnPdf,"Locaux_m_btnPdf");
+        bind(main.m_locaux->m_btnMap,"Locaux_m_btnMap");
+        bind(main.m_locaux->m_btnStats,"Locaux_m_btnStats");
+        bind(main.m_locaux->m_search,"Locaux_m_search");
+        bind(main.m_locaux->m_sortCombo,"Locaux_m_sortCombo");
+        bind(main.m_locaux->m_count,"Locaux_m_count");
+        bind(main.m_locaux->m_queryHint,"Locaux_m_queryHint");
+        bind(main.m_locaux->m_cardScroll,"Locaux_m_cardScroll");
+        bind(main.m_locaux->m_btnCards,"Locaux_m_btnCards");
+        bind(main.m_locaux->m_btnList,"Locaux_m_btnList");
+        bind(main.m_locaux->m_views,"Locaux_m_views");
+        bind(main.m_locaux->m_grid,"Locaux_m_grid");
+        bind(main.m_locaux->m_table,"Locaux_m_table");
+        bind(main.m_locaux->m_empty,"Locaux_m_empty");
+        bind(main.m_locaux->m_detail,"Locaux_m_detail");
+        bind(main.m_locaux->m_miniMap,"Locaux_m_miniMap");
+        bind(main.m_locaux->m_pct,"Locaux_m_pct");
+        bind(main.m_locaux->m_bar,"Locaux_m_bar");
+        bind(main.m_locaux->m_globalText,"Locaux_m_globalText");
+        capture(main.m_locaux,"Locaux");
+        QFile file(dir+"/bindings.json");QVERIFY(file.open(QIODevice::WriteOnly));file.write(QJsonDocument(mappings).toJson());
+    }
+
     void serviceCreatesFromMedicalOwner() {
         auto &db=DatabaseManager::instance();QVERIFY(db.initialize(":memory:"));
         QString error;
@@ -239,7 +374,7 @@ private slots:
         QString error;QList<int> services;int localId=0;MedicalRecord record;Employe employee;
         const auto cleanup=qScopeGuard([&]{
             db.rollback();db.transaction();QSqlQuery c(db);
-            bool ok=c.exec("DELETE FROM stock WHERE article IN ('MLD-TEST-ARTICLE','MLD-TEST-ARTICLE-2')");
+            bool ok=c.exec("DELETE FROM stock WHERE article IN ('MLD-TEST-ARTICLE','MLD-TEST-ARTICLE-2','MLD-TEST-RECEIPT')");
             if(record.storageId)ok=c.exec(QString("DELETE FROM medical WHERE id_doss=%1").arg(record.storageId)) && ok;
             if(localId)ok=c.exec(QString("DELETE FROM local WHERE id_local=%1").arg(localId)) && ok;
             if(employee.getId())ok=c.exec(QString("DELETE FROM employer WHERE id_emp=%1").arg(employee.getId())) && ok;
@@ -306,6 +441,20 @@ private slots:
         QVERIFY2(StockRecord::afficher(&stock,&revision,&error),qPrintable(error));
         for(const auto &r:stock)if(r.article==item.article){QCOMPARE(r.idArticle,stableId);QCOMPARE(r.nomArticle,QString("Nom modifié"));}
         for(const auto &r:stock)if(r.article==second.article)QVERIFY(r.lot.isEmpty());
+        // New module: invoice receipt is atomic and preserves generated IDs and local FK.
+        QVector<int> receiptIds;
+        Stock::Reception receipt{item.article,item.nomArticle,item.lot,item.category,3,localId,item.expiry};
+        Stock::Reception badReceipt{"MLD-TEST-RECEIPT",second.nomArticle,"",second.category,2,99999999,second.expiry};
+        QVERIFY(!Stock::receptionner({receipt,badReceipt},&receiptIds,&error));
+        QVERIFY(q.exec("SELECT quantite_disp FROM stock WHERE article='MLD-TEST-ARTICLE'"));QVERIFY(q.next());QCOMPARE(q.value(0).toInt(),4);q.finish();
+        QVERIFY2(Stock::receptionner({receipt},&receiptIds,&error),qPrintable(error));
+        QCOMPARE(receiptIds,QVector<int>{stableId});
+        QVERIFY(q.exec("SELECT quantite_disp FROM stock WHERE article='MLD-TEST-ARTICLE'"));QVERIFY(q.next());QCOMPARE(q.value(0).toInt(),7);q.finish();
+        Stock entity;entity.setArticle("MLD-TEST-RECEIPT");entity.setNomArticle("Test nouveau stock");entity.setLot("LOT-RECEIPT");entity.setQuantiteDisp(2);entity.setTypeArticle("Soins");entity.setSeuilMin(1);entity.setDateEcheance(QDate(2036,1,1));entity.setIdLocal(localId);
+        QVERIFY2(entity.ajouter(),qPrintable(entity.getError()));QVERIFY(entity.getIdArticle()>0);
+        entity.setQuantiteDisp(5);QVERIFY2(entity.modifier(),qPrintable(entity.getError()));
+        QVERIFY2(entity.supprimer(entity.getIdArticle()),qPrintable(entity.getError()));
+        QVERIFY2(StockRecord::afficher(&stock,&revision,&error),qPrintable(error));
         QVERIFY(!q.exec(QString("UPDATE local SET id_serv=NULL WHERE id_local=%1").arg(localId)));
         QVERIFY(!q.exec("UPDATE stock SET id_local=99999999 WHERE article='MLD-TEST-ARTICLE'"));
         QVERIFY(!q.exec(QString("UPDATE medical SET id_emp=99999999 WHERE id_doss=%1").arg(record.storageId)));
@@ -1082,6 +1231,20 @@ private slots:
         } });
         stock.findChild<QPushButton *>("stockStatisticsButton")->click(); QVERIFY(stats);
     }
+    void stockNewModules() {
+        QVERIFY(DatabaseManager::instance().initialize(":memory:"));
+        QTemporaryDir temporary;QSettings::setPath(QSettings::IniFormat,QSettings::UserScope,temporary.path());
+        const auto oldName=qApp->applicationName();qApp->setApplicationName("ANIWORLD-Stock-Integration-Test");
+        const auto restore=qScopeGuard([&]{QFile::remove(StockJournal::filePath());qApp->setApplicationName(oldName);});
+        QSettings data(StockJournal::filePath(),QSettings::IniFormat);data.clear();data.beginWriteArray("suppliers",1);data.setArrayIndex(0);data.setValue("id",1);data.setValue("name","Fournisseur test");data.setValue("leadDays",3);data.endArray();data.sync();
+        StockWidget stock;stock.resize(1100,750);stock.show();
+        for(const auto &pair:QList<QPair<QString,QString>>{{"stockPurchasesButton","stockPurchasesDialog"},{"stockAlertsButton","stockAlertsDialog"},{"stockReplenishmentButton","stockReplenishmentDialog"}}){
+            bool opened=false;
+            QTimer::singleShot(40,[&]{auto *dialog=qobject_cast<QDialog *>(QApplication::activeModalWidget());if(!dialog)return;opened=dialog->objectName()==pair.second;
+                const auto output=qEnvironmentVariable("ANIWORLD_CAPTURE_DIR");if(!output.isEmpty())dialog->grab().save(output+"/"+pair.second+".png");dialog->reject();});
+            auto *button=stock.findChild<QPushButton *>(pair.first);QVERIFY(button);button->click();QVERIFY2(opened,qPrintable(pair.second));
+        }
+    }
     void stockIntegratedNavigationAndLogout() {
         auto &db=DatabaseManager::instance(); QVERIFY(db.initialize(":memory:")); QVERIFY(db.addExamples());
         AppController controller(false,false); controller.start(); auto *login=controller.loginWindow();
@@ -1104,7 +1267,7 @@ private slots:
             const QSize target=QGuiApplication::platformName()=="windows"
                 ?size.boundedTo(main->screen()->availableGeometry().size()-QSize(40,60)).expandedTo(main->minimumSize()):size;
             main->resize(target); QTest::qWait(200); QCOMPARE(main->size(),target);
-            for(const auto &name:{"stockMovementButton","stockExportButton","stockEditButton","stockExpiryButton"}) {
+            for(const auto &name:{"stockMovementButton","stockExportButton","stockEditButton","stockExpiryButton","stockPurchasesButton","stockAlertsButton","stockReplenishmentButton"}) {
                 auto *button=stock->findChild<QPushButton *>(name); QVERIFY(button->isVisible());
                 QVERIFY(stock->rect().contains(QRect(button->mapTo(stock,QPoint()),button->size())));
             }

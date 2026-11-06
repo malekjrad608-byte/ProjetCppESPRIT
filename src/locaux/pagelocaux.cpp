@@ -1,3 +1,4 @@
+#include "ui_integrated_pages.h"
 #include "../ui/design.h"
 #include "../database/oracleconnection.h"
 #include "../ui/motion.h"
@@ -64,16 +65,7 @@ PageLocaux::PageLocaux(LocalRepository *repo, QWidget *parent)
     });
     m_alertTimer = new QTimer(this);
 
-    auto *root = new QVBoxLayout(this);
-    root->setContentsMargins(26, 22, 26, 10);
-    root->setSpacing(14);
-    if(!repo->lastError().isEmpty()) {
-        auto *error=Design::label(repo->lastError()); error->setWordWrap(true);
-        error->setStyleSheet("color:#B94A48;background:#FBEAEA;padding:10px;"); root->addWidget(error);
-    }
-    root->addLayout(buildHeader());
-    root->addLayout(buildTools());
-    root->addLayout(buildBody(), 1);
+    setupUi();
 
     // le plan et la liste se mettent a jour a chaque changement des donnees
     connect(m_repo, &LocalRepository::changed, this, [this] {
@@ -92,107 +84,51 @@ PageLocaux::PageLocaux(LocalRepository *repo, QWidget *parent)
     refresh(true);
 }
 
-// ================================================================ construction
-
-QPushButton *PageLocaux::makeButton(const QString &text, const QString &icon, const char *role)
-{
-    auto *b = new AnimatedButton(text);
-    b->setProperty("role", role);
-    b->setCursor(Qt::PointingHandCursor);
-    const bool ghost = QString(role) == "ghost";
-    b->setIcon(Icons::icon(icon, ghost ? Theme::TealDark : QColor(Qt::white), 16));
-    b->setIconSize(QSize(16, 16));
-    HoverGlow::attach(b);
-    return b;
-}
-
-QPushButton *PageLocaux::makeChip(const char *tone)
-{
-    auto *b = new AnimatedButton(QString());
-    b->setProperty("chip", true);
-    b->setProperty("tone", tone);
-    b->setCursor(Qt::PointingHandCursor);
-    HoverGlow::attach(b, QColor(31, 85, 96, 70), 16, 4);
-    return b;
-}
-
-QLayout *PageLocaux::buildHeader()
-{
-    auto *row = new QVBoxLayout;
-    row->setSpacing(10);
-
-    // gauche : titre + pastilles
-    auto *left = new QVBoxLayout;
-    left->setSpacing(4);
-    auto *titleRow = new QHBoxLayout;
-    titleRow->setSpacing(10);
-    auto *ic = new QLabel;
-    ic->setPixmap(Icons::pixmap("rooms", Theme::Teal, 28));
-    auto *h1 = new QLabel(QStringLiteral("Locaux"));
-    h1->setObjectName("h1");
-    titleRow->addWidget(ic);
-    titleRow->addWidget(h1);
-    titleRow->addStretch();
-    left->addLayout(titleRow);
-
-    auto *sub = new QLabel(QStringLiteral("Occupation, nettoyage et disponibilité des espaces"));
-    if(OracleConnection::isOracle())sub->setText("Locaux, capacités, spécialités et services associés");
-    sub->setObjectName("sub");
-    left->addWidget(sub);
-    left->addSpacing(6);
-
-    auto *chips = new QHBoxLayout;
-    chips->setSpacing(10);
-    m_chipAvail = makeChip("green");
-    m_chipOcc = makeChip("blue");
-    m_chipOos = makeChip("orange");
-    m_chipDirty = makeChip("red");
-    chips->addWidget(m_chipAvail);
-    chips->addWidget(m_chipOcc);
-    chips->addWidget(m_chipOos);
-    chips->addWidget(m_chipDirty);
-    if(OracleConnection::isOracle())m_chipDirty->hide();
-    chips->addStretch();
-    left->addLayout(chips);
-
-    // les pastilles sont des raccourcis de recherche : elles ajoutent / retirent un mot-cle
+// === MODULE LOCAUX : LIAISON AU FICHIER MAINWINDOW.UI ===
+void PageLocaux::setupUi() {
+    Ui::LocauxPage ui;ui.setupUi(this);
+    m_bar=ui.Locaux_m_bar;
+    m_btnAdd=ui.Locaux_m_btnAdd;
+    m_btnAlerts=ui.Locaux_m_btnAlerts;
+    m_btnCards=ui.Locaux_m_btnCards;
+    m_btnList=ui.Locaux_m_btnList;
+    m_btnMap=ui.Locaux_m_btnMap;
+    m_btnPdf=ui.Locaux_m_btnPdf;
+    m_btnSmart=ui.Locaux_m_btnSmart;
+    m_btnStats=ui.Locaux_m_btnStats;
+    m_cardScroll=ui.Locaux_m_cardScroll;
+    m_chipAvail=ui.Locaux_m_chipAvail;
+    m_chipDirty=ui.Locaux_m_chipDirty;
+    m_chipOcc=ui.Locaux_m_chipOcc;
+    m_chipOos=ui.Locaux_m_chipOos;
+    m_count=ui.Locaux_m_count;
+    m_detail=ui.Locaux_m_detail;
+    m_empty=ui.Locaux_m_empty;
+    m_globalText=ui.Locaux_m_globalText;
+    m_grid=ui.Locaux_m_grid;
+    m_miniMap=ui.Locaux_m_miniMap;
+    m_pct=ui.Locaux_m_pct;
+    m_queryHint=ui.Locaux_m_queryHint;
+    m_search=ui.Locaux_m_search;
+    m_sortCombo=ui.Locaux_m_sortCombo;
+    m_table=ui.Locaux_m_table;
+    m_views=ui.Locaux_m_views;
+    m_search->addAction(Icons::icon("search",Theme::Muted,16),QLineEdit::LeadingPosition);
+    m_table->setColumnCount(7);m_table->setHorizontalHeaderLabels({"ID","Local","Type","Étage","Occupation","État","Nettoyage"});
+    if(OracleConnection::isOracle()) {
+        m_table->setColumnCount(8);m_table->setHorizontalHeaderLabels({"ID local","Nom local","Type","Étage","Capacité","Spécialité","État","ID service"});
+        for(auto *b:{m_chipDirty,m_btnPdf,m_btnSmart,m_btnStats,m_btnAlerts})b->hide();
+        m_bar->parentWidget()->hide();
+    }
+    m_table->verticalHeader()->hide();m_table->verticalHeader()->setDefaultSectionSize(42);
+    m_table->horizontalHeader()->setHighlightSections(false);m_table->horizontalHeader()->setMinimumHeight(40);
+    m_table->horizontalHeader()->setSectionsClickable(true);m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_table->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Fixed);m_table->setColumnWidth(0,70);
+    m_queryHint->hide();m_empty->hide();
     connect(m_chipAvail, &QPushButton::clicked, this, [this] { toggleChip(int(SmartSearch::Kw::Available)); });
     connect(m_chipOcc, &QPushButton::clicked, this, [this] { toggleChip(int(SmartSearch::Kw::Occupied)); });
     connect(m_chipOos, &QPushButton::clicked, this, [this] { toggleChip(int(SmartSearch::Kw::OutOfService)); });
     connect(m_chipDirty, &QPushButton::clicked, this, [this] { toggleChip(int(SmartSearch::Kw::Dirty)); });
-
-    // droite : deux rangees de boutons
-    m_btnAlerts = makeButton(QStringLiteral("Alertes"), "bell", "ghost");
-    m_btnAlerts->setObjectName("locauxAlertsButton");
-    m_btnSmart = makeButton(QStringLiteral("Affectation intelligente"), "sparkle", "ghost");
-    m_btnSmart->setObjectName("locauxAssignButton");
-    m_btnAdd = makeButton(QStringLiteral("Ajouter un local"), "plus", "primary");
-    m_btnAdd->setObjectName("locauxAddButton");
-    m_btnPdf = makeButton(QStringLiteral("Rapport nettoyage PDF"), "download", "ghost");
-    m_btnPdf->setObjectName("locauxPdfButton");
-    m_btnMap = makeButton(QStringLiteral("Plan de la clinique"), "map", "ghost");
-    m_btnMap->setObjectName("locauxMapButton");
-    m_btnStats = makeButton(QStringLiteral("Voir les statistiques"), "chart", "ghost");
-    m_btnStats->setObjectName("locauxStatisticsButton");
-
-    auto *r1 = new QHBoxLayout;
-    r1->setSpacing(10);
-    r1->addStretch();
-    r1->addWidget(m_btnAlerts);
-    r1->addWidget(m_btnSmart);
-    titleRow->addWidget(m_btnAdd);
-    auto *r2 = new QHBoxLayout;
-    r2->setSpacing(10);
-
-    r2->addWidget(m_btnPdf);
-    r2->addWidget(m_btnMap);
-    r2->addWidget(m_btnStats);
-    auto *btnCol = new QVBoxLayout;
-    btnCol->setSpacing(10);
-    r1->addLayout(r2);
-    btnCol->addLayout(r1);
-    btnCol->addStretch();
-
     connect(m_btnAlerts, &QPushButton::clicked, this, [this] { openAlerts(); });
     connect(m_btnSmart, &QPushButton::clicked, this, [this] { openSmartAssign(); });
     connect(m_btnAdd, &QPushButton::clicked, this, [this] { addLocal(); });
@@ -202,114 +138,11 @@ QLayout *PageLocaux::buildHeader()
         StatsDialog dlg(m_repo->all(), this);
         dlg.exec();
     });
-
-    row->addLayout(left, 1);
-    row->addLayout(btnCol);
-    return row;
-}
-
-QLayout *PageLocaux::buildTools()
-{
-    auto *col = new QVBoxLayout;
-    col->setSpacing(6);
-    auto *row = new QHBoxLayout;
-    row->setSpacing(10);
-
-    m_search = new QLineEdit; m_search->setObjectName("locauxSearch");
-    m_search->setPlaceholderText(QStringLiteral(
-        "Recherche intelligente : « chirurgie dispo », « sale étage 1 », « plein », « alerte »…"));
-    m_search->setClearButtonEnabled(true);
-    m_search->addAction(Icons::icon("search", Theme::Muted, 16), QLineEdit::LeadingPosition);
-
-    m_sortCombo = new QComboBox;
-    m_sortCombo->addItems({ QStringLiteral("Trier : priorité"),
-                            QStringLiteral("Trier : nom A → Z"),
-                            QStringLiteral("Trier : remplissage") });
-    m_sortCombo->setToolTip(QStringLiteral(
-        "Priorité : alertes, puis locaux à nettoyer (blocs d'abord), puis les plus remplis.\n"
-        "En vue Liste, clique sur les en-têtes du tableau pour trier par colonne."));
-
-    auto *reset = new AnimatedButton(QStringLiteral("Réinitialiser"));
-    reset->setProperty("role", "link");
-    reset->setCursor(Qt::PointingHandCursor);
-
-    m_count = new QLabel;
-    m_count->setObjectName("sub");
-
-    m_btnCards = makeButton(QStringLiteral("Cartes"), "grid", "ghost");
-    m_btnList = makeButton(QStringLiteral("Liste"), "list", "ghost");
-    m_btnList->setObjectName("locauxListButton");
-    m_btnCards->setCheckable(true);
-    m_btnList->setCheckable(true);
-    m_btnCards->setChecked(true);
-
-    row->addWidget(m_search, 1);
-    row->addWidget(m_sortCombo);
-    row->addWidget(reset);
-    row->addWidget(m_count);
-    row->addWidget(m_btnCards);
-    row->addWidget(m_btnList);
-    col->addLayout(row);
-
-    m_queryHint = new QLabel;
-    m_queryHint->setObjectName("sub");
-    m_queryHint->setTextFormat(Qt::RichText);
-    m_queryHint->hide();
-    col->addWidget(m_queryHint);
-
     connect(m_search, &QLineEdit::textChanged, this, [this] { refresh(true); });
     connect(m_sortCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this] { refresh(true); });
-    connect(reset, &QPushButton::clicked, this, [this] { resetFilters(); });
+    connect(ui.locauxResetFilters, &QPushButton::clicked, this, [this] { resetFilters(); });
     connect(m_btnCards, &QPushButton::clicked, this, [this] { setView(0); });
     connect(m_btnList, &QPushButton::clicked, this, [this] { setView(1); });
-    return col;
-}
-
-QLayout *PageLocaux::buildBody()
-{
-    auto *row = new QHBoxLayout;
-    row->setSpacing(18);
-
-    // ---------------------------------------------------- gauche : cartes / liste
-    auto *leftCol = new QVBoxLayout;
-    m_views = new QStackedWidget;
-
-    m_cardScroll = new QScrollArea;
-    auto *scroll = m_cardScroll;
-    scroll->setWidgetResizable(true);
-    scroll->setFrameShape(QFrame::NoFrame);
-    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_grid = new CardGrid;
-    scroll->setWidget(m_grid);
-    m_views->addWidget(scroll);
-
-    m_table = new QTableWidget(0, 7); m_table->setObjectName("locauxTable");
-    m_table->setHorizontalHeaderLabels({ "ID", "Local", "Type", "Étage", "Occupation", "État", "Nettoyage" });
-    m_table->verticalHeader()->setVisible(false);
-    if(OracleConnection::isOracle()){m_table->setColumnCount(8);m_table->setHorizontalHeaderLabels({"ID local","Nom local","Type","Étage","Capacité","Spécialité","État","ID service"});
-      for(auto *b:{m_btnPdf,m_btnSmart,m_btnStats,m_btnAlerts})b->hide();}
-    m_table->verticalHeader()->setDefaultSectionSize(42);
-    m_table->horizontalHeader()->setHighlightSections(false);
-    m_table->horizontalHeader()->setMinimumHeight(40);
-    m_table->horizontalHeader()->setSectionsClickable(true);
-    m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    m_table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
-    m_table->setColumnWidth(0, 70);
-    m_table->setShowGrid(false);
-    m_table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_table->setSelectionMode(QAbstractItemView::SingleSelection);
-    m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_table->setFocusPolicy(Qt::NoFocus);
-    m_views->addWidget(m_table);
-
-    m_empty = new QLabel(QStringLiteral("Aucun local ne correspond à la recherche"));
-    m_empty->setObjectName("sub");
-    m_empty->setAlignment(Qt::AlignCenter);
-    m_empty->hide();
-    leftCol->addWidget(m_views, 1);
-    leftCol->addWidget(m_empty);
-    row->addLayout(leftCol, 1);
-
     connect(m_table, &QTableWidget::itemSelectionChanged, this, [this] {
         if (m_updatingTable)
             return;
@@ -331,82 +164,8 @@ QLayout *PageLocaux::buildBody()
         m_table->horizontalHeader()->setSortIndicator(c, m_tableSortOrder);
         m_table->sortItems(c, m_tableSortOrder);
     });
-
-    // ---------------------------------------------------- droite : details, plan, occupation
-    auto *rightScroll = new QScrollArea;
-    rightScroll->setWidgetResizable(true);
-    rightScroll->setFrameShape(QFrame::NoFrame);
-    rightScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    rightScroll->setFixedWidth(306);
-
-    auto *rightWidget = new QWidget;
-    auto *rv = new QVBoxLayout(rightWidget);
-    rv->setContentsMargins(0, 0, 8, 0);
-    rv->setSpacing(16);
-
-    m_detail = new DetailPanel;
-    rv->addWidget(m_detail);
-
-    // plan en direct
-    auto *planPanel = new QFrame;
-    planPanel->setObjectName("panel");
-    auto *pv = new QVBoxLayout(planPanel);
-    pv->setContentsMargins(16, 14, 16, 14);
-    pv->setSpacing(8);
-    auto *planHead = new QHBoxLayout;
-    auto *kicker = new QLabel(QStringLiteral("PLAN EN DIRECT"));
-    kicker->setObjectName("kicker");
-    QFont kf = kicker->font();
-    kf.setLetterSpacing(QFont::AbsoluteSpacing, 1.6);
-    kicker->setFont(kf);
-    auto *enlarge = new AnimatedButton(QStringLiteral("Agrandir"));
-    enlarge->setProperty("role", "link");
-    enlarge->setCursor(Qt::PointingHandCursor);
-    planHead->addWidget(kicker);
-    planHead->addStretch();
-    planHead->addWidget(enlarge);
-    pv->addLayout(planHead);
-    m_miniMap = new ClinicMap(true);
-    pv->addWidget(m_miniMap);
-    auto *legend = new QLabel(QStringLiteral(
-        "<span style='color:#4aa57a'>■</span> Dispo &nbsp; "
-        "<span style='color:#5b76c9'>■</span> Occupé &nbsp; "
-        "<span style='color:#d9972f'>■</span> H.S. &nbsp; "
-        "<span style='color:#c0504d'>●</span> À nettoyer"));
-    legend->setTextFormat(Qt::RichText);
-    legend->setStyleSheet(QStringLiteral("font-size:11px;color:#6f8a92;"));
-    pv->addWidget(legend);
-    rv->addWidget(planPanel);
-    connect(enlarge, &QPushButton::clicked, this, [this] { openPlan(); });
+    connect(ui.locauxEnlargeMap, &QPushButton::clicked, this, [this] { openPlan(); });
     connect(m_miniMap, &ClinicMap::roomClicked, this, [this](int id) { onCardClicked(id); });
-
-    // occupation globale
-    auto *global = new QFrame;
-    global->setObjectName("panel");
-    auto *gv = new QVBoxLayout(global);
-    gv->setContentsMargins(20, 16, 20, 16);
-    gv->setSpacing(6);
-    auto *gt = new QLabel(QStringLiteral("Occupation globale"));
-    gt->setObjectName("panelTitle");
-    m_pct = new QLabel(QStringLiteral("0 %"));
-    m_pct->setObjectName("big");
-    m_bar = new QProgressBar;
-    m_bar->setRange(0, 100);
-    m_bar->setTextVisible(false);
-    m_globalText = new QLabel;
-    m_globalText->setObjectName("sub");
-    gv->addWidget(gt);
-    gv->addWidget(m_pct);
-    gv->addWidget(m_bar);
-    gv->addWidget(m_globalText);
-    rv->addWidget(global);
-    if(OracleConnection::isOracle())global->hide();
-    rv->addStretch();
-
-    rightScroll->setWidget(rightWidget);
-    row->addWidget(rightScroll);
-
-    // ---------------------------------------------------- actions du panneau de detail
     connect(m_detail, &DetailPanel::assignRequested, this, [this] {
         modifySelected([this](Local &l) {
             if (l.outOfService || l.occupancy >= l.capacity)
@@ -452,8 +211,18 @@ QLayout *PageLocaux::buildBody()
     });
     connect(m_detail, &DetailPanel::editRequested, this, [this] { editSelected(); });
     connect(m_detail, &DetailPanel::deleteRequested, this, [this] { deleteSelected(); });
-    return row;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 // ================================================================ donnees affichees
 
