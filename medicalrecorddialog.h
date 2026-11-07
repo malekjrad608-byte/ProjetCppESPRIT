@@ -2,6 +2,7 @@
 #define MEDICALRECORDDIALOG_H
 
 #include <QDialog>
+#include <QDateEdit>
 #include <QComboBox>
 #include <QMap>
 #include <QVector>
@@ -59,6 +60,11 @@ public:
     bool rdvPlanifie() const;
     QDateTime rdvDate() const;
     QString telephone() const;
+    // Rappel vaccinal saisi directement dans le dossier (enregistré dans les Rappels vaccinaux)
+    bool vaccinPlanifie() const;
+    QDate dateVaccin() const;
+    QDate dateRappelVaccin() const;
+    QString nomVaccin() const;
 
 private slots:
     void onSaveClicked();
@@ -95,6 +101,9 @@ private:
     QCheckBox *m_chkRdv = nullptr;
     QDateTimeEdit *m_dateRdv = nullptr;
     QLineEdit *m_editPhone = nullptr;
+    QCheckBox *m_chkVacc = nullptr;
+    QDateEdit *m_dateVacc = nullptr;
+    QDateEdit *m_dateRappelVacc = nullptr;
 
     // Health widgets
     QTextEdit *m_editVaccinations;

@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QDateEdit>
+#include <QDateTimeEdit>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 #include <QVariantAnimation>
@@ -91,7 +92,7 @@ QString ValidatedField::typeSelector() const
     // Sélecteur de type : n'atteint pas les enfants (liste déroulante, calendrier, champ interne du combo).
     if (qobject_cast<QComboBox *>(m_field))        return "QComboBox";
     if (qobject_cast<QTextEdit *>(m_field))        return "QTextEdit";
-    if (qobject_cast<QDateEdit *>(m_field))        return "QDateEdit";
+    if (qobject_cast<QDateTimeEdit *>(m_field))    return "QDateTimeEdit";   // inclut QDateEdit
     if (qobject_cast<QDoubleSpinBox *>(m_field))   return "QDoubleSpinBox";
     if (qobject_cast<QSpinBox *>(m_field))         return "QSpinBox";
     return "QLineEdit";

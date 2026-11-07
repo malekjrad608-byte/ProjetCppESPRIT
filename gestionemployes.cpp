@@ -1,5 +1,5 @@
 #include "gestionemployes.h"
-#include "planning.h"
+#include "connection.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFormLayout>
@@ -21,6 +21,7 @@
 #include <QTableWidget>
 #include <QStackedWidget>
 #include <QTextEdit>
+#include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QDesktopServices>
@@ -30,9 +31,16 @@
 #include <QTextDocument>
 #include <QStandardPaths>
 #include <QDir>
-#include <QSqlQuery>
 #include <QSqlError>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QSaveFile>
+#include <QScreen>
+#include <QGuiApplication>
+#include <QPlainTextEdit>
 #include <QRegularExpression>
+#include <QRegularExpressionValidator>
 #include <QDate>
 #include <QHeaderView>
 #include <QMessageBox>
@@ -52,75 +60,14 @@
 #include <QLinearGradient>
 #include <QTableWidgetItem>
 #include <QSizePolicy>
+#include <QStandardItemModel>
+#include <QStandardItem>
 #include <QPaintEvent>
 #include <QVector>
 #include <cmath>
 #include <algorithm>
 
 namespace {
-QString afficherDateHeure(const QString &value)
-{
-    QDateTime dt = QDateTime::fromString(value, "yyyy-MM-dd HH:mm:ss");
-    if (!dt.isValid()) dt = QDateTime::fromString(value, Qt::ISODate);
-    return dt.isValid() ? dt.toString("dd/MM/yyyy HH:mm") : value;
-}
-
-// La requete SQL est dans le modele (Planning::conflits) : ici, uniquement la mise en forme.
-QStringList conflitsPlanning()
-{
-    QStringList conflits;
-    const QList<Planning::Conflit> liste = Planning::conflits();
-    for (const Planning::Conflit &c : liste) {
-        conflits << QString("%1 : « %2 » (%3–%4) chevauche « %5 » (%6–%7)")
-                        .arg(c.employe, c.titre1,
-                             afficherDateHeure(c.debut1),
-                             afficherDateHeure(c.fin1),
-                             c.titre2,
-                             afficherDateHeure(c.debut2),
-                             afficherDateHeure(c.fin2));
-    }
-    return conflits;
-}
-
-// La requete SQL est dans le modele (Planning::plagesAPartirDe).
-QStringList alertesHeuresConsecutives()
-{
-    QStringList alertes;
-    const QList<Planning::Plage> plages = Planning::plagesAPartirDe(QDate::currentDate());
-
-    int idCourant = -1;
-    QString nomCourant;
-    QDateTime debutSerie, finSerie;
-    auto verifierSerie = [&]() {
-        if (debutSerie.isValid() && finSerie.isValid() &&
-            debutSerie.secsTo(finSerie) >= 8 * 60 * 60) {
-            alertes << QString("⚠ %1 enchaîne au moins 8 heures de planning (%2–%3).")
-                           .arg(nomCourant,
-                                debutSerie.toString("dd/MM/yyyy HH:mm"),
-                                finSerie.toString("dd/MM/yyyy HH:mm"));
-        }
-    };
-
-    for (const Planning::Plage &p : plages) {
-        const int id = p.responsableId;
-        const QString nom = p.prenom + " " + p.nom;
-        const QDateTime debut = p.debut;
-        const QDateTime fin = p.fin;
-
-        if (id != idCourant || !finSerie.isValid() || debut > finSerie.addSecs(30 * 60)) {
-            verifierSerie();
-            idCourant = id;
-            nomCourant = nom;
-            debutSerie = debut;
-            finSerie = fin;
-        } else if (fin > finSerie) {
-            finSerie = fin;
-        }
-    }
-    verifierSerie();
-    return alertes;
-}
-
 // Graphique personnalisé Qt (sans dépendance supplémentaire à Qt Charts).
 // Il compare la charge hebdomadaire à la disponibilité de chaque employé.
 class CourbeChargeWidget : public QWidget
@@ -130,8 +77,8 @@ public:
                                 QWidget *parent = nullptr)
         : QWidget(parent), m_charges(charges)
     {
-        setMinimumHeight(260);
-        setFixedHeight(280);
+        setMinimumHeight(210);
+        setFixedHeight(230);
         setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         setAttribute(Qt::WA_OpaquePaintEvent, false);
     }
@@ -288,12 +235,60 @@ private:
 GestionEmployes::GestionEmployes(QWidget *parent) : QWidget(parent)
 {
     construireUI();
-    chargerEmployes();
+    appliquerEtatSchema();
+    if (m_schemaOk)
+        chargerEmployes();
 }
 
 void GestionEmployes::actualiserStats()
 {
-    mettreAJourStats();
+    // Appele par MainWindow a chaque affichage de la page : on revalide l'etat
+    // du schema (la connexion a pu etre retablie depuis la construction).
+    appliquerEtatSchema();
+    if (m_schemaOk)
+        mettreAJourStats();
+}
+
+// Mode degrade du module : si le schema Oracle des Employes est non conforme,
+// on affiche l'erreur ici et on desactive les boutons, sans toucher a la
+// connexion Oracle (les autres modules continuent de fonctionner).
+void GestionEmployes::appliquerEtatSchema()
+{
+    const Connection &cnx = Connection::createInstance();
+    const bool ok = cnx.schemaEmployesOk();
+    const bool etaitOk = m_schemaOk;
+    m_schemaOk = ok;
+
+    if (m_bandeauSchema) {
+        if (!ok) {
+            m_bandeauSchema->setText(
+                QStringLiteral("⚠  Module Employés désactivé\n\n"
+                               "La connexion Oracle fonctionne, mais la structure de la table EMPLOYER "
+                               "n'est pas celle de la relation. Les autres modules "
+                               "ne sont pas concernés.\n\nDétail :\n")
+                + cnx.erreurSchemaEmployes()
+                + QStringLiteral("\n\nVérifiez dans Oracle SQL Developer que la table EMPLOYER "
+                                 "existe et contient les 17 colonnes de la relation, "
+                                 "puis cliquez sur « Oracle connecté » en haut pour réessayer."));
+        }
+        m_bandeauSchema->setVisible(!ok);
+    }
+
+    const QString infobulle = ok
+        ? QString()
+        : QStringLiteral("Module Employés désactivé : schéma Oracle non conforme "
+                         "(voir le message en haut de la page).");
+    for (QPushButton *bouton : {m_btnNouveau, m_btnStats, m_btnEvaluation}) {
+        if (!bouton) continue;
+        bouton->setEnabled(ok);
+        bouton->setToolTip(infobulle);
+    }
+    if (!ok) {
+        effacerDetail();
+        afficherCards(QList<Employe>());
+    } else if (!etaitOk) {
+        chargerEmployes();   // schema repare entre-temps : on recharge liste + stats
+    }
 }
 
 // ==================== UI PRINCIPALE ====================
@@ -304,6 +299,19 @@ void GestionEmployes::construireUI()
     main->setSpacing(18);
 
     main->addWidget(construireHeader());
+
+    // Bandeau d'erreur du schema Employes (cache tant que tout va bien).
+    m_bandeauSchema = new QLabel;
+    m_bandeauSchema->setObjectName("bandeauSchemaEmployes");
+    m_bandeauSchema->setWordWrap(true);
+    m_bandeauSchema->setTextFormat(Qt::PlainText);
+    m_bandeauSchema->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    m_bandeauSchema->setStyleSheet(
+        "background-color: #FBE9E7; color: #8A2E27; border: 1px solid #E5B8B3;"
+        "border-radius: 10px; padding: 14px 18px; font-size: 13px;");
+    m_bandeauSchema->hide();
+    main->addWidget(m_bandeauSchema);
+
     main->addWidget(construireStatsPills());
     main->addWidget(construireBarreRecherche());
 
@@ -337,6 +345,7 @@ QWidget *GestionEmployes::construireHeader()
     layout->addStretch();
 
     QPushButton *btnNouveau = new QPushButton("+  Ajouter un employé");
+    m_btnNouveau = btnNouveau;
     btnNouveau->setObjectName("btnPrimary");
     btnNouveau->setMinimumHeight(44);
     btnNouveau->setMinimumWidth(210);
@@ -404,7 +413,7 @@ QWidget *GestionEmployes::construireStatsPills()
 
     QFrame *p1 = creerPill("✅", "#E6F4EA", "#2E7D32", m_lblDisponibles, "disponibles", 0);
     QFrame *p2 = creerPill("❌", "#FBE9E7", "#AE5751", m_lblIndisponibles, "indisponibles", 1);
-    QFrame *p3 = creerPill("⏱", "#FDF3E3", "#B8741A", m_lblChargeTotale, "heures planifiées", 2);
+    QFrame *p3 = creerPill("⏱", "#FDF3E3", "#B8741A", m_lblChargeTotale, "h de charge", 2);
 
     layout->addWidget(p1);
     layout->addWidget(p2);
@@ -413,6 +422,7 @@ QWidget *GestionEmployes::construireStatsPills()
     layout->addStretch();
 
     QPushButton *btnEvaluation = new QPushButton("⭐  Performance & Évaluation");
+    m_btnEvaluation = btnEvaluation;
     btnEvaluation->setObjectName("btnPrimary");
     btnEvaluation->setMinimumHeight(44);
     btnEvaluation->setMinimumWidth(220);
@@ -422,6 +432,7 @@ QWidget *GestionEmployes::construireStatsPills()
     layout->addWidget(btnEvaluation);
 
     QPushButton *btnStats = new QPushButton("📊  Voir les statistiques");
+    m_btnStats = btnStats;
     btnStats->setObjectName("btnSecondary");
     btnStats->setMinimumHeight(44);
     btnStats->setCursor(Qt::PointingHandCursor);
@@ -442,13 +453,17 @@ QWidget *GestionEmployes::construireStatsPills()
     connect(btnStats, &QPushButton::clicked, this, [this]() {
         QDialog dlg(this);
         dlg.setWindowTitle("Statistiques des employés");
-        dlg.resize(1020, 840);
-        dlg.setMinimumSize(880, 760);
+        const QRect zoneEcran = QGuiApplication::primaryScreen()
+                                    ? QGuiApplication::primaryScreen()->availableGeometry()
+                                    : QRect(0, 0, 1280, 800);
+        dlg.resize(qMin(1020, zoneEcran.width() - 70), qMin(720, zoneEcran.height() - 70));
+        dlg.setMinimumSize(qMin(820, zoneEcran.width() - 30), qMin(590, zoneEcran.height() - 30));
+        dlg.setSizeGripEnabled(true);
         dlg.setStyleSheet("QDialog { background-color: #F0F4F8; }");
 
         QVBoxLayout *mainL = new QVBoxLayout(&dlg);
-        mainL->setContentsMargins(25, 25, 25, 25);
-        mainL->setSpacing(15);
+        mainL->setContentsMargins(18, 16, 18, 14);
+        mainL->setSpacing(8);
 
         QLabel *titre = new QLabel("📊  Statistiques des employés");
         titre->setStyleSheet("font-size: 22px; font-weight: bold; color: #225A64;"
@@ -460,11 +475,10 @@ QWidget *GestionEmployes::construireStatsPills()
         mainL->addWidget(sous);
 
         QHBoxLayout *cardsL = new QHBoxLayout;
-        cardsL->setSpacing(12);
+        cardsL->setSpacing(8);
 
-        const QDate debutSemaine = Planning::semaineDebut();
-        // Les requetes sont dans le modele : Employe::chargesSemaine()
-        const QList<Employe::ChargeEmploye> charges = Employe::chargesSemaine(debutSemaine);
+        // Les requetes sont dans le modele : Employe::charges()
+        const QList<Employe::ChargeEmploye> charges = Employe::charges();
         const Employe::StatsCharge stats = Employe::statistiques(charges);
         const int totalEmp = stats.total;
         const double totalCharge = stats.somme;
@@ -478,14 +492,14 @@ QWidget *GestionEmployes::construireStatsPills()
             QFrame *card = new QFrame;
             card->setStyleSheet(QString(
                                     "QFrame { background-color: %1; border-radius: 14px; }").arg(bg));
-            card->setMinimumHeight(90);
+            card->setMinimumHeight(76);
 
             QHBoxLayout *l = new QHBoxLayout(card);
             l->setContentsMargins(15, 12, 15, 12);
             l->setSpacing(12);
 
             QLabel *ico = new QLabel(icone);
-            ico->setStyleSheet("font-size: 28px; background: transparent; border: none;");
+            ico->setStyleSheet("font-size: 24px; background: transparent; border: none;");
             l->addWidget(ico);
 
             QVBoxLayout *textL = new QVBoxLayout;
@@ -499,7 +513,7 @@ QWidget *GestionEmployes::construireStatsPills()
 
             QLabel *v = new QLabel(valeur);
             v->setStyleSheet(QString(
-                                 "font-size: 20px; font-weight: bold; color: %1;"
+                                 "font-size: 18px; font-weight: bold; color: %1;"
                                  "background: transparent; border: none;").arg(fg));
             textL->addWidget(v);
 
@@ -524,37 +538,129 @@ QWidget *GestionEmployes::construireStatsPills()
                                     "Charge max", QString::number(maxCharge, 'f', 0) + " h", "le plus chargé"));
 
         mainL->addLayout(cardsL);
-        mainL->addSpacing(5);
 
-        QStringList alertes;
-        for (const Employe::ChargeEmploye &c : charges) {
-            const double taux = c.dispo > 0 ? c.charge / c.dispo * 100.0
-                                            : (c.charge > 0 ? 100.0 : 0.0);
-            if (taux > 90.0) {
-                alertes << QString("⚠ %1 %2 : %3 % de charge (%4 h / %5 h). Rééquilibrage conseillé.")
-                               .arg(c.prenom, c.nom)
-                               .arg(qRound(taux)).arg(QString::number(c.charge, 'f', 1))
-                               .arg(QString::number(c.dispo, 'f', 1));
+        // Alertes et candidats de remplacement : aucun changement n'est fait dans Oracle.
+        auto tauxCharge = [](const Employe::ChargeEmploye &e) {
+            return e.dispo > 0.0 ? (e.charge / e.dispo) : (e.charge > 0.0 ? 1.0 : 0.0);
+        };
+        auto posteNormalise = [](QString poste) {
+            poste = poste.trimmed().toLower();
+            poste.replace("é", "e"); poste.replace("è", "e"); poste.replace("ê", "e");
+            poste.replace("à", "a"); poste.replace("ô", "o");
+            return poste;
+        };
+        auto candidatsRemplacants = [&](const Employe::ChargeEmploye &employe) {
+            QList<Employe::ChargeEmploye> candidats;
+            const QString posteCible = posteNormalise(employe.poste);
+            for (const Employe::ChargeEmploye &candidat : charges) {
+                if (candidat.id == employe.id || !candidat.disponible || candidat.dispo <= 0.0)
+                    continue;
+                if (posteNormalise(candidat.poste) != posteCible)
+                    continue;
+                if (candidat.charge >= candidat.dispo || tauxCharge(candidat) >= 0.90)
+                    continue;
+                candidats.append(candidat);
+            }
+            std::stable_sort(candidats.begin(), candidats.end(), [&](const auto &a, const auto &b) {
+                return tauxCharge(a) < tauxCharge(b);
+            });
+            return candidats;
+        };
+        auto proposerRemplacant = [&](const Employe::ChargeEmploye &employe) {
+            const QList<Employe::ChargeEmploye> candidats = candidatsRemplacants(employe);
+            if (candidats.isEmpty())
+                return QString("Aucun(e) %1 disponible avec une capacité restante.").arg(employe.poste);
+            const Employe::ChargeEmploye &meilleur = candidats.first();
+            return QString("Remplaçant proposé : %1 %2 — %3 h / %4 h (%5 %%).")
+                .arg(meilleur.prenom, meilleur.nom, QString::number(meilleur.charge, 'f', 1),
+                     QString::number(meilleur.dispo, 'f', 1))
+                .arg(qRound(tauxCharge(meilleur) * 100.0));
+        };
+
+        // Les affectations sont conservées dans un fichier JSON local (pas de table Oracle).
+        auto cheminFichierAffectations = []() {
+            QString dossier = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+            if (dossier.isEmpty())
+                dossier = QDir::homePath() + QLatin1String("/.aniworld");
+            QDir().mkpath(dossier);
+            return dossier + QLatin1String("/affectations_remplacements.json");
+        };
+        QJsonObject affectations;
+        {
+            QFile fichier(cheminFichierAffectations());
+            if (fichier.exists() && fichier.open(QIODevice::ReadOnly)) {
+                QJsonParseError erreurJson;
+                const QJsonDocument document = QJsonDocument::fromJson(fichier.readAll(), &erreurJson);
+                fichier.close();
+                if (erreurJson.error == QJsonParseError::NoError && document.isObject())
+                    affectations = document.object().value("affectations").toObject();
             }
         }
+        auto affectationActuelle = [&](const Employe::ChargeEmploye &employe) {
+            const int idRemplacant = affectations.value(QString::number(employe.id))
+                                         .toObject().value("remplacant_id").toInt();
+            for (const Employe::ChargeEmploye &candidat : charges) {
+                if (candidat.id == idRemplacant) {
+                    return QString("Affecté : %1 %2 (%3 h / %4 h).")
+                        .arg(candidat.prenom, candidat.nom,
+                             QString::number(candidat.charge, 'f', 1),
+                             QString::number(candidat.dispo, 'f', 1));
+                }
+            }
+            return QString();
+        };
 
-        alertes.append(alertesHeuresConsecutives());
-        const QStringList conflitsDetectes = conflitsPlanning();
-        for (const QString &conflit : conflitsDetectes)
-            alertes << "⚠ Conflit de planning : " + conflit;
-        if (alertes.isEmpty())
-            alertes << "✅ Aucun dépassement de 90 %, aucune séquence de 8 h détectée et aucun conflit de planning.";
+        QList<Employe::ChargeEmploye> ciblesAffectation;
+        int nbAbsents = 0;
+        int nbSurcharges = 0;
+        for (const Employe::ChargeEmploye &c : charges) {
+            if (!c.disponible) {
+                ++nbAbsents;
+                ciblesAffectation.append(c);
+            } else if (tauxCharge(c) >= 0.90) {
+                ++nbSurcharges;
+                ciblesAffectation.append(c);
+            }
+        }
+        auto construireListeAlertes = [&]() {
+            QStringList liste;
+            for (const Employe::ChargeEmploye &c : charges) {
+                const double taux = tauxCharge(c);
+                const QString nom = (c.prenom + " " + c.nom).trimmed();
+                if (!c.disponible) {
+                    QString detail = affectationActuelle(c);
+                    if (detail.isEmpty()) detail = proposerRemplacant(c);
+                    liste << QString("🔴 ABSENT / INDISPONIBLE : %1 (%2).\n   %3")
+                                 .arg(nom, c.poste, detail);
+                } else if (taux >= 0.90) {
+                    const QString niveau = taux >= 1.0 ? "CHARGE MAXIMALE" : "CHARGE PRESQUE MAXIMALE";
+                    QString detail = affectationActuelle(c);
+                    if (detail.isEmpty()) detail = proposerRemplacant(c);
+                    liste << QString("⚠ %1 : %2 (%3) — %4 % (%5 h / %6 h).\n   %7")
+                                 .arg(niveau, nom, c.poste).arg(qRound(taux * 100.0))
+                                 .arg(QString::number(c.charge, 'f', 1))
+                                 .arg(QString::number(c.dispo, 'f', 1))
+                                 .arg(detail);
+                }
+            }
+            if (liste.isEmpty())
+                liste << "✅ Aucun employé absent ou proche de sa charge maximale.";
+            return liste;
+        };
 
         QFrame *alertFrame = new QFrame;
         alertFrame->setStyleSheet("QFrame { background: #FFF4E5; border: 1px solid #F1CF98; border-radius: 10px; }");
         QVBoxLayout *alertLayout = new QVBoxLayout(alertFrame);
-        alertLayout->setContentsMargins(14, 10, 14, 10);
-        QLabel *alertTitle = new QLabel("🔔 Notifications au responsable");
+        alertLayout->setContentsMargins(12, 8, 12, 8);
+        QLabel *alertTitle = new QLabel(QString("🔔 Alertes au responsable  ·  %1 absence(s)  ·  %2 surcharge(s)")
+                                            .arg(nbAbsents).arg(nbSurcharges));
         alertTitle->setStyleSheet("font-weight: bold; color: #8A4B08; background: transparent; border: none;");
         alertLayout->addWidget(alertTitle);
-        QLabel *alertText = new QLabel(alertes.join("\n"));
-        alertText->setWordWrap(true);
-        alertText->setStyleSheet("color: #6D4C22; background: transparent; border: none;");
+        QPlainTextEdit *alertText = new QPlainTextEdit;
+        alertText->setReadOnly(true);
+        alertText->setPlainText(construireListeAlertes().join("\n"));
+        alertText->setFixedHeight(92);
+        alertText->setStyleSheet("QPlainTextEdit { color: #6D4C22; background: transparent; border: none; padding: 0; }");
         alertLayout->addWidget(alertText);
         mainL->addWidget(alertFrame);
 
@@ -567,7 +673,7 @@ QWidget *GestionEmployes::construireStatsPills()
         graphFrame->setStyleSheet("QFrame { background: #FFFFFF; border: 1px solid #D7E9ED;"
                                   "border-radius: 14px; }");
         QVBoxLayout *graphLayout = new QVBoxLayout(graphFrame);
-        graphLayout->setContentsMargins(10, 5, 10, 5);
+        graphLayout->setContentsMargins(8, 3, 8, 3);
         graphLayout->addWidget(new CourbeChargeWidget(charges, graphFrame));
         mainL->addWidget(graphFrame);
 
@@ -575,10 +681,10 @@ QWidget *GestionEmployes::construireStatsPills()
         basCard->setStyleSheet("QFrame { background-color: #E4F0F3;"
                                "border-radius: 12px; border: none; }");
         QHBoxLayout *basL = new QHBoxLayout(basCard);
-        basL->setContentsMargins(20, 14, 20, 14);
+        basL->setContentsMargins(14, 8, 14, 8);
 
         QLabel *basText = new QLabel(QString(
-                                         "⏱  <b>%1 heures</b> planifiées au total / semaine   ·   "
+                                         "⏱  <b>%1 heures</b> de charge au total / semaine   ·   "
                                          "📊  Moyenne : <b>%2 h</b> par employé   ·   "
                                          "🏆  Max : <b>%3 h</b>   ·   "
                                          "📉  Min : <b>%4 h</b>")
@@ -587,33 +693,198 @@ QWidget *GestionEmployes::construireStatsPills()
                                          .arg(QString::number(maxCharge, 'f', 0))
                                          .arg(QString::number(minCharge, 'f', 0)));
         basText->setTextFormat(Qt::RichText);
-        basText->setStyleSheet("font-size: 13px; color: #225A64;"
+        basText->setStyleSheet("font-size: 11px; color: #225A64;"
                                "background: transparent; border: none;");
         basL->addWidget(basText);
         basL->addStretch();
 
         mainL->addWidget(basCard);
 
-        QHBoxLayout *planningActions = new QHBoxLayout;
-        QPushButton *btnPlanifier = new QPushButton("🗓 Planifier + affecter automatiquement");
-        btnPlanifier->setObjectName("btnPrimary");
-        btnPlanifier->setMinimumHeight(42);
-        connect(btnPlanifier, &QPushButton::clicked, this, &GestionEmployes::ouvrirPlanification);
-        planningActions->addWidget(btnPlanifier);
+        // Bouton d'affectation placé en bas de la fenêtre Statistiques.
+        QHBoxLayout *actionsStats = new QHBoxLayout;
+        QPushButton *btnAffecter = new QPushButton("👥  Affecter un remplaçant");
+        btnAffecter->setObjectName("btnPrimary");
+        btnAffecter->setMinimumHeight(40);
+        btnAffecter->setMinimumWidth(230);
+        btnAffecter->setCursor(Qt::PointingHandCursor);
+        btnAffecter->setToolTip("Choisir et enregistrer les remplaçants des employés absents ou trop chargés.");
+        actionsStats->addWidget(btnAffecter);
+        actionsStats->addStretch();
+        QPushButton *btnFermerStats = new QPushButton("Fermer");
+        btnFermerStats->setObjectName("btnSecondary");
+        btnFermerStats->setMinimumHeight(40);
+        btnFermerStats->setMinimumWidth(120);
+        actionsStats->addWidget(btnFermerStats);
+        mainL->addLayout(actionsStats);
 
-        QPushButton *btnConflits = new QPushButton("🔎 Détecter les conflits");
-        btnConflits->setObjectName("btnSecondary");
-        btnConflits->setMinimumHeight(42);
-        connect(btnConflits, &QPushButton::clicked, this, &GestionEmployes::detecterConflitsPlanning);
-        planningActions->addWidget(btnConflits);
-        mainL->addLayout(planningActions);
+        connect(btnFermerStats, &QPushButton::clicked, &dlg, &QDialog::accept);
+        connect(btnAffecter, &QPushButton::clicked, &dlg, [&]() {
+            if (ciblesAffectation.isEmpty()) {
+                QMessageBox::information(&dlg, "Aucune affectation nécessaire",
+                                         "Aucun employé n'est absent ou proche de sa charge maximale.");
+                return;
+            }
 
-        QDialogButtonBox *btns = new QDialogButtonBox(QDialogButtonBox::Close);
-        btns->button(QDialogButtonBox::Close)->setText("Fermer");
-        btns->button(QDialogButtonBox::Close)->setMinimumHeight(42);
-        btns->button(QDialogButtonBox::Close)->setMinimumWidth(120);
-        connect(btns, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
-        mainL->addWidget(btns);
+            QDialog dialogueAffectation(&dlg);
+            dialogueAffectation.setWindowTitle("Affectation des remplaçants");
+            dialogueAffectation.resize(820, qMin(520, zoneEcran.height() - 80));
+            dialogueAffectation.setMinimumSize(650, 320);
+            dialogueAffectation.setStyleSheet("QDialog { background-color: #F0F4F8; }");
+            QVBoxLayout *affectL = new QVBoxLayout(&dialogueAffectation);
+            affectL->setContentsMargins(18, 16, 18, 14);
+            affectL->setSpacing(10);
+
+            QLabel *explication = new QLabel(
+                "Sélectionnez un remplaçant disponible du même poste. La proposition par défaut "
+                "est le collègue qui a le moins de charge. Les affectations sont sauvegardées "
+                "localement : aucune table Oracle n'est ajoutée et les données Oracle ne sont pas modifiées.");
+            explication->setWordWrap(true);
+            explication->setStyleSheet("color: #315B65; background: transparent;");
+            affectL->addWidget(explication);
+
+            QScrollArea *scrollAffect = new QScrollArea(&dialogueAffectation);
+            scrollAffect->setWidgetResizable(true);
+            scrollAffect->setFrameShape(QFrame::NoFrame);
+            scrollAffect->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            scrollAffect->setStyleSheet("QScrollArea { background: transparent; border: none; }");
+            QWidget *contenuAffect = new QWidget;
+            contenuAffect->setStyleSheet("background: transparent;");
+            QVBoxLayout *listeAffectL = new QVBoxLayout(contenuAffect);
+            listeAffectL->setContentsMargins(2, 2, 2, 2);
+            listeAffectL->setSpacing(8);
+            QList<QComboBox*> choixRemplacants;
+            choixRemplacants.reserve(ciblesAffectation.size());
+            QSet<int> remplacantsDejaProposes;
+
+            for (int row = 0; row < ciblesAffectation.size(); ++row) {
+                const Employe::ChargeEmploye cible = ciblesAffectation.at(row);
+                const QString nomCible = (cible.prenom + " " + cible.nom).trimmed();
+
+                QFrame *ligne = new QFrame(contenuAffect);
+                ligne->setStyleSheet("QFrame { background: white; border: 1px solid #D7E9ED; border-radius: 10px; }");
+                QHBoxLayout *ligneL = new QHBoxLayout(ligne);
+                ligneL->setContentsMargins(12, 9, 12, 9);
+                ligneL->setSpacing(12);
+
+                QVBoxLayout *infosL = new QVBoxLayout;
+                infosL->setSpacing(3);
+                QLabel *nomLabel = new QLabel(nomCible);
+                nomLabel->setStyleSheet("font-weight: bold; color: #225A64; background: transparent; border: none;");
+                infosL->addWidget(nomLabel);
+                const QString motif = !cible.disponible
+                    ? QString("Absent / indisponible · %1").arg(cible.poste)
+                    : QString("Charge : %1 % · %2").arg(qRound(tauxCharge(cible) * 100.0)).arg(cible.poste);
+                QLabel *motifLabel = new QLabel(motif);
+                motifLabel->setStyleSheet("font-size: 11px; color: #788A90; background: transparent; border: none;");
+                infosL->addWidget(motifLabel);
+                ligneL->addLayout(infosL, 2);
+
+                QComboBox *comboRemplacant = new QComboBox(ligne);
+                comboRemplacant->setMinimumHeight(38);
+                comboRemplacant->addItem("— Choisir un remplaçant —", 0);
+                const QList<Employe::ChargeEmploye> candidats = candidatsRemplacants(cible);
+                for (const Employe::ChargeEmploye &candidat : candidats) {
+                    comboRemplacant->addItem(
+                        QString("%1 %2 · %3%% · %4/%5 h")
+                            .arg(candidat.prenom, candidat.nom)
+                            .arg(qRound(tauxCharge(candidat) * 100.0))
+                            .arg(QString::number(candidat.charge, 'f', 1))
+                            .arg(QString::number(candidat.dispo, 'f', 1)),
+                        candidat.id);
+                }
+
+                const int idDejaAffecte = affectations.value(QString::number(cible.id))
+                                              .toObject().value("remplacant_id").toInt();
+                int indexSelectionne = comboRemplacant->findData(idDejaAffecte);
+                if (indexSelectionne > 0 && !remplacantsDejaProposes.contains(idDejaAffecte)) {
+                    comboRemplacant->setCurrentIndex(indexSelectionne);
+                    remplacantsDejaProposes.insert(idDejaAffecte);
+                } else {
+                    // Proposition initiale : le candidat disponible le moins chargé,
+                    // en évitant de proposer la même personne pour deux absences.
+                    for (int i = 1; i < comboRemplacant->count(); ++i) {
+                        const int idCandidat = comboRemplacant->itemData(i).toInt();
+                        if (!remplacantsDejaProposes.contains(idCandidat)) {
+                            comboRemplacant->setCurrentIndex(i);
+                            remplacantsDejaProposes.insert(idCandidat);
+                            break;
+                        }
+                    }
+                }
+                if (candidats.isEmpty()) {
+                    comboRemplacant->clear();
+                    comboRemplacant->addItem("Aucun remplaçant admissible", 0);
+                    comboRemplacant->setEnabled(false);
+                }
+                ligneL->addWidget(comboRemplacant, 3);
+                listeAffectL->addWidget(ligne);
+                choixRemplacants.append(comboRemplacant);
+            }
+            listeAffectL->addStretch();
+            scrollAffect->setWidget(contenuAffect);
+            affectL->addWidget(scrollAffect, 1);
+
+            QDialogButtonBox *boutonsAffect = new QDialogButtonBox;
+            QPushButton *btnEnregistrerAffect = boutonsAffect->addButton(
+                "💾  Enregistrer les affectations", QDialogButtonBox::AcceptRole);
+            QPushButton *btnAnnulerAffect = boutonsAffect->addButton(
+                "Annuler", QDialogButtonBox::RejectRole);
+            btnEnregistrerAffect->setObjectName("btnPrimary");
+            btnEnregistrerAffect->setMinimumHeight(40);
+            btnAnnulerAffect->setMinimumHeight(40);
+            affectL->addWidget(boutonsAffect);
+
+            connect(btnAnnulerAffect, &QPushButton::clicked,
+                    &dialogueAffectation, &QDialog::reject);
+            connect(btnEnregistrerAffect, &QPushButton::clicked, &dialogueAffectation, [&]() {
+                QSet<int> remplacantsChoisis;
+                QJsonObject nouvellesAffectations = affectations;
+                for (int row = 0; row < ciblesAffectation.size(); ++row) {
+                    const int idCible = ciblesAffectation.at(row).id;
+                    const int idRemplacant = choixRemplacants.at(row)->currentData().toInt();
+                    nouvellesAffectations.remove(QString::number(idCible));
+                    if (idRemplacant <= 0)
+                        continue;
+                    if (remplacantsChoisis.contains(idRemplacant)) {
+                        QMessageBox::warning(&dialogueAffectation, "Affectation non valide",
+                                             "Un même employé ne peut pas être affecté à plusieurs remplacements en même temps.");
+                        return;
+                    }
+                    remplacantsChoisis.insert(idRemplacant);
+                    QJsonObject affectation;
+                    affectation.insert("remplacant_id", idRemplacant);
+                    affectation.insert("enregistre_le", QDateTime::currentDateTime().toString(Qt::ISODate));
+                    nouvellesAffectations.insert(QString::number(idCible), affectation);
+                }
+
+                QJsonObject racine;
+                racine.insert("version", 1);
+                racine.insert("affectations", nouvellesAffectations);
+                QSaveFile fichier(cheminFichierAffectations());
+                if (!fichier.open(QIODevice::WriteOnly)) {
+                    QMessageBox::critical(&dialogueAffectation, "Erreur d'enregistrement",
+                                          "Impossible d'enregistrer les affectations : " + fichier.errorString());
+                    return;
+                }
+                const QByteArray contenu = QJsonDocument(racine).toJson(QJsonDocument::Indented);
+                if (fichier.write(contenu) != contenu.size() || !fichier.commit()) {
+                    const QString erreur = fichier.errorString();
+                    fichier.cancelWriting();
+                    QMessageBox::critical(&dialogueAffectation, "Erreur d'enregistrement",
+                                          "Impossible d'enregistrer les affectations : " + erreur);
+                    return;
+                }
+
+                affectations = nouvellesAffectations;
+                alertText->setPlainText(construireListeAlertes().join("\n"));
+                QMessageBox::information(&dialogueAffectation, "Affectations enregistrées",
+                                         "Les remplaçants ont été affectés et enregistrés localement.\n"
+                                         "Aucune table ni donnée Oracle n'a été modifiée.");
+                dialogueAffectation.accept();
+            });
+
+            dialogueAffectation.exec();
+        });
 
         dlg.exec();
     });
@@ -623,15 +894,18 @@ QWidget *GestionEmployes::construireStatsPills()
 }
 
 // ==================== PERFORMANCE & EVALUATION ====================
-// Cette fenetre est distincte des statistiques : elle permet au responsable
-// de saisir une evaluation professionnelle, de la conserver dans Oracle,
-// puis de produire un PDF ou de preparer un message Gmail.
+// Cette fenetre permet de saisir, conserver localement et modifier l'evaluation
+// de chaque employe, puis de produire un PDF ou de preparer un message Gmail.
+// Le schema Oracle reste strictement inchange (aucune table supplementaire).
 void GestionEmployes::ouvrirEvaluationEmployes()
 {
     QDialog dlg(this);
     dlg.setWindowTitle("Performance & Évaluation des employés");
-    dlg.resize(1080, 760);
-    dlg.setMinimumSize(900, 650);
+    const QRect zoneEvaluation = QGuiApplication::primaryScreen()
+                                     ? QGuiApplication::primaryScreen()->availableGeometry()
+                                     : QRect(0, 0, 1280, 800);
+    dlg.resize(qMin(1080, zoneEvaluation.width() - 70), qMin(760, zoneEvaluation.height() - 70));
+    dlg.setMinimumSize(qMin(900, zoneEvaluation.width() - 30), qMin(620, zoneEvaluation.height() - 30));
     dlg.setStyleSheet("QDialog { background-color: #F0F4F8; }");
 
     QVBoxLayout *root = new QVBoxLayout(&dlg);
@@ -660,8 +934,7 @@ void GestionEmployes::ouvrirEvaluationEmployes()
     // Reprendre les quatre indicateurs de la fenetre Statistiques et les garder
     // au-dessus de la recherche, comme dans l'interface precedente.
     const QList<Employe> employes = Employe::afficherTous();
-    const QDate debutSemaine = Planning::semaineDebut();
-    const QList<Employe::ChargeEmploye> charges = Employe::chargesSemaine(debutSemaine);
+    const QList<Employe::ChargeEmploye> charges = Employe::charges();
     const Employe::StatsCharge stats = Employe::statistiques(charges);
 
     QHBoxLayout *cardsLayout = new QHBoxLayout;
@@ -928,7 +1201,7 @@ void GestionEmployes::ouvrirEvaluationEmployes()
     QTextEdit *axesAmelioration = addTextField("Axes d'amélioration", "Ex. : améliorer le suivi des dossiers ou la communication...", 68);
     QTextEdit *commentaires = addTextField("Commentaire général du responsable", "Écrire ici l'avis et les observations concernant cet employé...", 82);
     QTextEdit *objectifs = addTextField("Objectifs / recommandations", "Ex. : suivre une formation, améliorer une compétence, respecter un objectif...", 68);
-    commentsLayout->addWidget(new QLabel("Les commentaires sont saisis par le responsable et seront conservés dans l'historique Oracle."));
+    commentsLayout->addWidget(new QLabel("Les notes et commentaires sont sauvegardés automatiquement et peuvent être modifiés à tout moment."));
     formLayout->addWidget(commentsFrame);
 
     QFrame *metaFrame = new QFrame;
@@ -951,12 +1224,6 @@ void GestionEmployes::ouvrirEvaluationEmployes()
     reviewStatus->setStyleSheet("QLabel { background: #E9F3F5; color: #315B65; border-radius: 8px; padding: 9px; }");
     formLayout->addWidget(reviewStatus);
 
-    QPushButton *btnSaveReview = new QPushButton("💾  Enregistrer l'évaluation dans Oracle");
-    btnSaveReview->setObjectName("btnPrimary");
-    btnSaveReview->setMinimumHeight(44);
-    btnSaveReview->setCursor(Qt::PointingHandCursor);
-    formLayout->addWidget(btnSaveReview, 0, Qt::AlignRight);
-
     scroll->setWidget(formContent);
     ficheLayout->addWidget(scroll, 1);
     pages->addWidget(pageFiche);
@@ -965,6 +1232,13 @@ void GestionEmployes::ouvrirEvaluationEmployes()
     QHBoxLayout *actionsLayout = new QHBoxLayout;
     actionsLayout->setSpacing(10);
     root->addLayout(actionsLayout);
+
+    QPushButton *btnSave = new QPushButton("💾  Enregistrer");
+    btnSave->setObjectName("btnPrimary");
+    btnSave->setMinimumHeight(42);
+    btnSave->setCursor(Qt::PointingHandCursor);
+    btnSave->setVisible(false);
+    actionsLayout->addWidget(btnSave);
 
     QPushButton *btnPdf = new QPushButton("📄  Exporter PDF");
     btnPdf->setObjectName("btnSecondary");
@@ -991,8 +1265,40 @@ void GestionEmployes::ouvrirEvaluationEmployes()
     Employe employeSelectionne;
     bool hasEmployee = false;
     bool loadingReview = false;
-    bool reviewSaved = false;
-    QString derniereDateReview;
+    bool reviewModified = false;
+
+    // Les evaluations restent dans un fichier local de l'application :
+    // on ne cree aucune table/colonne supplementaire dans Oracle.
+    auto cheminFichierEvaluations = []() {
+        QString dossier = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        if (dossier.isEmpty())
+            dossier = QDir::homePath() + QLatin1String("/.aniworld");
+        QDir().mkpath(dossier);
+        return dossier + QLatin1String("/evaluations_employes.json");
+    };
+
+    auto lireEvaluations = [&](QJsonObject &racine, QString *erreur) {
+        const QString chemin = cheminFichierEvaluations();
+        QFile fichier(chemin);
+        if (!fichier.exists()) {
+            racine = QJsonObject();
+            return true;
+        }
+        if (!fichier.open(QIODevice::ReadOnly)) {
+            if (erreur) *erreur = fichier.errorString();
+            return false;
+        }
+        const QByteArray contenu = fichier.readAll();
+        fichier.close();
+        QJsonParseError parseErreur;
+        const QJsonDocument document = QJsonDocument::fromJson(contenu, &parseErreur);
+        if (parseErreur.error != QJsonParseError::NoError || !document.isObject()) {
+            if (erreur) *erreur = QString("Fichier d'évaluations illisible : %1").arg(parseErreur.errorString());
+            return false;
+        }
+        racine = document.object();
+        return true;
+    };
 
     auto calculerNote = [&]() -> double {
         int total = 0;
@@ -1013,10 +1319,7 @@ void GestionEmployes::ouvrirEvaluationEmployes()
             globalScore->setText(QString("%1 / 6 critères notés").arg(count));
     };
     auto rendreActionsDisponibles = [&]() {
-        // Les actions sont utilisables dès qu'un employé est choisi. Elles
-        // travaillent sur le contenu actuellement affiché, même avant la
-        // sauvegarde Oracle ; la sauvegarde reste nécessaire pour conserver
-        // l'historique dans la base.
+        btnSave->setEnabled(hasEmployee);
         btnPdf->setEnabled(hasEmployee);
         btnGmail->setEnabled(hasEmployee);
         if (employeSelectionne.getCourriel().trimmed().isEmpty())
@@ -1024,12 +1327,73 @@ void GestionEmployes::ouvrirEvaluationEmployes()
         else
             btnGmail->setToolTip("Ouvre Gmail avec le destinataire et l'évaluation affichée préremplis.");
     };
+
+    auto sauvegarderEvaluation = [&](bool afficherConfirmation) -> bool {
+        if (!hasEmployee || employeSelectionne.getId() <= 0)
+            return false;
+
+        QJsonObject racine;
+        QString erreurLecture;
+        if (!lireEvaluations(racine, &erreurLecture)) {
+            reviewStatus->setText("❌ Impossible de lire les évaluations : " + erreurLecture);
+            if (afficherConfirmation)
+                QMessageBox::critical(&dlg, "Erreur d'enregistrement", erreurLecture);
+            return false;
+        }
+
+        QJsonObject toutes = racine.value("evaluations").toObject();
+        QJsonObject fiche;
+        QJsonArray notes;
+        for (int valeur : ratingValues)
+            notes.append(valeur);
+        fiche.insert("notes", notes);
+        fiche.insert("pointsForts", pointsForts->toPlainText());
+        fiche.insert("axesAmelioration", axesAmelioration->toPlainText());
+        fiche.insert("commentaires", commentaires->toPlainText());
+        fiche.insert("objectifs", objectifs->toPlainText());
+        fiche.insert("dateEvaluation", dateEvaluation->date().toString(Qt::ISODate));
+        fiche.insert("evaluateur", evaluateur->text().trimmed());
+        fiche.insert("noteGlobale", calculerNote());
+        fiche.insert("updatedAt", QDateTime::currentDateTime().toString(Qt::ISODate));
+
+        // Une seule fiche par ID_EMP : chaque sauvegarde remplace la précédente.
+        toutes.insert(QString::number(employeSelectionne.getId()), fiche);
+        racine.insert("version", 1);
+        racine.insert("evaluations", toutes);
+
+        QSaveFile fichier(cheminFichierEvaluations());
+        if (!fichier.open(QIODevice::WriteOnly)) {
+            const QString erreur = fichier.errorString();
+            reviewStatus->setText("❌ Enregistrement impossible : " + erreur);
+            if (afficherConfirmation)
+                QMessageBox::critical(&dlg, "Erreur d'enregistrement", erreur);
+            return false;
+        }
+        const QByteArray donnees = QJsonDocument(racine).toJson(QJsonDocument::Indented);
+        if (fichier.write(donnees) != donnees.size() || !fichier.commit()) {
+            const QString erreur = fichier.errorString();
+            reviewStatus->setText("❌ Enregistrement impossible : " + erreur);
+            if (afficherConfirmation)
+                QMessageBox::critical(&dlg, "Erreur d'enregistrement", erreur);
+            return false;
+        }
+
+        reviewModified = false;
+        reviewStatus->setText("✅ Évaluation enregistrée. Les changements suivants remplaceront cette version.");
+        if (afficherConfirmation)
+            QMessageBox::information(&dlg, "Évaluation enregistrée",
+                                     "L'évaluation de " + employeSelectionne.getPrenom() + " " +
+                                     employeSelectionne.getNom() + " a été sauvegardée. Vous la retrouverez en rouvrant sa fiche.");
+        return true;
+    };
+
     auto marquerModifie = [&]() {
-        if (loadingReview) return;
-        reviewSaved = false;
-        rendreActionsDisponibles();
-        reviewStatus->setText("Modifications non enregistrées. PDF et Gmail utilisent le contenu affiché ; cliquez sur Enregistrer pour conserver cette version dans l'historique Oracle.");
+        if (loadingReview || !hasEmployee) return;
+        reviewModified = true;
         actualiserNote();
+        // Sauvegarde automatique à chaque changement, en plus du bouton.
+        // Ainsi, fermer la fenêtre ou revenir à la liste ne fait pas perdre la note.
+        sauvegarderEvaluation(false);
     };
     for (int i = 0; i < ratingStarButtons.size(); ++i) {
         for (int j = 0; j < ratingStarButtons.at(i).size(); ++j) {
@@ -1096,7 +1460,7 @@ void GestionEmployes::ouvrirEvaluationEmployes()
         return html;
     };
 
-    auto chargerDerniereEvaluation = [&]() {
+    auto reinitialiserFiche = [&]() {
         loadingReview = true;
         for (int i = 0; i < ratingValues.size(); ++i) actualiserEtoiles(i, 0);
         pointsForts->clear();
@@ -1105,36 +1469,33 @@ void GestionEmployes::ouvrirEvaluationEmployes()
         objectifs->clear();
         evaluateur->clear();
         dateEvaluation->setDate(QDate::currentDate());
-        reviewSaved = false;
-        derniereDateReview.clear();
+        reviewModified = false;
 
-        QSqlQuery q;
-        q.prepare("SELECT TO_CHAR(DATE_EVALUATION, 'YYYY-MM-DD'), EVALUATEUR, "
-                  "DISCIPLINE, COMPORTEMENT, COMPETENCES, QUALITE, HYGIENE, RESPONSABILITE, "
-                  "POINTS_FORTS, AXES_AMELIORATION, COMMENTAIRES, OBJECTIFS "
-                  "FROM EMPLOYE_EVALUATIONS WHERE EMPLOYE_ID=:id "
-                  "ORDER BY DATE_EVALUATION DESC, ID DESC");
-        q.bindValue(":id", employeSelectionne.getId());
-        if (q.exec() && q.next()) {
-            derniereDateReview = q.value(0).toString();
-            const QDate loadedDate = QDate::fromString(derniereDateReview, "yyyy-MM-dd");
-            if (loadedDate.isValid()) dateEvaluation->setDate(loadedDate);
-            evaluateur->setText(q.value(1).toString());
-            for (int i = 0; i < ratingValues.size(); ++i) {
-                const int value = q.value(2 + i).toInt();
-                actualiserEtoiles(i, (value >= 1 && value <= 5) ? value : 0);
-            }
-            pointsForts->setPlainText(q.value(8).toString());
-            axesAmelioration->setPlainText(q.value(9).toString());
-            commentaires->setPlainText(q.value(10).toString());
-            objectifs->setPlainText(q.value(11).toString());
-            reviewSaved = true;
-            reviewStatus->setText("Dernière évaluation enregistrée le " + loadedDate.toString("dd/MM/yyyy") +
-                                  ". Vous pouvez la consulter ou la modifier, puis enregistrer une nouvelle version.");
+        QJsonObject racine;
+        QString erreurLecture;
+        if (!lireEvaluations(racine, &erreurLecture)) {
+            reviewStatus->setText("⚠ Impossible de charger l'évaluation sauvegardée : " + erreurLecture);
         } else {
-            reviewStatus->setText("Aucune évaluation enregistrée pour cet employé. Le responsable peut remplir les critères ci-dessus.");
+            const QJsonObject toutes = racine.value("evaluations").toObject();
+            const QJsonObject fiche = toutes.value(QString::number(employeSelectionne.getId())).toObject();
+            if (!fiche.isEmpty()) {
+                const QJsonArray notes = fiche.value("notes").toArray();
+                for (int i = 0; i < ratingValues.size(); ++i) {
+                    const int valeur = i < notes.size() ? qBound(0, notes.at(i).toInt(), 5) : 0;
+                    actualiserEtoiles(i, valeur);
+                }
+                pointsForts->setPlainText(fiche.value("pointsForts").toString());
+                axesAmelioration->setPlainText(fiche.value("axesAmelioration").toString());
+                commentaires->setPlainText(fiche.value("commentaires").toString());
+                objectifs->setPlainText(fiche.value("objectifs").toString());
+                const QDate dateStockee = QDate::fromString(fiche.value("dateEvaluation").toString(), Qt::ISODate);
+                if (dateStockee.isValid()) dateEvaluation->setDate(dateStockee);
+                evaluateur->setText(fiche.value("evaluateur").toString());
+                reviewStatus->setText("✅ Évaluation précédente chargée. Toute modification remplacera automatiquement cette version.");
+            } else {
+                reviewStatus->setText("Nouvelle fiche : saisissez les notes et commentaires. Les changements seront enregistrés automatiquement.");
+            }
         }
-        q.finish();
         loadingReview = false;
         actualiserNote();
         rendreActionsDisponibles();
@@ -1162,8 +1523,9 @@ void GestionEmployes::ouvrirEvaluationEmployes()
         else if (poste.contains("entretien"))
             competenceHint = "Nettoyage, désinfection, organisation des espaces et respect des protocoles d'hygiène.";
         criterionHints.at(2)->setText(competenceHint);
-        chargerDerniereEvaluation();
+        reinitialiserFiche();
         pages->setCurrentWidget(pageFiche);
+        btnSave->setVisible(true);
         btnPdf->setVisible(true);
         btnGmail->setVisible(true);
         rendreActionsDisponibles();
@@ -1180,6 +1542,7 @@ void GestionEmployes::ouvrirEvaluationEmployes()
             [&](int row, int) { choisirEmploye(row); });
     connect(btnRetour, &QPushButton::clicked, &dlg, [&]() {
         pages->setCurrentWidget(pageListe);
+        btnSave->setVisible(false);
         btnPdf->setVisible(false);
         btnGmail->setVisible(false);
         btnPdf->setEnabled(false);
@@ -1188,59 +1551,13 @@ void GestionEmployes::ouvrirEvaluationEmployes()
         searchEdit->setFocus();
     });
 
-    connect(btnSaveReview, &QPushButton::clicked, &dlg, [&]() {
-        if (!hasEmployee) return;
-        for (int i = 0; i < ratingValues.size(); ++i) {
-            if (ratingValues.at(i) < 1) {
-                QMessageBox::warning(&dlg, "Évaluation incomplète",
-                                     "Veuillez attribuer une note aux six critères en cliquant sur les étoiles.");
-                if (!ratingStarButtons.at(i).isEmpty()) ratingStarButtons.at(i).first()->setFocus();
-                return;
-            }
-        }
-        if (!dateEvaluation->date().isValid()) {
-            QMessageBox::warning(&dlg, "Date invalide", "Veuillez choisir une date d'évaluation valide.");
-            return;
-        }
-        const double note = calculerNote();
-        QSqlQuery q;
-        q.prepare("INSERT INTO EMPLOYE_EVALUATIONS (EMPLOYE_ID, DATE_EVALUATION, EVALUATEUR, "
-                  "DISCIPLINE, COMPORTEMENT, COMPETENCES, QUALITE, HYGIENE, RESPONSABILITE, "
-                  "POINTS_FORTS, AXES_AMELIORATION, COMMENTAIRES, OBJECTIFS, NOTE_GLOBALE) "
-                  "VALUES (:emp, TO_DATE(:dateEval, 'YYYY-MM-DD'), :evaluateur, :discipline, "
-                  ":comportement, :competences, :qualite, :hygiene, :responsabilite, "
-                  ":points, :axes, :commentaires, :objectifs, :note)");
-        q.bindValue(":emp", employeSelectionne.getId());
-        q.bindValue(":dateEval", dateEvaluation->date().toString("yyyy-MM-dd"));
-        q.bindValue(":evaluateur", evaluateur->text().trimmed());
-        q.bindValue(":discipline", ratingValues.at(0));
-        q.bindValue(":comportement", ratingValues.at(1));
-        q.bindValue(":competences", ratingValues.at(2));
-        q.bindValue(":qualite", ratingValues.at(3));
-        q.bindValue(":hygiene", ratingValues.at(4));
-        q.bindValue(":responsabilite", ratingValues.at(5));
-        q.bindValue(":points", pointsForts->toPlainText().trimmed());
-        q.bindValue(":axes", axesAmelioration->toPlainText().trimmed());
-        q.bindValue(":commentaires", commentaires->toPlainText().trimmed());
-        q.bindValue(":objectifs", objectifs->toPlainText().trimmed());
-        q.bindValue(":note", note);
-        if (!q.exec()) {
-            QMessageBox::critical(&dlg, "Erreur d'enregistrement",
-                                  "L'évaluation n'a pas pu être enregistrée dans Oracle :\n" + q.lastError().text());
-            q.finish();
-            return;
-        }
-        q.finish();
-        reviewSaved = true;
-        derniereDateReview = dateEvaluation->date().toString("yyyy-MM-dd");
-        reviewStatus->setText(QString("✅ Évaluation enregistrée dans Oracle. Note globale : %1 / 5. Vous pouvez maintenant exporter le PDF ou préparer l'envoi Gmail.")
-                              .arg(note, 0, 'f', 2));
-        rendreActionsDisponibles();
-        QMessageBox::information(&dlg, "Évaluation enregistrée", "L'évaluation de l'employé a bien été conservée dans Oracle.");
+    connect(btnSave, &QPushButton::clicked, &dlg, [&]() {
+        sauvegarderEvaluation(true);
     });
 
     connect(btnPdf, &QPushButton::clicked, &dlg, [&]() {
         if (!hasEmployee) return;
+        if (reviewModified && !sauvegarderEvaluation(false)) return;
         QString defaultName = "Evaluation_" + employeSelectionne.getPrenom() + "_" + employeSelectionne.getNom() + ".pdf";
         defaultName.replace(QRegularExpression("[^A-Za-z0-9_.-]"), "_");
         const QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + defaultName;
@@ -1260,13 +1577,12 @@ void GestionEmployes::ouvrirEvaluationEmployes()
             return;
         }
         QMessageBox::information(&dlg, "PDF créé",
-                                 "Le rapport d'évaluation a été exporté :\n" + path +
-                                 (reviewSaved ? "\n\nCette évaluation est également enregistrée dans Oracle."
-                                              : "\n\nAttention : cette version n'est pas encore enregistrée dans l'historique Oracle."));
+                                 "Le rapport d'évaluation a été exporté :\n" + path);
     });
 
     connect(btnGmail, &QPushButton::clicked, &dlg, [&]() {
         if (!hasEmployee) return;
+        if (reviewModified && !sauvegarderEvaluation(false)) return;
         const QString destinataire = employeSelectionne.getCourriel().trimmed();
         if (destinataire.isEmpty()) {
             QMessageBox::warning(&dlg, "Adresse manquante", "Aucune adresse courriel n'est enregistrée pour cet employé.");
@@ -1404,7 +1720,7 @@ QWidget *GestionEmployes::creerCard(const Employe &e)
     QHBoxLayout *botRow = new QHBoxLayout;
     botRow->setSpacing(10);
 
-    QLabel *charge = new QLabel(QString("⏱ %1 h").arg(e.getChargeHebdo(), 0, 'f', 0));
+    QLabel *charge = new QLabel(QString("⏱ %1 h").arg(e.getCharge(), 0, 'f', 0));
     charge->setStyleSheet("font-size: 11px; color: #263B42; font-weight: 500;"
                           "background: transparent;");
     botRow->addWidget(charge);
@@ -1501,12 +1817,18 @@ QWidget *GestionEmployes::construireDetailPanel()
         return row;
     };
 
-    contentL->addLayout(creerRow("Poste", m_detailPoste));
+    contentL->addLayout(creerRow("CIN", m_detailCin));
+    contentL->addLayout(creerRow("Naissance", m_detailNaissance));
+    contentL->addLayout(creerRow("Adresse", m_detailAdresse));
+    contentL->addLayout(creerRow("Téléphone", m_detailTel));
     contentL->addLayout(creerRow("Courriel", m_detailCourriel));
-    contentL->addLayout(creerRow("Téléphone", m_detailTelephone));
+    contentL->addLayout(creerRow("Poste", m_detailPoste));
+    contentL->addLayout(creerRow("Service", m_detailService));
+    contentL->addLayout(creerRow("Contrat", m_detailContrat));
     contentL->addLayout(creerRow("Embauche", m_detailDate));
+    contentL->addLayout(creerRow("Salaire", m_detailSalaire));
     contentL->addLayout(creerRow("Charge", m_detailCharge));
-    contentL->addLayout(creerRow("Dispo", m_detailDispo));
+    contentL->addLayout(creerRow("Repos", m_detailDispo));
     contentL->addLayout(creerRow("Compétences", m_detailCompetences));
 
     contentL->addSpacing(20);
@@ -1546,6 +1868,10 @@ QWidget *GestionEmployes::construireDetailPanel()
 void GestionEmployes::chargerEmployes(const QString &filtre, const QString &tri,
                                       const QString &poste, const QString &statut)
 {
+    // Schema Employes non conforme : on ne lance aucune requete (filtres inclus).
+    if (!m_schemaOk)
+        return;
+
     // Aucune requete ici : tout passe par le modele Employe (architecture Modele-Vue)
     const QList<Employe> liste = Employe::rechercher(filtre, tri, poste, statut);
 
@@ -1581,7 +1907,7 @@ void GestionEmployes::afficherDetail(const Employe &e)
     m_detailContent->show();
 
     m_detailNom->setText(e.getPrenom() + " " + e.getNom());
-    m_detailId->setText(QString("ID Employé #%1").arg(e.getId()));
+    m_detailId->setText(QString("ID_EMP #%1").arg(e.getId()));
 
     if (e.isDisponible()) {
         m_detailStatut->setText("✅  Disponible");
@@ -1595,15 +1921,27 @@ void GestionEmployes::afficherDetail(const Employe &e)
             "padding: 8px; border-radius: 8px; font-weight: bold; border: none;");
     }
 
-    m_detailPoste->setText(e.getPoste());
+    m_detailCin->setText(e.getCin().isEmpty() ? "-" : e.getCin());
+    m_detailNaissance->setText(e.getDateNaiss().isValid()
+                                   ? e.getDateNaiss().toString("dd/MM/yyyy") : "-");
+    m_detailAdresse->setText(e.getAdresse().isEmpty() ? "-" : e.getAdresse());
+    m_detailTel->setText(e.getTel().isEmpty() ? "-" : e.getTel());
     m_detailCourriel->setText(e.getCourriel().isEmpty() ? "-" : e.getCourriel());
-    m_detailTelephone->setText(e.getTelephone().isEmpty() ? "-" : e.getTelephone());
-    m_detailDate->setText(e.getDateEmbauche().toString("dd/MM/yyyy"));
+    m_detailPoste->setText(e.getPoste());
+    m_detailService->setText(e.getIdServ() > 0 ? Employe::libelleService(e.getIdServ()) : "-");
+    m_detailContrat->setText(e.getTypeContrat().isEmpty() ? "-" : e.getTypeContrat());
+    m_detailDate->setText(e.getDateEmbauche().isValid()
+                              ? e.getDateEmbauche().toString("dd/MM/yyyy") : "-");
+    m_detailSalaire->setText(QString("%1 DT").arg(e.getSalaire(), 0, 'f', 2));
 
     double taux = e.tauxCharge() * 100;
     m_detailCharge->setText(QString("%1 h (%2%)")
-                                .arg(e.getChargeHebdo(), 0, 'f', 0).arg(qRound(taux)));
-    m_detailDispo->setText(QString("%1 h").arg(e.getDispoHebdo(), 0, 'f', 0));
+                                .arg(e.getCharge(), 0, 'f', 0).arg(qRound(taux)));
+    const QString reposTexte = e.getDispoReposText().trimmed();
+    bool reposNumerique = false;
+    reposTexte.toDouble(&reposNumerique);
+    m_detailDispo->setText(reposTexte.isEmpty() ? "Non renseigné"
+                                                : (reposNumerique ? reposTexte + " h" : reposTexte));
     m_detailCompetences->setText(e.getCompetences().isEmpty() ? "-" : e.getCompetences());
 }
 
@@ -1620,8 +1958,7 @@ void GestionEmployes::mettreAJourStats()
     m_lblDisponibles->setText(QString::number(Employe::compterParDisponibilite(true)));
     m_lblIndisponibles->setText(QString::number(Employe::compterParDisponibilite(false)));
 
-    double total = Employe::chargeTotaleDisponibles();
-    total += Planning::chargePlanifieeSemaine(Planning::semaineDebut());
+    const double total = Employe::chargeTotaleDisponibles();
 
     m_lblChargeTotale->setText(QString::number(qRound(total)));
 }
@@ -1697,113 +2034,236 @@ bool GestionEmployes::ouvrirDialog(Employe &e, bool modification)
 {
     QDialog dlg(this);
     dlg.setWindowTitle(modification ? "Modifier l'employé" : "Nouvel employé");
-    dlg.setMinimumWidth(520);
+    const QRect zoneFormulaire = QGuiApplication::primaryScreen()
+                                     ? QGuiApplication::primaryScreen()->availableGeometry()
+                                     : QRect(0, 0, 1280, 800);
+    dlg.resize(qMin(1040, zoneFormulaire.width() - 60), qMin(700, zoneFormulaire.height() - 70));
+    dlg.setMinimumSize(qMin(900, zoneFormulaire.width() - 30), qMin(610, zoneFormulaire.height() - 30));
     dlg.setStyleSheet("QDialog { background-color: #F0F4F8; }");
 
     QVBoxLayout *mainL = new QVBoxLayout(&dlg);
-    mainL->setContentsMargins(25, 25, 25, 25);
-    mainL->setSpacing(15);
+    mainL->setContentsMargins(24, 20, 24, 18);
+    mainL->setSpacing(12);
 
     QLabel *titre = new QLabel(modification ? "✏️  Modifier l'employé" : "➕  Nouvel employé");
     titre->setStyleSheet("font-size: 20px; font-weight: bold; color: #225A64;"
                          "background: transparent;");
     mainL->addWidget(titre);
 
-    QFormLayout *form = new QFormLayout;
-    form->setSpacing(12);
+    QGridLayout *form = new QGridLayout;
+    form->setContentsMargins(0, 4, 0, 4);
+    form->setHorizontalSpacing(18);
+    form->setVerticalSpacing(12);
+    form->setColumnMinimumWidth(0, 118);
+    form->setColumnMinimumWidth(2, 138);
+    form->setColumnStretch(1, 1);
+    form->setColumnStretch(3, 1);
+    auto ajouterChamp = [&](int ligne, int colonne, const QString &libelle, QWidget *champ) {
+        QLabel *label = new QLabel(libelle);
+        label->setMinimumWidth(colonne == 0 ? 112 : 132);
+        label->setStyleSheet("font-size: 13px; color: #244B56; background: transparent;");
+        form->addWidget(label, ligne, colonne, Qt::AlignVCenter);
+        form->addWidget(champ, ligne, colonne + 1);
+    };
 
     QLineEdit *editNom = new QLineEdit(e.getNom());
-    editNom->setMinimumHeight(40);
+    editNom->setMinimumHeight(46);
     editNom->setPlaceholderText("Nom *");
-    form->addRow("Nom *", editNom);
+    ajouterChamp(0, 0, "Nom *", editNom);
 
     QLineEdit *editPrenom = new QLineEdit(e.getPrenom());
-    editPrenom->setMinimumHeight(40);
+    editPrenom->setMinimumHeight(46);
     editPrenom->setPlaceholderText("Prénom *");
-    form->addRow("Prénom *", editPrenom);
+    ajouterChamp(1, 0, "Prénom *", editPrenom);
+
+    QLineEdit *editCin = new QLineEdit(e.getCin());
+    editCin->setMinimumHeight(46);
+    editCin->setMaxLength(8);
+    editCin->setPlaceholderText("8 chiffres *");
+    editCin->setValidator(new QRegularExpressionValidator(QRegularExpression("[0-9]{0,8}"), editCin));
+    ajouterChamp(2, 0, "CIN *", editCin);
+
+    // Une date sentinelle permet d'afficher un vrai état vide au lieu de
+    // préremplir silencieusement une date que l'utilisateur n'a pas choisie.
+    const QDate dateNonRenseignee(1900, 1, 1);
+    QDateEdit *dateNaiss = new QDateEdit;
+    dateNaiss->setMinimumHeight(46);
+    dateNaiss->setCalendarPopup(true);
+    dateNaiss->setDisplayFormat("dd/MM/yyyy");
+    dateNaiss->setMinimumDate(dateNonRenseignee);
+    dateNaiss->setMaximumDate(QDate::currentDate());
+    dateNaiss->setSpecialValueText("Choisir une date *");
+    dateNaiss->setDate(e.getDateNaiss().isValid() ? e.getDateNaiss() : dateNonRenseignee);
+    ajouterChamp(3, 0, "Date de naissance *", dateNaiss);
+
+    QLineEdit *editAdresse = new QLineEdit(e.getAdresse());
+    editAdresse->setMinimumHeight(46);
+    editAdresse->setMaxLength(250);
+    ajouterChamp(4, 0, "Adresse", editAdresse);
+
+    QLineEdit *editTel = new QLineEdit(e.getTel());
+    editTel->setMinimumHeight(46);
+    editTel->setPlaceholderText("+216 20 000 000");
+    ajouterChamp(5, 0, modification ? "Tél" : "Tél *", editTel);
 
     QLineEdit *editCourriel = new QLineEdit(e.getCourriel());
-    editCourriel->setMinimumHeight(40);
-    form->addRow("Courriel", editCourriel);
-
-    QLineEdit *editTel = new QLineEdit(e.getTelephone());
-    editTel->setMinimumHeight(40);
-    form->addRow("Téléphone", editTel);
+    editCourriel->setMinimumHeight(46);
+    editCourriel->setPlaceholderText("nom@domaine.tn");
+    ajouterChamp(6, 0, modification ? "Courriel" : "Courriel *", editCourriel);
 
     QComboBox *comboPoste = new QComboBox;
-    comboPoste->setMinimumHeight(40);
+    comboPoste->setMinimumHeight(46);
+    comboPoste->addItem("— Choisir un poste —", QString());
     comboPoste->addItems({"Vétérinaire", "Assistant(e) vétérinaire",
                           "Auxiliaire vétérinaire", "Secrétaire / Réceptionniste",
                           "Agent d'entretien", "Aide aux soins animaliers"});
-    if (!e.getPoste().isEmpty()) comboPoste->setCurrentText(e.getPoste());
-    form->addRow("Poste", comboPoste);
+    if (!e.getPoste().isEmpty()) {
+        if (comboPoste->findText(e.getPoste()) < 0)
+            comboPoste->addItem(e.getPoste());
+        comboPoste->setCurrentText(e.getPoste());
+    } else {
+        comboPoste->setCurrentIndex(0);
+    }
+    ajouterChamp(0, 2, "Poste *", comboPoste);
 
-    QDateEdit *dateEmb = new QDateEdit(e.getDateEmbauche().isValid() ?
-                                           e.getDateEmbauche() : QDate::currentDate());
-    dateEmb->setMinimumHeight(40);
+    // Service facultatif : vide par défaut. Les libellés visibles sont les
+    // catégories de SERVICE ; seuls les services ayant un ID_SERV existant
+    // peuvent être sélectionnés et enregistrés comme clé étrangère.
+    QComboBox *comboService = new QComboBox;
+    comboService->setMinimumHeight(46);
+    comboService->addItem("— Aucun service —", 0);
+    const QList<Employe::ServiceInfo> services = Employe::listerServices();
+    for (const Employe::ServiceInfo &sv : services) {
+        const int index = comboService->count();
+        comboService->addItem(sv.libelle, sv.id);
+        if (sv.id <= 0) {
+            if (QStandardItemModel *model = qobject_cast<QStandardItemModel*>(comboService->model())) {
+                if (QStandardItem *item = model->item(index)) {
+                    item->setEnabled(false);
+                    item->setToolTip("Cette catégorie n'a pas encore de ligne correspondante dans SERVICE.");
+                }
+            }
+        }
+    }
+    if (e.getIdServ() > 0) {
+        int idx = comboService->findData(e.getIdServ());
+        if (idx < 0) {
+            comboService->addItem(QString("Service #%1").arg(e.getIdServ()), e.getIdServ());
+            idx = comboService->count() - 1;
+        }
+        comboService->setCurrentIndex(idx);
+    } else {
+        comboService->setCurrentIndex(0);
+    }
+    ajouterChamp(6, 2, "Service", comboService);
+
+    QComboBox *comboContrat = new QComboBox;
+    comboContrat->setMinimumHeight(46);
+    comboContrat->addItem("— Choisir un type de contrat —", QString());
+    comboContrat->addItems({"CDI", "CDD", "CIVP", "Stage", "Contractuel"});
+    if (!e.getTypeContrat().isEmpty()) {
+        if (comboContrat->findText(e.getTypeContrat()) < 0)
+            comboContrat->addItem(e.getTypeContrat());
+        comboContrat->setCurrentText(e.getTypeContrat());
+    } else {
+        comboContrat->setCurrentIndex(0);
+    }
+    ajouterChamp(2, 2, "Type de contrat *", comboContrat);
+
+    QDateEdit *dateEmb = new QDateEdit;
+    dateEmb->setMinimumHeight(46);
     dateEmb->setCalendarPopup(true);
     dateEmb->setDisplayFormat("dd/MM/yyyy");
-    form->addRow("Embauche", dateEmb);
+    dateEmb->setMinimumDate(dateNonRenseignee);
+    dateEmb->setMaximumDate(QDate::currentDate());
+    dateEmb->setSpecialValueText("Choisir une date *");
+    dateEmb->setDate(e.getDateEmbauche().isValid() ? e.getDateEmbauche() : dateNonRenseignee);
+    ajouterChamp(1, 2, "Date d'embauche *", dateEmb);
+
+    QLineEdit *editSalaire = new QLineEdit(e.getSalaire() > 0
+                                               ? QString::number(e.getSalaire(), 'f', 0) : QString());
+    editSalaire->setMinimumHeight(46);
+    editSalaire->setPlaceholderText("Ex. : 1500");
+    editSalaire->setValidator(new QRegularExpressionValidator(
+        QRegularExpression("[0-9]{0,7}([.,][0-9]{0,2})?"), editSalaire));
+    ajouterChamp(3, 2, modification ? "Salaire (DT)" : "Salaire (DT) *", editSalaire);
 
     QDoubleSpinBox *spinCharge = new QDoubleSpinBox;
-    spinCharge->setMinimumHeight(40);
+    spinCharge->setMinimumHeight(46);
     spinCharge->setRange(0, 60);
     spinCharge->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
     spinCharge->setSingleStep(1.0);
     spinCharge->setAccelerated(true);
     spinCharge->setSuffix(" h");
-    spinCharge->setValue(e.getChargeHebdo());
-    form->addRow("Charge hebdo", spinCharge);
+    spinCharge->setValue(e.getCharge());
+    ajouterChamp(4, 2, "Charge (h / semaine)", spinCharge);
 
-    QDoubleSpinBox *spinDispo = new QDoubleSpinBox;
-    spinDispo->setMinimumHeight(40);
-    spinDispo->setRange(1, 60);
-    spinDispo->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
-    spinDispo->setSingleStep(1.0);
-    spinDispo->setAccelerated(true);
-    spinDispo->setSuffix(" h");
-    spinDispo->setValue(e.getDispoHebdo() > 0 ? e.getDispoHebdo() : 35);
-    form->addRow("Dispo hebdo", spinDispo);
+    QLineEdit *editRepos = new QLineEdit(e.getDispoReposText());
+    editRepos->setMinimumHeight(46);
+    editRepos->setMaxLength(20);
+    editRepos->setPlaceholderText("Ex. : Dimanche");
+    ajouterChamp(5, 2, "Repos", editRepos);
 
     QLineEdit *editComp = new QLineEdit(e.getCompetences());
-    editComp->setMinimumHeight(40);
+    editComp->setMinimumHeight(46);
     editComp->setPlaceholderText("Soins, Toilettage...");
-    form->addRow("Compétences", editComp);
+    ajouterChamp(7, 0, "Compétences", editComp);
 
     QCheckBox *checkDispo = new QCheckBox("Disponible");
     checkDispo->setTristate(false);
     checkDispo->setChecked(modification ? e.isDisponible() : true);
-    form->addRow("", checkDispo);
+    form->addWidget(checkDispo, 7, 3, Qt::AlignLeft | Qt::AlignVCenter);
 
-    mainL->addLayout(form);
-    mainL->addSpacing(10);
+    // Le formulaire est long : il defile dans la fenetre au lieu de depasser l'ecran.
+    QWidget *formContent = new QWidget;
+    formContent->setStyleSheet("background: transparent;");
+    formContent->setLayout(form);
+    QScrollArea *formScroll = new QScrollArea;
+    formScroll->setWidgetResizable(true);
+    formScroll->setFrameShape(QFrame::NoFrame);
+    formScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    formScroll->setStyleSheet("QScrollArea { background: transparent; border: none; }");
+    formScroll->setWidget(formContent);
+    formScroll->setMinimumHeight(470);
+    mainL->addWidget(formScroll, 1);
+    mainL->addSpacing(4);
 
     QDialogButtonBox *btns = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     btns->button(QDialogButtonBox::Ok)->setText(modification ? "Modifier" : "Ajouter");
-    btns->button(QDialogButtonBox::Ok)->setMinimumHeight(44);
+    btns->button(QDialogButtonBox::Ok)->setMinimumHeight(46);
     btns->button(QDialogButtonBox::Ok)->setMinimumWidth(120);
-    btns->button(QDialogButtonBox::Cancel)->setMinimumHeight(44);
+    btns->button(QDialogButtonBox::Cancel)->setMinimumHeight(46);
     btns->button(QDialogButtonBox::Cancel)->setMinimumWidth(120);
     // Construit un Employe a partir des champs du formulaire (id conserve)
     auto lireFormulaire = [&]() {
         Employe saisie = e;
         saisie.setNom(editNom->text().trimmed());
         saisie.setPrenom(editPrenom->text().trimmed());
+        saisie.setCin(editCin->text().trimmed());
+        saisie.setDateNaiss(dateNaiss->date() == dateNonRenseignee ? QDate() : dateNaiss->date());
+        saisie.setAdresse(editAdresse->text().trimmed());
+        saisie.setTel(editTel->text().trimmed());
         saisie.setCourriel(editCourriel->text().trimmed());
-        saisie.setTelephone(editTel->text().trimmed());
-        saisie.setPoste(comboPoste->currentText());
-        saisie.setDateEmbauche(dateEmb->date());
+        saisie.setPoste(comboPoste->currentIndex() <= 0 ? QString() : comboPoste->currentText());
+        saisie.setIdServ(comboService->currentData().toInt());
+        saisie.setTypeContrat(comboContrat->currentIndex() <= 0 ? QString() : comboContrat->currentText());
+        saisie.setDateEmbauche(dateEmb->date() == dateNonRenseignee ? QDate() : dateEmb->date());
+        QString salaireTexte = editSalaire->text().trimmed();
+        salaireTexte.replace(',', '.');
+        saisie.setSalaire(salaireTexte.isEmpty()
+                              ? (modification ? e.getSalaire() : -1.0)
+                              : salaireTexte.toDouble());
+        saisie.setCharge(spinCharge->value());
+        saisie.setDispoRepos(editRepos->text().trimmed());
         saisie.setDisponible(checkDispo->isChecked());
-        saisie.setChargeHebdo(spinCharge->value());
-        saisie.setDispoHebdo(spinDispo->value());
         saisie.setCompetences(editComp->text().trimmed());
         return saisie;
     };
 
     // Controle de saisie (C++) : le dialogue reste ouvert tant que la saisie est invalide
     connect(btns, &QDialogButtonBox::accepted, &dlg, [&]() {
-        const QString erreurSaisie = lireFormulaire().validerSaisie();
+        const QString erreurSaisie = lireFormulaire().validerSaisie(!modification, !modification);
         if (!erreurSaisie.isEmpty()) {
             QMessageBox::warning(&dlg, "Validation", erreurSaisie);
             return;
@@ -1832,8 +2292,9 @@ bool GestionEmployes::ouvrirDialog(Employe &e, bool modification)
 void GestionEmployes::ajouterEmploye()
 {
     Employe vide;
-    vide.setDispoHebdo(35);
-    vide.setDateEmbauche(QDate::currentDate());
+    vide.setDispoRepos(QString());
+    vide.setTypeContrat(QString());
+    vide.setDateEmbauche(QDate());
 
     if (ouvrirDialog(vide, false)) {
         QMessageBox::information(this, "Succès", "✅ Employé ajouté");
@@ -1921,8 +2382,8 @@ void GestionEmployes::verifierAdequation()
     const QList<Employe> trouves = Employe::rechercherParCompetence(comp);
     for (const Employe &e : trouves) {
         const QString nom = e.getNom() + " " + e.getPrenom();
-        const double dispoH = e.getDispoHebdo();
-        const double taux = dispoH > 0 ? (e.getChargeHebdo() / dispoH * 100.0) : 0;
+        const double dispoH = e.getDispoRepos();
+        const double taux = dispoH > 0 ? (e.getCharge() / dispoH * 100.0) : 0;
         resultats << QString("• %1 — %2 (%3% de charge)")
                          .arg(nom, e.getPoste()).arg(qRound(taux));
     }
@@ -1943,9 +2404,9 @@ void GestionEmployes::verifierEquilibrage()
     const QList<Employe> liste = Employe::listerDisponiblesParCharge(true);
     for (const Employe &e : liste) {
         const QString nom = e.getNom() + " " + e.getPrenom();
-        const double charge = e.getChargeHebdo();
-        const double d = e.getDispoHebdo();
-        const double taux = charge / d;
+        const double charge = e.getCharge();
+        const double d = e.getDispoRepos();
+        const double taux = d > 0 ? charge / d : 0.0;
 
         if (taux > 0.8)
             surcharges << QString("⚠️  %1 — %2% (%3 h / %4 h)")
@@ -1962,133 +2423,4 @@ void GestionEmployes::verifierEquilibrage()
         msg += "🟢 Moins chargés (<50%) — candidats réaffectation :\n" + dispo.join("\n");
 
     QMessageBox::information(this, "EMP-12 · Équilibrage", msg);
-}
-
-// ==================== PLANIFICATION ====================
-void GestionEmployes::ouvrirPlanification()
-{
-    QDialog dlg(this);
-    dlg.setWindowTitle("Planifier une tâche — affectation automatique");
-    dlg.setMinimumWidth(520);
-    dlg.setStyleSheet("QDialog { background-color: #F0F4F8; }");
-
-    QVBoxLayout *layout = new QVBoxLayout(&dlg);
-    layout->setContentsMargins(24, 24, 24, 24);
-    layout->setSpacing(14);
-
-    QLabel *titre = new QLabel("🗓 Nouvelle tâche à planifier");
-    titre->setStyleSheet("font-size: 20px; font-weight: bold; color: #225A64; background: transparent;");
-    layout->addWidget(titre);
-
-    QFormLayout *form = new QFormLayout;
-    form->setSpacing(12);
-
-    QLineEdit *editTitre = new QLineEdit;
-    editTitre->setPlaceholderText("Ex. Consultation, soins, accueil...");
-    editTitre->setMinimumHeight(40);
-    form->addRow("Tâche *", editTitre);
-
-    QLineEdit *editCompetence = new QLineEdit;
-    editCompetence->setPlaceholderText("Ex. Soins, Chirurgie, Accueil");
-    editCompetence->setMinimumHeight(40);
-    form->addRow("Spécialité requise *", editCompetence);
-
-    QDateTime start = QDateTime::currentDateTime().addSecs(3600);
-    start.setTime(QTime(start.time().hour(), start.time().minute(), 0));
-    QDateTime end = start.addSecs(2 * 3600);
-    QDateTimeEdit *dateDebut = new QDateTimeEdit(start);
-    dateDebut->setCalendarPopup(true);
-    dateDebut->setDisplayFormat("dd/MM/yyyy HH:mm");
-    dateDebut->setMinimumHeight(40);
-    form->addRow("Début", dateDebut);
-
-    QDateTimeEdit *dateFin = new QDateTimeEdit(end);
-    dateFin->setCalendarPopup(true);
-    dateFin->setDisplayFormat("dd/MM/yyyy HH:mm");
-    dateFin->setMinimumHeight(40);
-    form->addRow("Fin", dateFin);
-
-    QDoubleSpinBox *heures = new QDoubleSpinBox;
-    heures->setRange(0.5, 24.0);
-    heures->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
-    heures->setAccelerated(true);
-    heures->setSingleStep(0.5);
-    heures->setValue(2.0);
-    heures->setSuffix(" h");
-    heures->setMinimumHeight(40);
-    form->addRow("Charge de cette tâche", heures);
-
-    layout->addLayout(form);
-    QLabel *info = new QLabel("Le système choisira une personne disponible avec la spécialité demandée, "
-                              "sans chevauchement horaire et avec la charge prévue la plus faible.");
-    info->setWordWrap(true);
-    info->setStyleSheet("color: #657B80; background: transparent;");
-    layout->addWidget(info);
-
-    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-    buttons->button(QDialogButtonBox::Ok)->setText("Affecter automatiquement");
-    buttons->button(QDialogButtonBox::Ok)->setMinimumHeight(42);
-    buttons->button(QDialogButtonBox::Cancel)->setMinimumHeight(42);
-    connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
-    connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
-    layout->addWidget(buttons);
-
-    if (dlg.exec() != QDialog::Accepted) return;
-    Planning tache;
-    tache.setTitre(editTitre->text().trimmed());
-    tache.setCompetence(editCompetence->text().trimmed());
-    tache.setDebut(dateDebut->dateTime());
-    tache.setFin(dateFin->dateTime());
-    tache.setHeures(heures->value());
-
-    // Controle de saisie (C++)
-    const QString erreurSaisie = tache.validerSaisie();
-    if (!erreurSaisie.isEmpty()) {
-        QMessageBox::warning(this, "Saisie invalide", erreurSaisie);
-        return;
-    }
-
-    // Choix du responsable + INSERT : tout est dans le modele Planning
-    QString meilleurNom, erreur;
-    double meilleurTaux = 0.0;
-    const Planning::Resultat resultat =
-        tache.affecterAutomatiquement(meilleurNom, meilleurTaux, erreur);
-
-    if (resultat == Planning::Resultat::AucunResponsable) {
-        QMessageBox::warning(this, "Aucun responsable disponible",
-                             "Aucune personne disponible ne possède cette spécialité avec une capacité suffisante "
-                             "et sans conflit horaire. Essayez une autre date, une autre spécialité ou une charge plus faible.");
-        return;
-    }
-    if (resultat == Planning::Resultat::ErreurBase) {
-        QMessageBox::critical(this, "Erreur d'enregistrement",
-                              "La tâche n'a pas été enregistrée : " + erreur);
-        return;
-    }
-
-    const QString nomTache = tache.getTitre();
-    const QDateTime debut = tache.getDebut();
-    const QDateTime fin = tache.getFin();
-
-    mettreAJourStats();
-    QString message = QString("Tâche « %1 » enregistrée et affectée à %2.\n"
-                              "Créneau : %3 – %4\nCharge prévue après affectation : %5 %%. ")
-                          .arg(nomTache, meilleurNom, debut.toString("dd/MM/yyyy HH:mm"),
-                               fin.toString("dd/MM/yyyy HH:mm"))
-                          .arg(qRound(meilleurTaux * 100));
-    if (meilleurTaux > 0.90)
-        message += "\n⚠ Attention : charge supérieure à 90 %, rééquilibrage conseillé.";
-    QMessageBox::information(this, "Affectation automatique", message);
-}
-
-void GestionEmployes::detecterConflitsPlanning()
-{
-    const QStringList conflits = conflitsPlanning();
-    if (conflits.isEmpty()) {
-        QMessageBox::information(this, "Vérification du planning",
-                                 "✅ Aucun chevauchement détecté entre les tâches affectées.");
-        return;
-    }
-    QMessageBox::warning(this, "Conflits de planification détectés",
-                         "Les affectations suivantes se chevauchent :\n\n" + conflits.join("\n\n"));
 }

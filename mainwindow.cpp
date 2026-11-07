@@ -1,10 +1,10 @@
-#include "espacelocaux.h"   // module Gestion des locaux
 #include "loginvisuals.h"
 #include "mainwindow.h"
+#include "espacelocaux.h"   // module Gestion des locaux
 #include "gestionemployes.h"
 #include "employe.h"
-#include "connection.h"
 #include "medicalwindow.h"
+#include "connection.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -75,6 +75,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     zoneLayout->addWidget(m_stack, 1);
     main->addWidget(zone, 1);
+
+    // Page d'accueil : Dossiers médicaux
+    QTimer::singleShot(0, this, &MainWindow::afficherDossiers);
 }
 
 // ==================== TOP BAR ====================
@@ -108,16 +111,16 @@ QFrame *MainWindow::creerTopBar()
             return;
 
         struct DemoEmployee {
-            QString nom, prenom, email, telephone, poste, date, competences;
+            QString nom, prenom, cin, naissance, email, telephone, poste, date, competences;
             double charge;
         };
         const QList<DemoEmployee> demos = {
-            {"Ben Ali", "Sami", "sami@aniworld.tn", "+216 20 111 111", "Vétérinaire", "2020-01-15", "Soins, Chirurgie, Diagnostic", 30},
-            {"Trabelsi", "Amine", "amine@aniworld.tn", "+216 20 222 222", "Assistant(e) vétérinaire", "2021-03-10", "Soins, Vaccination", 28},
-            {"Mansouri", "Youssef", "youssef@aniworld.tn", "+216 20 333 333", "Auxiliaire vétérinaire", "2022-06-01", "Toilettage, Soins", 20},
-            {"Karoui", "Lina", "lina@aniworld.tn", "+216 20 444 444", "Secrétaire / Réceptionniste", "2019-09-20", "Accueil, Réservation", 25},
-            {"Gharbi", "Sarra", "sarra@aniworld.tn", "+216 20 555 555", "Agent d'entretien", "2023-02-05", "Nettoyage", 22},
-            {"Jelassi", "Nour", "nour@aniworld.tn", "+216 20 666 666", "Aide aux soins animaliers", "2023-07-12", "Soins, Alimentation", 24}
+            {"Ben Ali", "Sami", "09100001", "1985-04-12", "sami@aniworld.tn", "+216 20 111 111", "Vétérinaire", "2020-01-15", "Soins, Chirurgie, Diagnostic", 30},
+            {"Trabelsi", "Amine", "09100002", "1990-08-23", "amine@aniworld.tn", "+216 20 222 222", "Assistant(e) vétérinaire", "2021-03-10", "Soins, Vaccination", 28},
+            {"Mansouri", "Youssef", "09100003", "1993-01-30", "youssef@aniworld.tn", "+216 20 333 333", "Auxiliaire vétérinaire", "2022-06-01", "Toilettage, Soins", 20},
+            {"Karoui", "Lina", "09100004", "1988-11-05", "lina@aniworld.tn", "+216 20 444 444", "Secrétaire / Réceptionniste", "2019-09-20", "Accueil, Réservation", 25},
+            {"Gharbi", "Sarra", "09100005", "1995-06-17", "sarra@aniworld.tn", "+216 20 555 555", "Agent d'entretien", "2023-02-05", "Nettoyage", 22},
+            {"Jelassi", "Nour", "09100006", "1997-03-09", "nour@aniworld.tn", "+216 20 666 666", "Aide aux soins animaliers", "2023-07-12", "Soins, Alimentation", 24}
         };
 
         int ajoutes = 0;
@@ -129,12 +132,16 @@ QFrame *MainWindow::creerTopBar()
             e.setNom(d.nom);
             e.setPrenom(d.prenom);
             e.setCourriel(d.email);
-            e.setTelephone(d.telephone);
+            e.setCin(d.cin);
+            e.setDateNaiss(QDate::fromString(d.naissance, "yyyy-MM-dd"));
+            e.setTypeContrat("CDI");
+            e.setSalaire(1200);
+            e.setTel(d.telephone);
             e.setPoste(d.poste);
             e.setDateEmbauche(QDate::fromString(d.date, "yyyy-MM-dd"));
             e.setDisponible(true);
-            e.setChargeHebdo(d.charge);
-            e.setDispoHebdo(35);
+            e.setCharge(d.charge);
+            e.setDispoRepos(35);
             e.setCompetences(d.competences);
 
             QString erreur;

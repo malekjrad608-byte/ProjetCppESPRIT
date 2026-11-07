@@ -1,4 +1,5 @@
 #include "vaccination.h"
+#include "rappelsdb.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -51,26 +52,25 @@ int VaccinationManager::intervalleParDefaut(const QString &espece, const QString
 QList<Vaccination> VaccinationManager::tousLesVaccins()
 {
     QList<Vaccination> list;
-    QSqlQuery query;
-    query.prepare("SELECT ID_VACCIN, ID_ANIMAL, NOM_ANIMAL, ESPECE, PROPRIETAIRE, TEL_PROPRIETAIRE, "
-                  "NOM_VACCIN, DATE_VACCIN, DATE_RAPPEL, DATE_SMS FROM VACCINATION");
-    if (!query.exec()) {
-        qDebug() << "SELECT VACCINATION :" << query.lastError().text();
-        return list;
-    }
-    while (query.next()) {
-        Vaccination v;
-        v.idVaccin     = query.value(0).toString();
-        v.idAnimal     = query.value(1).toString();
-        v.nomAnimal    = query.value(2).toString();
-        v.espece       = query.value(3).toString();
-        v.proprietaire = query.value(4).toString();
-        v.telephone    = query.value(5).toString();
-        v.nomVaccin    = query.value(6).toString();
-        v.dateVaccin   = query.value(7).toDate();
-        v.dateRappel   = query.value(8).toDate();
-        v.dateSms      = query.value(9).toDate();
-        list.append(v);
+    for (const RappelsDb::Ligne &l : RappelsDb::lireLignes()) {
+        const QStringList en = RappelsDb::entrees(l.vaccins);
+        for (int i = 0; i < en.size(); ++i) {
+            const QStringList f = en[i].split('|');
+            if (f.size() < 3)
+                continue;
+            Vaccination v;
+            v.idVaccin     = QString("%1:%2").arg(l.idDossier).arg(i);
+            v.idAnimal     = RappelsDb::idAnimalTexte(l.refAnimal);
+            v.nomAnimal    = l.nom;
+            v.espece       = l.espece;
+            v.proprietaire = l.proprietaire;
+            v.telephone    = l.telephone;
+            v.nomVaccin    = f[0];
+            v.dateVaccin   = QDate::fromString(f[1], Qt::ISODate);
+            v.dateRappel   = QDate::fromString(f[2], Qt::ISODate);
+            v.dateSms      = f.size() > 3 ? QDate::fromString(f[3], Qt::ISODate) : QDate();
+            list.append(v);
+        }
     }
     return list;
 }
@@ -166,25 +166,19 @@ bool VaccinationManager::ajouter(Vaccination &v)
         return true;
     }
 
-    v.idVaccin = prochainId(tousLesVaccins());
 
-    QSqlQuery query;
-    query.prepare("INSERT INTO VACCINATION (ID_VACCIN, ID_ANIMAL, NOM_ANIMAL, ESPECE, PROPRIETAIRE, "
-                  "TEL_PROPRIETAIRE, NOM_VACCIN, DATE_VACCIN, DATE_RAPPEL) "
-                  "VALUES (:id, :id_animal, :nom_animal, :espece, :proprietaire, :tel, :vaccin, :date_vaccin, :date_rappel)");
-    query.bindValue(":id", v.idVaccin);
-    query.bindValue(":id_animal", v.idAnimal);
-    query.bindValue(":nom_animal", v.nomAnimal);
-    query.bindValue(":espece", v.espece);
-    query.bindValue(":proprietaire", v.proprietaire);
-    query.bindValue(":tel", v.telephone);
-    query.bindValue(":vaccin", v.nomVaccin);
-    query.bindValue(":date_vaccin", v.dateVaccin);
-    query.bindValue(":date_rappel", v.dateRappel);
-    const bool ok = query.exec();
-    if (!ok)
-        qDebug() << "INSERT VACCINATION :" << query.lastError().text();
-    return ok;
+    RappelsDb::Ligne l;
+    if (!RappelsDb::assurerTables() || !RappelsDb::dossierDeAnimal(v.idAnimal, l))
+        return false;
+    QStringList en = RappelsDb::entrees(l.vaccins);
+    en << QString("%1|%2|%3|").arg(RappelsDb::nettoyer(v.nomVaccin), v.dateVaccin.toString(Qt::ISODate),
+                                   v.dateRappel.toString(Qt::ISODate));
+    if (!RappelsDb::ecrireColonne(l.idDossier, "RAPPELS_VACCINS", en))
+        return false;
+    v.idVaccin = QString("%1:%2").arg(l.idDossier).arg(en.size() - 1);
+    if (!v.telephone.trimmed().isEmpty() && v.telephone != l.telephone)
+        RappelsDb::ecrireTelephone(l.idDossier, v.telephone);
+    return true;
 }
 
 bool VaccinationManager::enregistrerTelephone(const QString &idVaccin, const QString &tel)
@@ -194,11 +188,7 @@ bool VaccinationManager::enregistrerTelephone(const QString &idVaccin, const QSt
             if (v.idVaccin == idVaccin) { v.telephone = tel; return true; }
         return false;
     }
-    QSqlQuery query;
-    query.prepare("UPDATE VACCINATION SET TEL_PROPRIETAIRE = :tel WHERE ID_VACCIN = :id");
-    query.bindValue(":tel", tel);
-    query.bindValue(":id", idVaccin);
-    return query.exec();
+    return RappelsDb::assurerTables() && RappelsDb::ecrireTelephone(idVaccin.section(':', 0, 0).toLongLong(), tel);
 }
 
 bool VaccinationManager::marquerSmsEnvoye(const QString &idVaccin, const QDate &date)
@@ -208,9 +198,20 @@ bool VaccinationManager::marquerSmsEnvoye(const QString &idVaccin, const QDate &
             if (v.idVaccin == idVaccin) { v.dateSms = date; return true; }
         return false;
     }
-    QSqlQuery query;
-    query.prepare("UPDATE VACCINATION SET DATE_SMS = :d WHERE ID_VACCIN = :id");
-    query.bindValue(":d", date);
-    query.bindValue(":id", idVaccin);
-    return query.exec();
+    const qlonglong dossier = idVaccin.section(':', 0, 0).toLongLong();
+    const int idx = idVaccin.section(':', 1, 1).toInt();
+    for (const RappelsDb::Ligne &l : RappelsDb::lireLignes()) {
+        if (l.idDossier != dossier)
+            continue;
+        QStringList en = RappelsDb::entrees(l.vaccins);
+        if (idx < 0 || idx >= en.size())
+            return false;
+        QStringList f = en[idx].split('|');
+        while (f.size() < 4)
+            f << QString();
+        f[3] = date.toString(Qt::ISODate);
+        en[idx] = f.join('|');
+        return RappelsDb::ecrireColonne(dossier, "RAPPELS_VACCINS", en);
+    }
+    return false;
 }

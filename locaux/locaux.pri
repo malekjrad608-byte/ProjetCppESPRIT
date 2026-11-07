@@ -12,7 +12,10 @@ SOURCES += \
     $$PWD/src/hoverglow.cpp \
     $$PWD/src/icons.cpp \
     $$PWD/src/local.cpp \
-    $$PWD/src/localform.cpp \
+    $$PWD/src/localdialog.cpp \
+    $$PWD/src/confirmdialog.cpp \
+    $$PWD/src/pawburst.cpp \
+    $$PWD/src/spinlogo.cpp \
     $$PWD/src/localrepository.cpp \
     $$PWD/src/pagelocaux.cpp \
     $$PWD/src/pdfreport.cpp \
@@ -33,7 +36,10 @@ HEADERS += \
     $$PWD/src/hoverglow.h \
     $$PWD/src/icons.h \
     $$PWD/src/local.h \
-    $$PWD/src/localform.h \
+    $$PWD/src/localdialog.h \
+    $$PWD/src/confirmdialog.h \
+    $$PWD/src/pawburst.h \
+    $$PWD/src/spinlogo.h \
     $$PWD/src/localrepository.h \
     $$PWD/src/pagelocaux.h \
     $$PWD/src/pdfreport.h \

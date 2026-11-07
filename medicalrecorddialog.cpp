@@ -266,7 +266,13 @@ void MedicalRecordDialog::setupUI()
     m_comboSex = new QComboBox();
     m_comboSex->addItem("Mâle");
     m_comboSex->addItem("Femelle");
-    animalGrid->addWidget(m_comboSex, 2, 3);
+    {
+        auto *f = vf(m_comboSex, [this]() -> VF::Result {
+            return m_comboSex->currentIndex() >= 0 ? VF::valid() : VF::invalid("Choisissez le sexe de l'animal");
+        }, false);
+        f->watch(m_comboSex, &QComboBox::currentIndexChanged);
+        animalGrid->addWidget(f, 2, 3);
+    }
 
     animalGrid->addWidget(new QLabel("Propriétaire:"), 3, 0);
     m_comboOwner = new QComboBox();
@@ -395,7 +401,19 @@ void MedicalRecordDialog::setupUI()
 
     medicalGrid->addWidget(new QLabel("Traitement:"), 5, 0);
     m_comboTreatment = new CheckableComboBox();
-    medicalGrid->addWidget(m_comboTreatment, 5, 1, 1, 3);
+    {
+        auto *f = vf(m_comboTreatment, [this]() -> VF::Result {
+            const QStringList v = m_comboTreatment->checkedValues();
+            if (v.isEmpty())
+                return VF::neutral();                                  // facultatif
+            const int len = v.join("; ").size();
+            if (len > 500)
+                return VF::invalid(QString("Maximum 500 caractères pour la liste des traitements (%1 saisis)").arg(len));
+            return VF::valid();
+        }, false);
+        f->watch(m_comboTreatment, &QComboBox::editTextChanged);       // émis à chaque case cochée / décochée
+        medicalGrid->addWidget(f, 5, 1, 1, 3);
+    }
 
     // Prochain rendez-vous : un SMS de rappel part automatiquement la veille,
     // et un SMS "rendez-vous manqué" le lendemain si l'animal n'est pas venu.
@@ -406,12 +424,38 @@ void MedicalRecordDialog::setupUI()
     m_dateRdv->setDisplayFormat("dd/MM/yyyy HH:mm");
     m_dateRdv->setMinimumDateTime(QDateTime::currentDateTime());
     m_dateRdv->setEnabled(false);
-    medicalGrid->addWidget(m_dateRdv, 6, 2, 1, 2);
+    {
+        auto *f = vf(m_dateRdv, [this]() -> VF::Result {
+            if (!m_chkRdv->isChecked())
+                return VF::neutral();                                  // pas de rendez-vous : champ neutre
+            return m_dateRdv->dateTime() > QDateTime::currentDateTime()
+                       ? VF::valid() : VF::invalid("La date du rendez-vous doit être dans le futur");
+        }, false);
+        f->watch(m_dateRdv, &QDateTimeEdit::dateTimeChanged);
+        f->watch(m_chkRdv, &QCheckBox::toggled);
+        medicalGrid->addWidget(f, 6, 2, 1, 2);
+    }
 
     medicalGrid->addWidget(new QLabel("Téléphone propriétaire:"), 7, 0);
     m_editPhone = new QLineEdit();
     m_editPhone->setPlaceholderText("Ex : 20 123 456 (enregistré avec le rendez-vous)");
-    medicalGrid->addWidget(m_editPhone, 7, 1, 1, 3);
+    {
+        auto *f = vf(m_editPhone, [this]() -> VF::Result {
+            const QString t = m_editPhone->text().trimmed();
+            if (t.isEmpty())
+                return m_chkRdv->isChecked()
+                           ? VF::invalid("Téléphone obligatoire pour envoyer le rappel SMS du rendez-vous")
+                           : VF::neutral();                            // facultatif sans rendez-vous
+            if (t.size() > 20)
+                return VF::invalid("Maximum 20 caractères");
+            if (SmsService::normalizePhone(t).isEmpty())
+                return VF::invalid("Téléphone invalide (8 chiffres, ou +216 suivi de 8 chiffres)");
+            return VF::valid();
+        }, false);
+        f->watch(m_editPhone, &QLineEdit::textChanged);
+        f->watch(m_chkRdv, &QCheckBox::toggled);
+        medicalGrid->addWidget(f, 7, 1, 1, 3);
+    }
     connect(m_chkRdv, &QCheckBox::toggled, m_dateRdv, &QWidget::setEnabled);
 
     medicalCardLayout->addLayout(medicalGrid);
@@ -472,12 +516,34 @@ void MedicalRecordDialog::setupUI()
     healthGrid->addWidget(new QLabel("Vaccinations:"), 0, 0);
     m_editVaccinations = new QTextEdit();
     m_editVaccinations->setMaximumHeight(60);
-    healthGrid->addWidget(m_editVaccinations, 0, 1, 1, 3);
+    {
+        auto *f = vf(m_editVaccinations, [this]() -> VF::Result {
+            const QString t = m_editVaccinations->toPlainText().trimmed();
+            if (t.isEmpty())
+                return VF::neutral();                                  // facultatif
+            if (t.size() > 200)
+                return VF::invalid(QString("Maximum 200 caractères (%1 saisis)").arg(t.size()));
+            return VF::valid();
+        }, false);
+        f->watch(m_editVaccinations, &QTextEdit::textChanged);
+        healthGrid->addWidget(f, 0, 1, 1, 3);
+    }
 
     healthGrid->addWidget(new QLabel("Allergies:"), 1, 0);
     m_editAllergies = new QTextEdit();
     m_editAllergies->setMaximumHeight(60);
-    healthGrid->addWidget(m_editAllergies, 1, 1, 1, 3);
+    {
+        auto *f = vf(m_editAllergies, [this]() -> VF::Result {
+            const QString t = m_editAllergies->toPlainText().trimmed();
+            if (t.isEmpty())
+                return VF::neutral();                                  // facultatif
+            if (t.size() > 200)
+                return VF::invalid(QString("Maximum 200 caractères (%1 saisis)").arg(t.size()));
+            return VF::valid();
+        }, false);
+        f->watch(m_editAllergies, &QTextEdit::textChanged);
+        healthGrid->addWidget(f, 1, 1, 1, 3);
+    }
 
     healthGrid->addWidget(new QLabel("Poids (kg):"), 2, 0);
     m_spinWeight = new QDoubleSpinBox();
@@ -503,12 +569,63 @@ void MedicalRecordDialog::setupUI()
     m_comboVaccinationStatus = new QComboBox();
     m_comboVaccinationStatus->addItem("À jour");
     m_comboVaccinationStatus->addItem("À renouveler");
-    healthGrid->addWidget(m_comboVaccinationStatus, 2, 3);
+    {
+        auto *f = vf(m_comboVaccinationStatus, [this]() -> VF::Result {
+            return m_comboVaccinationStatus->currentIndex() >= 0 ? VF::valid() : VF::invalid("Choisissez le statut de vaccination");
+        }, false);
+        f->watch(m_comboVaccinationStatus, &QComboBox::currentIndexChanged);
+        healthGrid->addWidget(f, 2, 3);
+    }
 
     healthGrid->addWidget(new QLabel("Observations:"), 3, 0);
     m_editObservations = new QTextEdit();
     m_editObservations->setMaximumHeight(80);
-    healthGrid->addWidget(m_editObservations, 3, 1, 1, 3);
+    {
+        auto *f = vf(m_editObservations, [this]() -> VF::Result {
+            const QString t = m_editObservations->toPlainText().trimmed();
+            if (t.isEmpty())
+                return VF::neutral();                                  // facultatif
+            if (t.size() > 500)
+                return VF::invalid(QString("Maximum 500 caractères (%1 saisis)").arg(t.size()));
+            return VF::valid();
+        }, false);
+        f->watch(m_editObservations, &QTextEdit::textChanged);
+        healthGrid->addWidget(f, 3, 1, 1, 3);
+    }
+
+    // Rappel vaccinal : date du vaccin + prochain rappel, enregistrés directement dans les Rappels vaccinaux
+    m_chkVacc = new QCheckBox("Programmer un rappel vaccinal :");
+    healthGrid->addWidget(m_chkVacc, 4, 0, 1, 2);
+    m_dateVacc = new QDateEdit(QDate::currentDate());
+    m_dateVacc->setCalendarPopup(true);
+    m_dateVacc->setDisplayFormat("'Fait le' dd/MM/yyyy");
+    m_dateVacc->setMaximumDate(QDate::currentDate());
+    m_dateVacc->setEnabled(false);
+    m_dateRappelVacc = new QDateEdit(QDate::currentDate().addYears(1));
+    m_dateRappelVacc->setCalendarPopup(true);
+    m_dateRappelVacc->setDisplayFormat("'Rappel le' dd/MM/yyyy");
+    m_dateRappelVacc->setEnabled(false);
+    // saisir un vaccin dans "Vaccinations" coche automatiquement le rappel vaccinal
+    connect(m_editVaccinations, &QTextEdit::textChanged, this, [this]() {
+        if (!m_editVaccinations->toPlainText().trimmed().isEmpty() && !m_chkVacc->isChecked() && m_editVaccinations->hasFocus())
+            m_chkVacc->setChecked(true);
+    });
+    connect(m_chkVacc, &QCheckBox::toggled, m_dateVacc, &QWidget::setEnabled);
+    connect(m_chkVacc, &QCheckBox::toggled, m_dateRappelVacc, &QWidget::setEnabled);
+    connect(m_dateVacc, &QDateEdit::dateChanged, this, [this](const QDate &d) { m_dateRappelVacc->setDate(d.addYears(1)); });
+    healthGrid->addWidget(m_dateVacc, 4, 2);
+    {
+        auto *f = vf(m_dateRappelVacc, [this]() -> VF::Result {
+            if (!m_chkVacc->isChecked())
+                return VF::neutral();
+            return m_dateRappelVacc->date() > m_dateVacc->date()
+                       ? VF::valid() : VF::invalid("Le rappel doit être après la date du vaccin");
+        }, false);
+        f->watch(m_dateRappelVacc, &QDateEdit::dateChanged);
+        f->watch(m_dateVacc, &QDateEdit::dateChanged);
+        f->watch(m_chkVacc, &QCheckBox::toggled);
+        healthGrid->addWidget(f, 4, 3);
+    }
 
     healthCardLayout->addLayout(healthGrid);
     scrollLayout->addWidget(healthCard);
@@ -769,7 +886,8 @@ void MedicalRecordDialog::setMedicalRecord(const MedicalRecord& record)
     m_spinWeight->setValue(record.getPoids());
     m_comboVaccinationStatus->setCurrentText(record.getStatutVaccination());
     m_editObservations->setText(record.getObservations());
-    m_editPhone->setText(RdvManager::dernierTelephone(record.getIdAnimal(), m_existing));
+    m_editPhone->setText(!record.getTelephone().isEmpty() ? record.getTelephone()
+                                                          : RdvManager::dernierTelephone(record.getIdAnimal(), m_existing));
 }
 
 MedicalRecord MedicalRecordDialog::getMedicalRecord() const
@@ -801,6 +919,7 @@ MedicalRecord MedicalRecordDialog::getMedicalRecord() const
     M.setAllergies(m_editAllergies->toPlainText());
     M.setObservations(m_editObservations->toPlainText());
     M.setStatutVaccination(m_comboVaccinationStatus->currentText());
+    M.setTelephone(m_editPhone->text().trimmed());
 
     return M;
 }
@@ -860,6 +979,11 @@ bool MedicalRecordDialog::validateForm()
         }
     }
 
+    if (m_chkVacc->isChecked() && m_dateRappelVacc->date() <= m_dateVacc->date()) {
+        QMessageBox::warning(this, "Rappel vaccinal", "La date de rappel doit être après la date du vaccin.");
+        return false;
+    }
+
     if (!maxLength(m_editAnimalRef->text(), 20, "La référence animal") ||
         !maxLength(m_editAnimalName->text(), 100, "Le nom de l'animal") ||
         !maxLength(m_comboOwner->currentText(), 100, "Le propriétaire") ||
@@ -867,7 +991,10 @@ bool MedicalRecordDialog::validateForm()
         !maxLength(m_comboBreed->currentText(), 100, "La race") ||
         !maxLength(m_editReason->toPlainText(), 200, "Le motif") ||
         !maxLength(m_comboDiagnosis->currentText(), 500, "Le diagnostic") ||
-        !maxLength(m_comboTreatment->checkedValues().join("; "), 500, "La liste des traitements"))
+        !maxLength(m_comboTreatment->checkedValues().join("; "), 500, "La liste des traitements") ||
+        !maxLength(m_editVaccinations->toPlainText(), 200, "Les vaccinations") ||
+        !maxLength(m_editAllergies->toPlainText(), 200, "Les allergies") ||
+        !maxLength(m_editObservations->toPlainText(), 500, "Les observations"))
         return false;
 
     return true;
@@ -910,3 +1037,13 @@ void MedicalRecordDialog::setRendezVous(const RendezVous &rdv)
 bool MedicalRecordDialog::rdvPlanifie() const { return m_chkRdv->isChecked(); }
 QDateTime MedicalRecordDialog::rdvDate() const { return m_dateRdv->dateTime(); }
 QString MedicalRecordDialog::telephone() const { return m_editPhone->text().trimmed(); }
+bool MedicalRecordDialog::vaccinPlanifie() const { return m_chkVacc->isChecked(); }
+QDate MedicalRecordDialog::dateVaccin() const { return m_dateVacc->date(); }
+QDate MedicalRecordDialog::dateRappelVaccin() const { return m_dateRappelVacc->date(); }
+QString MedicalRecordDialog::nomVaccin() const
+{
+    // premier vaccin cité dans le champ "Vaccinations" (avant virgule, point-virgule ou retour à la ligne)
+    QString t = m_editVaccinations->toPlainText().trimmed();
+    t = t.section(QRegularExpression("[,;\\n]"), 0, 0).trimmed();
+    return t.isEmpty() ? QStringLiteral("Vaccin annuel") : t.left(100);
+}

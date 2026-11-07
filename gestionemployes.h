@@ -29,8 +29,6 @@ private slots:
     void verifierAdequation();
     void verifierEquilibrage();
     void onFiltresChange();
-    void ouvrirPlanification();
-    void detecterConflitsPlanning();
     void ouvrirEvaluationEmployes();
 
 private:
@@ -55,18 +53,32 @@ private:
     QLabel *m_detailNom;
     QLabel *m_detailId;
     QLabel *m_detailStatut;
-    QLabel *m_detailPoste;
+    QLabel *m_detailCin;
+    QLabel *m_detailNaissance;
+    QLabel *m_detailAdresse;
+    QLabel *m_detailTel;
     QLabel *m_detailCourriel;
-    QLabel *m_detailTelephone;
+    QLabel *m_detailPoste;
+    QLabel *m_detailService;
+    QLabel *m_detailContrat;
     QLabel *m_detailDate;
+    QLabel *m_detailSalaire;
     QLabel *m_detailCharge;
     QLabel *m_detailDispo;
     QLabel *m_detailCompetences;
 
     int m_idSelectionne = -1;
 
+    // ---- Etat du schema Oracle du module (voir Connection::schemaEmployesOk) ----
+    QPushButton *m_btnNouveau = nullptr;
+    QPushButton *m_btnEvaluation = nullptr;
+    QPushButton *m_btnStats = nullptr;
+    QLabel *m_bandeauSchema = nullptr;
+    bool m_schemaOk = true;
+
     // ---- Méthodes ----
     void construireUI();
+    void appliquerEtatSchema();
     QWidget *construireHeader();
     QWidget *construireStatsPills();
     QWidget *construireBarreRecherche();

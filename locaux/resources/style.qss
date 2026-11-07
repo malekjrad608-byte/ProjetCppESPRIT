@@ -1,17 +1,4 @@
-/* ANIWORLD - module Gestion des locaux.
-   Cette feuille est appliquee UNIQUEMENT a la page Locaux (et a ses fenetres) :
-   elle ne change pas le style des autres modules. */
-
-/* le style global de l'application peint le fond de chaque QWidget :
-   ici on le remet transparent pour garder les panneaux blancs propres */
-QWidget { background-color: transparent; }
-#page   { background: #f3f8f9; }
-#espaceLocaux { background: #f3f8f9; }
-QDialog { background: #f3f8f9; }
-QMenu   { background: white; border: 1px solid #e1ebee; padding: 4px; }
-QMenu::item { padding: 6px 18px; border-radius: 6px; }
-QMenu::item:selected { background: #dbeaee; color: #1f5560; }
-QTableWidget { background: white; border: 1px solid #e1ebee; border-radius: 12px; }
+/* ANIWORLD - feuille de style (meme palette que le module Services) */
 
 QMainWindow, #central { background: #f3f8f9; }
 QWidget { color: #1d3b44; }
@@ -124,7 +111,7 @@ QComboBox {
 QComboBox:hover { border-color: #9cc6cf; }
 QComboBox:focus { border-color: #2f7482; }
 QComboBox::drop-down { border: none; width: 26px; }
-QComboBox::down-arrow { image: url(:/locaux/images/chevron.png); width: 12px; height: 12px; }
+QComboBox::down-arrow { image: url(:/images/chevron.png); width: 12px; height: 12px; }
 QComboBox QAbstractItemView {
     border: 1px solid #e1ebee; background: white; padding: 4px; outline: 0;
     selection-background-color: #dbeaee; selection-color: #1f5560;
@@ -220,15 +207,3 @@ QPushButton[role="suggest"] {
 }
 QPushButton[role="suggest"]:hover { background: #d3ecdd; }
 #switchCard { background: white; border: 1px solid #e1ebee; border-radius: 12px; }
-
-/* ---------- formulaire affiche dans la page ---------- */
-#formCard { background: #f7fbfc; border: 1px solid #e1ebee; border-radius: 16px; }
-#formCard #formHead { border-top-left-radius: 16px; border-top-right-radius: 16px; }
-#formCard #formFoot { border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; }
-#formBody { background: #f7fbfc; }
-
-/* ---------- panneau "Local selectionne" ---------- */
-#detailName { font-size: 20px; font-weight: 700; color: #1f5560; }
-#confirmBox { background: #fdf3f3; border: 1px solid #f0c9c7; border-radius: 12px; }
-#confirmTitle { font-weight: 700; color: #c0504d; }
-#confirmText { color: #7a4a48; }

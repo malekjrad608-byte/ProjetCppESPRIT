@@ -7,12 +7,11 @@ TARGET = ANIWORLD2
 TEMPLATE = app
 
 SOURCES += \
+    employe.cpp \
+    gestionemployes.cpp \
     connection.cpp \
     main.cpp \
     mainwindow.cpp \
-    employe.cpp \
-    planning.cpp \
-    gestionemployes.cpp \
     loginvisuals.cpp \
     medicalwindow.cpp \
     recordcard.cpp \
@@ -36,11 +35,11 @@ SOURCES += \
     groomingdialog.cpp
 
 HEADERS += \
+    employe.h \
+    gestionemployes.h \
+    rappelsdb.h \
     connection.h \
     mainwindow.h \
-    employe.h \
-    planning.h \
-    gestionemployes.h \
     loginvisuals.h \
     medicalwindow.h \
     recordcard.h \

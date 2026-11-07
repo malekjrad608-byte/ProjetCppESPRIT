@@ -20,8 +20,9 @@ private:
     double poids;
     QString proprietaire, idEmployes;
 
-    // Informations affichées dans l'interface (pas de colonne dans MEDICAL)
-    QString sexe, traitement, vaccinations, allergies, observations, statutVaccination;
+    // Informations facultatives : enregistrées dans MEDICAL seulement si les colonnes existent
+    // (voir ajouter_colonnes_optionnelles.sql), sinon gardées en mémoire pendant l'exécution
+    QString sexe, traitement, vaccinations, allergies, observations, statutVaccination, telephone;
 
 public:
     //Constructeurs
@@ -49,6 +50,7 @@ public:
     QString getAllergies() const { return allergies; }
     QString getObservations() const { return observations; }
     QString getStatutVaccination() const { return statutVaccination; }
+    QString getTelephone() const { return telephone; }
 
     //Setters
     void setIdDossier(QString id){ idDossier = id; }
@@ -69,6 +71,7 @@ public:
     void setAllergies(QString a){ allergies = a; }
     void setObservations(QString o){ observations = o; }
     void setStatutVaccination(QString s){ statutVaccination = s; }
+    void setTelephone(QString t){ telephone = t; }
 
     // Fonctionnalités de Base relatives à l'entité MedicalRecord
     bool ajouter();
@@ -82,7 +85,8 @@ public:
     static QVariant versNombre(const QString &identifiant);                    // "MED-012" -> 12 (NULL si pas de nombre)
     static QString versTexte(const QVariant &nombre, const QString &prefixe);  // 12, "MED" -> "MED-012"
     static qlonglong prochainIdDossier();                                      // MAX(ID_DOSSIER)+1, -1 si échec
-    // Colonnes facultatives (SEXE, TRAITEMENT) : utilisées seulement si elles existent dans la table
+    // Colonnes facultatives (SEXE, TRAITEMENT, VACCINATIONS, ALLERGIES, OBSERVATIONS, STATUT_VACCINATION, TELEPHONE) :
+    // utilisées seulement si elles existent dans la table
     static bool colonneExiste(const QString &colonne);
     // Dernier message d'erreur Oracle renvoyé par ajouter() / modifier() / supprimer() / afficher()
     static QString derniereErreur();

@@ -123,7 +123,28 @@ QString nombreSql(const QVariant &v)
     return v.isNull() ? QString("NULL") : QString::number(v.toLongLong());
 }
 
-QVector<Champ> champsDe(const MedicalRecord &r, bool avecSexe, bool avecTraitement)
+// Colonnes facultatives de MEDICAL : utilisées seulement si elles existent (script ajouter_colonnes_optionnelles.sql)
+struct ColOpt {
+    const char *nom;                              // paramètre
+    const char *colonne;                          // colonne Oracle
+    int taille;                                   // VARCHAR2(taille)
+    QString (*lire)(const MedicalRecord &);       // valeur du dossier
+};
+const QVector<ColOpt> &colonnesOptionnelles()
+{
+    static const QVector<ColOpt> liste = {
+        {"sexe",               "SEXE",               10,  [](const MedicalRecord &r) { return r.getSexe(); }},
+        {"traitement",         "TRAITEMENT",         500, [](const MedicalRecord &r) { return r.getTraitement(); }},
+        {"vaccinations",       "VACCINATIONS",       200, [](const MedicalRecord &r) { return r.getVaccinations(); }},
+        {"allergies",          "ALLERGIES",          200, [](const MedicalRecord &r) { return r.getAllergies(); }},
+        {"observations",       "OBSERVATIONS",       500, [](const MedicalRecord &r) { return r.getObservations(); }},
+        {"statut_vaccination", "STATUT_VACCINATION", 30,  [](const MedicalRecord &r) { return r.getStatutVaccination(); }},
+        {"telephone",          "TELEPHONE",          20,  [](const MedicalRecord &r) { return r.getTelephone(); }},
+    };
+    return liste;
+}
+
+QVector<Champ> champsDe(const MedicalRecord &r)
 {
     QVector<Champ> c;
     const QVariant idD = MedicalRecord::versNombre(r.getIdDossier());
@@ -144,10 +165,12 @@ QVector<Champ> champsDe(const MedicalRecord &r, bool avecSexe, bool avecTraiteme
     c << Champ{"poids", "POIDS", ":poids", r.getPoids(), QString::number(r.getPoids(), 'f', 2)};
     c << Champ{"proprietaire", "PROPRIETAIRE", ":proprietaire", r.getProprietaire(), chaineSql(r.getProprietaire())};
     c << Champ{"id_employes", "ID_EMPLOYES", "TO_NUMBER(:id_employes)", emp.isNull() ? QString() : QString::number(emp.toLongLong()), nombreSql(emp)};
-    if (avecSexe)
-        c << Champ{"sexe", "SEXE", ":sexe", r.getSexe(), chaineSql(r.getSexe())};
-    if (avecTraitement)
-        c << Champ{"traitement", "TRAITEMENT", ":traitement", r.getTraitement(), chaineSql(r.getTraitement())};
+    for (const ColOpt &o : colonnesOptionnelles()) {
+        if (!MedicalRecord::colonneExiste(o.colonne))
+            continue;
+        const QString v = o.lire(r).left(o.taille);       // jamais plus long que la colonne
+        c << Champ{o.nom, o.colonne, QString(":") + o.nom, v, chaineSql(v)};
+    }
     return c;
 }
 
@@ -175,11 +198,9 @@ bool executer(const QString &sqlLie, const QString &sqlLitteral, const QVector<C
 // ---------------------------------------------------------------- AJOUT (create)
 bool MedicalRecord::ajouter()
 {
-    const bool avecSexe = colonneExiste("SEXE");
-    const bool avecTraitement = colonneExiste("TRAITEMENT");
     g_derniereErreur.clear();
 
-    const QVector<Champ> champs = champsDe(*this, avecSexe, avecTraitement);
+    const QVector<Champ> champs = champsDe(*this);
     QStringList cols, lies, lits;
     for (const Champ &ch : champs) {
         cols << ch.colonne;
@@ -195,12 +216,15 @@ QSqlQueryModel * MedicalRecord::afficher()
 {
     QSqlQueryModel * model = new QSqlQueryModel();
 
-    // SEXE et TRAITEMENT : colonnes lues seulement si elles existent (sinon NULL, valeurs gardées en mémoire)
-    const QString sexe = colonneExiste("SEXE") ? "SEXE" : "CAST(NULL AS VARCHAR2(10)) AS SEXE";
-    const QString traitement = colonneExiste("TRAITEMENT") ? "TRAITEMENT" : "CAST(NULL AS VARCHAR2(500)) AS TRAITEMENT";
+    // Colonnes facultatives : lues seulement si elles existent (sinon NULL ; valeurs gardées en mémoire)
+    QString facultatives;
+    for (const ColOpt &o : colonnesOptionnelles()) {
+        const QString col = QString::fromLatin1(o.colonne);
+        facultatives += ", " + (colonneExiste(col) ? col : QString("CAST(NULL AS VARCHAR2(%1)) AS %2").arg(o.taille).arg(col));
+    }
 
     model->setQuery("SELECT ID_DOSSIER, DATE_CONSULTATION, MOTIF, DIAGNOSTIC, REF_ANIMAL, NOM_ANIMAL, "
-                    "ESPECE, RACE, AGE, POIDS, PROPRIETAIRE, ID_EMPLOYES, " + sexe + ", " + traitement + " "
+                    "ESPECE, RACE, AGE, POIDS, PROPRIETAIRE, ID_EMPLOYES" + facultatives + " "
                     "FROM MEDICAL ORDER BY DATE_CONSULTATION DESC");
     if (model->lastError().isValid())
         memoriserErreur("SELECT MEDICAL", model->lastError());
@@ -218,6 +242,11 @@ QSqlQueryModel * MedicalRecord::afficher()
     model->setHeaderData(11, Qt::Horizontal, QObject::tr("ID employé"));
     model->setHeaderData(12, Qt::Horizontal, QObject::tr("Sexe"));
     model->setHeaderData(13, Qt::Horizontal, QObject::tr("Traitement"));
+    model->setHeaderData(14, Qt::Horizontal, QObject::tr("Vaccinations"));
+    model->setHeaderData(15, Qt::Horizontal, QObject::tr("Allergies"));
+    model->setHeaderData(16, Qt::Horizontal, QObject::tr("Observations"));
+    model->setHeaderData(17, Qt::Horizontal, QObject::tr("Statut vaccination"));
+    model->setHeaderData(18, Qt::Horizontal, QObject::tr("Téléphone"));
 
     return model;
 }
@@ -241,11 +270,9 @@ bool MedicalRecord::supprimer(QString idDossier)
 // ---------------------------------------------------------------- MODIFICATION (update)
 bool MedicalRecord::modifier()
 {
-    const bool avecSexe = colonneExiste("SEXE");
-    const bool avecTraitement = colonneExiste("TRAITEMENT");
     g_derniereErreur.clear();
 
-    const QVector<Champ> champs = champsDe(*this, avecSexe, avecTraitement);
+    const QVector<Champ> champs = champsDe(*this);
     QStringList lies, lits;
     QString idLie, idLit;
     for (const Champ &ch : champs) {

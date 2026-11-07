@@ -1,4 +1,7 @@
+#include <algorithm>
 #include "reminderdialog.h"
+#include "rappelsdb.h"
+#include <QSqlDatabase>
 #include "smsservice.h"
 #include "appointmentdialog.h"
 #include "lookupdata.h"
@@ -133,7 +136,10 @@ ReminderDialog::ReminderDialog(const QVector<MedicalRecord> &records, QWidget *p
 void ReminderDialog::reload()
 {
     m_loading = true;
-    m_rows = VaccinationManager::aRappeler(m_records, kJoursAvant);
+    // Tous les vaccins enregistrés (les rappels urgents d'abord, puis les "à jour" par date)
+    RappelsDb::derniereErreur().clear();
+    m_rows = VaccinationManager::derniers(m_records);
+    std::sort(m_rows.begin(), m_rows.end(), [](const Vaccination &a, const Vaccination &b) { return a.dateRappel < b.dateRappel; });
     m_table->setRowCount(0);
 
     int late = 0, soon = 0;
@@ -144,9 +150,12 @@ void ReminderDialog::reload()
 
         const int d = v.joursRestants();
         const bool isLate = d < 0;
-        isLate ? ++late : ++soon;
+        const bool aJour = v.etat(kJoursAvant) == Vaccination::AJour;
+        if (!aJour)
+            isLate ? ++late : ++soon;
         const QString statut = isLate ? QString("En retard de %1 j").arg(-d)
-                                      : (d == 0 ? QString("Aujourd'hui") : QString("Dans %1 j").arg(d));
+                                      : (aJour ? QString::fromUtf8("À jour (dans %1 j)").arg(d)
+                                               : (d == 0 ? QString("Aujourd'hui") : QString("Dans %1 j").arg(d)));
 
         auto *chk = new QTableWidgetItem();
         chk->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
@@ -169,17 +178,21 @@ void ReminderDialog::reload()
         m_table->setItem(row, ColStatut, ro(statut));
         m_table->setItem(row, ColSms, ro(v.dateSms.isValid() ? fr.toString(v.dateSms, "dd/MM/yyyy") : QString::fromUtf8("—")));
 
-        const QColor bg = isLate ? QColor("#FDECEA") : QColor("#FFF6E5");
+        const QColor bg = isLate ? QColor("#FDECEA") : (aJour ? QColor("#EAF7EF") : QColor("#FFF6E5"));
         for (int c = 0; c < ColCount; ++c)
             m_table->item(row, c)->setBackground(QBrush(bg));
-        m_table->item(row, ColStatut)->setForeground(QBrush(isLate ? QColor("#B42318") : QColor("#B54708")));
+        m_table->item(row, ColStatut)->setForeground(QBrush(isLate ? QColor("#B42318") : (aJour ? QColor("#1E7B46") : QColor("#B54708"))));
     }
 
     m_summary->setText(QString::fromUtf8("🔴 %1 en retard   ·   🟠 %2 à renouveler dans les %3 jours   ·   %4 animaux concernés")
                        .arg(late).arg(soon).arg(kJoursAvant)
-                       .arg([this]() { QSet<QString> s; for (const auto &v : m_rows) s.insert(v.idAnimal); return s.size(); }()));
-    if (m_rows.isEmpty())
-        m_status->setText(QString::fromUtf8("✅ Aucun rappel : tous les vaccins sont à jour."));
+                       .arg([this]() { QSet<QString> s; for (const auto &v : m_rows) if (v.etat(kJoursAvant) != Vaccination::AJour) s.insert(v.idAnimal); return s.size(); }()));
+    if (m_rows.isEmpty() && QSqlDatabase::database().isOpen() && !RappelsDb::derniereErreur().isEmpty())
+        m_status->setText(QString::fromUtf8("⚠ Lecture des rappels impossible : ") + RappelsDb::derniereErreur());
+    else if (m_rows.isEmpty())
+        m_status->setText(QString::fromUtf8("Aucun vaccin enregistré : cliquez sur « Nouveau vaccin »."));
+    else if (late + soon == 0)
+        m_status->setText(QString::fromUtf8("✅ Aucun rappel urgent : tous les vaccins sont à jour."));
     m_loading = false;
 }
 
@@ -227,15 +240,22 @@ void ReminderDialog::onSendSelected()
 
 void ReminderDialog::onSendAll()
 {
-    if (m_rows.isEmpty())
+    int aEnvoyer = 0;
+    for (const Vaccination &v : std::as_const(m_rows))
+        if (v.etat(kJoursAvant) != Vaccination::AJour)
+            ++aEnvoyer;
+    if (aEnvoyer == 0) {
+        QMessageBox::information(this, "Rappels", "Aucun vaccin en retard ou à renouveler bientôt.");
         return;
+    }
     if (QMessageBox::question(this, "Confirmation",
-            QString("Envoyer un SMS de rappel pour les %1 vaccins listés ?").arg(m_rows.size()),
+            QString("Envoyer un SMS de rappel pour les %1 vaccins à renouveler ?").arg(aEnvoyer),
             QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
         return;
     QList<int> rows;
     for (int r = 0; r < m_rows.size(); ++r)
-        rows << r;
+        if (m_rows[r].etat(kJoursAvant) != Vaccination::AJour)
+            rows << r;
     sendRows(rows);
 }
 
@@ -271,7 +291,7 @@ void ReminderDialog::onRenew()
                           .arg(QLocale(QLocale::French).toString(n.dateRappel, "dd/MM/yyyy")));
         reload();
     } else {
-        QMessageBox::critical(this, "Erreur", "Enregistrement du vaccin impossible.");
+        QMessageBox::critical(this, "Erreur", "Enregistrement du vaccin impossible.\n\n" + RappelsDb::derniereErreur());
     }
 }
 
@@ -355,7 +375,7 @@ void ReminderDialog::onAddVaccine()
         m_status->setText(QString::fromUtf8("✅ Vaccin ajouté pour %1.").arg(v.nomAnimal));
         reload();
     } else {
-        QMessageBox::critical(this, "Erreur", "Ajout du vaccin impossible.");
+        QMessageBox::critical(this, "Erreur", "Ajout du vaccin impossible.\n\n" + RappelsDb::derniereErreur());
     }
 }
 

@@ -1,4 +1,5 @@
 #include "medicalwindow.h"
+#include "rappelsdb.h"
 #include "motion.h"
 #include "ui_medicalwindow.h"
 #include "recordcard.h"
@@ -396,18 +397,24 @@ void MedicalWindow::actualiser()
         MedicalRecord M(MedicalRecord::versTexte(val(0), "MED"), val(1).toDate(), val(2).toString(), val(3).toString(),
                         MedicalRecord::versTexte(val(4), "ANI"), val(5).toString(), val(6).toString(), val(7).toString(),
                         val(8).toInt(), val(9).toDouble(), val(10).toString(), val(11).toString());
-        M.setSexe(val(12).toString());          // colonnes SEXE et TRAITEMENT (si elles existent dans MEDICAL)
+        // Colonnes facultatives (si elles existent dans MEDICAL : voir ajouter_colonnes_optionnelles.sql)
+        M.setSexe(val(12).toString());
         M.setTraitement(val(13).toString());
+        M.setVaccinations(val(14).toString());
+        M.setAllergies(val(15).toString());
+        M.setObservations(val(16).toString());
+        M.setStatutVaccination(val(17).toString());
+        M.setTelephone(val(18).toString());
         if (anciens.contains(M.getIdDossier())) {
+            // pas de colonne en base : on garde en mémoire la valeur saisie pendant cette session
             const MedicalRecord &a = anciens[M.getIdDossier()];
-            if (M.getSexe().isEmpty())          // pas de colonne en base : on garde la valeur saisie
-                M.setSexe(a.getSexe());
-            if (M.getTraitement().isEmpty())
-                M.setTraitement(a.getTraitement());
-            M.setVaccinations(a.getVaccinations());
-            M.setAllergies(a.getAllergies());
-            M.setObservations(a.getObservations());
-            M.setStatutVaccination(a.getStatutVaccination());
+            if (M.getSexe().isEmpty())              M.setSexe(a.getSexe());
+            if (M.getTraitement().isEmpty())        M.setTraitement(a.getTraitement());
+            if (M.getVaccinations().isEmpty())      M.setVaccinations(a.getVaccinations());
+            if (M.getAllergies().isEmpty())         M.setAllergies(a.getAllergies());
+            if (M.getObservations().isEmpty())      M.setObservations(a.getObservations());
+            if (M.getStatutVaccination().isEmpty()) M.setStatutVaccination(a.getStatutVaccination());
+            if (M.getTelephone().isEmpty())         M.setTelephone(a.getTelephone());
         }
         m_records.append(M);
     }
@@ -497,8 +504,10 @@ void MedicalWindow::rebuildCards()
         c->deleteLater();
     m_cards.clear();
 
+    const QList<HealthAlert> alertesSante = HealthWatch::analyser(m_records);   // une seule analyse pour tous les scores
     for (const auto &r : m_filteredRecords) {
         auto *card = new RecordCard(r, m_cardsContainer);
+        card->setRisk(RiskScore::calculer(r, alertesSante));
         connect(card, &RecordCard::clicked, this, &MedicalWindow::onCardClicked);
         connect(card, &RecordCard::doubleClicked, this, [this](const QString &id) { viewRecord(id); });
         card->setSelected(r.getIdDossier() == m_selectedId);
@@ -798,6 +807,7 @@ void MedicalWindow::editRecord(const QString &recordId)
         if (!m_db) {            // mode hors ligne
             m_records[idx] = M;
             applyRdv(dialog, M);
+            applyVaccin(dialog, M);
             QTimer::singleShot(400, this, [this]() { checkHealthWatch(true); });
             refreshView();
             return;
@@ -808,6 +818,7 @@ void MedicalWindow::editRecord(const QString &recordId)
             // Refresh (Actualiser)
             m_records[idx] = M;     // garde les champs affichés seulement (sexe, traitement, ...)
             applyRdv(dialog, M);
+            applyVaccin(dialog, M);
             QTimer::singleShot(400, this, [this]() { checkHealthWatch(true); });
             actualiser();
             refreshView();
@@ -885,6 +896,7 @@ void MedicalWindow::onAddRecordClicked()
         if (!m_db) {            // mode hors ligne
             m_records.append(M);
             applyRdv(dialog, M);
+            applyVaccin(dialog, M);
             QTimer::singleShot(400, this, [this]() { checkHealthWatch(true); });
             m_selectedId = M.getIdDossier();
             refreshView();
@@ -896,6 +908,7 @@ void MedicalWindow::onAddRecordClicked()
             // Refresh (Actualiser)
             m_records.append(M);   // garde les champs affichés seulement (sexe, traitement, ...)
             applyRdv(dialog, M);
+            applyVaccin(dialog, M);
             QTimer::singleShot(400, this, [this]() { checkHealthWatch(true); });
             actualiser();
             m_selectedId = M.getIdDossier();
@@ -1292,8 +1305,34 @@ void MedicalWindow::applyRdv(const MedicalRecordDialog &dialog, const MedicalRec
     r.telephone = dialog.telephone();
     r.motif = record.getMotif().left(200);
     r.dateRdv = dialog.rdvDate();
-    RdvManager::planifier(r, m_records);
+    if (!RdvManager::planifier(r, m_records))
+        QMessageBox::warning(this, "Rendez-vous", "Le rendez-vous n'a pas pu être enregistré.\n\n" + RappelsDb::derniereErreur());
     updateRdvButton(RdvManager::aEnvoyer(m_records).size());
+}
+
+// Rappel vaccinal saisi dans le dossier : enregistré tel quel dans les Rappels vaccinaux (pas besoin de "Nouveau vaccin")
+void MedicalWindow::applyVaccin(const MedicalRecordDialog &dialog, const MedicalRecord &record)
+{
+    if (!dialog.vaccinPlanifie())
+        return;
+    Vaccination v;
+    v.idAnimal = record.getIdAnimal();
+    v.nomAnimal = record.getNomAnimal();
+    v.espece = record.getEspece();
+    v.proprietaire = record.getProprietaire();
+    v.telephone = dialog.telephone();
+    v.nomVaccin = dialog.nomVaccin();
+    v.dateVaccin = dialog.dateVaccin();
+    v.dateRappel = dialog.dateRappelVaccin();
+    if (!VaccinationManager::ajouter(v)) {
+        QMessageBox::warning(this, "Rappel vaccinal", "Le rappel vaccinal n'a pas pu être enregistré.\n\n" + RappelsDb::derniereErreur());
+        return;
+    }
+    syncVaccinationStatus();
+    updateReminderButton();
+    QMessageBox::information(this, "Rappel vaccinal",
+        QString("Rappel enregistré pour %1 : %2, prochain rappel le %3.")
+            .arg(record.getNomAnimal(), v.nomVaccin, v.dateRappel.toString("dd/MM/yyyy")));
 }
 
 void MedicalWindow::updateRdvButton(int pending)

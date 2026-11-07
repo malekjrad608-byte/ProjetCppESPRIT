@@ -1,5 +1,6 @@
 #include "appointment.h"
 #include "vaccination.h"
+#include "rappelsdb.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -36,26 +37,25 @@ bool consulteDepuis(const QString &idAnimal, const QDate &date, const QVector<Me
 QList<RendezVous> RdvManager::lireBase()
 {
     QList<RendezVous> list;
-    QSqlQuery query;
-    query.prepare("SELECT ID_RDV, ID_ANIMAL, NOM_ANIMAL, PROPRIETAIRE, TEL_PROPRIETAIRE, MOTIF, "
-                  "DATE_RDV, STATUT, DATE_SMS_RAPPEL, DATE_SMS_MANQUE FROM RENDEZVOUS");
-    if (!query.exec()) {
-        qDebug() << "SELECT RENDEZVOUS :" << query.lastError().text();
-        return list;
-    }
-    while (query.next()) {
-        RendezVous r;
-        r.idRdv        = query.value(0).toString();
-        r.idAnimal     = query.value(1).toString();
-        r.nomAnimal    = query.value(2).toString();
-        r.proprietaire = query.value(3).toString();
-        r.telephone    = query.value(4).toString();
-        r.motif        = query.value(5).toString();
-        r.dateRdv      = query.value(6).toDateTime();
-        r.statut       = query.value(7).toString();
-        r.smsRappel    = query.value(8).toDate();
-        r.smsManque    = query.value(9).toDate();
-        list.append(r);
+    for (const RappelsDb::Ligne &l : RappelsDb::lireLignes()) {
+        const QStringList en = RappelsDb::entrees(l.rdv);
+        for (int i = 0; i < en.size(); ++i) {
+            const QStringList f = en[i].split('|');
+            if (f.size() < 2)
+                continue;
+            RendezVous r;
+            r.idRdv        = QString("%1:%2").arg(l.idDossier).arg(i);
+            r.idAnimal     = RappelsDb::idAnimalTexte(l.refAnimal);
+            r.nomAnimal    = l.nom;
+            r.proprietaire = l.proprietaire;
+            r.telephone    = l.telephone;
+            r.dateRdv      = QDateTime::fromString(f[0], Qt::ISODate);
+            r.statut       = f[1];
+            r.motif        = f.size() > 2 ? f[2] : QString();
+            r.smsRappel    = f.size() > 3 ? QDate::fromString(f[3], Qt::ISODate) : QDate();
+            r.smsManque    = f.size() > 4 ? QDate::fromString(f[4], Qt::ISODate) : QDate();
+            list.append(r);
+        }
     }
     return list;
 }
@@ -146,22 +146,38 @@ bool RdvManager::planifier(RendezVous &r, const QVector<MedicalRecord> &records)
         return true;
     }
 
-    r.idRdv = prochainId(lireBase());
-    QSqlQuery query;
-    query.prepare("INSERT INTO RENDEZVOUS (ID_RDV, ID_ANIMAL, NOM_ANIMAL, PROPRIETAIRE, TEL_PROPRIETAIRE, "
-                  "MOTIF, DATE_RDV, STATUT) VALUES (:id, :animal, :nom, :proprio, :tel, :motif, :date, :statut)");
-    query.bindValue(":id", r.idRdv);
-    query.bindValue(":animal", r.idAnimal);
-    query.bindValue(":nom", r.nomAnimal);
-    query.bindValue(":proprio", r.proprietaire);
-    query.bindValue(":tel", r.telephone);
-    query.bindValue(":motif", r.motif);
-    query.bindValue(":date", r.dateRdv);
-    query.bindValue(":statut", r.statut);
-    const bool ok = query.exec();
-    if (!ok)
-        qDebug() << "INSERT RENDEZVOUS :" << query.lastError().text();
-    return ok;
+    RappelsDb::Ligne l;
+    if (!RappelsDb::assurerTables() || !RappelsDb::dossierDeAnimal(r.idAnimal, l))
+        return false;
+    QStringList en = RappelsDb::entrees(l.rdv);
+    en << QString("%1|%2|%3||").arg(r.dateRdv.toString(Qt::ISODate), RappelsDb::nettoyer(r.statut), RappelsDb::nettoyer(r.motif));
+    if (!RappelsDb::ecrireColonne(l.idDossier, "RAPPELS_RDV", en))
+        return false;
+    r.idRdv = QString("%1:%2").arg(l.idDossier).arg(en.size() - 1);
+    if (!r.telephone.trimmed().isEmpty() && r.telephone != l.telephone)
+        RappelsDb::ecrireTelephone(l.idDossier, r.telephone);
+    return true;
+}
+
+// modifie le champ 'champ' (1 = statut, 3 = SMS rappel, 4 = SMS manqué) du rendez-vous 'idRdv'
+static bool majChampRdv(const QString &idRdv, int champ, const QString &valeur)
+{
+    const qlonglong dossier = idRdv.section(':', 0, 0).toLongLong();
+    const int idx = idRdv.section(':', 1, 1).toInt();
+    for (const RappelsDb::Ligne &l : RappelsDb::lireLignes()) {
+        if (l.idDossier != dossier)
+            continue;
+        QStringList en = RappelsDb::entrees(l.rdv);
+        if (idx < 0 || idx >= en.size())
+            return false;
+        QStringList f = en[idx].split('|');
+        while (f.size() < 5)
+            f << QString();
+        f[champ] = valeur;
+        en[idx] = f.join('|');
+        return RappelsDb::ecrireColonne(dossier, "RAPPELS_RDV", en);
+    }
+    return false;
 }
 
 bool RdvManager::changerStatut(const QString &idRdv, const QString &statut)
@@ -171,11 +187,7 @@ bool RdvManager::changerStatut(const QString &idRdv, const QString &statut)
             if (r.idRdv == idRdv) { r.statut = statut; return true; }
         return false;
     }
-    QSqlQuery query;
-    query.prepare("UPDATE RENDEZVOUS SET STATUT = :s WHERE ID_RDV = :id");
-    query.bindValue(":s", statut);
-    query.bindValue(":id", idRdv);
-    return query.exec();
+    return majChampRdv(idRdv, 1, statut);
 }
 
 bool RdvManager::marquerSms(const QString &idRdv, bool manque, const QDate &date)
@@ -185,12 +197,7 @@ bool RdvManager::marquerSms(const QString &idRdv, bool manque, const QDate &date
             if (r.idRdv == idRdv) { (manque ? r.smsManque : r.smsRappel) = date; return true; }
         return false;
     }
-    QSqlQuery query;
-    query.prepare(QString("UPDATE RENDEZVOUS SET %1 = :d WHERE ID_RDV = :id")
-                      .arg(manque ? "DATE_SMS_MANQUE" : "DATE_SMS_RAPPEL"));
-    query.bindValue(":d", date);
-    query.bindValue(":id", idRdv);
-    return query.exec();
+    return majChampRdv(idRdv, manque ? 4 : 3, date.toString(Qt::ISODate));
 }
 
 // ---------------------------------------------------------------- logique automatique

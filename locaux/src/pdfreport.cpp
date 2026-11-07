@@ -159,7 +159,7 @@ bool generate(const QList<Local> &all, const QString &path, QString *error)
 
     QTextDocument doc;
     doc.addResource(QTextDocument::ImageResource, QUrl(QStringLiteral("logo")),
-                    QVariant::fromValue(QPixmap(QStringLiteral(":/locaux/images/logo.png"))));
+                    QVariant::fromValue(QPixmap(QStringLiteral(":/images/logo.png"))));
     doc.setHtml(h);
     doc.print(&writer);
     return true;

@@ -17,7 +17,7 @@ LocalRepository::LocalRepository(QObject *parent) : QObject(parent)
 
 bool LocalRepository::usesDatabase() const
 {
-    return Connection::createInstance().isConnected();
+    return Connection::createInstance().isOpen();
 }
 
 QString LocalRepository::lastDbError() const
@@ -25,14 +25,6 @@ QString LocalRepository::lastDbError() const
     return Local::derniereErreur();
 }
 
-bool LocalRepository::reconnect()
-{
-    const bool ok = Connection::createInstance().createConnection() && charger();
-    emit changed();
-    return ok;
-}
-
-// Read : on utilise Local::afficher() puis on transforme chaque ligne en objet Local
 bool LocalRepository::recharger()
 {
     const bool ok = charger();
@@ -40,13 +32,18 @@ bool LocalRepository::recharger()
     return ok;
 }
 
+bool LocalRepository::reconnect()
+{
+    if (!Connection::createInstance().createConnection() || !charger())
+        return false;
+    emit changed();
+    return true;
+}
+
+// Read : on utilise Local::afficher() puis on transforme chaque ligne en objet Local
 bool LocalRepository::charger()
 {
     m_items.clear();
-    if (!usesDatabase()) {            // pas de connexion : on le dit clairement
-        m_loadError = QStringLiteral("Oracle non connecté");
-        return false;
-    }
     Local l;
     QSqlQueryModel *model = l.afficher();
     const bool ok = !model->lastError().isValid();

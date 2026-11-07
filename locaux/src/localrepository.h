@@ -20,8 +20,8 @@ public:
     bool update(const Local &l);
     bool remove(int id);
 
-    bool reconnect();                 // retente la connexion Oracle
     bool recharger();                 // relit la table LOCAUX et previent l'interface
+    bool reconnect();                 // retente la connexion Oracle
     QString lastDbError() const;      // derniere erreur Oracle (pour l'afficher)
     bool usesDatabase() const;        // true si la connexion Oracle est ouverte
     QString loadError() const { return m_loadError; }   // erreur de lecture de LOCAUX ("" = OK)

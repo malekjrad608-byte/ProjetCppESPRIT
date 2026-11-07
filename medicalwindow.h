@@ -71,6 +71,7 @@ private:
     void checkHealthWatch(bool popup);   // alertes automatiques pour le médecin
     void exportAnimalPdf(const QString &idAnimal);
     void applyRdv(const MedicalRecordDialog &dialog, const MedicalRecord &record);
+    void applyVaccin(const MedicalRecordDialog &dialog, const MedicalRecord &record);
     void actualiser();   // Refresh : relance Mtmp.afficher() (comme l'atelier)
 
     // Data / view

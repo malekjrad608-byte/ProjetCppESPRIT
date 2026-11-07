@@ -385,6 +385,7 @@ Makefile: ../../ANIWORLD2.pro C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmake.conf 
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/toolchain.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/default_pre.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/win32/default_pre.prf \
+		../../locaux/locaux.pri \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/resolve_config.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/exclusive_builds_post.prf \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/default_post.prf \
@@ -408,12 +409,16 @@ Makefile: ../../ANIWORLD2.pro C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++/qmake.conf 
 		../../ANIWORLD2.pro \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6PrintSupport.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Widgets.prl \
+		C:/Qt/6.7.3/mingw_64/lib/Qt6Svg.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Gui.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Sql.prl \
+		C:/Qt/6.7.3/mingw_64/lib/Qt6Network.prl \
 		C:/Qt/6.7.3/mingw_64/lib/Qt6Core.prl \
 		.qmake.stash \
 		C:/Qt/6.7.3/mingw_64/mkspecs/features/build_pass.prf \
-		../../resources.qrc
+		../../resources.qrc \
+		../../medical.qrc \
+		../../locaux/locaux.qrc
 	$(QMAKE) -o Makefile ..\..\ANIWORLD2.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 C:/Qt/6.7.3/mingw_64/mkspecs/features/spec_pre.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/device_config.prf:
@@ -730,6 +735,7 @@ C:/Qt/6.7.3/mingw_64/mkspecs/features/exclusive_builds.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/toolchain.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/default_pre.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/win32/default_pre.prf:
+../../locaux/locaux.pri:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/resolve_config.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/exclusive_builds_post.prf:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/default_post.prf:
@@ -753,12 +759,16 @@ C:/Qt/6.7.3/mingw_64/mkspecs/features/lex.prf:
 ../../ANIWORLD2.pro:
 C:/Qt/6.7.3/mingw_64/lib/Qt6PrintSupport.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Widgets.prl:
+C:/Qt/6.7.3/mingw_64/lib/Qt6Svg.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Gui.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Sql.prl:
+C:/Qt/6.7.3/mingw_64/lib/Qt6Network.prl:
 C:/Qt/6.7.3/mingw_64/lib/Qt6Core.prl:
 .qmake.stash:
 C:/Qt/6.7.3/mingw_64/mkspecs/features/build_pass.prf:
 ../../resources.qrc:
+../../medical.qrc:
+../../locaux/locaux.qrc:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ..\..\ANIWORLD2.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 
