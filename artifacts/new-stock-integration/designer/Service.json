@@ -1,0 +1,1552 @@
+{
+    "Service_control_1": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_10": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            1,
+            0
+        ]
+    },
+    "Service_control_100": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            3,
+            0
+        ],
+        "stretch": [
+            1,
+            0
+        ]
+    },
+    "Service_control_101": {
+        "alignment": 0,
+        "margins": [
+            18,
+            17,
+            18,
+            17
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            1,
+            1
+        ]
+    },
+    "Service_control_102": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "eyebrow"
+        }
+    },
+    "Service_control_103": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_104": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0
+        ]
+    },
+    "Service_control_105": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_106": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_107": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_108": {
+        "alignment": 0,
+        "margins": [
+            0,
+            7,
+            4,
+            7
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_109": {
+        "alignment": 0,
+        "columnstretch": [
+            0,
+            1
+        ],
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "rowstretch": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_11": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_110": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_111": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_112": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_113": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_114": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_115": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_116": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_117": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_118": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_119": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_12": {
+        "class": "QLabel",
+        "hidden": false,
+        "pixmap": true,
+        "props": {
+        }
+    },
+    "Service_control_120": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_121": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_122": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_123": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_124": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_125": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_13": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "title"
+        }
+    },
+    "Service_control_14": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_15": {
+        "class": "QLineEditIconButton",
+        "hidden": true,
+        "icon": true,
+        "props": {
+        }
+    },
+    "Service_control_16": {
+        "class": "QLineEditIconButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+        }
+    },
+    "Service_control_17": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_18": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_19": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_2": {
+        "alignment": 0,
+        "margins": [
+            9,
+            9,
+            9,
+            9
+        ]
+    },
+    "Service_control_20": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_21": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_22": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_23": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_24": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_25": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_26": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_27": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_28": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_29": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_3": {
+        "alignment": 0,
+        "margins": [
+            24,
+            20,
+            24,
+            16
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+        ]
+    },
+    "Service_control_30": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_31": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_32": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_33": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_34": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_35": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_36": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_37": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_38": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_39": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_4": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_40": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_41": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_42": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_43": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_44": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_45": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_46": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_47": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_48": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_49": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_5": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0
+        ]
+    },
+    "Service_control_50": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_control_51": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_52": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_53": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_54": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_55": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_56": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_57": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_58": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_59": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_6": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_60": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_61": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_62": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_63": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_64": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_65": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_66": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_67": {
+        "class": "QHeaderView",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_68": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_69": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_7": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_70": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_71": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_72": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_73": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_74": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_75": {
+        "class": "QHeaderView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_76": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_77": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_78": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_79": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_8": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            1,
+            0,
+            0
+        ]
+    },
+    "Service_control_80": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_81": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_82": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_83": {
+        "class": "QTableCornerButton",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_84": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_85": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_86": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_87": {
+        "alignment": 0,
+        "margins": [
+            9,
+            9,
+            9,
+            9
+        ]
+    },
+    "Service_control_88": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_89": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_9": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_90": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_91": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_92": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_93": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_control_94": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_control_95": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Service_control_96": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+            "role": "card"
+        }
+    },
+    "Service_control_97": {
+        "alignment": 0,
+        "margins": [
+            30,
+            30,
+            30,
+            30
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Service_control_98": {
+        "class": "QLabel",
+        "hidden": false,
+        "pixmap": true,
+        "props": {
+        }
+    },
+    "Service_control_99": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_detailValue_0": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_detailValue_1": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_detailValue_2": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_detailValue_3": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_detailValue_4": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_detailValue_5": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_detailValue_6": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_detailValue_7": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_m_advance": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "detailAction": true,
+            "role": "success"
+        }
+    },
+    "Service_m_attention": {
+        "class": "QLabel",
+        "hidden": true,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_m_category": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Toutes les catégories"
+            },
+            {
+                "data": null,
+                "text": "Consultation vétérinaire"
+            },
+            {
+                "data": null,
+                "text": "Vaccination"
+            },
+            {
+                "data": null,
+                "text": "Analyses de laboratoire"
+            },
+            {
+                "data": null,
+                "text": "Imagerie médicale"
+            },
+            {
+                "data": null,
+                "text": "Chirurgie vétérinaire"
+            },
+            {
+                "data": null,
+                "text": "Soins dentaires"
+            },
+            {
+                "data": null,
+                "text": "Soins infirmiers"
+            },
+            {
+                "data": null,
+                "text": "Suivi postopératoire"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Service_m_count": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_m_delete": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "detailAction": true,
+            "role": "danger"
+        }
+    },
+    "Service_m_detailContent": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_m_detailName": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_m_detailNotes": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_m_detailReference": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_m_edit": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "detailAction": true,
+            "role": "primary"
+        }
+    },
+    "Service_m_emptyDetailSpacer": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_m_emptyText": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Service_m_emptyTitle": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "section"
+        }
+    },
+    "Service_m_grid": {
+        "alignment": 32,
+        "columnstretch": [
+            1,
+            1
+        ],
+        "margins": [
+            0,
+            0,
+            5,
+            0
+        ],
+        "rowstretch": [
+            0
+        ]
+    },
+    "Service_m_gridScroll": {
+        "class": "QScrollArea",
+        "content": "Service_control_89",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_m_invoice": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+        }
+    },
+    "Service_m_listPage": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_m_notice": {
+        "class": "QLabel",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_m_pages": {
+        "class": "QStackedWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_m_period": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Toutes les dates"
+            },
+            {
+                "data": null,
+                "text": "Aujourd'hui"
+            },
+            {
+                "data": null,
+                "text": "7 prochains jours"
+            },
+            {
+                "data": null,
+                "text": "À replanifier"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Service_m_search": {
+        "class": "QLineEdit",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_m_sort": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Plus récents"
+            },
+            {
+                "data": null,
+                "text": "Plus anciens"
+            },
+            {
+                "data": null,
+                "text": "Nom : A → Z"
+            },
+            {
+                "data": null,
+                "text": "Tarif croissant"
+            },
+            {
+                "data": null,
+                "text": "Tarif décroissant"
+            },
+            {
+                "data": null,
+                "text": "Durée croissante"
+            },
+            {
+                "data": null,
+                "text": "Durée décroissante"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Service_m_status": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Tous les statuts"
+            },
+            {
+                "data": null,
+                "text": "Planifié"
+            },
+            {
+                "data": null,
+                "text": "En cours"
+            },
+            {
+                "data": null,
+                "text": "Terminé"
+            },
+            {
+                "data": null,
+                "text": "Annulé"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Service_m_statusLayout": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+        ]
+    },
+    "Service_m_table": {
+        "class": "QTableView",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Service_m_view": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+        }
+    },
+    "Service_m_views": {
+        "class": "QStackedWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_summary_0": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_summary_1": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_summary_2": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Service_summary_3": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "addService": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "primary"
+        }
+    },
+    "cardsView": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "toggle"
+        }
+    },
+    "inputHoverGlow": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "qt_scrollarea_hcontainer": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "qt_scrollarea_vcontainer": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "qt_scrollarea_viewport": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "resetFilters": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "role": "link"
+        }
+    },
+    "serviceDetailPanel": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+            "role": "card"
+        }
+    },
+    "serviceFirstAdd": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "primary"
+        }
+    },
+    "serviceInfoScroll": {
+        "class": "QScrollArea",
+        "content": "Service_control_107",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "servicePlanning": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+        }
+    },
+    "serviceStatistics": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+        }
+    },
+    "tableView": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "toggle"
+        }
+    }
+}

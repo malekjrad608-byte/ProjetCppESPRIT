@@ -1,0 +1,850 @@
+{
+    "AdvancedModulesPanel": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_alertsNavButton": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_categoryFilter": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Toutes les catégories"
+            },
+            {
+                "data": null,
+                "text": "Chiens"
+            },
+            {
+                "data": null,
+                "text": "Chats"
+            },
+            {
+                "data": null,
+                "text": "Oiseaux"
+            },
+            {
+                "data": null,
+                "text": "Poissons"
+            },
+            {
+                "data": null,
+                "text": "Rongeurs"
+            },
+            {
+                "data": null,
+                "text": "Matériel Clinique"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Stock_control_1": {
+        "alignment": 0,
+        "margins": [
+            24,
+            18,
+            24,
+            12
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0
+        ]
+    },
+    "Stock_control_10": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_11": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Stock_control_12": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_13": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_14": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_15": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_16": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_17": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_18": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_19": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_2": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1,
+            0,
+            0
+        ]
+    },
+    "Stock_control_20": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Stock_control_21": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_22": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_23": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_24": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_25": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_26": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_27": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_28": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_29": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_3": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0
+        ]
+    },
+    "Stock_control_30": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_31": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_32": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Stock_control_33": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_34": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_35": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_36": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_37": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_38": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_39": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_4": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Stock_control_40": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_41": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_42": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_43": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_44": {
+        "class": "QHeaderView",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_45": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_46": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_47": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_48": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_49": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_5": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            1,
+            0,
+            0,
+            0
+        ]
+    },
+    "Stock_control_50": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_51": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_52": {
+        "class": "QHeaderView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_53": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_54": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_55": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_56": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_57": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_58": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_59": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_6": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1,
+            0
+        ]
+    },
+    "Stock_control_60": {
+        "class": "QTableCornerButton",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Stock_control_61": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_62": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_63": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_64": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_65": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_66": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Stock_control_67": {
+        "alignment": 0,
+        "margins": [
+            14,
+            10,
+            14,
+            12
+        ],
+        "stretch": [
+            0,
+            0
+        ]
+    },
+    "Stock_control_68": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1,
+            0
+        ]
+    },
+    "Stock_control_69": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            1,
+            1,
+            1
+        ]
+    },
+    "Stock_control_7": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_70": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_71": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_72": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_73": {
+        "alignment": 0,
+        "margins": [
+            16,
+            12,
+            16,
+            12
+        ],
+        "stretch": [
+            1,
+            0
+        ]
+    },
+    "Stock_control_74": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0
+        ]
+    },
+    "Stock_control_75": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_76": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_77": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_8": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_control_9": {
+        "class": "QLineEditIconButton",
+        "hidden": true,
+        "icon": true,
+        "props": {
+        }
+    },
+    "Stock_footerLabel": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_searchLineEdit": {
+        "class": "QLineEdit",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Stock_sortFilter": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": 0,
+                "text": "Tri : par défaut"
+            },
+            {
+                "data": 1,
+                "text": "Quantité : croissante"
+            },
+            {
+                "data": 2,
+                "text": "Quantité : décroissante"
+            },
+            {
+                "data": 3,
+                "text": "Échéance : plus proche"
+            },
+            {
+                "data": 4,
+                "text": "Échéance : plus éloignée"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Stock_stateFilter": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Tous les états"
+            },
+            {
+                "data": null,
+                "text": "Disponible"
+            },
+            {
+                "data": null,
+                "text": "Sous le seuil"
+            },
+            {
+                "data": null,
+                "text": "Échéance proche"
+            },
+            {
+                "data": null,
+                "text": "Périmé"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Stock_stockTable": {
+        "class": "QTableView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "qt_scrollarea_hcontainer": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "qt_scrollarea_vcontainer": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "qt_scrollarea_viewport": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "stockDeleteButton": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "role": "danger"
+        }
+    },
+    "stockEditButton": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "stockExpiryButton": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "role": "primary"
+        }
+    },
+    "stockExportButton": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+        }
+    },
+    "stockMovementButton": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "role": "primary"
+        }
+    },
+    "stockPurchasesButton": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "stockReplenishmentButton": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "stockStatisticsButton": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+        }
+    }
+}

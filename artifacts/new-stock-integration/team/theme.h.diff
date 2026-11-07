@@ -1,0 +1,18 @@
+--- 
+
++++ 
+
+@@ -69,4 +69,5 @@
+
+     case RoomState::Occupied:     bg = BlueLight;   fg = Blue;       break;
+     case RoomState::OutOfService: bg = OrangeLight; fg = OrangeText; break;
++    case RoomState::ToClean:      bg = RedLight;    fg = Red;        break;
+     }
+ }
+@@ -77,5 +78,4 @@
+
+     case CleaningState::Clean:      bg = GreenLight;  fg = Green;      break;
+     case CleaningState::ToClean:    bg = RedLight;    fg = Red;        break;
+-    case CleaningState::InProgress: bg = OrangeLight; fg = OrangeText; break;
+     }
+ }

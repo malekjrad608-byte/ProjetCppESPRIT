@@ -1,0 +1,171 @@
+--- 
+
++++ 
+
+@@ -1,7 +1,5 @@
+
+-#include "../database/oracleconnection.h"
+ #include "roomcard.h"
+ #include "icons.h"
+ #include "theme.h"
+-#include "../ui/motion.h"
+ 
+ #include <QEnterEvent>
+@@ -22,10 +20,4 @@
+
+     m_hoverAnim->setDuration(240);
+     m_hoverAnim->setEasingCurve(QEasingCurve::OutCubic);
+-    connect(&Motion::instance(),&Motion::changed,this,[this](bool enabled) {
+-        if(!enabled) {
+-            for(auto *animation:findChildren<QPropertyAnimation *>()) animation->stop();
+-            m_intro=1; m_hover=0; update();
+-        }
+-    });
+ }
+ 
+@@ -35,12 +27,4 @@
+
+         return;
+     m_selected = on;
+-    update();
+-}
+-
+-void RoomCard::setAlertLevel(int level)
+-{
+-    if (m_alert == level)
+-        return;
+-    m_alert = level;
+     update();
+ }
+@@ -68,8 +52,5 @@
+
+     a->setEndValue(1.0);
+     a->setEasingCurve(QEasingCurve::OutCubic);
+-    QTimer::singleShot(delayMs, this, [this,a] {
+-        if(Theme::animations) a->start(QAbstractAnimation::DeleteWhenStopped);
+-        else { setIntro(1); a->deleteLater(); }
+-    });
++    QTimer::singleShot(delayMs, this, [a] { a->start(QAbstractAnimation::DeleteWhenStopped); });
+ }
+ 
+@@ -116,5 +97,5 @@
+
+ {
+     if (m_pressed && e->button() == Qt::LeftButton && rect().contains(e->position().toPoint()))
+-        emit clicked(m_local.id);
++        emit clicked(m_local.getId());
+     m_pressed = false;
+     QWidget::mouseReleaseEvent(e);
+@@ -129,5 +110,5 @@
+
+ 
+     const qreal lift = m_hover * 5.0;
+-    const QRectF cr(10, 16 - lift - (1.0 - m_intro) * 10.0, width()-20, 152);
++    const QRectF cr(10, 16 - lift - (1.0 - m_intro) * 10.0, 250, 152);
+     const qreal pi = 3.14159265358979;
+ 
+@@ -135,5 +116,5 @@
+
+     p.setPen(Qt::NoPen);
+     for (int i = 0; i < 7; ++i) {
+-        QColor c = Theme::Orange;
++        QColor c = Theme::TealDark;
+         c.setAlphaF((0.035 + 0.06 * m_hover) * (1.0 - i / 7.0));
+         p.setBrush(c);
+@@ -151,7 +132,7 @@
+
+         p.setClipPath(body);
+         QRadialGradient g(m_mouse.isNull() ? cr.center() : m_mouse, 150);
+-        QColor c0 = Theme::Orange;
++        QColor c0 = Theme::Teal;
+         c0.setAlphaF(0.13 * m_hover);
+-        QColor c1 = Theme::Orange;
++        QColor c1 = Theme::Teal;
+         c1.setAlphaF(0.0);
+         g.setColorAt(0, c0);
+@@ -161,5 +142,5 @@
+
+         p.translate(cr.center().x() + 78, cr.center().y() + 6);
+         p.rotate(-18 + 30 * m_hover);
+-        QColor pc = Theme::Orange;
++        QColor pc = Theme::Teal;
+         pc.setAlphaF(0.09 * m_hover);
+         p.fillPath(Theme::pawPath(QRectF(-38, -38, 76, 76)), pc);
+@@ -170,5 +151,5 @@
+
+     const QColor border = m_selected
+         ? Theme::Orange
+-        : Theme::lerp(Theme::Line, Theme::Orange, m_hover);
++        : Theme::lerp(Theme::Line, QColor(0x9c, 0xc6, 0xcf), m_hover);
+     p.setPen(QPen(border, m_selected ? 2.0 : 1.4));
+     p.setBrush(Qt::NoBrush);
+@@ -195,8 +176,8 @@
+
+     {
+         const QFont f = Theme::font(8.5);
+-        const QString t = OracleConnection::isOracle()?QString("Capacité : %1").arg(m_local.capacity):QStringLiteral("%1/%2 animal%3")
+-                              .arg(m_local.occupancy)
+-                              .arg(m_local.capacity)
+-                              .arg(QString(m_local.capacity > 1 ? "aux" : ""));
++        const QString t = QStringLiteral("%1/%2 animal%3")
++                              .arg(m_local.getOccupancy())
++                              .arg(m_local.getCapacity())
++                              .arg(QString(m_local.getCapacity() > 1 ? "aux" : ""));
+         const qreal w = Theme::pillWidth(t, f, false);
+         Theme::drawPill(p, QRectF(cr.right() - 14 - w, cr.top() + 20, w, 22), t,
+@@ -213,5 +194,5 @@
+
+         p.setPen(Theme::Ink);
+         p.drawText(QRectF(left, cr.top() + 58, textW, 24), Qt::AlignVCenter | Qt::AlignLeft,
+-                   QFontMetricsF(f).elidedText(m_local.name, Qt::ElideRight, textW));
++                   QFontMetricsF(f).elidedText(m_local.getName(), Qt::ElideRight, textW));
+     }
+     // type
+@@ -221,7 +202,7 @@
+
+         p.setPen(Theme::Muted);
+         p.drawText(QRectF(left, cr.top() + 82, textW, 18), Qt::AlignVCenter | Qt::AlignLeft,
+-                   m_local.type);
+-    }
+-    // etat + nettoyage
++                   m_local.getType());
++    }
++    // etat
+     {
+         const QFont f = Theme::font(8.5, true);
+@@ -231,11 +212,4 @@
+
+         Theme::drawPill(p, QRectF(left, cr.top() + 108, Theme::pillWidth(st, f, true), 24),
+                         st, bg, fg, f, true);
+-
+-        if(!OracleConnection::isOracle()){
+-        Theme::cleaningColors(m_local.cleaning, bg, fg);
+-        const QString cl = m_local.cleaningText();
+-        const qreal w = Theme::pillWidth(cl, f, true);
+-        Theme::drawPill(p, QRectF(cr.right() - 14 - w, cr.top() + 108, w, 24), cl, bg, fg, f, true);
+-        }
+     }
+     // specialite + etage
+@@ -245,18 +219,8 @@
+
+         p.setPen(Theme::Muted);
+         QString info = m_local.floorShort();
+-        if (!m_local.specialty.isEmpty())
+-            info = m_local.specialty + QStringLiteral("  ·  ") + info;
++        if (!m_local.getSpecialty().isEmpty())
++            info = m_local.getSpecialty() + QStringLiteral("  ·  ") + info;
+         p.drawText(QRectF(left, cr.top() + 134, textW, 16), Qt::AlignVCenter | Qt::AlignLeft,
+                    QFontMetricsF(f).elidedText(info, Qt::ElideRight, textW));
+     }
+-    // pastille d'alerte (coin haut droit)
+-    if (m_alert > 0) {
+-        const QPointF c(cr.right() - 4, cr.top() + 2);
+-        p.setPen(QPen(Qt::white, 2));
+-        p.setBrush(m_alert >= 2 ? Theme::Red : Theme::Orange);
+-        p.drawEllipse(c, 10, 10);
+-        p.setPen(Qt::white);
+-        p.setFont(Theme::font(10, true));
+-        p.drawText(QRectF(c.x() - 10, c.y() - 10, 20, 20), Qt::AlignCenter, QStringLiteral("!"));
+-    }
+-}
++}

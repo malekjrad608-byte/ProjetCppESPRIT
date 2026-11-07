@@ -1,0 +1,11 @@
+void GestionEmployes::detecterConflitsPlanning()
+{
+    const QStringList conflits = conflitsPlanning();
+    if (conflits.isEmpty()) {
+        QMessageBox::information(this, "Vérification du planning",
+                                 "✅ Aucun chevauchement détecté entre les tâches affectées.");
+        return;
+    }
+    QMessageBox::warning(this, "Conflits de planification détectés",
+                         "Les affectations suivantes se chevauchent :\n\n" + conflits.join("\n\n"));
+}

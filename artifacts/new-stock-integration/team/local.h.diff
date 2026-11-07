@@ -1,0 +1,156 @@
+--- 
+
++++ 
+
+@@ -1,57 +1,105 @@
+
+ #pragma once
+-#include <QDateTime>
+-#include <QJsonObject>
+ #include <QString>
+ #include <QStringList>
+-#include <QVariant>
+-#include <QVector>
++#include <QSqlQuery>
++#include <QSqlQueryModel>
++#include <QSqlRecord>
++#include <QList>
++#include <QPair>
+ 
+-enum class CleaningState { Clean = 0, ToClean = 1, InProgress = 2 };
+-enum class RoomState { Available, Occupied, OutOfService };
++enum class CleaningState { Clean = 0, ToClean = 1 };
++enum class RoomState { Available, Occupied, OutOfService, ToClean };
+ 
+ // Entite "Local" (une salle / un espace de la clinique)
+-class Local {
++// Table LOCAUX : ID_LOCAL, NOM_LOCAL, TYPE_LOCAL, ETAGE, CAPACITE, SPECIALITE, ETAT, OCCUPATION, ID_SERV
++//
++// Cycle de vie d'un local (gere UNIQUEMENT par les methodes metier ci-dessous) :
++//
++//   Disponible --(+1 animal)--> Occupé --(-1, dernier animal)--> À nettoyer
++//        ^                                                            |
++//        +-------------------(nettoyage terminé)----------------------+
++//
++//   Hors service : choisi dans le formulaire, seulement si le local est vide.
++class Local
++{
++private:
++    // ---- attributs = colonnes de la table LOCAUX ----
++    int id = 0;
++    QString name;
++    QString type;                  // Consultation, Chirurgie, ...
++    int floor = 0;                 // 0 = rez-de-chaussee
++    int capacity = 1;              // nombre d'animaux max
++    QString specialty;
++    QString etat = "Disponible";   // Disponible, Occupé, À nettoyer, Hors service
++    int occupancy = 0;             // nombre d'animaux presents
++    int idService = 0;             // cle etrangere -> SERVICES(ID_SERV)
++
+ public:
+-  Local() = default;
+-  static bool afficher(QList<Local> *items, qint64 *revision, QString *error);
+-  static bool enregistrer(const QList<Local> &items, qint64 *revision,
+-                          QString *error);
+-  int id = 0;
+-  int serviceId = 0;
+-  QString name;
+-  QString type;      // Consultation, Chirurgie, ...
+-  int floor = 0;     // 0 = rez-de-chaussee
+-  int capacity = 1;  // nombre d'animaux max
+-  int occupancy = 0; // nombre d'animaux presents
+-  QString specialty;
+-  bool outOfService = false;
+-  CleaningState cleaning = CleaningState::Clean;
+-  QDateTime lastCleaned;
+-  QDateTime dirtySince; // depuis quand le local est "a nettoyer"
++    // ---- les 4 etats ----
++    static const QString Disponible;
++    static const QString Occupe;
++    static const QString ANettoyer;
++    static const QString HorsService;
++    static QStringList etats();
+ 
+-  RoomState state() const;
+-  QString stateText() const;
+-  QString cleaningText() const;
+-  QString floorText() const;  // "Rez-de-chaussée", "Étage 1"
+-  QString floorShort() const; // "RDC", "Étage 1"
+-  QString iconName() const;
+-  bool isUrgentType() const; // blocs et isolement : nettoyage prioritaire
++    // ---- constructeurs ----
++    Local() {}
++    Local(int id, QString name, QString type, int floor, int capacity,
++          QString specialty, QString etat, int idService)
++        : id(id), name(name), type(type), floor(floor), capacity(capacity),
++          specialty(specialty), etat(etat), idService(idService) {}
+ 
+-  // suivi du nettoyage
+-  void markToClean();          // -> A nettoyer (demarre le chronometre)
+-  void startCleaning();        // -> En cours
+-  void markClean();            // -> Propre
+-  qint64 dirtyMinutes() const; // minutes passees a l'etat "A nettoyer"
++    // ---- getters ----
++    int getId() const { return id; }
++    QString getName() const { return name; }
++    QString getType() const { return type; }
++    int getFloor() const { return floor; }
++    int getCapacity() const { return capacity; }
++    QString getSpecialty() const { return specialty; }
++    QString getEtat() const { return etat; }
++    int getOccupancy() const { return occupancy; }
++    int getIdService() const { return idService; }
++    bool getOutOfService() const { return etat == HorsService; }
+ 
+-  QJsonObject toJson() const;
+-  static Local fromJson(const QJsonObject &o);
+-  static QStringList types();
+-  // Lecture/ecriture SQL propres a cette entite, avec revision de concurrence.
+-  using Rows = QVector<QVariantList>;
+-  static bool readRows(Rows *rows, qint64 *revision, QString *error);
+-  static bool saveRows(const Rows &rows, qint64 *revision, QString *error);
++    // ---- setters (informations du formulaire) ----
++    void setId(int v) { id = v; }
++    void setName(const QString &v) { name = v; }
++    void setType(const QString &v) { type = v; }
++    void setFloor(int v) { floor = v; }
++    void setCapacity(int v) { capacity = v; }
++    void setSpecialty(const QString &v) { specialty = v; }
++    void setIdService(int v) { idService = v; }
++    void setEtat(const QString &v) { etat = v; }   // utilise par les donnees d'exemple
++    bool setOutOfService(bool on);                 // false si le local n'est pas vide
+ 
+-private:
+-  static bool loadRows(Rows *rows, QString *error);
+-  static qint64 rowsVersion(const Rows &rows);
++    // ---- methodes metier : changent ETAT et OCCUPATION de facon coherente ----
++    bool peutRecevoirAnimal() const;   // Disponible ou Occupé, et il reste une place
++    bool ajouterAnimal();              // +1  -> "Occupé"
++    bool retirerAnimal();              // -1  -> "À nettoyer" quand le dernier animal part
++    bool signalerANettoyer();          // Disponible -> "À nettoyer"
++    bool terminerNettoyage();          // À nettoyer -> "Disponible"
++
++    // ---- affichage ----
++    RoomState state() const;
++    QString stateText() const { return etat; }
++    CleaningState getCleaning() const;
++    QString cleaningText() const;
++    QString floorText() const;   // "Rez-de-chaussée", "Étage 1"
++    QString floorShort() const;  // "RDC", "Étage 1"
++    QString iconName() const;
++    bool isUrgentType() const;   // blocs et isolement : nettoyage prioritaire
++
++    static QStringList types();
++
++    // ---- CRUD (comme l'atelier) : toutes les requetes SQL sont dans la classe de l'entite ----
++    QString controleSaisie() const;          // controle de saisie ("" = OK)
++    bool ajouter();                          // Create
++    QSqlQueryModel *afficher();              // Read
++    bool modifier();                         // Update
++    bool supprimer(int id);                  // Delete
++
++    static QList<QPair<int, QString>> services();   // (ID_SERV, libelle) pour la liste du formulaire
++    static Local fromRecord(const QSqlRecord &r);   // ligne de la table -> objet Local
++    static int prochainId();                        // MAX(ID_LOCAL) + 1 lu dans Oracle (0 si erreur)
++    static QString derniereErreur();                // dernier message d'erreur SQL
+ };

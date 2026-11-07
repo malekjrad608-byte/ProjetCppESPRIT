@@ -1,0 +1,26 @@
+--- 
+
++++ 
+
+@@ -26,9 +26,8 @@
+
+ void CardGrid::relayout()
+ {
+-    m_cols = qBound(1, width() / RoomCard::CardWidth, 2);
+-    const int cw = width() / m_cols;
++    const int cw = RoomCard::CardWidth;
+     const int ch = RoomCard::CardHeight;
++    m_cols = qMax(1, width() / cw);
+     for (int i = 0; i < m_cards.size(); ++i) {
+-        m_cards[i]->setFixedWidth(cw);
+         m_cards[i]->move((i % m_cols) * cw, (i / m_cols) * ch);
+         m_cards[i]->show();
+@@ -41,4 +40,6 @@
+
+ {
+     QWidget::resizeEvent(e);
+-    relayout();
++    const int cols = qMax(1, width() / RoomCard::CardWidth);
++    if (cols != m_cols)
++        relayout();
+ }

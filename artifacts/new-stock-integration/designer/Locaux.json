@@ -1,0 +1,1237 @@
+{
+    "Locaux_control_1": {
+        "alignment": 0,
+        "margins": [
+            26,
+            22,
+            26,
+            10
+        ],
+        "stretch": [
+            0,
+            0,
+            1
+        ]
+    },
+    "Locaux_control_10": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_100": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "primary"
+        }
+    },
+    "Locaux_control_101": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "danger"
+        }
+    },
+    "Locaux_control_102": {
+        "alignment": 0,
+        "margins": [
+            16,
+            14,
+            16,
+            14
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_103": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_104": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_105": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_106": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_107": {
+        "alignment": 0,
+        "margins": [
+            20,
+            16,
+            20,
+            16
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_108": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_109": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_11": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            1,
+            0
+        ]
+    },
+    "Locaux_control_110": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_111": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_112": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_113": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_12": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            1,
+            0
+        ]
+    },
+    "Locaux_control_13": {
+        "class": "QLabel",
+        "hidden": false,
+        "pixmap": true,
+        "props": {
+        }
+    },
+    "Locaux_control_14": {
+        "class": "QLineEditIconButton",
+        "hidden": true,
+        "icon": true,
+        "props": {
+        }
+    },
+    "Locaux_control_15": {
+        "class": "QLineEditIconButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+        }
+    },
+    "Locaux_control_16": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_17": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_18": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_19": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_2": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            1,
+            0
+        ]
+    },
+    "Locaux_control_20": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_21": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_22": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_23": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_24": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_25": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_26": {
+        "class": "QHeaderView",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_27": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_28": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_29": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_3": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_30": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_31": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_32": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_33": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_34": {
+        "class": "QHeaderView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_35": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_36": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_37": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_38": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_39": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_4": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_40": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_41": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_42": {
+        "class": "QTableCornerButton",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_43": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_44": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_45": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_46": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_47": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_48": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_49": {
+        "alignment": 0,
+        "margins": [
+            9,
+            9,
+            9,
+            9
+        ]
+    },
+    "Locaux_control_5": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_50": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_51": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_52": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_53": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_54": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_55": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_56": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_57": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_58": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_59": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_6": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0
+        ]
+    },
+    "Locaux_control_60": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_61": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_62": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_63": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_64": {
+        "class": "RoomCard",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_65": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_66": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_67": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_68": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_69": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_7": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_70": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Locaux_control_71": {
+        "class": "QScrollArea",
+        "content": "Locaux_control_73",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_72": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_73": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_74": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            8,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_75": {
+        "alignment": 0,
+        "margins": [
+            20,
+            18,
+            20,
+            18
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_76": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0
+        ]
+    },
+    "Locaux_control_77": {
+        "class": "QLabel",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_78": {
+        "class": "QLabel",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_79": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_8": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_80": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_81": {
+        "alignment": 0,
+        "columnstretch": [
+            0,
+            1
+        ],
+        "margins": [
+            0,
+            8,
+            0,
+            8
+        ],
+        "rowstretch": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_82": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_83": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_84": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_85": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_86": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_87": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_88": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_89": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_9": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0
+        ]
+    },
+    "Locaux_control_90": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_91": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_92": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_93": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_94": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_control_95": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_control_96": {
+        "alignment": 0,
+        "columnstretch": [
+            0,
+            0
+        ],
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "rowstretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Locaux_control_97": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "primary"
+        }
+    },
+    "Locaux_control_98": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "role": "ghost"
+        }
+    },
+    "Locaux_control_99": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "success"
+        }
+    },
+    "Locaux_m_bar": {
+        "class": "QProgressBar",
+        "hidden": false,
+        "props": {
+            "motionTarget": 55
+        }
+    },
+    "Locaux_m_btnAdd": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "primary"
+        }
+    },
+    "Locaux_m_btnAlerts": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "alert": "critical",
+            "role": "ghost"
+        }
+    },
+    "Locaux_m_btnCards": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "ghost"
+        }
+    },
+    "Locaux_m_btnList": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "ghost"
+        }
+    },
+    "Locaux_m_btnMap": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "ghost"
+        }
+    },
+    "Locaux_m_btnPdf": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "ghost"
+        }
+    },
+    "Locaux_m_btnSmart": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "ghost"
+        }
+    },
+    "Locaux_m_btnStats": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "ghost"
+        }
+    },
+    "Locaux_m_cardScroll": {
+        "class": "QScrollArea",
+        "content": "Locaux_m_grid",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_m_chipAvail": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "chip": true,
+            "tone": "green"
+        }
+    },
+    "Locaux_m_chipDirty": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "chip": true,
+            "tone": "red"
+        }
+    },
+    "Locaux_m_chipOcc": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "chip": true,
+            "tone": "blue"
+        }
+    },
+    "Locaux_m_chipOos": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "chip": true,
+            "tone": "orange"
+        }
+    },
+    "Locaux_m_count": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_m_detail": {
+        "class": "DetailPanel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_m_empty": {
+        "class": "QLabel",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_m_globalText": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_m_grid": {
+        "class": "CardGrid",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_m_miniMap": {
+        "class": "ClinicMap",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_m_pct": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_m_queryHint": {
+        "class": "QLabel",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_m_search": {
+        "class": "QLineEdit",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Locaux_m_sortCombo": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Trier : priorité"
+            },
+            {
+                "data": null,
+                "text": "Trier : nom A → Z"
+            },
+            {
+                "data": null,
+                "text": "Trier : remplissage"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Locaux_m_table": {
+        "class": "QTableWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Locaux_m_views": {
+        "class": "QStackedWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "h1": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "key": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "kicker": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "locauxEnlargeMap": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "role": "link"
+        }
+    },
+    "locauxResetFilters": {
+        "class": "QPushButton",
+        "hidden": false,
+        "props": {
+            "role": "link"
+        }
+    },
+    "panel": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "panelName": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "panelTitle": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "qt_scrollarea_hcontainer": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "qt_scrollarea_vcontainer": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "qt_scrollarea_viewport": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "sub": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "toast": {
+        "class": "Toast",
+        "hidden": true,
+        "props": {
+        }
+    }
+}

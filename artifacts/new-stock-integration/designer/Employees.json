@@ -1,0 +1,1106 @@
+{
+    "Employees_control_1": {
+        "alignment": 0,
+        "margins": [
+            24,
+            24,
+            24,
+            20
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            1
+        ]
+    },
+    "Employees_control_10": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_11": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_12": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_13": {
+        "alignment": 0,
+        "margins": [
+            18,
+            5,
+            22,
+            5
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_14": {
+        "class": "QLabel",
+        "hidden": false,
+        "pixmap": true,
+        "props": {
+        }
+    },
+    "Employees_control_15": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_16": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_17": {
+        "alignment": 0,
+        "margins": [
+            18,
+            5,
+            22,
+            5
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_18": {
+        "class": "QLabel",
+        "hidden": false,
+        "pixmap": true,
+        "props": {
+        }
+    },
+    "Employees_control_19": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_2": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            3,
+            1
+        ]
+    },
+    "Employees_control_20": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_21": {
+        "alignment": 0,
+        "margins": [
+            18,
+            5,
+            22,
+            5
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_22": {
+        "class": "QLabel",
+        "hidden": false,
+        "pixmap": true,
+        "props": {
+        }
+    },
+    "Employees_control_23": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_24": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_25": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            3,
+            1,
+            1,
+            1
+        ]
+    },
+    "Employees_control_26": {
+        "class": "QLineEditIconButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+        }
+    },
+    "Employees_control_27": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_28": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_29": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_3": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_30": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_31": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_32": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_33": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_34": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_35": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_36": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_37": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_38": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_39": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_4": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_40": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_41": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_42": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_43": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_44": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_45": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_46": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_47": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_48": {
+        "class": "QComboBoxPrivateContainer",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_49": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_5": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0
+        ]
+    },
+    "Employees_control_50": {
+        "class": "QComboBoxListView",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_51": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_52": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_53": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_54": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_55": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_56": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_57": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_58": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_59": {
+        "class": "QComboBoxPrivateScroller",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_6": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_60": {
+        "class": "QScrollArea",
+        "content": "Employees_m_cardsContainer",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_61": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_62": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+            "role": "muted"
+        }
+    },
+    "Employees_control_63": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_64": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_65": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_66": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_67": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_68": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_69": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            0,
+            1,
+            0
+        ]
+    },
+    "Employees_control_7": {
+        "class": "QLabel",
+        "hidden": false,
+        "pixmap": true,
+        "props": {
+        }
+    },
+    "Employees_control_70": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_71": {
+        "class": "QScrollArea",
+        "content": "Employees_m_detailContent",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_72": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_73": {
+        "alignment": 0,
+        "margins": [
+            18,
+            5,
+            18,
+            12
+        ],
+        "stretch": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_control_74": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1
+        ]
+    },
+    "Employees_control_75": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1
+        ]
+    },
+    "Employees_control_76": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1
+        ]
+    },
+    "Employees_control_77": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1
+        ]
+    },
+    "Employees_control_78": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1
+        ]
+    },
+    "Employees_control_79": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1
+        ]
+    },
+    "Employees_control_8": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_80": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0,
+            1
+        ]
+    },
+    "Employees_control_81": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_82": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_83": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_84": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_85": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_86": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_87": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_88": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_89": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_9": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_90": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_91": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_92": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_control_93": {
+        "class": "QScrollBar",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_control_94": {
+        "alignment": 0,
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "stretch": [
+            0
+        ]
+    },
+    "Employees_control_95": {
+        "alignment": 0,
+        "margins": [
+            18,
+            8,
+            18,
+            18
+        ],
+        "stretch": [
+            0,
+            0,
+            0
+        ]
+    },
+    "Employees_m_cardsContainer": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_comboPoste": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Tous les postes"
+            },
+            {
+                "data": null,
+                "text": "Vétérinaire"
+            },
+            {
+                "data": null,
+                "text": "Assistant(e) vétérinaire"
+            },
+            {
+                "data": null,
+                "text": "Auxiliaire vétérinaire"
+            },
+            {
+                "data": null,
+                "text": "Secrétaire / Réceptionniste"
+            },
+            {
+                "data": null,
+                "text": "Agent d'entretien"
+            },
+            {
+                "data": null,
+                "text": "Aide aux soins animaliers"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Employees_m_comboStatut": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Tous"
+            },
+            {
+                "data": null,
+                "text": "Disponible"
+            },
+            {
+                "data": null,
+                "text": "Non disponible"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Employees_m_comboTri": {
+        "class": "QComboBox",
+        "hidden": false,
+        "items": [
+            {
+                "data": null,
+                "text": "Tri par date"
+            },
+            {
+                "data": null,
+                "text": "Tri par charge"
+            }
+        ],
+        "props": {
+        }
+    },
+    "Employees_m_detailActions": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_m_detailCharge": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailCompetences": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailContent": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "Employees_m_detailCourriel": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailDate": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailDispo": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailId": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailNom": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailPlaceholder": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailPoste": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailStatut": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_detailTelephone": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_editRecherche": {
+        "class": "QLineEdit",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_gridCards": {
+        "alignment": 32,
+        "columnstretch": [
+            0,
+            0
+        ],
+        "margins": [
+            0,
+            0,
+            0,
+            0
+        ],
+        "rowstretch": [
+            0
+        ]
+    },
+    "Employees_m_lblChargeTotale": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_lblDisponibles": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "Employees_m_lblIndisponibles": {
+        "class": "QLabel",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "addEmployee": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "primary"
+        }
+    },
+    "deleteEmployee": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "danger"
+        }
+    },
+    "editEmployee": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "primary"
+        }
+    },
+    "employeeDetailPanel": {
+        "class": "QFrame",
+        "hidden": false,
+        "props": {
+            "role": "card"
+        }
+    },
+    "employeeLeavePdf": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+        }
+    },
+    "employeeStatistics": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": ""
+        }
+    },
+    "qt_scrollarea_hcontainer": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "qt_scrollarea_vcontainer": {
+        "class": "QWidget",
+        "hidden": true,
+        "props": {
+        }
+    },
+    "qt_scrollarea_viewport": {
+        "class": "QWidget",
+        "hidden": false,
+        "props": {
+        }
+    },
+    "toggleEmployeeAvailability": {
+        "class": "QPushButton",
+        "hidden": false,
+        "icon": true,
+        "props": {
+            "role": "success"
+        }
+    }
+}

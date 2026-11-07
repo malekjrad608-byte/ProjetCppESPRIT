@@ -1,0 +1,54 @@
+--- 
+
++++ 
+
+@@ -4,12 +4,12 @@
+
+ #include "local.h"
+ 
+-// Oracle in normal mode; JSON and memory remain available for offline/demo use.
++// Garde en memoire la liste des locaux lue depuis Oracle (table LOCAUX)
++// et previent l'interface (signal changed) apres chaque ajout / modification / suppression.
++// Aucune requete SQL ici : elles sont toutes dans la classe Local.
+ class LocalRepository : public QObject
+ {
+     Q_OBJECT
+ public:
+-    explicit LocalRepository(QObject *parent = nullptr, const QString &storagePath = ":memory:");
+-    QString lastError() const { return m_error; }
+-    void reload() { load(); emit changed(); }
++    explicit LocalRepository(QObject *parent = nullptr);
+ 
+     const QList<Local> &all() const { return m_items; }
+@@ -20,21 +20,20 @@
+
+     bool update(const Local &l);
+     bool remove(int id);
+-    void resetDemo();             // remet les donnees de demonstration
++
++    bool reconnect();                 // retente la connexion Oracle
++    bool recharger();                 // relit la table LOCAUX et previent l'interface
++    QString lastDbError() const;      // derniere erreur Oracle (pour l'afficher)
++    bool usesDatabase() const;        // true si la connexion Oracle est ouverte
++    QString loadError() const { return m_loadError; }   // erreur de lecture de LOCAUX ("" = OK)
+ 
+ signals:
+     void changed();
+-    void storageError(const QString &message);
+ 
+ private:
+-    QString filePath() const;
+-    void load();
+-    bool save();
+-    void seed();
++    bool charger();       // relit la table LOCAUX (Local::afficher)
++    void seed();          // premiers locaux si la table est vide
+     int nextId() const;
+ 
+     QList<Local> m_items;
+-    QString m_path;
+-    QString m_error;
+-    bool m_loadFailed = false;
+-    qint64 m_revision = 0;
++    QString m_loadError;
+ };

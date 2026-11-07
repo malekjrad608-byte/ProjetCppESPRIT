@@ -1,0 +1,103 @@
+--- 
+
++++ 
+
+@@ -13,4 +13,5 @@
+
+ class ClinicMap;
+ class DetailPanel;
++class LocalForm;
+ class LocalRepository;
+ class QComboBox;
+@@ -30,17 +31,14 @@
+
+ {
+     Q_OBJECT
+-    friend class ServiceTests;
+ public:
+     explicit PageLocaux(LocalRepository *repo, QWidget *parent = nullptr);
+ 
+-    void focusSearch();
+-    void refreshPage();
+-    void addLocal();
+-protected:
+-    void paintEvent(QPaintEvent *) override;
+-    void hideEvent(QHideEvent *) override;
+ private:
+-    // Interface commune : src/mainwindow.ui
+-    void setupUi();
++    // construction
++    QLayout *buildHeader();
++    QLayout *buildTools();
++    QLayout *buildBody();
++    QPushButton *makeButton(const QString &text, const QString &icon, const char *role);
++    QPushButton *makeChip(const char *tone);
+ 
+     // donnees affichees
+@@ -50,5 +48,4 @@
+
+     void updateChips();
+     void updateQueryHint();
+-    void updateGlobal();
+     void setView(int index);          // 0 = cartes, 1 = liste
+ 
+@@ -63,17 +60,15 @@
+
+ 
+     // CRUD + actions metier
++    void addLocal();
+     void editSelected();
+     void deleteSelected();
++    void openForm(const Local *existing);   // formulaire dans la page (ajout / modification)
++    void closeForm();
+     void modifySelected(const std::function<bool(Local &)> &fn);
+ 
+     // fonctionnalites avancees
+     void openPlan();
+-    void openAlerts();
+     void openSmartAssign();
+     void exportPdf();
+-
+-    // alertes automatiques
+-    void computeAlerts(bool notify);
+-    void applyAlerts();
+ 
+     LocalRepository *m_repo;
+@@ -85,5 +80,4 @@
+
+     QPushButton *m_chipOos;
+     QPushButton *m_chipDirty;
+-    QPushButton *m_btnAlerts;
+     QPushButton *m_btnSmart;
+     QPushButton *m_btnAdd;
+@@ -102,4 +96,8 @@
+
+ 
+     // corps
++    QWidget *m_toolsBox;              // barre de recherche (cachee pendant la saisie)
++    QStackedWidget *m_bodyStack;      // 0 = cartes/liste + panneau, 1 = formulaire
++    QWidget *m_formHost;
++    QPointer<LocalForm> m_form;
+     QStackedWidget *m_views;
+     CardGrid *m_grid;
+@@ -108,7 +106,4 @@
+
+     DetailPanel *m_detail;
+     ClinicMap *m_miniMap;
+-    QLabel *m_pct;
+-    QProgressBar *m_bar;
+-    QLabel *m_globalText;
+     Toast *m_toast;
+     QPointer<PlanDialog> m_plan;
+@@ -118,10 +113,3 @@
+
+     int m_tableSortCol = -1;
+     Qt::SortOrder m_tableSortOrder = Qt::AscendingOrder;
+-
+-    // alertes
+-    QTimer *m_alertTimer;
+-    QHash<int, int> m_alertLevel;
+-    QHash<int, QStringList> m_alertTexts;
+-    QSet<QString> m_knownAlertKeys;
+-    bool m_alertsReady = false;
+ };

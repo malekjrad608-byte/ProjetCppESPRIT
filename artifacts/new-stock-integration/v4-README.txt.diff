@@ -1,0 +1,29 @@
+--- old/README.txt
++++ v4/README.txt
+@@ -17,9 +17,11 @@
+ - Enregistrement des entrées/sorties de stock et statistiques.
+ - Suivi des lots périmés ou à échéance proche. Le retrait du stock disponible met désormais la quantité à zéro sans effacer l'enregistrement de traçabilité.
+ - Module Factures d'achat : ouverture PDF, extraction directe du texte via Poppler, OCR via Tesseract pour les scans, lignes détectées modifiables, validation transactionnelle, mise à jour du stock, lien fournisseur, historique de factures et historique de prix.
+-- Alertes de seuil minimum / stock critique et péremption à 30 jours, avec préparation d'un e-mail destiné au dépôt/local ou au fournisseur dans le client mail configuré.
++- Alertes de stock actives uniquement lorsque la quantité est inférieure ou égale au seuil minimum ; dès qu'un réapprovisionnement fait remonter la quantité au-dessus du seuil, l'alerte disparaît après actualisation depuis Oracle. Les alertes de péremption concernent les lots ayant encore une quantité disponible et arrivant à échéance sous 30 jours.
++- Notification destinée exclusivement au local / dépôt : une grande fenêtre affiche un message professionnel prérempli avec l'article, le lot, la quantité disponible, le seuil minimum et l'action demandée. Aucun champ e-mail n'est demandé à chaque alerte. L'adresse du local est configurée une seule fois dans aniworld_features.ini, sous [notifications] avec localEmail=adresse@local.tn. Le bouton ouvre le client e-mail configuré avec le destinataire, l'objet et le message préremplis ; l'utilisateur confirme l'envoi dans ce client.
+ - Réapprovisionnement indicatif selon le stock, le seuil minimum, le délai fournisseur, une couverture cible et le stock de sécurité. Sans historique des sorties disponible, le module signale que l'estimation repose sur le seuil minimum.
+-- Génération d'un bon de commande PDF au format A4, dans la même identité visuelle ANIWORLD.
++- Génération d'un bon de commande PDF au format A4, dans la même identité visuelle ANIWORLD. Le PDF contient séparément l'article, le lot, l'unité et la quantité commandée, ainsi qu'un bloc de données intégré pour permettre son réimport automatique dans le module d'achat.
++- Réimport d'un bon de commande PDF ANIWORLD : le fournisseur, les articles, les lots et les quantités sont préremplis automatiquement. Dans le tableau de facture, l'utilisateur saisit le prix unitaire et vérifie/modifie la date de péremption ; par défaut, celle-ci est initialisée à la date du jour + 1 an. Les champs article, lot et quantité restent verrouillés pour éviter les modifications accidentelles.
+ 
+ STOCKAGE DES NOUVEAUX MODULES
+ - Aucun nouveau tableau Oracle / fichier SQL n'est nécessaire pour les fonctionnalités ajoutées.
+@@ -36,3 +38,12 @@
+ - Le stock courant est enregistré dans la table Oracle STOCK existante. Les métadonnées d'achat et fournisseurs sont enregistrées localement par Qt, sans créer de tables Oracle.
+ - Les sorties enregistrées après cette version sont historisées localement par Qt. L'historique ancien n'est pas disponible rétroactivement ; sans sorties récentes, le module de réapprovisionnement se base sur les seuils minimums.
+ - Le bon de commande PDF est généré localement. L'application prépare les e-mails via le client mail de l'ordinateur, elle n'envoie pas automatiquement sans configuration SMTP dédiée.
++
++
++CONFIGURATION UNIQUE DU DESTINATAIRE DES ALERTES
++- Ouvrez le fichier aniworld_features.ini dans le dossier de données utilisateur de l'application.
++- Ajoutez (ou complétez) les lignes suivantes :
++  [notifications]
++  localEmail=adresse-reelle-du-local@exemple.tn
++- Remplacez l'adresse d'exemple par l'adresse réelle du local / dépôt. Cette adresse est ensuite réutilisée automatiquement ; aucune saisie n'est demandée dans la fenêtre des alertes.
++- Le bouton « Envoyer au local / dépôt » ouvre le client e-mail par défaut avec le contenu prérempli. L'envoi final est confirmé dans ce client ; l'application ne transmet pas directement via SMTP.

@@ -1,0 +1,2522 @@
+{
+    "Employees_control_1": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_10": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_11": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_12": {
+        "class": "QFrame",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_13": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_14": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_15": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "disponibles"
+    },
+    "Employees_control_16": {
+        "class": "QFrame",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_17": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_18": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_19": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "indisponibles"
+    },
+    "Employees_control_2": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_20": {
+        "class": "QFrame",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_21": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_22": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_23": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "heures planifiées"
+    },
+    "Employees_control_24": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_25": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_26": {
+        "class": "QLineEditIconButton",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_27": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_28": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_29": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_3": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_30": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_31": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_32": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_33": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_34": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_35": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_36": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_37": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_38": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_39": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Employees_control_4": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_40": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Employees_control_41": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_42": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_43": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Employees_control_44": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_45": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_46": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_47": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_48": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_49": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_5": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_50": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_51": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Employees_control_52": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Employees_control_53": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_54": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_55": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Employees_control_56": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_57": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_58": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_59": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_6": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_60": {
+        "class": "QScrollArea",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_61": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Employees_control_62": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Aucun employé ne correspond à votre recherche."
+    },
+    "Employees_control_63": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Employees_control_64": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_65": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_66": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Employees_control_67": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_68": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_69": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_7": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_70": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "EMPLOYÉ SÉLECTIONNÉ"
+    },
+    "Employees_control_71": {
+        "class": "QScrollArea",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_72": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Employees_control_73": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_74": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_75": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_76": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_77": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_78": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_79": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_8": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Employés"
+    },
+    "Employees_control_80": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_81": {
+        "class": "QFrame",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_82": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Poste"
+    },
+    "Employees_control_83": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Courriel"
+    },
+    "Employees_control_84": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Téléphone"
+    },
+    "Employees_control_85": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Embauche"
+    },
+    "Employees_control_86": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Charge"
+    },
+    "Employees_control_87": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Dispo"
+    },
+    "Employees_control_88": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Compétences"
+    },
+    "Employees_control_89": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Employees_control_9": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Annuaire, disponibilités et gestion de la charge"
+    },
+    "Employees_control_90": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_91": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_92": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Employees_control_93": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_94": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_control_95": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_m_cardsContainer": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_m_comboPoste": {
+        "class": "QComboBox",
+        "oldName": "employeePostFilter",
+        "text": ""
+    },
+    "Employees_m_comboStatut": {
+        "class": "QComboBox",
+        "oldName": "employeeStatusFilter",
+        "text": ""
+    },
+    "Employees_m_comboTri": {
+        "class": "QComboBox",
+        "oldName": "employeeSort",
+        "text": ""
+    },
+    "Employees_m_detailActions": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_m_detailCharge": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "-"
+    },
+    "Employees_m_detailCompetences": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "-"
+    },
+    "Employees_m_detailContent": {
+        "class": "QWidget",
+        "oldName": "detailContent",
+        "text": ""
+    },
+    "Employees_m_detailCourriel": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "-"
+    },
+    "Employees_m_detailDate": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "-"
+    },
+    "Employees_m_detailDispo": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "-"
+    },
+    "Employees_m_detailId": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_m_detailNom": {
+        "class": "QLabel",
+        "oldName": "employeeDetailName",
+        "text": ""
+    },
+    "Employees_m_detailPlaceholder": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Sélectionnez un employé\npour voir ses détails"
+    },
+    "Employees_m_detailPoste": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "-"
+    },
+    "Employees_m_detailStatut": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_m_detailTelephone": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "-"
+    },
+    "Employees_m_editRecherche": {
+        "class": "QLineEdit",
+        "oldName": "employeeSearch",
+        "text": ""
+    },
+    "Employees_m_gridCards": {
+        "class": "QGridLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Employees_m_lblChargeTotale": {
+        "class": "QLabel",
+        "oldName": "employeeTotalHours",
+        "text": "0"
+    },
+    "Employees_m_lblDisponibles": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "0"
+    },
+    "Employees_m_lblIndisponibles": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "0"
+    },
+    "Locaux_control_1": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_10": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_100": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "Modifier"
+    },
+    "Locaux_control_101": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "Supprimer"
+    },
+    "Locaux_control_102": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_103": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_104": {
+        "class": "QLabel",
+        "oldName": "kicker",
+        "text": "PLAN EN DIRECT"
+    },
+    "Locaux_control_105": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "<span style='color:#4aa57a'>■</span> Dispo &nbsp; <span style='color:#5b76c9'>■</span> Occupé &nbsp; <span style='color:#d9972f'>■</span> H.S. &nbsp; <span style='color:#c0504d'>●</span> À nettoyer"
+    },
+    "Locaux_control_106": {
+        "class": "QFrame",
+        "oldName": "panel",
+        "text": ""
+    },
+    "Locaux_control_107": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_108": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Locaux_control_109": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_11": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_110": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_111": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Locaux_control_112": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_113": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_12": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_13": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_14": {
+        "class": "QLineEditIconButton",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_15": {
+        "class": "QLineEditIconButton",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_16": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_17": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_18": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_19": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_2": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_20": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_21": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_22": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_23": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_24": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_25": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Locaux_control_26": {
+        "class": "QHeaderView",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_27": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Locaux_control_28": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Locaux_control_29": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_3": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_30": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_31": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Locaux_control_32": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_33": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_34": {
+        "class": "QHeaderView",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_35": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Locaux_control_36": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Locaux_control_37": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_38": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_39": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Locaux_control_4": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_40": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_41": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_42": {
+        "class": "QTableCornerButton",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_43": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Locaux_control_44": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_45": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_46": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Locaux_control_47": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_48": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_49": {
+        "class": "QStackedLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_5": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_50": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Locaux_control_51": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_52": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_53": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_54": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_55": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_56": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_57": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_58": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_59": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_6": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_60": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_61": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_62": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_63": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_64": {
+        "class": "RoomCard",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_65": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Locaux_control_66": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_67": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_68": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Locaux_control_69": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_7": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_70": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_71": {
+        "class": "QScrollArea",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_72": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Locaux_control_73": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_74": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_75": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_76": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_77": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_78": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_79": {
+        "class": "QLabel",
+        "oldName": "sub",
+        "text": "Clique sur un local pour voir ses détails et le gérer."
+    },
+    "Locaux_control_8": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_80": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_81": {
+        "class": "QGridLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_82": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_83": {
+        "class": "QLabel",
+        "oldName": "key",
+        "text": "Type"
+    },
+    "Locaux_control_84": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_85": {
+        "class": "QLabel",
+        "oldName": "key",
+        "text": "Étage"
+    },
+    "Locaux_control_86": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_87": {
+        "class": "QLabel",
+        "oldName": "key",
+        "text": "Occupation"
+    },
+    "Locaux_control_88": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_89": {
+        "class": "QLabel",
+        "oldName": "key",
+        "text": "Spécialité"
+    },
+    "Locaux_control_9": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_90": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_91": {
+        "class": "QLabel",
+        "oldName": "key",
+        "text": "Nettoyage"
+    },
+    "Locaux_control_92": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_93": {
+        "class": "QLabel",
+        "oldName": "key",
+        "text": "Dernier nettoyage"
+    },
+    "Locaux_control_94": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_95": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_96": {
+        "class": "QGridLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_control_97": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "Affecter un animal"
+    },
+    "Locaux_control_98": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "Retirer un animal (−1)"
+    },
+    "Locaux_control_99": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "Nettoyage"
+    },
+    "Locaux_m_bar": {
+        "class": "QProgressBar",
+        "oldName": "",
+        "text": "55%"
+    },
+    "Locaux_m_btnAdd": {
+        "class": "QPushButton",
+        "oldName": "locauxAddButton",
+        "text": "Ajouter un local"
+    },
+    "Locaux_m_btnAlerts": {
+        "class": "QPushButton",
+        "oldName": "locauxAlertsButton",
+        "text": "Alertes (3)"
+    },
+    "Locaux_m_btnCards": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "Cartes"
+    },
+    "Locaux_m_btnList": {
+        "class": "QPushButton",
+        "oldName": "locauxListButton",
+        "text": "Liste"
+    },
+    "Locaux_m_btnMap": {
+        "class": "QPushButton",
+        "oldName": "locauxMapButton",
+        "text": "Plan de la clinique"
+    },
+    "Locaux_m_btnPdf": {
+        "class": "QPushButton",
+        "oldName": "locauxPdfButton",
+        "text": "Rapport nettoyage PDF"
+    },
+    "Locaux_m_btnSmart": {
+        "class": "QPushButton",
+        "oldName": "locauxAssignButton",
+        "text": "Affectation intelligente"
+    },
+    "Locaux_m_btnStats": {
+        "class": "QPushButton",
+        "oldName": "locauxStatisticsButton",
+        "text": "Voir les statistiques"
+    },
+    "Locaux_m_cardScroll": {
+        "class": "QScrollArea",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_m_chipAvail": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "9 disponible(s)"
+    },
+    "Locaux_m_chipDirty": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "3 à nettoyer"
+    },
+    "Locaux_m_chipOcc": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "4 occupé(s)"
+    },
+    "Locaux_m_chipOos": {
+        "class": "QPushButton",
+        "oldName": "",
+        "text": "1 hors service"
+    },
+    "Locaux_m_count": {
+        "class": "QLabel",
+        "oldName": "sub",
+        "text": "14 / 14 locaux"
+    },
+    "Locaux_m_detail": {
+        "class": "DetailPanel",
+        "oldName": "panel",
+        "text": ""
+    },
+    "Locaux_m_empty": {
+        "class": "QLabel",
+        "oldName": "sub",
+        "text": "Aucun local ne correspond à la recherche"
+    },
+    "Locaux_m_globalText": {
+        "class": "QLabel",
+        "oldName": "sub",
+        "text": "33 animaux pour 60 places disponibles"
+    },
+    "Locaux_m_grid": {
+        "class": "CardGrid",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_m_miniMap": {
+        "class": "ClinicMap",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_m_pct": {
+        "class": "QLabel",
+        "oldName": "big",
+        "text": "55 %"
+    },
+    "Locaux_m_queryHint": {
+        "class": "QLabel",
+        "oldName": "sub",
+        "text": ""
+    },
+    "Locaux_m_search": {
+        "class": "QLineEdit",
+        "oldName": "locauxSearch",
+        "text": ""
+    },
+    "Locaux_m_sortCombo": {
+        "class": "QComboBox",
+        "oldName": "",
+        "text": ""
+    },
+    "Locaux_m_table": {
+        "class": "QTableWidget",
+        "oldName": "locauxTable",
+        "text": ""
+    },
+    "Locaux_m_views": {
+        "class": "QStackedWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_1": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_10": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_100": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_101": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_102": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "SERVICE SÉLECTIONNÉ"
+    },
+    "Service_control_103": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_104": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_105": {
+        "class": "QFrame",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_106": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Service_control_107": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_108": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_109": {
+        "class": "QGridLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_11": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_110": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Catégorie"
+    },
+    "Service_control_111": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Date"
+    },
+    "Service_control_112": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Horaire"
+    },
+    "Service_control_113": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Durée"
+    },
+    "Service_control_114": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Responsable"
+    },
+    "Service_control_115": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Client"
+    },
+    "Service_control_116": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Tarif"
+    },
+    "Service_control_117": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Facture"
+    },
+    "Service_control_118": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Service_control_119": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_12": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_120": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_121": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Service_control_122": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_123": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_124": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "ANIWORLD · Gestion des services"
+    },
+    "Service_control_125": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Ctrl+N  Ajouter   ·   Ctrl+F  Rechercher"
+    },
+    "Service_control_13": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Services"
+    },
+    "Service_control_14": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Prestations, suivi et organisation des soins"
+    },
+    "Service_control_15": {
+        "class": "QLineEditIconButton",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_16": {
+        "class": "QLineEditIconButton",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_17": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_18": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_19": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_2": {
+        "class": "QStackedLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_20": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_21": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_22": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_23": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_24": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_25": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_26": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_27": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_28": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_29": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Service_control_3": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_30": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Service_control_31": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_32": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_33": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Service_control_34": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_35": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_36": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_37": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_38": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_39": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_4": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_40": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_41": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Service_control_42": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Service_control_43": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_44": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_45": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Service_control_46": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_47": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_48": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_49": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_5": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_50": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Trier par"
+    },
+    "Service_control_51": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_52": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_53": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_54": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Service_control_55": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Service_control_56": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_57": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_58": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Service_control_59": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_6": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_60": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_61": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_62": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_63": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Service_control_64": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Service_control_65": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_66": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_67": {
+        "class": "QHeaderView",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_68": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Service_control_69": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Service_control_7": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_70": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_71": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_72": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Service_control_73": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_74": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_75": {
+        "class": "QHeaderView",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_76": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Service_control_77": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Service_control_78": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_79": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_8": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_80": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Service_control_81": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_82": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_83": {
+        "class": "QTableCornerButton",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_84": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Service_control_85": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_86": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_87": {
+        "class": "QStackedLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_88": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Service_control_89": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_9": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_90": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Service_control_91": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_92": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_93": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Service_control_94": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_95": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_96": {
+        "class": "QFrame",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_97": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_98": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_control_99": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_detailValue_0": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_detailValue_1": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_detailValue_2": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_detailValue_3": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_detailValue_4": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_detailValue_5": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_detailValue_6": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_detailValue_7": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_m_advance": {
+        "class": "QPushButton",
+        "oldName": "advanceService",
+        "text": "Démarrer le service"
+    },
+    "Service_m_attention": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Aucun service planifié en retard. Les statuts et les indicateurs sont mis à jour après chaque modification."
+    },
+    "Service_m_category": {
+        "class": "QComboBox",
+        "oldName": "categoryFilter",
+        "text": ""
+    },
+    "Service_m_count": {
+        "class": "QLabel",
+        "oldName": "serviceCount",
+        "text": "0 / 0 services"
+    },
+    "Service_m_delete": {
+        "class": "QPushButton",
+        "oldName": "deleteService",
+        "text": "Supprimer"
+    },
+    "Service_m_detailContent": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_m_detailName": {
+        "class": "QLabel",
+        "oldName": "selectedServiceName",
+        "text": "Sélectionnez un service"
+    },
+    "Service_m_detailNotes": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_m_detailReference": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Les informations apparaîtront ici."
+    },
+    "Service_m_edit": {
+        "class": "QPushButton",
+        "oldName": "editService",
+        "text": "Modifier"
+    },
+    "Service_m_emptyDetailSpacer": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_m_emptyText": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Ajoutez un service pour organiser vos soins.\nVos données seront conservées sur cet ordinateur."
+    },
+    "Service_m_emptyTitle": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Votre première prestation"
+    },
+    "Service_m_grid": {
+        "class": "QGridLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_m_gridScroll": {
+        "class": "QScrollArea",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_m_invoice": {
+        "class": "QPushButton",
+        "oldName": "invoiceService",
+        "text": "Facture PDF"
+    },
+    "Service_m_listPage": {
+        "class": "QWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_m_notice": {
+        "class": "QLabel",
+        "oldName": "serviceNotice",
+        "text": ""
+    },
+    "Service_m_pages": {
+        "class": "QStackedWidget",
+        "oldName": "servicePages",
+        "text": ""
+    },
+    "Service_m_period": {
+        "class": "QComboBox",
+        "oldName": "periodFilter",
+        "text": ""
+    },
+    "Service_m_search": {
+        "class": "QLineEdit",
+        "oldName": "serviceSearch",
+        "text": ""
+    },
+    "Service_m_sort": {
+        "class": "QComboBox",
+        "oldName": "sortServices",
+        "text": ""
+    },
+    "Service_m_status": {
+        "class": "QComboBox",
+        "oldName": "statusFilter",
+        "text": ""
+    },
+    "Service_m_statusLayout": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_m_table": {
+        "class": "QTableView",
+        "oldName": "serviceTable",
+        "text": ""
+    },
+    "Service_m_view": {
+        "class": "QPushButton",
+        "oldName": "viewService",
+        "text": "Consulter"
+    },
+    "Service_m_views": {
+        "class": "QStackedWidget",
+        "oldName": "",
+        "text": ""
+    },
+    "Service_summary_0": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "0 planifiés"
+    },
+    "Service_summary_1": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "0 en cours"
+    },
+    "Service_summary_2": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "0 terminés"
+    },
+    "Service_summary_3": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "0 h 00 à réaliser"
+    },
+    "Stock_alertsNavButton": {
+        "class": "QPushButton",
+        "oldName": "stockAlertsButton",
+        "text": "⚠   Alertes de stock (11)"
+    },
+    "Stock_categoryFilter": {
+        "class": "QComboBox",
+        "oldName": "stockCategoryFilter",
+        "text": ""
+    },
+    "Stock_control_1": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_10": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_11": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_12": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_13": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_14": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_15": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_16": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_17": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_18": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_19": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_2": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_20": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_21": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_22": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Stock_control_23": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Stock_control_24": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_25": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_26": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Stock_control_27": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_28": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_29": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_3": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_30": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_31": {
+        "class": "QComboBoxPrivateContainer",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_32": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_33": {
+        "class": "QComboBoxListView",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_34": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Stock_control_35": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Stock_control_36": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_37": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_38": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Stock_control_39": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_4": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_40": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_41": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_42": {
+        "class": "QComboBoxPrivateScroller",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_43": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Stock_control_44": {
+        "class": "QHeaderView",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_45": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Stock_control_46": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Stock_control_47": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_48": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_49": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Stock_control_5": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_50": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_51": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_52": {
+        "class": "QHeaderView",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_53": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_viewport",
+        "text": ""
+    },
+    "Stock_control_54": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Stock_control_55": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_56": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_57": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Stock_control_58": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_59": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_6": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_60": {
+        "class": "QTableCornerButton",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_61": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_hcontainer",
+        "text": ""
+    },
+    "Stock_control_62": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_63": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_64": {
+        "class": "QWidget",
+        "oldName": "qt_scrollarea_vcontainer",
+        "text": ""
+    },
+    "Stock_control_65": {
+        "class": "QScrollBar",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_66": {
+        "class": "QBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_67": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_68": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_69": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_7": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "📦  Stock"
+    },
+    "Stock_control_70": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Gestion avancée"
+    },
+    "Stock_control_71": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Factures fournisseurs, alertes et commandes"
+    },
+    "Stock_control_72": {
+        "class": "QFrame",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_73": {
+        "class": "QHBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_74": {
+        "class": "QVBoxLayout",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_control_75": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Gestion des articles périmés"
+    },
+    "Stock_control_76": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Consultez les lots périmés ou à échéance proche, puis retirez-les du disponible ou remplacez-les par un nouveau lot."
+    },
+    "Stock_control_77": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Stock du centre · connexion commune"
+    },
+    "Stock_control_8": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "Inventaire, traçabilité des lots et réapprovisionnement"
+    },
+    "Stock_control_9": {
+        "class": "QLineEditIconButton",
+        "oldName": "",
+        "text": ""
+    },
+    "Stock_footerLabel": {
+        "class": "QLabel",
+        "oldName": "",
+        "text": "19 / 19 articles"
+    },
+    "Stock_searchLineEdit": {
+        "class": "QLineEdit",
+        "oldName": "stockSearch",
+        "text": ""
+    },
+    "Stock_sortFilter": {
+        "class": "QComboBox",
+        "oldName": "stockSortFilter",
+        "text": ""
+    },
+    "Stock_stateFilter": {
+        "class": "QComboBox",
+        "oldName": "stockStateFilter",
+        "text": ""
+    },
+    "Stock_stockTable": {
+        "class": "QTableView",
+        "oldName": "stockTable",
+        "text": ""
+    }
+}

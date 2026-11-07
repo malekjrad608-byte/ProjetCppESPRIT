@@ -1,0 +1,243 @@
+Projet C++ 2A AU 2025-2026 
+ 
+SOUMAYA ARGOUBI 1 
+ 
+ 
+ 
+GUIDE D’INTÉGRATION COLLABORATIVE  
+PROJET SMARTMARKET 
+ 
+ 
+Table des matières 
+1 Contexte de départ ............................................................................................................... 2 
+2 Étape préalable : Ajout de la classe Connection (commune à toute l’équipe) .......................... 2 
+3 Intégration ............................................................................................................................ 3 
+3.1 Structure du code : Règles de nommage, découpage par zones ....................................... 4 
+3.2 Gestion Git et .gitignore .................................................................................................. 5 
+3.3 Méthodes d’intégration possibles .................................................................................... 6 
+3.3.1 Une branche par module .......................................................................................... 6 
+3.3.2 Une même branche pour tout le projet ...................................................................... 7 
+3.4 Étapes de travail collaboratif sur une même branche ....................................................... 7 
+3.5 Résumé clé pour les débutants ....................................................................................... 8 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Projet C++ 2A AU 2025-2026 
+ 
+SOUMAYA ARGOUBI 2 
+ 
+ 
+        Phase 2 : Intégration des classes métier via GitHub 
+1 Contexte de départ 
+• La dernière version intégrée du projet d’équipe est déjà disponible sur la branche 
+d’intégration GitHub . Elle contient toutes les interfaces des différents 
+modules (Employé, Client, Produit, etc.) réunies dans un seul fichier .ui, 
+comme dans l’exemple du projet SmartMarket. 
+• L’interface graphique  (stackedWidget principal et pages) est déjà intégrée et 
+fonctionnelle. 
+• L’objectif de cette phase est d’intégrer la couche métier (classes C++) de 
+chaque module dans le projet commun, tout en respectant la collaboration Git et 
+en minimisant les conflits. 
+• Chaque étudiant est responsable de son module  et de sa classe métier 
+associée. 
+ 
+2 Étape préalable : Ajout de la classe Connection 
+(commune à toute l’équipe) 
+Avant de commencer à intégrer les classes métiers, il est indispensable d’ajouter la 
+classe Connection dans le projet intégré.  Cette classe gère la connexion à la base de 
+données et doit contenir les mêmes paramètres de connexion pour tous les membres 
+de l’équipe, afin de garantir une configuration commune et d’éviter les conflits liés à des 
+différences locales. 
+ 
+       Exemple de code (connection.cpp) 
+ 
+1. Un seul membre de l’équipe réalise au départ les étapes suivantes : 
+o   Crée la source de données ODBC nommée "DS_SmartMarket " . 
+o   Crée un utilisateur (ex. : " SmartMarket ") avec un mot de passe commun 
+(ex. : "0000"). 
+
+Projet C++ 2A AU 2025-2026 
+ 
+SOUMAYA ARGOUBI 3 
+ 
+o Ajoute la classe Connection  au projet, en utilisant ces mêmes 
+paramètres. 
+o Fait un push du projet mis à jour sur la branche d’intégration. 
+2. Les autres membres de l’équipe : 
+o Reproduisent exactement la même configuration ODBC  sur leur 
+machine locale (même nom de source, même utilisateur et mot de passe). 
+o Effectuent un git pull  pour récupérer la version du projet contenant la 
+classe Connection. 
+o Testent la connexion pour vérifier le bon fonctionnement. 
+ 
+   Résultat attendu : 
+Tous les membres de l’équipe travaillent avec : 
+• la même configuration de connexion à la base de données, 
+• la même version du projet intégré, 
+• un environnement commun garantissant moins de fichiers modifiés et donc moins de 
+risques de conflits Git. 
+3 Intégration  
+Ce guide présente une méthode d’intégration collaborative pour le projet SmartMarket 
+sous Qt + GitHub , visant à permettre à plusieurs étudiants de travailler simultanément 
+tout en minimisant les conflits et en assurant la maintenabilité du code. 
+L’essentiel pour réussir l’intégration est le suivant :    
+• Travailler sur le projet intégré contenant toutes les interfaces graphiques. 
+• Disposer d’un seul fichier .ui  (une seule classe d’interface graphique) qui 
+regroupe toutes les pages et modules du projet. 
+• Chaque étudiant ajoute et développe sa propre classe métier (Employé, Client, 
+Produit, etc.) sur sa machine locale. 
+• L’équipe se met d’accord sur la méthode d’intégration  afin de fusionner les 
+changements et obtenir le projet final fonctionnel. 
+Vous avez le choix entre deux approches : 
+1. L’ancienne méthode, utilisée lors de l’intégration des interfaces : 
+o Chaque module est déposé dans sa branche dédiée. 
+Projet C++ 2A AU 2025-2026 
+ 
+SOUMAYA ARGOUBI 4 
+ 
+o Les branches sont ensuite fusionnées  successivement et manuellement 
+sur une branche finale d’intégration. 
+ 
+2. La méthode détaillée dans ce guide : 
+o Tous les étudiants travaillent sur la même branche  en respectant des 
+bonnes pratiques strictes (zones de code par module, nommage clair, tests 
+avant push, etc.), 
+o Git peut ainsi gérer automatiquement la plupart des fusions, simplifiant le 
+processus d’intégration. 
+L’objectif de ce guide est de fournir une approche structurée pour permettre à tous les 
+étudiants de collaborer efficacement, réduire les risques de conflits Git et maintenir un 
+projet clair, lisible et évolutif. 
+            Exemple d’architecture générale du projet SmartMaket 
+ 
+ 
+3.1 Structure du code : Règles de nommage, découpage par zones 
+• Tous les boutons, labels, champs… doivent avoir des noms significatifs  
+(btnAjouterEmp, lineEditNomClient, etc.). 
+• Les boutons de navigation (menu, retour, etc.) sont programmés dans 
+SmartMarket, pas dans les modules. 
+• Structurer le code dans smartmarket.cpp et smartmarket.h  en zones 
+clairement délimitées par module. 
+ 
+• Chaque étudiant travaille uniquement dans la section de son module (délimitée 
+par les grands commentaires // === MODULE XXX ===). 
+• Le code de navigation (on_btnMenu...) est géré dans la zone “SLOTS GÉNÉRAUX” . 
+
+Projet C++ 2A AU 2025-2026 
+ 
+SOUMAYA ARGOUBI 5 
+ 
+• Chaque module (Employé, Client, Produit) a sa propre classe métier  
+(employe.cpp, client.cpp, etc.) gérant les opérations CRUD et autres. 
+   Avantage pour la collaboration : Git peut fusionner les changements facilement car 
+chaque étudiant modifie une section distincte du même fichier. 
+smartmarket.h 
+ 
+smartmarket.cpp 
+ 
+3.2 Gestion Git et .gitignore 
+ 
+Utilité d’un .gitignore : 
+• Ignorer les fichiers temporaires ou générés (compilation, configuration locale). 
+
+Projet C++ 2A AU 2025-2026 
+ 
+SOUMAYA ARGOUBI 6 
+ 
+• Réduire le “bruit” dans Git pour ne suivre que les vrais changements. 
+• Éviter les conflits entre développeurs liés aux fichiers spécifiques à chaque 
+poste. 
+• Maintenir un dépôt propre et portable, facile à partager et à cloner. 
+ 
+Créer le fichier .gitignore adapté à Qt Creator : 
+1- Ajouter un nouveau fichier : Ajouter → Général → Fichier vide 
+2- Saisir le contenu ci-dessous dans ce fichier 
+ 
+ 
+ 
+ Seul le code source, les classes métiers et le fichier .ui principal sont versionnés. 
+3.3 Méthodes d’intégration possibles 
+3.3.1 Une branche par module 
+• Chaque module est développé dans sa branche dédiée, 
+• Les modules sont ensuite fusionnés sur une branche finale d’intégration  pour 
+obtenir le projet complet. 
+• Toutes les étapes sont les mêmes  que celles du guide d’intégration des 
+interfaces déjà partagé. 
+• L’important : un seul .ui final contenant toutes les pages. 
+ 
+
+Projet C++ 2A AU 2025-2026 
+ 
+SOUMAYA ARGOUBI 7 
+ 
+3.3.2 Une même branche pour tout le projet 
+• Tous les étudiants travaillent sur la même branche (ex. integFinale, master, main) 
+• Respect strict des bonnes pratiques : 
+o Modifier uniquement sa zone de code (// === MODULE XXX ===) 
+o Noms clairs pour boutons, labels, champs… 
+o Tester avant de pousser 
+o Faire systématiquement un git pull avant git push 
+• Git fusionne automatiquement la plupart des changements. 
+ 
+Le choix de la méthode dépend de la maîtrise de Git par l’équipe, de l’organisation et 
+des contraintes spécifiques au projet. 
+ 
+3.4 Étapes de travail collaboratif sur une même branche 
+1. Récupérer la dernière version :   git pull origin integFinale 
+Avant de commencer, assurez-vous d’avoir la dernière version du dépôt : 
+• Cela synchronise votre dépôt local avec le dépôt distant. 
+• Important : toujours faire ce pull avant de commencer à travailler pour éviter des 
+conflits inutiles. 
+2. Travailler uniquement sur votre module : 
+• Ajouter/modifier uniquement dans votre zone (// === MODULE XXX ===) 
+• Tester localement avant tout push 
+• Ne touchez pas aux sections des autres pour éviter les conflits. 
+ 
+3. Ajoutez et validez vos modifications : 
+git add smartmarket.cpp smartmarket.h  
+              git commit -m "Ajout des slots Employé" 
+• git add : sélectionne les fichiers à inclure dans le commit. 
+• git commit : enregistre vos changements localement avec un message clair et 
+significatif. 
+Projet C++ 2A AU 2025-2026 
+ 
+SOUMAYA ARGOUBI 8 
+ 
+Important : faites un commit après chaque modification importante, cela rend le 
+suivi plus facile. 
+4. Récupérer les modifications des autres avant de pousser : 
+                git pull origin integFinale 
+• Git va tenter de fusionner vos modifications avec celles des autres. 
+• Si personne n’a touché aux mêmes lignes, tout se passe automatiquement. 
+ 
+• Si un conflit survient, Git marque les fichiers concernés comme suit : 
+ 
+ 
+ 
+➢ Comment gérer un conflit : 
+ 
+1- Ouvrez les fichiers en conflit dans Qt Creator. 
+2- Identifiez votre section (celle sur laquelle vous travaillez). 
+3- Supprimez les marqueurs de conflit (<<<<<<<, =======, >>>>>>>) et 
+conservez uniquement votre code ou combinez correctement les 
+deux versions en faisant appel à l’étudiant concerné si nécessaire. 
+4- Sauvegardez le fichier. 
+5- Répétez l’étape git add pour chaque fichier résolu : 
+git add smartmarket.cpp smartmarket.h 
+6- Faites un commit pour valider la résolution du conflit : 
+git commit -m "Résolution des conflits sur smartmarket" 
+ Très important pour les débutants : si vous ne refaites pas git add et git commit, Git ne saura pas 
+que le conflit est résolu et vous ne pourrez pas pousser vos changements. 
+5. Pousser vos changements :  git push origin integFinale 
+Si tout s’est bien passé, vos changements sont maintenant disponibles pour les autres 
+membres de l’équipe. 
+3.5 Résumé clé pour les débutants  
+✓ Toujours git pull avant de commencer. 
+✓ Faites des commits clairs après chaque modification importante. 
+✓ Si un conflit apparaît : résolvez-le, refaites git add, puis git commit. 
+✓ Ensuite seulement, vous pouvez faire un git push. 

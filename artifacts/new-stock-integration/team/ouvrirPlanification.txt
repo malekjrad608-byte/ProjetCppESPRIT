@@ -1,0 +1,115 @@
+void GestionEmployes::ouvrirPlanification()
+{
+    QDialog dlg(this);
+    dlg.setWindowTitle("Planifier une tâche — affectation automatique");
+    dlg.setMinimumWidth(520);
+    dlg.setStyleSheet("QDialog { background-color: #F0F4F8; }");
+
+    QVBoxLayout *layout = new QVBoxLayout(&dlg);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setSpacing(14);
+
+    QLabel *titre = new QLabel("🗓 Nouvelle tâche à planifier");
+    titre->setStyleSheet("font-size: 20px; font-weight: bold; color: #225A64; background: transparent;");
+    layout->addWidget(titre);
+
+    QFormLayout *form = new QFormLayout;
+    form->setSpacing(12);
+
+    QLineEdit *editTitre = new QLineEdit;
+    editTitre->setPlaceholderText("Ex. Consultation, soins, accueil...");
+    editTitre->setMinimumHeight(40);
+    form->addRow("Tâche *", editTitre);
+
+    QLineEdit *editCompetence = new QLineEdit;
+    editCompetence->setPlaceholderText("Ex. Soins, Chirurgie, Accueil");
+    editCompetence->setMinimumHeight(40);
+    form->addRow("Spécialité requise *", editCompetence);
+
+    QDateTime start = QDateTime::currentDateTime().addSecs(3600);
+    start.setTime(QTime(start.time().hour(), start.time().minute(), 0));
+    QDateTime end = start.addSecs(2 * 3600);
+    QDateTimeEdit *dateDebut = new QDateTimeEdit(start);
+    dateDebut->setCalendarPopup(true);
+    dateDebut->setDisplayFormat("dd/MM/yyyy HH:mm");
+    dateDebut->setMinimumHeight(40);
+    form->addRow("Début", dateDebut);
+
+    QDateTimeEdit *dateFin = new QDateTimeEdit(end);
+    dateFin->setCalendarPopup(true);
+    dateFin->setDisplayFormat("dd/MM/yyyy HH:mm");
+    dateFin->setMinimumHeight(40);
+    form->addRow("Fin", dateFin);
+
+    QDoubleSpinBox *heures = new QDoubleSpinBox;
+    heures->setRange(0.5, 24.0);
+    heures->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+    heures->setAccelerated(true);
+    heures->setSingleStep(0.5);
+    heures->setValue(2.0);
+    heures->setSuffix(" h");
+    heures->setMinimumHeight(40);
+    form->addRow("Charge de cette tâche", heures);
+
+    layout->addLayout(form);
+    QLabel *info = new QLabel("Le système choisira une personne disponible avec la spécialité demandée, "
+                              "sans chevauchement horaire et avec la charge prévue la plus faible.");
+    info->setWordWrap(true);
+    info->setStyleSheet("color: #657B80; background: transparent;");
+    layout->addWidget(info);
+
+    QDialogButtonBox *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttons->button(QDialogButtonBox::Ok)->setText("Affecter automatiquement");
+    buttons->button(QDialogButtonBox::Ok)->setMinimumHeight(42);
+    buttons->button(QDialogButtonBox::Cancel)->setMinimumHeight(42);
+    connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+    layout->addWidget(buttons);
+
+    if (dlg.exec() != QDialog::Accepted) return;
+    Planning tache;
+    tache.setTitre(editTitre->text().trimmed());
+    tache.setCompetence(editCompetence->text().trimmed());
+    tache.setDebut(dateDebut->dateTime());
+    tache.setFin(dateFin->dateTime());
+    tache.setHeures(heures->value());
+
+    // Controle de saisie (C++)
+    const QString erreurSaisie = tache.validerSaisie();
+    if (!erreurSaisie.isEmpty()) {
+        QMessageBox::warning(this, "Saisie invalide", erreurSaisie);
+        return;
+    }
+
+    // Choix du responsable + INSERT : tout est dans le modele Planning
+    QString meilleurNom, erreur;
+    double meilleurTaux = 0.0;
+    const Planning::Resultat resultat =
+        tache.affecterAutomatiquement(meilleurNom, meilleurTaux, erreur);
+
+    if (resultat == Planning::Resultat::AucunResponsable) {
+        QMessageBox::warning(this, "Aucun responsable disponible",
+                             "Aucune personne disponible ne possède cette spécialité avec une capacité suffisante "
+                             "et sans conflit horaire. Essayez une autre date, une autre spécialité ou une charge plus faible.");
+        return;
+    }
+    if (resultat == Planning::Resultat::ErreurBase) {
+        QMessageBox::critical(this, "Erreur d'enregistrement",
+                              "La tâche n'a pas été enregistrée : " + erreur);
+        return;
+    }
+
+    const QString nomTache = tache.getTitre();
+    const QDateTime debut = tache.getDebut();
+    const QDateTime fin = tache.getFin();
+
+    mettreAJourStats();
+    QString message = QString("Tâche « %1 » enregistrée et affectée à %2.\n"
+                              "Créneau : %3 – %4\nCharge prévue après affectation : %5 %%. ")
+                          .arg(nomTache, meilleurNom, debut.toString("dd/MM/yyyy HH:mm"),
+                               fin.toString("dd/MM/yyyy HH:mm"))
+                          .arg(qRound(meilleurTaux * 100));
+    if (meilleurTaux > 0.90)
+        message += "\n⚠ Attention : charge supérieure à 90 %, rééquilibrage conseillé.";
+    QMessageBox::information(this, "Affectation automatique", message);
+}

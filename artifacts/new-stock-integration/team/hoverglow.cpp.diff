@@ -1,0 +1,34 @@
+--- 
+
++++ 
+
+@@ -1,4 +1,2 @@
+
+-#include "../widgets/animatedbutton.h"
+-#include "../ui/motion.h"
+ #include "hoverglow.h"
+ #include "theme.h"
+@@ -11,5 +9,5 @@
+
+ void HoverGlow::attach(QWidget *w, const QColor &color, qreal blur, qreal offsetY)
+ {
+-    if (w && !dynamic_cast<AnimatedButton *>(w))
++    if (w)
+         new HoverGlow(w, color, blur, offsetY);
+ }
+@@ -18,5 +16,4 @@
+
+     : QObject(w), m_w(w), m_color(color), m_blur(blur), m_off(offsetY)
+ {
+-    m_color = QColor(245, 158, 11, 110);
+     m_anim = new QPropertyAnimation(this, "level", this);
+     m_anim->setDuration(220);
+@@ -27,7 +24,4 @@
+
+     });
+     w->installEventFilter(this);
+-    connect(&Motion::instance(), &Motion::changed, this, [this](bool enabled) {
+-        if (!enabled) { m_anim->stop(); m_level=0; removeEffect(); }
+-    });
+ }
+ 

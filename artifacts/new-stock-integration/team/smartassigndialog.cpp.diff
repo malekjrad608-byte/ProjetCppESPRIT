@@ -1,0 +1,44 @@
+--- 
+
++++ 
+
+@@ -1,3 +1,2 @@
+
+-#include "../widgets/animatedbutton.h"
+ #include "smartassigndialog.h"
+ #include "hoverglow.h"
+@@ -128,5 +127,5 @@
+
+     auto *btns = new QHBoxLayout;
+     btns->addStretch();
+-    auto *close = new AnimatedButton(QStringLiteral("Fermer"));
++    auto *close = new QPushButton(QStringLiteral("Fermer"));
+     close->setProperty("role", "ghost");
+     close->setCursor(Qt::PointingHandCursor);
+@@ -241,5 +240,5 @@
+
+         h->addLayout(col, 1);
+ 
+-        auto *go = new AnimatedButton(QStringLiteral("Affecter ici"));
++        auto *go = new QPushButton(QStringLiteral("Affecter ici"));
+         go->setProperty("role", best ? "primary" : "ghost");
+         go->setCursor(Qt::PointingHandCursor);
+@@ -248,11 +247,13 @@
+
+         connect(go, &QPushButton::clicked, this, [this, id] {
+             const Local *cur = m_repo->find(id);
+-            if (!cur || cur->outOfService || cur->occupancy >= cur->capacity)
++            if (!cur)
+                 return;
+             Local l = *cur;
+-            l.occupancy++;
++            if (!l.ajouterAnimal())          // +1 et etat "Occupé"
++                return;
++            if (!m_repo->update(l))           // enregistre ETAT + OCCUPATION dans Oracle
++                return;
+             m_assignedId = id;
+-            m_assignedName = l.name;
+-            if (!m_repo->update(l)) return;
++            m_assignedName = l.getName();
+             accept();
+         });

@@ -1,0 +1,63 @@
+--- previous/stockwidget.cpp
+
++++ v4/stockwidget.cpp
+
+@@ -524,7 +524,16 @@
+
+ }
+ 
+ void StockWidget::openAlertsModule() {
++    // Always read the current Oracle quantities before calculating alerts.
++    // This removes an alert immediately after a purchase/restock brings the
++    // available quantity back above the minimum threshold.
++    loadDataFromDatabase();
++    refreshTable();
+     InventoryFeatures::showAlerts(this, items);
++
++    // Keep the stock table and alert badge synchronized when the dialog closes.
++    loadDataFromDatabase();
++    refreshTable();
+ }
+ 
+ void StockWidget::openReplenishmentModule() {
+@@ -539,7 +548,7 @@
+
+     if (item.expiry.isValid() && item.expiry <= today.addDays(30)) {
+         return "Échéance proche";
+     }
+-    if (item.quantity < item.threshold) {
++    if (item.quantity <= item.threshold) {
+         return "Sous le seuil";
+     }
+     return "Disponible";
+@@ -548,7 +557,7 @@
+
+ int StockWidget::countBelowThreshold() const {
+     int count = 0;
+     for (const StockRecord &item : items) {
+-        if (item.quantity < item.threshold) ++count;
++        if (item.quantity <= item.threshold) ++count;
+     }
+     return count;
+ }
+@@ -557,7 +566,7 @@
+
+     int count = 0;
+     const QDate limit = QDate::currentDate().addDays(30);
+     for (const StockRecord &item : items) {
+-        if (item.expiry.isValid() && item.expiry <= limit) ++count;
++        if (item.quantity > 0 && item.expiry.isValid() && item.expiry <= limit) ++count;
+     }
+     return count;
+ }
+@@ -631,8 +640,7 @@
+
+     if (!alertsNavButton) return;
+     int activeAlertCount = countExpiryAlerts();
+     for (const StockRecord &record : items) {
+-        const int earlyWarning = qMax(1, record.threshold / 5);
+-        if (record.quantity <= record.threshold + earlyWarning) ++activeAlertCount;
++        if (record.quantity <= record.threshold) ++activeAlertCount;
+     }
+     alertsNavButton->setText(QString("⚠   Alertes de stock (%1)").arg(activeAlertCount));
+     alertsNavButton->setStyleSheet(QString(

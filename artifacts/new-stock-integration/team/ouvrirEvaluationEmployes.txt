@@ -1,0 +1,669 @@
+void GestionEmployes::ouvrirEvaluationEmployes()
+{
+    QDialog dlg(this);
+    dlg.setWindowTitle("Performance & Évaluation des employés");
+    dlg.resize(1080, 760);
+    dlg.setMinimumSize(900, 650);
+    dlg.setStyleSheet("QDialog { background-color: #F0F4F8; }");
+
+    QVBoxLayout *root = new QVBoxLayout(&dlg);
+    root->setContentsMargins(24, 22, 24, 20);
+    root->setSpacing(12);
+
+    QLabel *titre = new QLabel("⭐  Performance & Évaluation des employés");
+    titre->setStyleSheet("font-size: 22px; font-weight: bold; color: #225A64; background: transparent;");
+    root->addWidget(titre);
+
+    QLabel *sousTitre = new QLabel(
+        "Sélectionnez un employé pour consulter ou remplir son évaluation professionnelle.");
+    sousTitre->setWordWrap(true);
+    sousTitre->setStyleSheet("font-size: 13px; color: #71858B; background: transparent;");
+    root->addWidget(sousTitre);
+
+    QStackedWidget *pages = new QStackedWidget(&dlg);
+    root->addWidget(pages, 1);
+
+    // -------------------- PAGE 1 : indicateurs + liste + recherche --------------------
+    QWidget *pageListe = new QWidget;
+    QVBoxLayout *listeLayout = new QVBoxLayout(pageListe);
+    listeLayout->setContentsMargins(0, 4, 0, 4);
+    listeLayout->setSpacing(12);
+
+    // Reprendre les quatre indicateurs de la fenetre Statistiques et les garder
+    // au-dessus de la recherche, comme dans l'interface precedente.
+    const QList<Employe> employes = Employe::afficherTous();
+    const QDate debutSemaine = Planning::semaineDebut();
+    const QList<Employe::ChargeEmploye> charges = Employe::chargesSemaine(debutSemaine);
+    const Employe::StatsCharge stats = Employe::statistiques(charges);
+
+    QHBoxLayout *cardsLayout = new QHBoxLayout;
+    cardsLayout->setSpacing(10);
+    auto creerCarteIndicateur = [](const QString &icone, const QString &fond,
+                                   const QString &couleur, const QString &titreCarte,
+                                   const QString &valeur, const QString &sousTitre) {
+        QFrame *card = new QFrame;
+        card->setMinimumHeight(82);
+        card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        card->setStyleSheet(QString("QFrame { background-color: %1; border: none; border-radius: 12px; }").arg(fond));
+        QHBoxLayout *cardLayout = new QHBoxLayout(card);
+        cardLayout->setContentsMargins(12, 9, 12, 9);
+        cardLayout->setSpacing(9);
+        QLabel *iconLabel = new QLabel(icone);
+        iconLabel->setStyleSheet("font-size: 24px; background: transparent; border: none;");
+        cardLayout->addWidget(iconLabel);
+        QVBoxLayout *textLayout = new QVBoxLayout;
+        textLayout->setSpacing(1);
+        QLabel *titleLabel = new QLabel(titreCarte);
+        titleLabel->setStyleSheet(QString("font-size: 10px; color: %1; background: transparent; border: none;").arg(couleur));
+        QLabel *valueLabel = new QLabel(valeur);
+        valueLabel->setStyleSheet(QString("font-size: 19px; font-weight: bold; color: %1; background: transparent; border: none;").arg(couleur));
+        QLabel *subtitleLabel = new QLabel(sousTitre);
+        subtitleLabel->setStyleSheet(QString("font-size: 9px; color: %1; background: transparent; border: none;").arg(couleur));
+        textLayout->addWidget(titleLabel);
+        textLayout->addWidget(valueLabel);
+        textLayout->addWidget(subtitleLabel);
+        cardLayout->addLayout(textLayout, 1);
+        return card;
+    };
+    cardsLayout->addWidget(creerCarteIndicateur(
+        "👥", "#E4F0F3", "#225A64", "Nombre des employés",
+        QString::number(employes.size()), "employés enregistrés"));
+    cardsLayout->addWidget(creerCarteIndicateur(
+        "⏱", "#FDF3E3", "#B8741A", "Charge totale",
+        QString::number(stats.somme, 'f', 0) + " h", "par semaine"));
+    cardsLayout->addWidget(creerCarteIndicateur(
+        "📈", "#E6F4EA", "#2E7D32", "Charge moyenne",
+        QString::number(stats.moyenne, 'f', 1) + " h", "par employé"));
+    cardsLayout->addWidget(creerCarteIndicateur(
+        "⚠️", "#FBE9E7", "#AE5751", "Charge max",
+        QString::number(stats.maximum, 'f', 0) + " h", "le plus chargé"));
+    listeLayout->addLayout(cardsLayout);
+
+    QFrame *searchFrame = new QFrame;
+    searchFrame->setStyleSheet("QFrame { background: white; border: 1px solid #D7E9ED; border-radius: 12px; }");
+    QHBoxLayout *searchLayout = new QHBoxLayout(searchFrame);
+    searchLayout->setContentsMargins(14, 8, 14, 8);
+    QLabel *searchIcon = new QLabel("🔍");
+    searchLayout->addWidget(searchIcon);
+    QLineEdit *searchEdit = new QLineEdit;
+    searchEdit->setPlaceholderText("Rechercher un employé par son nom ou prénom...");
+    searchEdit->setMinimumHeight(38);
+    searchEdit->setStyleSheet("QLineEdit { border: none; background: transparent; color: #244B56; font-size: 13px; }");
+    searchLayout->addWidget(searchEdit, 1);
+    listeLayout->addWidget(searchFrame);
+
+    QLabel *listeInfo = new QLabel("Cliquez sur un employé pour ouvrir sa fiche d'évaluation.");
+    listeInfo->setStyleSheet("font-size: 12px; color: #71858B; background: transparent;");
+    listeLayout->addWidget(listeInfo);
+
+    QTableWidget *employeesTable = new QTableWidget;
+    employeesTable->setColumnCount(3);
+    employeesTable->setHorizontalHeaderLabels({"Employé", "Poste", "Courriel"});
+    employeesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    employeesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    employeesTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    employeesTable->setAlternatingRowColors(true);
+    employeesTable->setShowGrid(false);
+    employeesTable->verticalHeader()->setVisible(false);
+    employeesTable->verticalHeader()->setDefaultSectionSize(52);
+    employeesTable->horizontalHeader()->setMinimumHeight(42);
+    employeesTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    employeesTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    employeesTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    employeesTable->setStyleSheet(
+        "QTableWidget { background: white; border: 1px solid #D7E9ED; border-radius: 12px; "
+        "color: #244B56; selection-background-color: #D9EEF1; selection-color: #174B55; }"
+        "QHeaderView::section { background: #2F7F8D; color: white; padding: 11px; border: none; font-weight: bold; }");
+
+    employeesTable->setRowCount(employes.size());
+    for (int row = 0; row < employes.size(); ++row) {
+        const Employe &e = employes.at(row);
+        QTableWidgetItem *nom = new QTableWidgetItem((e.getPrenom() + " " + e.getNom()).trimmed());
+        nom->setData(Qt::UserRole, e.getId());
+        QFont nomFont = nom->font();
+        nomFont.setBold(true);
+        nom->setFont(nomFont);
+        employeesTable->setItem(row, 0, nom);
+        employeesTable->setItem(row, 1, new QTableWidgetItem(e.getPoste()));
+        employeesTable->setItem(row, 2, new QTableWidgetItem(e.getCourriel()));
+    }
+    if (employes.isEmpty()) {
+        employeesTable->setRowCount(1);
+        QTableWidgetItem *empty = new QTableWidgetItem("Aucun employé enregistré.");
+        empty->setTextAlignment(Qt::AlignCenter);
+        employeesTable->setItem(0, 0, empty);
+        employeesTable->setSpan(0, 0, 1, 3);
+        employeesTable->setEnabled(false);
+    }
+    listeLayout->addWidget(employeesTable, 1);
+    pages->addWidget(pageListe);
+
+    // -------------------- PAGE 2 : fiche d'evaluation --------------------
+    QWidget *pageFiche = new QWidget;
+    QVBoxLayout *ficheLayout = new QVBoxLayout(pageFiche);
+    ficheLayout->setContentsMargins(0, 4, 0, 4);
+    ficheLayout->setSpacing(10);
+
+    QPushButton *btnRetour = new QPushButton("←  Retour à la liste des employés");
+    btnRetour->setObjectName("btnSecondary");
+    btnRetour->setCursor(Qt::PointingHandCursor);
+    btnRetour->setMinimumHeight(36);
+    ficheLayout->addWidget(btnRetour, 0, Qt::AlignLeft);
+
+    QFrame *identiteFrame = new QFrame;
+    identiteFrame->setStyleSheet("QFrame { background: white; border: 1px solid #D7E9ED; border-radius: 12px; }");
+    QHBoxLayout *identiteLayout = new QHBoxLayout(identiteFrame);
+    identiteLayout->setContentsMargins(16, 12, 16, 12);
+    QLabel *avatar = new QLabel("👤");
+    avatar->setStyleSheet("font-size: 30px; background: transparent; border: none;");
+    identiteLayout->addWidget(avatar);
+    QVBoxLayout *identiteText = new QVBoxLayout;
+    QLabel *employeeName = new QLabel;
+    employeeName->setStyleSheet("font-size: 18px; font-weight: bold; color: #225A64; background: transparent; border: none;");
+    QLabel *employeeInfo = new QLabel;
+    employeeInfo->setStyleSheet("font-size: 12px; color: #71858B; background: transparent; border: none;");
+    identiteText->addWidget(employeeName);
+    identiteText->addWidget(employeeInfo);
+    identiteLayout->addLayout(identiteText, 1);
+    QLabel *globalScore = new QLabel("Note globale : -- / 5");
+    globalScore->setAlignment(Qt::AlignCenter);
+    globalScore->setMinimumWidth(160);
+    globalScore->setStyleSheet("QLabel { background: #FFF5D9; color: #9A6A12; border-radius: 10px; padding: 10px; font-size: 14px; font-weight: bold; }");
+    identiteLayout->addWidget(globalScore);
+    ficheLayout->addWidget(identiteFrame);
+
+    QScrollArea *scroll = new QScrollArea;
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    QWidget *formContent = new QWidget;
+    QVBoxLayout *formLayout = new QVBoxLayout(formContent);
+    formLayout->setContentsMargins(0, 0, 6, 0);
+    formLayout->setSpacing(12);
+
+    QFrame *criteriaFrame = new QFrame;
+    criteriaFrame->setStyleSheet("QFrame { background: white; border: 1px solid #D7E9ED; border-radius: 12px; }");
+    QVBoxLayout *criteriaLayout = new QVBoxLayout(criteriaFrame);
+    criteriaLayout->setContentsMargins(16, 14, 16, 14);
+    QLabel *criteriaTitle = new QLabel("⭐  Critères d'évaluation");
+    criteriaTitle->setStyleSheet("font-size: 16px; font-weight: bold; color: #225A64; background: transparent; border: none;");
+    criteriaLayout->addWidget(criteriaTitle);
+    QLabel *criteriaHelp = new QLabel(
+        "Le responsable attribue une note de 1 à 5 pour chaque critère : 1 = Insuffisant, 5 = Excellent.");
+    criteriaHelp->setWordWrap(true);
+    criteriaHelp->setStyleSheet("font-size: 11px; color: #71858B; background: transparent; border: none;");
+    criteriaLayout->addWidget(criteriaHelp);
+
+    const QStringList criteriaNames = {
+        "Discipline & ponctualité",
+        "Comportement & communication",
+        "Compétences professionnelles",
+        "Qualité du travail",
+        "Hygiène & sécurité",
+        "Responsabilité & travail en équipe"
+    };
+    const QStringList tooltips = {
+        "Respect des horaires, ponctualité et présence.",
+        "Respect des collègues, des clients et qualité de communication.",
+        "Compétences techniques liées au poste occupé.",
+        "Précision, sérieux et qualité des tâches réalisées.",
+        "Respect des règles d'hygiène, de sécurité et des protocoles.",
+        "Autonomie, respect des responsabilités et coopération avec l'équipe."
+    };
+    QList<QList<QToolButton*>> ratingStarButtons;
+    QList<QLabel*> ratingValueLabels;
+    QList<QLabel*> criterionHints;
+    QList<int> ratingValues;
+    const QStringList ratingNames = {"", "Insuffisant", "À améliorer", "Satisfaisant", "Très bien", "Excellent"};
+    for (int i = 0; i < criteriaNames.size(); ++i) {
+        QFrame *line = new QFrame;
+        line->setStyleSheet("QFrame { background: #F7FAFB; border: none; border-radius: 8px; }");
+        QHBoxLayout *lineLayout = new QHBoxLayout(line);
+        lineLayout->setContentsMargins(10, 7, 10, 7);
+        QVBoxLayout *nameLayout = new QVBoxLayout;
+        QLabel *criterion = new QLabel(criteriaNames.at(i));
+        criterion->setStyleSheet("font-size: 13px; font-weight: 600; color: #315B65; background: transparent;");
+        QLabel *hint = new QLabel(tooltips.at(i));
+        hint->setWordWrap(true);
+        criterionHints.append(hint);
+        hint->setStyleSheet("font-size: 10px; color: #829297; background: transparent;");
+        nameLayout->addWidget(criterion);
+        nameLayout->addWidget(hint);
+        lineLayout->addLayout(nameLayout, 1);
+
+        QHBoxLayout *starsLayout = new QHBoxLayout;
+        starsLayout->setSpacing(1);
+        QList<QToolButton*> rowStars;
+        for (int star = 1; star <= 5; ++star) {
+            QToolButton *starButton = new QToolButton;
+            starButton->setText("★");
+            starButton->setToolTip(QString::number(star) + "/5");
+            starButton->setCursor(Qt::PointingHandCursor);
+            starButton->setFixedSize(29, 32);
+            starButton->setStyleSheet("QToolButton { color: #B8C4C8; font-size: 23px; border: none; background: transparent; padding: 0; }");
+            starsLayout->addWidget(starButton);
+            rowStars.append(starButton);
+        }
+        QWidget *starsWidget = new QWidget;
+        starsWidget->setStyleSheet("background: transparent;");
+        starsWidget->setLayout(starsLayout);
+        lineLayout->addWidget(starsWidget, 0, Qt::AlignVCenter);
+
+        QLabel *valueLabel = new QLabel("Non noté");
+        valueLabel->setMinimumWidth(105);
+        valueLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+        valueLabel->setStyleSheet("font-size: 10px; color: #829297; background: transparent;");
+        lineLayout->addWidget(valueLabel);
+        criteriaLayout->addWidget(line);
+        ratingStarButtons.append(rowStars);
+        ratingValueLabels.append(valueLabel);
+        ratingValues.append(0);
+    }
+    auto actualiserEtoiles = [&](int criterionIndex, int value) {
+        if (criterionIndex < 0 || criterionIndex >= ratingStarButtons.size()) return;
+        ratingValues[criterionIndex] = value;
+        for (int j = 0; j < ratingStarButtons.at(criterionIndex).size(); ++j) {
+            const bool selected = (j + 1) <= value;
+            ratingStarButtons[criterionIndex].at(j)->setStyleSheet(
+                selected
+                    ? "QToolButton { color: #E6A52E; font-size: 23px; border: none; background: transparent; padding: 0; }"
+                    : "QToolButton { color: #B8C4C8; font-size: 23px; border: none; background: transparent; padding: 0; }");
+        }
+        ratingValueLabels.at(criterionIndex)->setText(value > 0
+            ? QString("%1/5 · %2").arg(value).arg(ratingNames.at(value))
+            : "Non noté");
+        ratingValueLabels.at(criterionIndex)->setStyleSheet(value > 0
+            ? "font-size: 10px; color: #9A6A12; font-weight: bold; background: transparent;"
+            : "font-size: 10px; color: #829297; background: transparent;");
+    };
+    formLayout->addWidget(criteriaFrame);
+
+    QFrame *commentsFrame = new QFrame;
+    commentsFrame->setStyleSheet("QFrame { background: white; border: 1px solid #D7E9ED; border-radius: 12px; }");
+    QVBoxLayout *commentsLayout = new QVBoxLayout(commentsFrame);
+    commentsLayout->setContentsMargins(16, 14, 16, 14);
+    QLabel *commentsTitle = new QLabel("📝  Avis du responsable & plan d'amélioration");
+    commentsTitle->setStyleSheet("font-size: 16px; font-weight: bold; color: #225A64; background: transparent; border: none;");
+    commentsLayout->addWidget(commentsTitle);
+
+    auto addTextField = [&](const QString &label, const QString &placeholder, int height) {
+        QLabel *fieldLabel = new QLabel(label);
+        fieldLabel->setStyleSheet("font-size: 12px; font-weight: 600; color: #315B65; background: transparent; border: none;");
+        QTextEdit *field = new QTextEdit;
+        field->setPlaceholderText(placeholder);
+        field->setFixedHeight(height);
+        field->setStyleSheet("QTextEdit { background: #F7FAFB; border: 1px solid #DCE9EC; border-radius: 8px; padding: 7px; color: #244B56; }");
+        commentsLayout->addWidget(fieldLabel);
+        commentsLayout->addWidget(field);
+        return field;
+    };
+    QTextEdit *pointsForts = addTextField("Points forts", "Ex. : ponctuel, sérieux, bonne prise en charge des animaux...", 68);
+    QTextEdit *axesAmelioration = addTextField("Axes d'amélioration", "Ex. : améliorer le suivi des dossiers ou la communication...", 68);
+    QTextEdit *commentaires = addTextField("Commentaire général du responsable", "Écrire ici l'avis et les observations concernant cet employé...", 82);
+    QTextEdit *objectifs = addTextField("Objectifs / recommandations", "Ex. : suivre une formation, améliorer une compétence, respecter un objectif...", 68);
+    commentsLayout->addWidget(new QLabel("Les commentaires sont saisis par le responsable et seront conservés dans l'historique Oracle."));
+    formLayout->addWidget(commentsFrame);
+
+    QFrame *metaFrame = new QFrame;
+    metaFrame->setStyleSheet("QFrame { background: white; border: 1px solid #D7E9ED; border-radius: 12px; }");
+    QFormLayout *metaLayout = new QFormLayout(metaFrame);
+    metaLayout->setContentsMargins(16, 12, 16, 12);
+    QDateEdit *dateEvaluation = new QDateEdit(QDate::currentDate());
+    dateEvaluation->setCalendarPopup(true);
+    dateEvaluation->setDisplayFormat("dd/MM/yyyy");
+    dateEvaluation->setMinimumHeight(34);
+    QLineEdit *evaluateur = new QLineEdit;
+    evaluateur->setPlaceholderText("Nom du responsable / évaluateur");
+    evaluateur->setMinimumHeight(34);
+    metaLayout->addRow("Date de l'évaluation", dateEvaluation);
+    metaLayout->addRow("Évaluateur", evaluateur);
+    formLayout->addWidget(metaFrame);
+
+    QLabel *reviewStatus = new QLabel("Sélectionnez les critères et saisissez les observations du responsable.");
+    reviewStatus->setWordWrap(true);
+    reviewStatus->setStyleSheet("QLabel { background: #E9F3F5; color: #315B65; border-radius: 8px; padding: 9px; }");
+    formLayout->addWidget(reviewStatus);
+
+    QPushButton *btnSaveReview = new QPushButton("💾  Enregistrer l'évaluation dans Oracle");
+    btnSaveReview->setObjectName("btnPrimary");
+    btnSaveReview->setMinimumHeight(44);
+    btnSaveReview->setCursor(Qt::PointingHandCursor);
+    formLayout->addWidget(btnSaveReview, 0, Qt::AlignRight);
+
+    scroll->setWidget(formContent);
+    ficheLayout->addWidget(scroll, 1);
+    pages->addWidget(pageFiche);
+
+    // -------------------- Barre d'actions --------------------
+    QHBoxLayout *actionsLayout = new QHBoxLayout;
+    actionsLayout->setSpacing(10);
+    root->addLayout(actionsLayout);
+
+    QPushButton *btnPdf = new QPushButton("📄  Exporter PDF");
+    btnPdf->setObjectName("btnSecondary");
+    btnPdf->setMinimumHeight(42);
+    btnPdf->setCursor(Qt::PointingHandCursor);
+    btnPdf->setVisible(false);
+    actionsLayout->addWidget(btnPdf);
+
+    QPushButton *btnGmail = new QPushButton("✉️  Envoyer par Gmail");
+    btnGmail->setObjectName("btnPrimary");
+    btnGmail->setMinimumHeight(42);
+    btnGmail->setCursor(Qt::PointingHandCursor);
+    btnGmail->setVisible(false);
+    actionsLayout->addWidget(btnGmail);
+
+    actionsLayout->addStretch();
+    QPushButton *btnFermer = new QPushButton("Fermer");
+    btnFermer->setObjectName("btnSecondary");
+    btnFermer->setMinimumHeight(42);
+    btnFermer->setMinimumWidth(125);
+    btnFermer->setCursor(Qt::PointingHandCursor);
+    actionsLayout->addWidget(btnFermer);
+
+    Employe employeSelectionne;
+    bool hasEmployee = false;
+    bool loadingReview = false;
+    bool reviewSaved = false;
+    QString derniereDateReview;
+
+    auto calculerNote = [&]() -> double {
+        int total = 0;
+        int count = 0;
+        for (int value : ratingValues) {
+            if (value > 0) { total += value; ++count; }
+        }
+        if (count == 0) return 0.0;
+        return static_cast<double>(total) / count;
+    };
+    auto actualiserNote = [&]() {
+        int count = 0;
+        for (int value : ratingValues)
+            if (value > 0) ++count;
+        if (count == ratingValues.size())
+            globalScore->setText(QString("Note globale : %1 / 5").arg(calculerNote(), 0, 'f', 2));
+        else
+            globalScore->setText(QString("%1 / 6 critères notés").arg(count));
+    };
+    auto rendreActionsDisponibles = [&]() {
+        // Les actions sont utilisables dès qu'un employé est choisi. Elles
+        // travaillent sur le contenu actuellement affiché, même avant la
+        // sauvegarde Oracle ; la sauvegarde reste nécessaire pour conserver
+        // l'historique dans la base.
+        btnPdf->setEnabled(hasEmployee);
+        btnGmail->setEnabled(hasEmployee);
+        if (employeSelectionne.getCourriel().trimmed().isEmpty())
+            btnGmail->setToolTip("Aucune adresse courriel n'est enregistrée : cliquez pour voir le message d'avertissement.");
+        else
+            btnGmail->setToolTip("Ouvre Gmail avec le destinataire et l'évaluation affichée préremplis.");
+    };
+    auto marquerModifie = [&]() {
+        if (loadingReview) return;
+        reviewSaved = false;
+        rendreActionsDisponibles();
+        reviewStatus->setText("Modifications non enregistrées. PDF et Gmail utilisent le contenu affiché ; cliquez sur Enregistrer pour conserver cette version dans l'historique Oracle.");
+        actualiserNote();
+    };
+    for (int i = 0; i < ratingStarButtons.size(); ++i) {
+        for (int j = 0; j < ratingStarButtons.at(i).size(); ++j) {
+            connect(ratingStarButtons.at(i).at(j), &QToolButton::clicked, &dlg, [&, i, score = j + 1]() {
+                actualiserEtoiles(i, score);
+                marquerModifie();
+            });
+        }
+    }
+    connect(pointsForts, &QTextEdit::textChanged, &dlg, marquerModifie);
+    connect(axesAmelioration, &QTextEdit::textChanged, &dlg, marquerModifie);
+    connect(commentaires, &QTextEdit::textChanged, &dlg, marquerModifie);
+    connect(objectifs, &QTextEdit::textChanged, &dlg, marquerModifie);
+    connect(dateEvaluation, &QDateEdit::dateChanged, &dlg, marquerModifie);
+    connect(evaluateur, &QLineEdit::textChanged, &dlg, marquerModifie);
+
+    auto construireTexteReview = [&]() {
+        QString text;
+        text += "ÉVALUATION PROFESSIONNELLE\n";
+        text += "Employé : " + (employeSelectionne.getPrenom() + " " + employeSelectionne.getNom()).trimmed() + "\n";
+        text += "Poste : " + employeSelectionne.getPoste() + "\n";
+        text += "Date : " + dateEvaluation->date().toString("dd/MM/yyyy") + "\n";
+        text += "Évaluateur : " + evaluateur->text().trimmed() + "\n\n";
+        for (int i = 0; i < ratingValues.size(); ++i) {
+            const int score = ratingValues.at(i);
+            text += criteriaNames.at(i) + " : " + (score > 0 ? QString::number(score) + "/5" : "Non évalué") + "\n";
+        }
+        text += "\nNote globale : " + QString::number(calculerNote(), 'f', 2) + "/5\n";
+        text += "\nPoints forts :\n" + pointsForts->toPlainText().trimmed() + "\n";
+        text += "\nAxes d'amélioration :\n" + axesAmelioration->toPlainText().trimmed() + "\n";
+        text += "\nCommentaire du responsable :\n" + commentaires->toPlainText().trimmed() + "\n";
+        text += "\nObjectifs / recommandations :\n" + objectifs->toPlainText().trimmed() + "\n";
+        return text;
+    };
+
+    auto construireHtmlReview = [&]() {
+        QString html = "<html><head><meta charset='utf-8'><style>"
+                       "body{font-family:Arial,sans-serif;color:#244B56;} h1{color:#225A64;} "
+                       ".meta{color:#607D86;} table{border-collapse:collapse;width:100%;} "
+                       "td,th{border:1px solid #D7E9ED;padding:9px;text-align:left;} "
+                       "th{background:#2F7F8D;color:white;} .box{background:#F3F8F9;padding:10px;margin:10px 0;}"
+                       "</style></head><body>";
+        html += "<h1>Évaluation professionnelle</h1>";
+        html += "<p class='meta'><b>Employé :</b> " + (employeSelectionne.getPrenom() + " " + employeSelectionne.getNom()).trimmed().toHtmlEscaped() +
+                "<br><b>Poste :</b> " + employeSelectionne.getPoste().toHtmlEscaped() +
+                "<br><b>Date :</b> " + dateEvaluation->date().toString("dd/MM/yyyy") +
+                "<br><b>Évaluateur :</b> " + evaluateur->text().toHtmlEscaped() + "</p>";
+        html += "<table><tr><th>Critère</th><th>Note</th></tr>";
+        for (int i = 0; i < ratingValues.size(); ++i) {
+            const int score = ratingValues.at(i);
+            html += "<tr><td>" + criteriaNames.at(i).toHtmlEscaped() + "</td><td>" +
+                    (score > 0 ? QString::number(score) + "/5" : "Non évalué") + "</td></tr>";
+        }
+        html += "</table><p><b>Note globale :</b> " + QString::number(calculerNote(), 'f', 2) + "/5</p>";
+        auto bloc = [&](const QString &label, const QString &value) {
+            return "<div class='box'><b>" + label.toHtmlEscaped() + "</b><p>" +
+                   value.toHtmlEscaped().replace("\n", "<br>") + "</p></div>";
+        };
+        html += bloc("Points forts", pointsForts->toPlainText());
+        html += bloc("Axes d'amélioration", axesAmelioration->toPlainText());
+        html += bloc("Commentaire du responsable", commentaires->toPlainText());
+        html += bloc("Objectifs / recommandations", objectifs->toPlainText());
+        html += "</body></html>";
+        return html;
+    };
+
+    auto chargerDerniereEvaluation = [&]() {
+        loadingReview = true;
+        for (int i = 0; i < ratingValues.size(); ++i) actualiserEtoiles(i, 0);
+        pointsForts->clear();
+        axesAmelioration->clear();
+        commentaires->clear();
+        objectifs->clear();
+        evaluateur->clear();
+        dateEvaluation->setDate(QDate::currentDate());
+        reviewSaved = false;
+        derniereDateReview.clear();
+
+        QSqlQuery q;
+        q.prepare("SELECT TO_CHAR(DATE_EVALUATION, 'YYYY-MM-DD'), EVALUATEUR, "
+                  "DISCIPLINE, COMPORTEMENT, COMPETENCES, QUALITE, HYGIENE, RESPONSABILITE, "
+                  "POINTS_FORTS, AXES_AMELIORATION, COMMENTAIRES, OBJECTIFS "
+                  "FROM EMPLOYE_EVALUATIONS WHERE EMPLOYE_ID=:id "
+                  "ORDER BY DATE_EVALUATION DESC, ID DESC");
+        q.bindValue(":id", employeSelectionne.getId());
+        if (q.exec() && q.next()) {
+            derniereDateReview = q.value(0).toString();
+            const QDate loadedDate = QDate::fromString(derniereDateReview, "yyyy-MM-dd");
+            if (loadedDate.isValid()) dateEvaluation->setDate(loadedDate);
+            evaluateur->setText(q.value(1).toString());
+            for (int i = 0; i < ratingValues.size(); ++i) {
+                const int value = q.value(2 + i).toInt();
+                actualiserEtoiles(i, (value >= 1 && value <= 5) ? value : 0);
+            }
+            pointsForts->setPlainText(q.value(8).toString());
+            axesAmelioration->setPlainText(q.value(9).toString());
+            commentaires->setPlainText(q.value(10).toString());
+            objectifs->setPlainText(q.value(11).toString());
+            reviewSaved = true;
+            reviewStatus->setText("Dernière évaluation enregistrée le " + loadedDate.toString("dd/MM/yyyy") +
+                                  ". Vous pouvez la consulter ou la modifier, puis enregistrer une nouvelle version.");
+        } else {
+            reviewStatus->setText("Aucune évaluation enregistrée pour cet employé. Le responsable peut remplir les critères ci-dessus.");
+        }
+        q.finish();
+        loadingReview = false;
+        actualiserNote();
+        rendreActionsDisponibles();
+    };
+
+    auto choisirEmploye = [&](int row) {
+        if (row < 0 || !employeesTable->item(row, 0)) return;
+        const int id = employeesTable->item(row, 0)->data(Qt::UserRole).toInt();
+        if (id <= 0) return;
+        if (!Employe::charger(id, employeSelectionne)) {
+            QMessageBox::warning(&dlg, "Employé introuvable", "Impossible de charger les informations de cet employé.");
+            return;
+        }
+        hasEmployee = true;
+        employeeName->setText((employeSelectionne.getPrenom() + " " + employeSelectionne.getNom()).trimmed());
+        employeeInfo->setText(employeSelectionne.getPoste() + "  ·  " + employeSelectionne.getCourriel());
+        const QString poste = employeSelectionne.getPoste().toLower();
+        QString competenceHint = "Compétences techniques et savoir-faire nécessaires pour le poste occupé.";
+        if (poste.contains("vétérinaire") || poste.contains("veterinaire"))
+            competenceHint = "Consultation, diagnostic, soins, suivi des dossiers médicaux et respect des protocoles vétérinaires.";
+        else if (poste.contains("assistant") || poste.contains("auxiliaire"))
+            competenceHint = "Préparation du matériel, aide aux soins, manipulation sécurisée des animaux et assistance au vétérinaire.";
+        else if (poste.contains("réception") || poste.contains("reception") || poste.contains("secrétaire") || poste.contains("secretaire"))
+            competenceHint = "Accueil des clients, gestion des rendez-vous et dossiers, communication et confidentialité.";
+        else if (poste.contains("entretien"))
+            competenceHint = "Nettoyage, désinfection, organisation des espaces et respect des protocoles d'hygiène.";
+        criterionHints.at(2)->setText(competenceHint);
+        chargerDerniereEvaluation();
+        pages->setCurrentWidget(pageFiche);
+        btnPdf->setVisible(true);
+        btnGmail->setVisible(true);
+        rendreActionsDisponibles();
+    };
+
+    connect(searchEdit, &QLineEdit::textChanged, &dlg, [employeesTable](const QString &text) {
+        const QString needle = text.trimmed();
+        for (int row = 0; row < employeesTable->rowCount(); ++row) {
+            const QString name = employeesTable->item(row, 0) ? employeesTable->item(row, 0)->text() : QString();
+            employeesTable->setRowHidden(row, !name.contains(needle, Qt::CaseInsensitive));
+        }
+    });
+    connect(employeesTable, &QTableWidget::cellClicked, &dlg,
+            [&](int row, int) { choisirEmploye(row); });
+    connect(btnRetour, &QPushButton::clicked, &dlg, [&]() {
+        pages->setCurrentWidget(pageListe);
+        btnPdf->setVisible(false);
+        btnGmail->setVisible(false);
+        btnPdf->setEnabled(false);
+        btnGmail->setEnabled(false);
+        employeesTable->clearSelection();
+        searchEdit->setFocus();
+    });
+
+    connect(btnSaveReview, &QPushButton::clicked, &dlg, [&]() {
+        if (!hasEmployee) return;
+        for (int i = 0; i < ratingValues.size(); ++i) {
+            if (ratingValues.at(i) < 1) {
+                QMessageBox::warning(&dlg, "Évaluation incomplète",
+                                     "Veuillez attribuer une note aux six critères en cliquant sur les étoiles.");
+                if (!ratingStarButtons.at(i).isEmpty()) ratingStarButtons.at(i).first()->setFocus();
+                return;
+            }
+        }
+        if (!dateEvaluation->date().isValid()) {
+            QMessageBox::warning(&dlg, "Date invalide", "Veuillez choisir une date d'évaluation valide.");
+            return;
+        }
+        const double note = calculerNote();
+        QSqlQuery q;
+        q.prepare("INSERT INTO EMPLOYE_EVALUATIONS (EMPLOYE_ID, DATE_EVALUATION, EVALUATEUR, "
+                  "DISCIPLINE, COMPORTEMENT, COMPETENCES, QUALITE, HYGIENE, RESPONSABILITE, "
+                  "POINTS_FORTS, AXES_AMELIORATION, COMMENTAIRES, OBJECTIFS, NOTE_GLOBALE) "
+                  "VALUES (:emp, TO_DATE(:dateEval, 'YYYY-MM-DD'), :evaluateur, :discipline, "
+                  ":comportement, :competences, :qualite, :hygiene, :responsabilite, "
+                  ":points, :axes, :commentaires, :objectifs, :note)");
+        q.bindValue(":emp", employeSelectionne.getId());
+        q.bindValue(":dateEval", dateEvaluation->date().toString("yyyy-MM-dd"));
+        q.bindValue(":evaluateur", evaluateur->text().trimmed());
+        q.bindValue(":discipline", ratingValues.at(0));
+        q.bindValue(":comportement", ratingValues.at(1));
+        q.bindValue(":competences", ratingValues.at(2));
+        q.bindValue(":qualite", ratingValues.at(3));
+        q.bindValue(":hygiene", ratingValues.at(4));
+        q.bindValue(":responsabilite", ratingValues.at(5));
+        q.bindValue(":points", pointsForts->toPlainText().trimmed());
+        q.bindValue(":axes", axesAmelioration->toPlainText().trimmed());
+        q.bindValue(":commentaires", commentaires->toPlainText().trimmed());
+        q.bindValue(":objectifs", objectifs->toPlainText().trimmed());
+        q.bindValue(":note", note);
+        if (!q.exec()) {
+            QMessageBox::critical(&dlg, "Erreur d'enregistrement",
+                                  "L'évaluation n'a pas pu être enregistrée dans Oracle :\n" + q.lastError().text());
+            q.finish();
+            return;
+        }
+        q.finish();
+        reviewSaved = true;
+        derniereDateReview = dateEvaluation->date().toString("yyyy-MM-dd");
+        reviewStatus->setText(QString("✅ Évaluation enregistrée dans Oracle. Note globale : %1 / 5. Vous pouvez maintenant exporter le PDF ou préparer l'envoi Gmail.")
+                              .arg(note, 0, 'f', 2));
+        rendreActionsDisponibles();
+        QMessageBox::information(&dlg, "Évaluation enregistrée", "L'évaluation de l'employé a bien été conservée dans Oracle.");
+    });
+
+    connect(btnPdf, &QPushButton::clicked, &dlg, [&]() {
+        if (!hasEmployee) return;
+        QString defaultName = "Evaluation_" + employeSelectionne.getPrenom() + "_" + employeSelectionne.getNom() + ".pdf";
+        defaultName.replace(QRegularExpression("[^A-Za-z0-9_.-]"), "_");
+        const QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + defaultName;
+        QString path = QFileDialog::getSaveFileName(&dlg, "Exporter l'évaluation en PDF", defaultPath, "Fichier PDF (*.pdf)");
+        if (path.isEmpty()) return;
+        if (!path.endsWith(".pdf", Qt::CaseInsensitive)) path += ".pdf";
+        QPrinter printer(QPrinter::HighResolution);
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setOutputFileName(path);
+        QTextDocument document;
+        document.setHtml(construireHtmlReview());
+        document.print(&printer);
+        const QFileInfo pdfInfo(path);
+        if (!pdfInfo.exists() || pdfInfo.size() <= 0) {
+            QMessageBox::critical(&dlg, "Erreur PDF",
+                                  "Le fichier PDF n'a pas pu être créé. Vérifiez les droits d'accès au dossier choisi.");
+            return;
+        }
+        QMessageBox::information(&dlg, "PDF créé",
+                                 "Le rapport d'évaluation a été exporté :\n" + path +
+                                 (reviewSaved ? "\n\nCette évaluation est également enregistrée dans Oracle."
+                                              : "\n\nAttention : cette version n'est pas encore enregistrée dans l'historique Oracle."));
+    });
+
+    connect(btnGmail, &QPushButton::clicked, &dlg, [&]() {
+        if (!hasEmployee) return;
+        const QString destinataire = employeSelectionne.getCourriel().trimmed();
+        if (destinataire.isEmpty()) {
+            QMessageBox::warning(&dlg, "Adresse manquante", "Aucune adresse courriel n'est enregistrée pour cet employé.");
+            return;
+        }
+        QUrl url("https://mail.google.com/mail/");
+        QUrlQuery query;
+        query.addQueryItem("view", "cm");
+        query.addQueryItem("fs", "1");
+        query.addQueryItem("to", destinataire);
+        query.addQueryItem("su", "Évaluation professionnelle - " +
+                           (employeSelectionne.getPrenom() + " " + employeSelectionne.getNom()).trimmed());
+        query.addQueryItem("body", "Bonjour " + employeSelectionne.getPrenom() + ",\n\n" +
+                           construireTexteReview() +
+                           "\n\nCordialement,\nResponsable du centre\n\n" +
+                           "Remarque : vous pouvez joindre le PDF exporté depuis ANIWORLD avant d'envoyer ce message.");
+        url.setQuery(query);
+        if (!QDesktopServices::openUrl(url)) {
+            QMessageBox::warning(&dlg, "Gmail", "Impossible d'ouvrir Gmail dans le navigateur. Vérifiez la connexion Internet et l'application associée aux liens web.");
+            return;
+        }
+        QMessageBox::information(&dlg, "Gmail ouvert",
+                                 "Gmail a été ouvert avec le destinataire, le sujet et le contenu de l'évaluation préremplis.\n\nVérifiez le message puis cliquez sur Envoyer dans Gmail. Pour joindre le PDF, exportez-le avec le bouton PDF puis ajoutez-le au message.");
+    });
+
+    connect(btnFermer, &QPushButton::clicked, &dlg, &QDialog::accept);
+    dlg.exec();
+}
