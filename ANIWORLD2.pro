@@ -6,13 +6,34 @@ CONFIG += console      # qDebug() visible dans la console (Atelier Connexion)
 TARGET = ANIWORLD2
 TEMPLATE = app
 
+INCLUDEPATH += .
+
+# === COMMUN : connexion Oracle unique + fenetre principale (navigation) ===
 SOURCES += \
-    employe.cpp \
-    gestionemployes.cpp \
     connection.cpp \
     main.cpp \
     mainwindow.cpp \
-    loginvisuals.cpp \
+    loginvisuals.cpp
+HEADERS += \
+    connection.h \
+    mainwindow.h \
+    loginvisuals.h
+# UN SEUL fichier .ui : toutes les pages (stackedWidget)
+FORMS += \
+    mainwindow.ui
+RESOURCES += \
+    resources.qrc
+
+# === MODULE EMPLOYE (Linda) ===
+SOURCES += \
+    employe.cpp \
+    gestionemployes.cpp
+HEADERS += \
+    employe.h \
+    gestionemployes.h
+
+# === MODULE DOSSIERS MEDICAUX (Rawand) ===
+SOURCES += \
     medicalwindow.cpp \
     recordcard.cpp \
     medicalrecord.cpp \
@@ -33,14 +54,7 @@ SOURCES += \
     treatmentadvisor.cpp \
     groomingcut.cpp \
     groomingdialog.cpp
-
 HEADERS += \
-    employe.h \
-    gestionemployes.h \
-    rappelsdb.h \
-    connection.h \
-    mainwindow.h \
-    loginvisuals.h \
     medicalwindow.h \
     recordcard.h \
     medicalrecord.h \
@@ -60,14 +74,59 @@ HEADERS += \
     reminderdialog.h \
     treatmentadvisor.h \
     groomingcut.h \
-    groomingdialog.h
-
-FORMS += \
-    medicalwindow.ui
-
+    groomingdialog.h \
+    rappelsdb.h
 RESOURCES += \
-    resources.qrc \
     medical.qrc
 
-# Module "Gestion des locaux" (Emna) : sources, ressources et style dans le dossier locaux/
-include(locaux/locaux.pri)
+# === MODULE LOCAUX (Emna) ===
+SOURCES += \
+    cardgrid.cpp \
+    clinicmap.cpp \
+    confirmdialog.cpp \
+    detailpanel.cpp \
+    espacelocaux.cpp \
+    flatmap.cpp \
+    hoverglow.cpp \
+    icons.cpp \
+    local.cpp \
+    localdialog.cpp \
+    localrepository.cpp \
+    pagelocaux.cpp \
+    pawburst.cpp \
+    pdfreport.cpp \
+    plandialog.cpp \
+    roomcard.cpp \
+    smartassign.cpp \
+    smartassigndialog.cpp \
+    smartsearch.cpp \
+    spinlogo.cpp \
+    statsdialog.cpp \
+    toast.cpp
+HEADERS += \
+    cardgrid.h \
+    clinicmap.h \
+    confirmdialog.h \
+    detailpanel.h \
+    espacelocaux.h \
+    flatmap.h \
+    hoverglow.h \
+    icons.h \
+    local.h \
+    localdialog.h \
+    localrepository.h \
+    pagelocaux.h \
+    pawburst.h \
+    pdfreport.h \
+    plandialog.h \
+    roomcard.h \
+    smartassign.h \
+    smartassigndialog.h \
+    smartsearch.h \
+    spinlogo.h \
+    statsdialog.h \
+    theme.h \
+    toast.h
+RESOURCES += \
+    locaux.qrc
+

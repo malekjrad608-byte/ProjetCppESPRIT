@@ -4,13 +4,17 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
+#include <QRegularExpression>
 
 // ------------------------------------------------------------------
 // A ADAPTER aux tables des autres modules (une seule ligne à changer par requête)
 // ------------------------------------------------------------------
 // Colonnes attendues : 1) identifiant  2) texte affiché  [3) quantité pour le stock]
-// Table EMPLOYES du module Employés (Linda) : colonnes ID, NOM, PRENOM. Les employés affichés dans le formulaire
-// sont exactement ceux créés dans « Gestion des employés ». L'ancien nom de clé ID_EMPLOYES est aussi accepté.
+// Employés du module « Gestion des employés » (Linda) : table EMPLOYER (ID_EMP, NOM, PRENOM).
+// Si elle n'existe pas, on retombe sur l'ancienne table EMPLOYES (ID ou ID_EMPLOYES).
+// Les employés affichés dans le formulaire sont donc ceux créés dans « Gestion des employés ».
+static const char *SQL_EMPLOYER =
+    "SELECT ID_EMP, NVL(TRIM(NOM || ' ' || PRENOM), 'Employé n° ' || ID_EMP) FROM EMPLOYER ORDER BY NOM, PRENOM, ID_EMP";
 static const char *SQL_EMPLOYES_ID =
     "SELECT ID, NVL(TRIM(NOM || ' ' || PRENOM), 'Employé n° ' || ID) FROM EMPLOYES ORDER BY NOM, PRENOM, ID";
 static const char *SQL_EMPLOYES_ID_EMPLOYES =
@@ -54,12 +58,45 @@ static bool lire(const char *sql, QList<LookupItem> &out, bool avecQuantite = fa
     return true;
 }
 
+// Table et colonne réellement référencées par la clé étrangère FK_05 de MEDICAL (lues dans le dictionnaire
+// Oracle : aucune table ni contrainte n'est modifiée). Le formulaire propose ainsi exactement les employés
+// que la base accepte, ce qui évite l'erreur ORA-02291.
+static bool cibleCleEmployes(QString &table, QString &colonne)
+{
+    QSqlQuery q;
+    q.prepare("SELECT rcc.table_name, rcc.column_name "
+              "FROM user_constraints c "
+              "JOIN user_constraints rc ON rc.constraint_name = c.r_constraint_name "
+              "JOIN user_cons_columns rcc ON rcc.constraint_name = rc.constraint_name "
+              "WHERE c.constraint_name = 'FK_05' AND c.table_name = 'MEDICAL'");
+    if (!q.exec() || !q.next())
+        return false;
+    table = q.value(0).toString().trimmed().toUpper();
+    colonne = q.value(1).toString().trimmed().toUpper();
+    const QRegularExpression ident("^[A-Z][A-Z0-9_$#]*$");
+    return ident.match(table).hasMatch() && ident.match(colonne).hasMatch();
+}
+
 QList<LookupItem> LookupData::employes()
 {
     QList<LookupItem> list;
     if (QSqlDatabase::database().isOpen()) {
-        if (!lire(SQL_EMPLOYES_ID, list))          // en ligne : seulement les vrais employés
-            lire(SQL_EMPLOYES_ID_EMPLOYES, list);
+        // 1) table référencée par FK_05 (ex. EMPLOYES) : c'est la seule qui accepte l'insertion dans MEDICAL
+        QString table, colonne;
+        if (cibleCleEmployes(table, colonne)) {
+            const QString sql = QString("SELECT %1, NVL(TRIM(NOM || ' ' || PRENOM), 'Employé n° ' || %1) "
+                                        "FROM %2 ORDER BY NOM, PRENOM, %1").arg(colonne, table);
+            if (lire(sql.toUtf8().constData(), list))
+                return list;
+            list.clear();
+        }
+        // 2) FK_05 introuvable : on essaie les tables connues, la première qui contient des employés
+        const char *sources[] = { SQL_EMPLOYER, SQL_EMPLOYES_ID, SQL_EMPLOYES_ID_EMPLOYES };
+        for (const char *sql : sources) {
+            list.clear();
+            if (lire(sql, list) && !list.isEmpty())
+                break;
+        }
         return list;
     }
     // Données d'exemple (mode hors ligne uniquement)

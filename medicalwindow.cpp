@@ -1,7 +1,7 @@
 #include "medicalwindow.h"
 #include "rappelsdb.h"
 #include "motion.h"
-#include "ui_medicalwindow.h"
+#include "ui_mainwindow.h"
 #include "recordcard.h"
 #include "medicalrecorddialog.h"
 #include "medicalrecorddetailsdialog.h"
@@ -66,11 +66,16 @@ const int kPanelGap = 12;
 const bool kShowSidebar = false;      // intégré : le menu latéral est celui de la fenêtre principale ANIWORLD
 }
 
-MedicalWindow::MedicalWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MedicalWindow)
+MedicalWindow::MedicalWindow(Ui::MainWindow *mainUi, QWidget *parent)
+    : QWidget(parent)
+    , ui(mainUi)
 {
-    ui->setupUi(this);      // builds everything described in mainwindow.ui
+    // Les widgets du module sont décrits dans mainwindow.ui (page « pageDossiers », racine « medicalCentral »).
+    // Ils ont déjà été créés par MainWindow::setupUi : on les place simplement dans ce widget.
+    auto *racine = new QVBoxLayout(this);
+    racine->setContentsMargins(0, 0, 0, 0);
+    racine->setSpacing(0);
+    racine->addWidget(ui->medicalCentral);
 
     m_db = QSqlDatabase::database().isOpen();     // connexion ouverte au démarrage par main.cpp (Connection de Linda)
     if (m_db)
@@ -90,10 +95,6 @@ MedicalWindow::MedicalWindow(QWidget *parent)
     m_rdvTimer->start(15 * 60 * 1000);
 }
 
-MedicalWindow::~MedicalWindow()
-{
-    delete ui;
-}
 
 // ---------------------------------------------------------------- UI setup
 
@@ -702,7 +703,7 @@ void MedicalWindow::layoutDetailPanel()
 
 void MedicalWindow::resizeEvent(QResizeEvent *event)
 {
-    QMainWindow::resizeEvent(event);
+    QWidget::resizeEvent(event);
     layoutUi();
 }
 
@@ -710,7 +711,7 @@ bool MedicalWindow::eventFilter(QObject *watched, QEvent *event)
 {
     if (m_scroll && watched == m_scroll->viewport() && event->type() == QEvent::Resize)
         relayoutCards();
-    return QMainWindow::eventFilter(watched, event);
+    return QWidget::eventFilter(watched, event);
 }
 
 void MedicalWindow::updateChips()

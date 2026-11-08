@@ -1,13 +1,13 @@
 #ifndef MEDICALWINDOW_H
 #define MEDICALWINDOW_H
 
-#include <QMainWindow>
+#include <QWidget>
 #include <QVector>
 #include <QStringList>
 #include "medicalrecord.h"
 
 namespace Ui {
-class MedicalWindow;
+class MainWindow;   // classe unique générée depuis mainwindow.ui (toutes les pages)
 }
 
 class QPushButton;
@@ -24,13 +24,15 @@ class SmsService;
 class MedicalRecordDialog;
 class QTimer;
 
-class MedicalWindow : public QMainWindow
+class MedicalWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit MedicalWindow(QWidget *parent = nullptr);
-    ~MedicalWindow() override;
+    // Module Dossiers médicaux : travaille sur la page « pageDossiers » du fichier mainwindow.ui unique.
+    // ui = interface générée de MainWindow (non possédée) ; parent = page qui accueille le module.
+    explicit MedicalWindow(Ui::MainWindow *ui, QWidget *parent = nullptr);
+    ~MedicalWindow() override = default;
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -57,7 +59,7 @@ private slots:
     void onLogoutClicked();        // bouton « Se déconnecter » de la barre du haut
 
 private:
-    Ui::MedicalWindow *ui = nullptr;
+    Ui::MainWindow *ui = nullptr;      // non possédée : appartient à MainWindow
 
     // UI construction (layout itself lives in mainwindow.ui)
     void setupUI();

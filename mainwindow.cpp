@@ -1,5 +1,6 @@
 #include "loginvisuals.h"
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include "espacelocaux.h"   // module Gestion des locaux
 #include "gestionemployes.h"
 #include "employe.h"
@@ -38,46 +39,37 @@
 #include <QDate>
 
 // ==================== Constructeur ====================
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    // Un seul fichier .ui (mainwindow.ui) : stackedWidget avec les pages Employés, Services, Stock, Locaux, Dossiers médicaux
+    ui->setupUi(this);
     setWindowTitle("ANIWORLD — Gestion du centre");
     resize(1400, 900);
 
-    QWidget *central = new QWidget;
-    setCentralWidget(central);
-
-    QHBoxLayout *main = new QHBoxLayout(central);
-    main->setContentsMargins(0, 0, 0, 0);
-    main->setSpacing(0);
-
-    main->addWidget(creerSidebar());
-
-    QWidget *zone = new QWidget;
-    QVBoxLayout *zoneLayout = new QVBoxLayout(zone);
-    zoneLayout->setContentsMargins(0, 0, 0, 0);
-    zoneLayout->setSpacing(0);
-
+    // Menu latéral et bande du haut (navigation : programmés ici, pas dans les modules)
+    ui->layoutPrincipal->insertWidget(0, creerSidebar());
+    ui->layoutPrincipal->setStretch(1, 1);
     m_topBar = creerTopBar();
-    zoneLayout->addWidget(m_topBar);
+    ui->layoutZone->insertWidget(0, m_topBar);
+    ui->layoutZone->setStretch(1, 1);
 
-    m_stack = new QStackedWidget;
-    m_stack->addWidget(creerPageEmployes());                                    // 0
-    m_stack->addWidget(creerPagePlaceholder("Services", "🐾",
+    // Pages du stackedWidget (ordre fixé dans mainwindow.ui)
+    m_stack = ui->stackedWidget;
+    ui->layoutPageEmployes->addWidget(creerPageEmployes());                     // 0 : module Employé (Linda)
+    ui->layoutPageServices->addWidget(creerPagePlaceholder("Services", "🐾",
                                             "Planning et gestion des prestations"));                                // 1
-    m_stack->addWidget(creerPagePlaceholder("Stock", "📦",
+    ui->layoutPageStock->addWidget(creerPagePlaceholder("Stock", "📦",
                                             "Inventaire, traçabilité des lots et réapprovisionnement"));            // 2
-    m_stack->addWidget(new EspaceLocaux);                                       // 3 : Gestion des locaux (module d'Emna, avec sa propre bande)
-    m_dossiersPage = new QWidget;                                               // 4 : Dossiers médicaux (module vétérinaire)
-    auto *dossiersLayout = new QVBoxLayout(m_dossiersPage);
-    dossiersLayout->setContentsMargins(0, 0, 0, 0);
-    dossiersLayout->setSpacing(0);
-    m_stack->addWidget(m_dossiersPage);
-
-    zoneLayout->addWidget(m_stack, 1);
-    main->addWidget(zone, 1);
+    ui->layoutPageLocaux->addWidget(new EspaceLocaux);                          // 3 : module Locaux (Emna)
+    m_dossiersPage = ui->pageDossiers;                                          // 4 : module Dossiers médicaux (Rawand)
 
     // Page d'accueil : Dossiers médicaux
     QTimer::singleShot(0, this, &MainWindow::afficherDossiers);
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
 }
 
 // ==================== TOP BAR ====================
@@ -562,20 +554,9 @@ void MainWindow::fadeInPage(QWidget *page)
     anim->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
-// ==================== SLOTS ====================
-void MainWindow::afficherEmployes()
-{
-    m_stack->setCurrentIndex(0);
-    m_topBar->setVisible(true);
-    if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Employés</b>");
-    if (m_gestionEmployes)
-        m_gestionEmployes->actualiserStats();
-    m_btnServices->setChecked(false);
-    m_btnEmployes->setChecked(true);
-    m_btnStock->setChecked(false);
-    m_btnLocaux->setChecked(false);
-    m_btnDossiers->setChecked(false);
-}
+// ======================================================================
+// === SLOTS GENERAUX (NAVIGATION ENTRE PAGES) ===
+// ======================================================================
 
 void MainWindow::afficherServices()
 {
@@ -603,6 +584,30 @@ void MainWindow::afficherStock()
     m_btnDossiers->setChecked(false);
 }
 
+// ======================================================================
+// === MODULE EMPLOYE ===
+// ======================================================================
+// Etudiante responsable du module Employe (Linda) : travaille ici uniquement
+
+void MainWindow::afficherEmployes()
+{
+    m_stack->setCurrentIndex(0);
+    m_topBar->setVisible(true);
+    if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Employés</b>");
+    if (m_gestionEmployes)
+        m_gestionEmployes->actualiserStats();
+    m_btnServices->setChecked(false);
+    m_btnEmployes->setChecked(true);
+    m_btnStock->setChecked(false);
+    m_btnLocaux->setChecked(false);
+    m_btnDossiers->setChecked(false);
+}
+
+// ======================================================================
+// === MODULE LOCAUX ===
+// ======================================================================
+// Etudiante responsable du module Locaux (Emna) : travaille ici uniquement
+
 void MainWindow::afficherLocaux()
 {
     m_stack->setCurrentIndex(3);
@@ -616,15 +621,18 @@ void MainWindow::afficherLocaux()
     m_btnDossiers->setChecked(false);
 }
 
+// ======================================================================
+// === MODULE DOSSIERS MEDICAUX ===
+// ======================================================================
+// Etudiante responsable du module Dossiers medicaux (Rawand) : travaille ici uniquement
+
 void MainWindow::afficherDossiers()
 {
     if (!m_medical) {
         // Le module est créé à la première ouverture : sa liste d'employés lit alors la table EMPLOYES
         // de ce projet, et ses alertes de démarrage ne s'affichent pas sur la page Employés.
-        m_medical = new MedicalWindow(m_dossiersPage);
-        m_medical->setWindowFlags(Qt::Widget);          // page intégrée, pas une fenêtre séparée
-        m_medical->setMinimumSize(0, 0);
-        m_dossiersPage->layout()->addWidget(m_medical);
+        m_medical = new MedicalWindow(ui, m_dossiersPage);   // widgets décrits dans mainwindow.ui (pageDossiers)
+        ui->layoutPageDossiers->addWidget(m_medical);
     }
     m_stack->setCurrentIndex(4);
     m_topBar->setVisible(true);

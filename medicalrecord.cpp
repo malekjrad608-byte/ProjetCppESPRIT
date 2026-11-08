@@ -16,6 +16,9 @@ void memoriserErreur(const char *contexte, const QSqlError &erreur)
     g_derniereErreur = QString("%1\n[driver : %2 | base : %3 | code : %4]")
                            .arg(erreur.text().trimmed(), erreur.driverText().trimmed(),
                                 erreur.databaseText().trimmed(), erreur.nativeErrorCode());
+    if (g_derniereErreur.contains("FK_05") || g_derniereErreur.contains("ORA-02291"))
+        g_derniereErreur += QString::fromUtf8("\n\nL'employé choisi n'existe pas dans la table EMPLOYES référencée par MEDICAL (clé FK_05). "
+                                              "Choisissez un employé présent dans cette table.");
     qDebug() << contexte << ":" << g_derniereErreur;
 }
 

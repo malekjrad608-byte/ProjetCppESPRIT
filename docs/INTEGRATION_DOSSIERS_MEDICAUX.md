@@ -5,7 +5,7 @@ Base du projet : ANIWORLD2 (Employés). Le module « Dossiers médicaux » est l
 ## Ce qui a changé
 - `mainwindow.cpp/.h` (Linda) : la page « Dossiers médicaux » ouvre le module (créé au premier clic).
 - `main.cpp` : ajout de setApplicationName / setOrganizationName("ANIWORLD") (réglages SMS et alertes).
-- `ANIWORLD2.pro` : fichiers du module, `QT += svg network`, `medicalwindow.ui`, `medical.qrc`.
+- `ANIWORLD2.pro` : fichiers du module, `QT += svg network`, `mainwindow.ui` (fichier .ui unique), `medical.qrc`.
 - Ancienne fenêtre médicale `mainwindow.*` renommée `medicalwindow.*` (classe `MedicalWindow`), sans menu latéral,
   sans bouton de déconnexion ni badge Oracle (ils existent déjà dans la fenêtre principale). Son style reste limité à cette page.
 - Ressources du module sous le préfixe `:/med/` (`medical.qrc`) pour ne pas entrer en conflit avec `resources.qrc`.

@@ -8,6 +8,7 @@
 #include <QPropertyAnimation>
 #include <QEasingCurve>
 
+namespace Ui { class MainWindow; }   // interface unique : mainwindow.ui (toutes les pages)
 class GestionEmployes;
 class MedicalWindow;
 class QLabel;
@@ -18,14 +19,34 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
 
 private slots:
-    void afficherEmployes();
+    // ======================================================================
+    // === SLOTS GENERAUX (NAVIGATION ENTRE PAGES) ===
+    // ======================================================================
     void afficherServices();
     void afficherStock();
-    void afficherLocaux();
-    void afficherDossiers();
     void rafraichirStatutOracle(bool retenter = false);
+
+    // ======================================================================
+    // === MODULE EMPLOYE ===
+    // ======================================================================
+    // Etudiante responsable du module Employe (Linda) : travaille ici uniquement
+    void afficherEmployes();
+
+    // ======================================================================
+    // === MODULE LOCAUX ===
+    // ======================================================================
+    // Etudiante responsable du module Locaux (Emna) : travaille ici uniquement
+    void afficherLocaux();
+
+    // ======================================================================
+    // === MODULE DOSSIERS MEDICAUX ===
+    // ======================================================================
+    // Etudiante responsable du module Dossiers medicaux (Rawand) : travaille ici uniquement
+    void afficherDossiers();
+
 
 private:
     QFrame *creerTopBar();
@@ -36,7 +57,8 @@ private:
                                   const QString &description);
     void fadeInPage(QWidget *page);
 
-    QStackedWidget *m_stack;
+    Ui::MainWindow *ui = nullptr;             // généré depuis mainwindow.ui
+    QStackedWidget *m_stack = nullptr;        // = ui->stackedWidget
     QFrame *m_topBar = nullptr;               // bande du haut (cachee sur la page Locaux)
     GestionEmployes *m_gestionEmployes = nullptr;
     QWidget *m_dossiersPage = nullptr;        // conteneur de la page Dossiers médicaux
