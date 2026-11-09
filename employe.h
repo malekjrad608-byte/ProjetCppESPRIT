@@ -34,7 +34,7 @@ public:
 
     // ---- Structures de resultat (donnees pour la Vue) ----
     struct ChargeEmploye {
-        int id = 0;
+        int id_emp = 0;
         QString nom;
         QString prenom;
         QString poste;
