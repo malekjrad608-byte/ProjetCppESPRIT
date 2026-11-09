@@ -26,7 +26,7 @@ class Employe
 public:
     // ---- Constructeurs ----
     Employe();
-    Employe(int id, const QString &nom, const QString &prenom, const QString &cin,
+    Employe(int id_emp, const QString &nom, const QString &prenom, const QString &cin,
             const QDate &dateNaiss, const QString &adresse, const QString &tel,
             const QString &poste, const QString &courriel, const QString &competences,
             const QDate &dateEmbauche, const QString &typeContrat, double salaire,
