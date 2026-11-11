@@ -1,0 +1,44 @@
+CORRECTION DU CRASH SERVICES - 9 novembre 2026
+
+Le crash SIGSEGV a été reproduit localement avec une requête Services en échec.
+Le debugger situe la faute dans QHeaderView::setSectionResizeMode appelé avec
+un indice de colonne inexistant : le modèle SQL possède zéro colonne.
+
+La correction vérifie les colonnes avant de les configurer et recommence la
+configuration après chaque actualisation. Une connexion fermée, une table/vue
+absente ou un mauvais schéma affiche désormais « Services indisponibles » avec
+l'erreur SQL, sans fermer l'application. Après correction de la connexion/base,
+revenir sur Services ou cliquer sur le badge Oracle pour actualiser.
+
+POUR LES AUTRES MEMBRES
+1. Extraire cette archive dans un NOUVEAU dossier local.
+2. Ouvrir ANIWORLD2.pro dans Qt Creator.
+3. Sélectionner le kit Qt 6.7.3 MinGW 64 bits (ou le kit Qt 6 compatible de l'équipe).
+4. Exécuter qmake puis Compiler. Ne pas réutiliser build/, les anciens ui_*.h,
+   moc_*.cpp, .o ou la configuration .pro.user d'un autre ordinateur.
+5. Ouvrir Services. Si une erreur de base apparaît, relever son texte exact.
+
+IMPORTANT : un .rar/.zip du projet ne transporte pas la base Oracle, les vues,
+les séquences, les droits, le pilote ODBC ou le DSN Windows. Le badge Oracle vert
+confirme la connexion ; il ne garantit pas que toutes les vues Services existent.
+
+La connexion commune est définie dans connection.cpp. Vérifier le DSN ODBC
+64 bits Source_Projet2A18 et le même schéma Oracle que le projet de l'équipe.
+Le module utilise SERVICE, MEDICAL, les vues SERVICES et EMPLOYES, et la
+séquence SERVICES_SEQ. Ne pas inventer une deuxième connexion propre à Services.
+
+En cas d'ORA-00942 ou ORA-00904, exécuter uniquement le diagnostic en lecture seule
+sql/diagnostic_services_lecture_seule.sql avec le compte de l'application et
+comparer au schéma de l'équipe. Le diagnostic ne crée ni ne modifie de données.
+Ne pas lancer les anciens scripts de création/migration au hasard sur une base
+existante : ils ne remplacent pas un diagnostic du schéma utilisé chez les amis.
+
+Fichiers de correction :
+- services/widgets/servicewidget.h et servicewidget.cpp
+- services/models/service.cpp (remontée explicite des erreurs de connexion/SQL)
+- tests/service_integration_tests.cpp (régression et récupération après erreur)
+
+La correction locale du crash est vérifiée ; le schéma Oracle des autres postes
+n'a pas été inspecté à distance. Pour utiliser les données chez eux, leur schéma
+et les objets Services doivent être présents et compatibles.
+

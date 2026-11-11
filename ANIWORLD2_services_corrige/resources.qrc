@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="style.qss">resources/style.qss</file>
+        <file alias="logo.png">resources/logo.png</file>
+        <file alias="arrow.svg">resources/arrow.svg</file>
+        <file alias="arrow-up.svg">resources/arrow-up.svg</file>
+        <file alias="logout.svg">resources/logout.svg</file>
+    </qresource>
+    <qresource prefix="/images">
+        <file alias="logo.png">resources/logo.png</file>
+        <file alias="check.png">resources/check.png</file>
+    </qresource>
+</RCC>

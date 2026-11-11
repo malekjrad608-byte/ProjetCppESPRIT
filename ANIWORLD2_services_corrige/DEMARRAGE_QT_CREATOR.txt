@@ -1,0 +1,16 @@
+ANIWORLD2 - démarrage dans Qt Creator
+
+1) Décompresser le dossier complet.
+2) Ouvrir ANIWORLD2.pro (pas un fichier du dossier build).
+3) Choisir le kit Desktop Qt 6.7.3 MinGW 64-bit correspondant à l'installation.
+4) Menu Compiler > Nettoyer le projet.
+5) Menu Compiler > Exécuter qmake.
+6) Menu Compiler > Reconstruire le projet.
+7) Cliquer sur le triangle vert Exécuter (Ctrl+R). La compilation seule ne lance pas l'application.
+
+Oracle : l'application démarre maintenant sans attendre Oracle. Pour connecter la base,
+cliquer sur le badge « Oracle non connecté » en haut de la fenêtre. Vérifier que le DSN
+ODBC Source_Projet2A18 existe en 64 bits et que les identifiants dans connection.cpp
+sont ceux de votre environnement.
+
+Aucune table SQL n'est créée ou modifiée par ce correctif.
