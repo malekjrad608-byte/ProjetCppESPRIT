@@ -27,11 +27,10 @@ int main(int argc, char *argv[])
     QApplication::setStyle("Fusion");
     chargerStyle();
 
-    // Si Oracle n'est pas disponible, l'application demarre quand meme :
-    // le badge en haut a droite affichera "Oracle non connecte" (clic = reessayer).
-    Connection& c = Connection::createInstance();
-    c.createConnection();
-
+    // Ne jamais ouvrir Oracle pendant le démarrage : un pilote ODBC absent,
+    // un DSN incorrect ou un serveur arrêté peut bloquer l'interface avant
+    // son premier affichage. L'utilisateur peut lancer la connexion depuis
+    // le bouton de statut Oracle dans la barre supérieure.
     MainWindow mainWindow;
     mainWindow.show();
 

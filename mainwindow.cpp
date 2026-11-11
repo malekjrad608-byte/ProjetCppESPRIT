@@ -1,11 +1,13 @@
 #include "loginvisuals.h"
 #include "mainwindow.h"
+#include "stockwidget.h"
 #include "ui_mainwindow.h"
 #include "espacelocaux.h"   // module Gestion des locaux
 #include "gestionemployes.h"
 #include "employe.h"
 #include "medicalwindow.h"
 #include "connection.h"
+#include "services/widgets/servicewidget.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -56,15 +58,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Pages du stackedWidget (ordre fixé dans mainwindow.ui)
     m_stack = ui->stackedWidget;
     ui->layoutPageEmployes->addWidget(creerPageEmployes());                     // 0 : module Employé (Linda)
-    ui->layoutPageServices->addWidget(creerPagePlaceholder("Services", "🐾",
-                                            "Planning et gestion des prestations"));                                // 1
-    ui->layoutPageStock->addWidget(creerPagePlaceholder("Stock", "📦",
-                                            "Inventaire, traçabilité des lots et réapprovisionnement"));            // 2
+    // 1 : Services, widgets Designer dans mainwindow.ui, initialises a la premiere ouverture.
+    m_stock = new StockWidget(ui->pageStock);
+    ui->layoutPageStock->addWidget(m_stock);                                             // 2 : module Stock intégré
     ui->layoutPageLocaux->addWidget(new EspaceLocaux);                          // 3 : module Locaux (Emna)
     m_dossiersPage = ui->pageDossiers;                                          // 4 : module Dossiers médicaux (Rawand)
 
-    // Page d'accueil : Dossiers médicaux
-    QTimer::singleShot(0, this, &MainWindow::afficherDossiers);
+    // Page d'accueil : Stock. Le module médical, plus lourd, sera initialisé
+    // uniquement lorsque l'utilisateur ouvrira sa rubrique.
+    QTimer::singleShot(0, this, &MainWindow::afficherStock);
 }
 
 MainWindow::~MainWindow()
@@ -350,6 +352,8 @@ void MainWindow::rafraichirStatutOracle(bool retenter)
     if (!ok && retenter)
         ok = c.createConnection() && c.isConnected();
 
+    if (ok && retenter && m_services) m_services->refresh();
+
     m_btnOracle->setText(ok ? "●  Oracle connecté" : "●  Oracle non connecté");
     m_btnOracle->setToolTip(ok ? "Connexion Oracle active"
                                : "Oracle injoignable — cliquez pour réessayer");
@@ -560,6 +564,7 @@ void MainWindow::fadeInPage(QWidget *page)
 
 void MainWindow::afficherServices()
 {
+    initialiserServices();
     m_stack->setCurrentIndex(1);
     m_topBar->setVisible(true);
     if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Services</b>");
@@ -573,6 +578,8 @@ void MainWindow::afficherServices()
 
 void MainWindow::afficherStock()
 {
+    if (m_stock)
+        m_stock->refresh();
     m_stack->setCurrentIndex(2);
     m_topBar->setVisible(true);
     if (m_breadcrumb) m_breadcrumb->setText("Gestion   /   <b>Stock</b>");
@@ -643,4 +650,17 @@ void MainWindow::afficherDossiers()
     m_btnStock->setChecked(false);
     m_btnLocaux->setChecked(false);
     m_btnDossiers->setChecked(true);
+}
+// ======================================================================
+// === MODULE SERVICES ===
+// ======================================================================
+void MainWindow::initialiserServices()
+{
+    if (!m_services) {
+        m_services = new ServiceWidget(ui, ui->pageServices);
+        ui->layoutPageServices->addWidget(m_services);
+    } else {
+        // Relire les donnees partagees apres navigation ou reconnexion Oracle.
+        m_services->refresh();
+    }
 }

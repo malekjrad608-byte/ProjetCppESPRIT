@@ -22,8 +22,6 @@ void memoriserErreur(const char *contexte, const QSqlError &erreur)
     qDebug() << contexte << ":" << g_derniereErreur;
 }
 
-// valeur SQL NULL typée (évite les erreurs de liaison avec un QVariant vide)
-QVariant nullDate()   { return QVariant(QMetaType(QMetaType::QDate)); }
 }
 
 MedicalRecord::MedicalRecord(QString idDossier, QDate dateConsultation, QString motif, QString diagnostic,

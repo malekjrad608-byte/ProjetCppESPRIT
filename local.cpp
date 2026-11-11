@@ -125,11 +125,11 @@ bool Local::isUrgentType() const
 QStringList Local::types()
 {
     return { "Consultation", "Chirurgie", "Hospitalisation", "Pension",
-            "Laboratoire", "Imagerie", "Isolement" };
+             "Laboratoire", "Imagerie", "Isolement" };
 }
 
 // =====================================================================
-//  CRUD - table LOCAL (meme architecture que l'atelier CRUD)
+//  CRUD - table LOCAUX (meme architecture que l'atelier CRUD)
 //  Requetes preparees : prepare() + bindValue() -> protection contre l'injection SQL
 // =====================================================================
 
@@ -180,7 +180,7 @@ QString Local::controleSaisie() const
 bool Local::ajouter()
 {
     QSqlQuery query;
-    query.prepare("INSERT INTO LOCAL (ID_LOCAL, NOM_LOCAL, TYPE, ETAGE, CAPACITE, "
+    query.prepare("INSERT INTO LOCAUX (ID_LOCAL, NOM_LOCAL, TYPE_LOCAL, ETAGE, CAPACITE, "
                   "SPECIALITE, ETAT, OCCUPATION, ID_SERV) "
                   "VALUES (:id, :name, :type, :floor, :capacity, :specialty, :etat, :occupancy, :service)");
     query.bindValue(":id", id);
@@ -202,8 +202,8 @@ bool Local::ajouter()
 QSqlQueryModel *Local::afficher()
 {
     QSqlQueryModel *model = new QSqlQueryModel();
-    model->setQuery("SELECT ID_LOCAL, NOM_LOCAL, TYPE, ETAGE, CAPACITE, SPECIALITE, "
-                    "ETAT, OCCUPATION, ID_SERV FROM LOCAL ORDER BY ID_LOCAL");
+    model->setQuery("SELECT ID_LOCAL, NOM_LOCAL, TYPE_LOCAL, ETAGE, CAPACITE, SPECIALITE, "
+                    "ETAT, OCCUPATION, ID_SERV FROM LOCAUX ORDER BY ID_LOCAL");
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("Nom"));
     model->setHeaderData(2, Qt::Horizontal, QObject::tr("Type"));
@@ -221,7 +221,7 @@ QSqlQueryModel *Local::afficher()
 bool Local::modifier()
 {
     QSqlQuery query;
-    query.prepare("UPDATE LOCAL SET NOM_LOCAL = :name, TYPE = :type, ETAGE = :floor, "
+    query.prepare("UPDATE LOCAUX SET NOM_LOCAL = :name, TYPE_LOCAL = :type, ETAGE = :floor, "
                   "CAPACITE = :capacity, SPECIALITE = :specialty, ETAT = :etat, "
                   "OCCUPATION = :occupancy, ID_SERV = :service WHERE ID_LOCAL = :id");
     query.bindValue(":id", id);
@@ -243,7 +243,7 @@ bool Local::modifier()
 bool Local::supprimer(int id)
 {
     QSqlQuery query;
-    query.prepare("DELETE FROM LOCAL WHERE ID_LOCAL = :id");
+    query.prepare("DELETE FROM LOCAUX WHERE ID_LOCAL = :id");
     query.bindValue(":id", id);
 
     bool ok = query.exec();
@@ -255,7 +255,7 @@ bool Local::supprimer(int id)
 int Local::prochainId()
 {
     QSqlQuery query;
-    if (query.exec("SELECT NVL(MAX(ID_LOCAL), 100) + 1 FROM LOCAL") && query.next())
+    if (query.exec("SELECT NVL(MAX(ID_LOCAL), 100) + 1 FROM LOCAUX") && query.next())
         return query.value(0).toInt();
     return 0;
 }
@@ -265,10 +265,10 @@ QList<QPair<int, QString>> Local::services()
 {
     QList<QPair<int, QString>> liste;
     QSqlQuery query;
-    if (query.exec("SELECT ID_SERV, CATEGORIE, PRESTATION FROM SERVICE ORDER BY ID_SERV")) {
+    if (query.exec("SELECT ID_SERV, CATEGORIE, PRESTATION FROM SERVICES ORDER BY ID_SERV")) {
         while (query.next())
             liste.append({ query.value(0).toInt(),
-                          query.value(1).toString() + " - " + query.value(2).toString() });
+                           query.value(1).toString() + " - " + query.value(2).toString() });
     }
     return liste;
 }

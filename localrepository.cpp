@@ -7,7 +7,12 @@
 
 LocalRepository::LocalRepository(QObject *parent) : QObject(parent)
 {
-    // la connexion est deja ouverte dans main.cpp
+    // Le depot peut etre construit avant toute connexion Oracle. Ne pas lancer
+    // de requete SQL tant que la connexion n'est pas ouverte : cela permet a
+    // l'interface principale de demarrer meme hors ligne.
+    if (!Connection::createInstance().isOpen())
+        return;
+
     if (charger() && m_items.isEmpty()) {   // table vide -> premiers locaux
         seed();
         for (Local &l : m_items)

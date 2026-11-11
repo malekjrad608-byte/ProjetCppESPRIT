@@ -1,0 +1,28 @@
+INTEGRATION DU MODULE STOCK
+============================
+
+Le module Stock est maintenant intégré à la page « Stock » du stackedWidget
+principal d'ANIWORLD. Il n'affiche plus sa propre barre latérale ni sa propre
+barre supérieure : il réutilise la navigation, le bandeau supérieur et
+l'identité visuelle de l'application principale.
+
+Fichiers ajoutés au projet :
+- stockwidget.cpp / stockwidget.h
+- inventoryfeatures.cpp / inventoryfeatures.h
+
+Le fichier ANIWORLD2.pro référence ces quatre fichiers. Le module utilise
+la connexion Oracle unique déjà ouverte par connection.cpp et interroge la
+table STOCK du schéma de l'utilisateur connecté (sans identifiant de schéma
+C##RAWAND codé en dur).
+
+Aucune table Oracle supplémentaire ni aucun script SQL ne sont requis pour
+les fonctionnalités ajoutées. Les métadonnées locales gérées par Qt restent
+dans aniworld_features.ini, conformément au README du module Stock.
+
+Ouverture dans Qt Creator :
+1. Ouvrir ANIWORLD2.pro.
+2. Choisir un kit Qt compatible avec Qt Widgets, SQL et PrintSupport.
+3. Exécuter qmake puis compiler le projet.
+4. Ouvrir la rubrique « Stock » depuis la navigation principale.
+
+La lecture de PDF scannés nécessite Poppler et Tesseract accessibles via PATH.

@@ -12,6 +12,7 @@
 #include <QLocale>
 #include <QtGlobal>
 #include <algorithm>
+#include <utility>
 
 namespace {
 // Colonnes de la table EMPLOYER, dans l'ordre lu par depuisRequete().
@@ -419,7 +420,7 @@ QSqlQueryModel *Employe::afficher()
     QSqlQuery q;
     q.prepare(QString("SELECT %1 FROM employer ORDER BY id_emp").arg(COLONNES_EMPLOYE));
     q.exec();
-    model->setQuery(q);
+    model->setQuery(std::move(q));
     const QStringList entetes = {
         QObject::tr("ID"), QObject::tr("Nom"), QObject::tr("Prénom"), QObject::tr("CIN"),
         QObject::tr("Naissance"), QObject::tr("Adresse"), QObject::tr("Tél"),

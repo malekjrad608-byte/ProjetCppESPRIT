@@ -1,0 +1,28 @@
+ANIWORLD - Correction du démarrage
+==================================
+
+Corrections apportées :
+1. La fenêtre principale est affichée avant la tentative de connexion Oracle/ODBC.
+   Une connexion lente ou indisponible ne bloque donc plus l'affichage initial.
+2. L'application ouvre la page Stock comme page d'accueil.
+3. Le module Dossiers médicaux est initialisé seulement lorsque l'utilisateur clique
+   sur sa rubrique, afin de ne pas charger ce module pendant le démarrage.
+4. Le chargement du stock vérifie que la connexion Oracle est ouverte avant d'exécuter
+   la requête STOCK.
+5. Nettoyage des avertissements signalés : setQuery avec déplacement de QSqlQuery,
+   suppression des fonctions inutilisées et marquage du paramètre inutilisé.
+
+Installation :
+- Extraire tout le ZIP dans un nouveau dossier.
+- Ouvrir ANIWORLD2.pro avec Qt Creator.
+- Vérifier le kit Qt 6.7.x MinGW 64-bit et le compilateur utilisés par votre projet.
+- Faire Build > Clean All, puis Build > Run qmake, puis Rebuild All.
+- Lancer avec Ctrl+R.
+
+Important :
+- Aucun nouveau tableau SQL n'a été ajouté.
+- Le DSN Oracle reste Source_Projet2A18 et les paramètres Oracle restent ceux du
+  fichier connection.cpp. Ils doivent correspondre à votre installation locale.
+- La compilation n'a pas pu être exécutée dans cet environnement, car Qt/qmake et
+  le pilote Oracle/ODBC Windows ne sont pas installés ici. Le code a été corrigé,
+  mais le lancement doit être vérifié sur votre poste avec votre kit Qt.

@@ -26,7 +26,7 @@ class Employe
 public:
     // ---- Constructeurs ----
     Employe();
-    Employe(int id_emp, const QString &nom, const QString &prenom, const QString &cin,
+    Employe(int id, const QString &nom, const QString &prenom, const QString &cin,
             const QDate &dateNaiss, const QString &adresse, const QString &tel,
             const QString &poste, const QString &courriel, const QString &competences,
             const QDate &dateEmbauche, const QString &typeContrat, double salaire,
@@ -34,7 +34,7 @@ public:
 
     // ---- Structures de resultat (donnees pour la Vue) ----
     struct ChargeEmploye {
-        int id_emp = 0;
+        int id = 0;
         QString nom;
         QString prenom;
         QString poste;

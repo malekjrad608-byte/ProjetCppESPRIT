@@ -9,8 +9,10 @@
 #include <QEasingCurve>
 
 namespace Ui { class MainWindow; }   // interface unique : mainwindow.ui (toutes les pages)
+class ServiceWidget;
 class GestionEmployes;
 class MedicalWindow;
+class StockWidget;
 class QLabel;
 class QVBoxLayout;
 
@@ -57,13 +59,20 @@ private:
                                   const QString &description);
     void fadeInPage(QWidget *page);
 
+    // ======================================================================
+    // === MODULE SERVICES ===
+    // ======================================================================
+    void initialiserServices();
+    ServiceWidget *m_services = nullptr;
+
     Ui::MainWindow *ui = nullptr;             // généré depuis mainwindow.ui
     QStackedWidget *m_stack = nullptr;        // = ui->stackedWidget
     QFrame *m_topBar = nullptr;               // bande du haut (cachee sur la page Locaux)
     GestionEmployes *m_gestionEmployes = nullptr;
     QWidget *m_dossiersPage = nullptr;        // conteneur de la page Dossiers médicaux
     QLabel *m_breadcrumb = nullptr;
-    MedicalWindow *m_medical = nullptr;       // créée à la première ouverture
+    MedicalWindow *m_medical = nullptr;
+    StockWidget *m_stock = nullptr;       // créée à la première ouverture
     QPushButton *m_btnEmployes;
     QPushButton *m_btnServices;
     QPushButton *m_btnStock;

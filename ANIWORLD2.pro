@@ -130,3 +130,14 @@ HEADERS += \
 RESOURCES += \
     locaux.qrc
 
+
+# === MODULE SERVICES ===
+include(services/services.pri)
+
+# === MODULE STOCK (integre dans la navigation principale ANIWORLD) ===
+SOURCES += \
+    stockwidget.cpp \
+    inventoryfeatures.cpp
+HEADERS += \
+    stockwidget.h \
+    inventoryfeatures.h
