@@ -1,8 +1,8 @@
 #pragma once
 #include <QDialog>
 #include <QMap>
-#include "../models/service.h"
-#include "../models/service.h"
+#include "services/models/service.h"
+#include "services/models/service.h"
 class QComboBox;
 class QDateEdit;
 class QCheckBox;

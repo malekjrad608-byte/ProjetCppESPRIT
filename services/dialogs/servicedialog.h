@@ -7,7 +7,7 @@
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 #include <QLabel>
-#include "../models/service.h"
+#include "services/models/service.h"
 
 class ServiceDialog : public QDialog {
     Q_OBJECT

@@ -1,5 +1,8 @@
 QT += core gui widgets sql printsupport svg network
 
+# MinGW make can exceed MAX_PATH before resolving relative paths in shadow builds.
+win32-g++: QMAKE_PROJECT_DEPTH = 0
+
 CONFIG += c++17
 CONFIG += console      # qDebug() visible dans la console (Atelier Connexion)
 

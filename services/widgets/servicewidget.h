@@ -9,7 +9,7 @@
 #include <QStackedWidget>
 #include <QGridLayout>
 #include <QTimer>
-#include "../models/service.h"
+#include "services/models/service.h"
 
 namespace Ui { class MainWindow; }
 
