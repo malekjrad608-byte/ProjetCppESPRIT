@@ -8,22 +8,22 @@
 #include <QRegularExpression>
 #include <QDebug>
 
-namespace {
-QString g_derniereErreur;
+    namespace {
+    QString g_derniereErreur;
 
-void memoriserErreur(const char *contexte, const QSqlError &erreur)
-{
-    g_derniereErreur = QString("%1\n[driver : %2 | base : %3 | code : %4]")
-                           .arg(erreur.text().trimmed(), erreur.driverText().trimmed(),
-                                erreur.databaseText().trimmed(), erreur.nativeErrorCode());
-    if (g_derniereErreur.contains("FK_05") || g_derniereErreur.contains("ORA-02291"))
-        g_derniereErreur += QString::fromUtf8("\n\nL'employé choisi n'existe pas dans la table référencée par MEDICAL (clé FK_05). "
-                                              "Exécutez sql/integration_fk_employer.sql pour relier MEDICAL.ID_EMPLOYES à EMPLOYER(ID_EMP).");
-    qDebug() << contexte << ":" << g_derniereErreur;
-}
+    void memoriserErreur(const char *contexte, const QSqlError &erreur)
+    {
+        g_derniereErreur = QString("%1\n[driver : %2 | base : %3 | code : %4]")
+        .arg(erreur.text().trimmed(), erreur.driverText().trimmed(),
+             erreur.databaseText().trimmed(), erreur.nativeErrorCode());
+        if (g_derniereErreur.contains("FK_05") || g_derniereErreur.contains("ORA-02291"))
+            g_derniereErreur += QString::fromUtf8("\n\nL'employé choisi n'existe pas dans la table référencée par MEDICAL (clé FK_05). "
+                                                  "Exécutez sql/integration_fk_employer.sql pour relier MEDICAL.ID_EMP à EMPLOYER(ID_EMP).");
+        qDebug() << contexte << ":" << g_derniereErreur;
+    }
 
-// valeur SQL NULL typée (évite les erreurs de liaison avec un QVariant vide)
-QVariant nullDate()   { return QVariant(QMetaType(QMetaType::QDate)); }
+    // valeur SQL NULL typée (évite les erreurs de liaison avec un QVariant vide)
+    QVariant nullDate()   { return QVariant(QMetaType(QMetaType::QDate)); }
 }
 
 MedicalRecord::MedicalRecord(QString idDossier, QDate dateConsultation, QString motif, QString diagnostic,
@@ -83,6 +83,25 @@ bool MedicalRecord::colonneExiste(const QString &colonne)
     return existe;
 }
 
+// Nom réel de la colonne "employé" de MEDICAL : ID_EMP (base actuelle) ou ID_EMPLOYES (ancienne base).
+static QString colonneEmploye()
+{
+    static QString nom;
+    if (!nom.isEmpty())
+        return nom;
+    if (!QSqlDatabase::database().isOpen())
+        return QStringLiteral("ID_EMP");
+    const QStringList candidats = { QStringLiteral("ID_EMP"), QStringLiteral("ID_EMPLOYES"), QStringLiteral("ID_EMPLOYE") };
+    for (const QString &c : candidats) {
+        QSqlQuery q;
+        if (q.exec(QString("SELECT %1 FROM MEDICAL WHERE 1 = 0").arg(c))) {
+            nom = c;
+            return nom;
+        }
+    }
+    return QStringLiteral("ID_EMP");   // valeur par défaut (non mémorisée : on retentera)
+}
+
 qlonglong MedicalRecord::prochainIdDossier()
 {
     QSqlQuery query;
@@ -136,14 +155,14 @@ struct ColOpt {
 const QVector<ColOpt> &colonnesOptionnelles()
 {
     static const QVector<ColOpt> liste = {
-        {"sexe",               "SEXE",               10,  [](const MedicalRecord &r) { return r.getSexe(); }},
-        {"traitement",         "TRAITEMENT",         500, [](const MedicalRecord &r) { return r.getTraitement(); }},
-        {"vaccinations",       "VACCINATIONS",       200, [](const MedicalRecord &r) { return r.getVaccinations(); }},
-        {"allergies",          "ALLERGIES",          200, [](const MedicalRecord &r) { return r.getAllergies(); }},
-        {"observations",       "OBSERVATIONS",       500, [](const MedicalRecord &r) { return r.getObservations(); }},
-        {"statut_vaccination", "STATUT_VACCINATION", 30,  [](const MedicalRecord &r) { return r.getStatutVaccination(); }},
-        {"telephone",          "TELEPHONE",          20,  [](const MedicalRecord &r) { return r.getTelephone(); }},
-    };
+                                           {"sexe",               "SEXE",               10,  [](const MedicalRecord &r) { return r.getSexe(); }},
+                                           {"traitement",         "TRAITEMENT",         500, [](const MedicalRecord &r) { return r.getTraitement(); }},
+                                           {"vaccinations",       "VACCINATIONS",       200, [](const MedicalRecord &r) { return r.getVaccinations(); }},
+                                           {"allergies",          "ALLERGIES",          200, [](const MedicalRecord &r) { return r.getAllergies(); }},
+                                           {"observations",       "OBSERVATIONS",       500, [](const MedicalRecord &r) { return r.getObservations(); }},
+                                           {"statut_vaccination", "STATUT_VACCINATION", 30,  [](const MedicalRecord &r) { return r.getStatutVaccination(); }},
+                                           {"telephone",          "TELEPHONE",          20,  [](const MedicalRecord &r) { return r.getTelephone(); }},
+                                           };
     return liste;
 }
 
@@ -167,7 +186,7 @@ QVector<Champ> champsDe(const MedicalRecord &r)
     c << Champ{"age", "AGE", ":age", r.getAge(), QString::number(r.getAge())};
     c << Champ{"poids", "POIDS", ":poids", r.getPoids(), QString::number(r.getPoids(), 'f', 2)};
     c << Champ{"proprietaire", "PROPRIETAIRE", ":proprietaire", r.getProprietaire(), chaineSql(r.getProprietaire())};
-    c << Champ{"id_employes", "ID_EMPLOYES", "TO_NUMBER(:id_employes)", emp.isNull() ? QString() : QString::number(emp.toLongLong()), nombreSql(emp)};
+    c << Champ{"id_employes", colonneEmploye(), "TO_NUMBER(:id_employes)", emp.isNull() ? QString() : QString::number(emp.toLongLong()), nombreSql(emp)};
     for (const ColOpt &o : colonnesOptionnelles()) {
         if (!MedicalRecord::colonneExiste(o.colonne))
             continue;
@@ -227,8 +246,8 @@ QSqlQueryModel * MedicalRecord::afficher()
     }
 
     model->setQuery("SELECT ID_DOSSIER, DATE_CONSULTATION, MOTIF, DIAGNOSTIC, REF_ANIMAL, NOM_ANIMAL, "
-                    "ESPECE, RACE, AGE, POIDS, PROPRIETAIRE, ID_EMPLOYES" + facultatives + " "
-                    "FROM MEDICAL ORDER BY DATE_CONSULTATION DESC");
+                    "ESPECE, RACE, AGE, POIDS, PROPRIETAIRE, " + colonneEmploye() + facultatives + " "
+                                                        "FROM MEDICAL ORDER BY DATE_CONSULTATION DESC");
     if (model->lastError().isValid())
         memoriserErreur("SELECT MEDICAL", model->lastError());
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("ID dossier"));
