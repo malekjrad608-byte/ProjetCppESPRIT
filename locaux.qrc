@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/locaux">
+        <file alias="style.qss">resources/locaux/style.qss</file>
+        <file alias="images/logo.png">resources/locaux/images/logo.png</file>
+        <file alias="images/chevron.png">resources/locaux/images/chevron.png</file>
+    </qresource>
+</RCC>

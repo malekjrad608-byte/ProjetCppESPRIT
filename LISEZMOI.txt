@@ -1,0 +1,71 @@
+ANIWORLD - Gestion des locaux (Qt 6.7.3, C++ / Widgets)
+Version complete : CRUD + plan + statistiques + PDF + affectation intelligente
+
+COMMENT LANCER
+1. Qt Creator > Fichier > Ouvrir un fichier ou projet... > GestionLocaux_ANIWORLD.pro
+2. Kit "Desktop Qt 6.7.3 ..." (MinGW ou MSVC) > Configurer le projet
+3. IMPORTANT : Build > Nettoyer, puis Build > Executer qmake, puis Ctrl+R
+   (de nouveaux fichiers ont ete ajoutes au .pro)
+
+SI IL Y A UNE ERREUR : copie le message complet de l'onglet "Problemes" et envoie-le.
+
+FONCTIONNALITES (demande du prof : 1 entite, CRUD + 5 fonctionnalites avancees)
+CRUD
+  - Ajouter / Modifier : formulaire avec controle de saisie (nom obligatoire et unique, capacite 1-50,
+    impossible de mettre "hors service" un local occupe)
+  - Supprimer : fenetre de confirmation
+  - Affichage en Cartes ou en Liste (tableau triable en cliquant sur les en-tetes)
+1. Recherche intelligente + tri : UNE seule barre qui comprend des mots-cles
+     "chirurgie dispo", "sale etage 1", "hors service", "plein", "consultation 3"
+     (ce qui est compris s'affiche sous la barre). Les pastilles du haut sont des raccourcis.
+     Tri : Priorite (a nettoyer, blocs d'abord > remplis) / Nom A-Z / Remplissage ;
+     en vue Liste : clic sur les en-tetes du tableau.
+2. PDF : "Rapport nettoyage PDF" -> locaux a nettoyer classes par priorite, case "Fait", remarques,
+   agent, signatures, puis la liste des autres locaux
+3. Statistiques : bouton "Voir les statistiques" (tuiles, tableau par type, nettoyage, resume)
+4. Plan 2.5D de la clinique (metier avance 1) : vue isometrique dessinee avec QPainter.
+   Chaque etage est une dalle, chaque local une boite coloree selon son ETAT
+   (vert Disponible, bleu Occupe, rouge A nettoyer qui clignote, gris Hors service).
+   Glisser = tourner le batiment ; boutons "Tourner" et "Vue eclatee" dans le grand plan ;
+   survol = la boite se souleve ; clic = selection. Il se met a jour en direct (ajout / suppression).
+   Dans la fenetre "Plan de la clinique" : boutons "Vue 2.5D" / "Vue plan" pour passer a la vue a plat
+   (un bloc par etage). Fichiers : src/clinicmap.* (2.5D) et src/flatmap.* (plan).
+5. Cycle de vie d'un local : Disponible -> (+1 animal) Occupe -> (-1, dernier animal) A nettoyer
+   -> (Nettoyage termine) Disponible. Hors service seulement si le local est vide.
+6. Affectation intelligente (metier avance 3) : on choisit l'espece et le besoin de l'animal, ANIWORLD
+   classe les locaux (proprete, places, specialite, urgence) et propose le meilleur avec les raisons.
+
+DONNEES
+  Base Oracle uniquement (table LOCAUX de la base commune, schema rawand) :
+  ID_LOCAL, NOM_LOCAL, TYPE_LOCAL, ETAGE, CAPACITE, SPECIALITE, ETAT, OCCUPATION, ID_SERV. Au premier lancement, si la table est vide,
+  l'application ajoute 10 locaux d'exemple.
+
+STRUCTURE
+  main.cpp                  demarrage, palette claire, chargement du style
+  resources/style.qss       tout le design
+  src/pagelocaux.*          LA PAGE a integrer dans le projet de l'equipe (QStackedWidget)
+  src/local.*               entite Local
+  src/localrepository.*     liste des locaux en memoire (lue depuis Oracle via Local::afficher)
+  src/localdialog.*         formulaire ajout / modification
+  src/confirmdialog.*       confirmation (suppression...)
+  src/roomcard.*, cardgrid.*, detailpanel.*   cartes et panneau de details
+  src/clinicmap.*, flatmap.*, plandialog.*    plan de la clinique (2.5D + vue plan)
+  src/statsdialog.*                           statistiques
+  src/pdfreport.*                             rapport PDF
+  src/smartassign.*, smartassigndialog.*      affectation intelligente
+  src/smartsearch.*                           recherche intelligente (mots-cles)
+  src/hoverglow, toast, pawburst, spinlogo, icons, theme.h   effets visuels et outils
+
+INTEGRATION (etape finale)
+  1. Copier le dossier src/ (sauf mainwindow.*) + resources/style.qss + les images dans le projet de l'equipe
+  2. Ajouter PageLocaux dans leur QStackedWidget : new PageLocaux(new LocalRepository(this))
+  3. Fusionner style.qss avec leur feuille de style (ou garder les regles de la page)
+  4. Brancher LocalRepository sur leur base de donnees (add / update / remove / all / find)
+
+
+--- CONNEXION ORACLE ---
+1. Source ODBC 64 bits "Source_Projet2A18", utilisateur rawand (src/connection.cpp).
+2. Creer la base commune : executer sql/base_commune_aniworld.sql dans SQL Developer (F5).
+3. La connexion est ouverte dans main.cpp avant l'interface (comme l'atelier).
+4. Le CRUD est dans la classe Local (src/local.cpp) : ajouter / afficher / modifier / supprimer,
+   avec prepare() + bindValue().

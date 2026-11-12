@@ -1,0 +1,23 @@
+MODELE DE DONNEES - Module Gestion des locaux (a completer avec les tables de l'equipe)
+
+1) MODELE ENTITE / ASSOCIATION (partie "Locaux")
+   Entite : LOCAL
+   Attributs : id_local (identifiant), nom_local, type_local, etage,
+               capacite, specialite, etat, occupation
+   Associations a decider avec l'equipe (une seule ligne chacune, a verifier avec les autres modules) :
+     - LOCAL (0,N) --- heberger --- (0,1) ANIMAL / DOSSIER MEDICAL : un local contient plusieurs animaux
+     - LOCAL (0,N) --- nettoyer  --- (0,N) EMPLOYE               : agent d'entretien responsable
+     - SERVICE (1,1) --- possede --- (0,N) LOCAL                    : un local appartient a un service
+
+2) MODELE RELATIONNEL (MLD)
+   LOCAUX (#id_local, nom_local, type_local, etage, capacite, specialite, etat, occupation, id_serv*)
+   (si l'equipe ajoute ANIMAL : ANIMAL (..., #id_local)  -> cle etrangere vers LOCAL)
+
+3) MODELE PHYSIQUE (MPD) Oracle : voir sql/base_commune_aniworld.sql (table LOCAUX)
+   ID_LOCAL NUMBER PK | NOM_LOCAL VARCHAR2(150) NOT NULL UNIQUE | TYPE_LOCAL VARCHAR2(100) NOT NULL
+   ETAGE NUMBER(3) >= 0 | CAPACITE NUMBER(4) > 0 | SPECIALITE VARCHAR2(250)
+   ETAT VARCHAR2(20) : Disponible / Occupé / À nettoyer / Hors service (valeurs controlees en C++)
+   OCCUPATION NUMBER(2) : nombre d'animaux presents (0..capacite, controle en C++)
+   ID_SERV -> SERVICES(ID_SERV)
+
+CONNEXION ORACLE (src/connection.cpp) : modifier kDsn, kUser, kPassword selon ton PC.

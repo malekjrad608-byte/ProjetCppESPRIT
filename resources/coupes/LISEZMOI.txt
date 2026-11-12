@@ -1,0 +1,17 @@
+Photos des coupes - ordre de recherche (le premier fichier trouvé est utilisé) :
+  coupes/<coupe>_<espece>_<race>.jpg   ex : hygienique_chat_persan.jpg
+  coupes/<coupe>_<espece>.jpg          ex : hygienique_chat.jpg
+  coupes/<coupe>.jpg                   photo générique (seulement si elle montre la bonne espèce)
+Sinon : la photo de l'espèce (animal_chien.jpg ...) est affichée avec un message dans la fenêtre.
+
+Identifiants des coupes : teddy_bear, caniche_moderne, coupe_ete, deshabillage, franges_golden,
+hygienique, lion, demelage, tonte_angora, griffes, bec_ailes
+Espèces (minuscules, sans accent) : chien, chat, lapin, oiseau
+Races : minuscules, sans accent, espaces -> _   ex : belier_lop, maine_coon
+
+Photos génériques actuelles : hygienique.jpg = chien, demelage.jpg = chat, griffes.jpg = chien.
+Photos à ajouter pour que chaque espèce ait la sienne :
+  hygienique_chat.jpg   hygienique_lapin.jpg
+  demelage_chien.jpg    demelage_lapin.jpg
+  griffes_chat.jpg      griffes_lapin.jpg      griffes_oiseau.jpg
+Les nouvelles photos placées dans le dossier "coupes" à côté de l'exécutable sont prises en compte sans recompiler.
