@@ -1,0 +1,10 @@
+release/connection.o
+release/main.o
+release/stock.o
+release/stockwidget.o
+release/loginwindow.o
+release/loginvisuals.o
+release/inventoryfeatures.o
+release/qrc_resources.o
+release/moc_stockwidget.o
+release/moc_loginwindow.o

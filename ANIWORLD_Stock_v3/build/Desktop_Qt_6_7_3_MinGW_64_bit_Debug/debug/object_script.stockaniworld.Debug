@@ -1,0 +1,10 @@
+debug/connection.o
+debug/main.o
+debug/stock.o
+debug/stockwidget.o
+debug/loginwindow.o
+debug/loginvisuals.o
+debug/inventoryfeatures.o
+debug/qrc_resources.o
+debug/moc_stockwidget.o
+debug/moc_loginwindow.o
