@@ -147,5 +147,10 @@ bool Planning::chargePlanifieeEmploye(int id,const QDate &debutSemaine,double &h
 }
 
 bool Planning::aConflit(int id,const QDateTime &debut,const QDateTime &fin) {
- for(const auto &p:plagesAPartirDe(debut.date()))if(p.responsableId==id && p.debut<fin && debut<p.fin)return true;return false;
+ for (const auto &p : plagesAPartirDe(debut.date())) {
+     if (p.responsableId == id && p.debut < fin && debut < p.fin) {
+         return true;
+     }
+ }
+ return false;
 }

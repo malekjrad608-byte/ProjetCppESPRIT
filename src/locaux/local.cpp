@@ -349,5 +349,8 @@ QString Local::controleSaisie() const {
 }
 QList<QPair<int,QString>> Local::services() {
  QList<QPair<int,QString>> out;auto rows=RelationModel::afficher(RelationModel::Entity::Services);
- while(rows.next())out.append({rows.value(0).toInt(),rows.value(1).toString()});return out;
+ while (rows.next()) {
+     out.append({rows.value(0).toInt(), rows.value(1).toString()});
+ }
+ return out;
 }

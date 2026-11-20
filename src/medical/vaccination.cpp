@@ -133,6 +133,7 @@ QList<Vaccination> &VaccinationManager::demo(const QVector<MedicalRecord> &recor
 
 QList<Vaccination> VaccinationManager::derniers(const QVector<MedicalRecord> &records)
 {
+    Q_UNUSED(records);
     const QList<Vaccination> all = tousLesVaccins();
 
     QMap<QString, Vaccination> latest;       // clé = animal|vaccin

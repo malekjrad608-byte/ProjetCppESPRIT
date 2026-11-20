@@ -113,6 +113,7 @@ QList<RendezVous> &RdvManager::demo(const QVector<MedicalRecord> &records)
 
 QList<RendezVous> RdvManager::tous(const QVector<MedicalRecord> &records)
 {
+    Q_UNUSED(records);
     QList<RendezVous> all = lireBase();
     std::sort(all.begin(), all.end(), [](const RendezVous &a, const RendezVous &b) { return a.dateRdv < b.dateRdv; });
     return all;

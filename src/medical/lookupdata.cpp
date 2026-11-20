@@ -12,7 +12,14 @@ QList<LookupItem> LookupData::proprietaires() {
 }
 QList<LookupItem> LookupData::traitementsEnStock() {
  QList<LookupItem> out;QVector<StockRecord> rows;qint64 revision=0;QString error;
- if(Stock::afficher(&rows,&revision,&error))for(const auto &r:rows)if(r.quantity>0)out.append({QString::number(r.idArticle),r.nomArticle,r.quantity});return out;
+ if (Stock::afficher(&rows, &revision, &error)) {
+     for (const auto &r : rows) {
+         if (r.quantity > 0) {
+             out.append({QString::number(r.idArticle), r.nomArticle, r.quantity});
+         }
+     }
+ }
+ return out;
 }
 QString LookupData::telephoneProprietaire(const QString &owner) {
  const auto rows=RdvManager::tous({});for(auto i=rows.crbegin();i!=rows.crend();++i)if(i->proprietaire==owner && !i->telephone.isEmpty())return i->telephone;return {};

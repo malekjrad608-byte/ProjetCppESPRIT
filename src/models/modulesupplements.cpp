@@ -25,7 +25,10 @@ QJsonArray ModuleSupplements::read(const QString &module, QString *error) {
     QJsonParseError parse;
     const auto doc=QJsonDocument::fromJson(f.readAll(),&parse);
     if(parse.error!=QJsonParseError::NoError || !doc.isArray()){
-        if(error)*error="Fichier complementaire illisible : "+f.fileName();return {};
+        if (error) {
+            *error = "Fichier complementaire illisible : " + f.fileName();
+        }
+        return {};
     }
     return doc.array();
 }
@@ -43,7 +46,10 @@ bool ModuleSupplements::update(const QString &module,
     QSaveFile file(filename);
     const auto data=QJsonDocument(rows).toJson();
     if(!file.open(QIODevice::WriteOnly) || file.write(data)!=data.size() || !file.commit()) {
-        if(error)*error=file.errorString();return false;
+        if (error) {
+            *error = file.errorString();
+        }
+        return false;
     }
     if(error)error->clear();
     return true;
