@@ -7,10 +7,10 @@ bool InvoiceModel::loadStored(const Service &source,Service *invoice,QString *er
     *invoice=source;
     if(!OracleConnection::isOracle()) return true;
     QSqlQuery q(OracleConnection::database());
-    q.prepare("SELECT id_serv,ref_service,categorie,statut,date_heur,duree,tarif,prestation FROM service WHERE id_serv=?");
+    q.prepare("SELECT id_serv,ref_service,categorie,statut,date_heur,duree,tarif,prestation,proprietaire FROM service WHERE id_serv=?");
     q.addBindValue(source.getId());
     if(!q.exec() || !q.next()){if(error)*error=q.lastError().isValid()?q.lastError().text():QStringLiteral("Service introuvable.");return false;}
-    invoice->setId(q.value(0).toInt());invoice->setName(q.value(1).toString());invoice->setClientName(q.value(1).toString());
+    invoice->setId(q.value(0).toInt());invoice->setName(q.value(1).toString());invoice->setClientName(q.value(8).toString());
     invoice->setCategory(q.value(2).toString());invoice->setStatus(q.value(3).toString());
     invoice->setDateTime(QDateTime::fromString(q.value(4).toString(),Qt::ISODate));
     invoice->setDuration(q.value(5).toInt());invoice->setPrice(q.value(6).toDouble());invoice->setDescription(q.value(7).toString());

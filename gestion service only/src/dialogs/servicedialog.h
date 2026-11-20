@@ -8,6 +8,7 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include "../models/service.h"
+class ValidatedField;
 
 class ServiceDialog : public QDialog {
     Q_OBJECT
@@ -21,6 +22,7 @@ protected:
 private:
     void setup(const Service &service,bool editing,bool readOnly);
     void validateAndAccept();
+    QList<ValidatedField *> m_fields;
     int m_id=0;
     qint64 m_medicalRecordId=0;
     QLineEdit *m_name;

@@ -1,3 +1,4 @@
+#include "../database/oracleconnection.h"
 #include "servicecard.h"
 #include "../ui/design.h"
 #include "../ui/motion.h"
@@ -93,11 +94,11 @@ void ServiceCard::paintEvent(QPaintEvent *) {
     QFont f("Segoe UI"); f.setPixelSize(10); f.setWeight(QFont::DemiBold); p.setFont(f); p.setPen(QColor(fg));
     p.drawText(badge,Qt::AlignCenter,"●  "+m_service.getStatus());
     f.setPixelSize(14); f.setWeight(QFont::DemiBold); p.setFont(f); p.setPen(QColor("#315D6C"));
-    p.drawText(QRect(17,48,width()-34,22),Qt::AlignVCenter,p.fontMetrics().elidedText(m_service.getName(),Qt::ElideRight,width()-38));
+    p.drawText(QRect(17,48,width()-34,22),Qt::AlignVCenter,p.fontMetrics().elidedText(OracleConnection::isOracle() ? m_service.getClientName() : m_service.getName(),Qt::ElideRight,width()-38));
     f.setPixelSize(12); f.setWeight(QFont::Normal); p.setFont(f); p.setPen(QColor("#84979E"));
     p.drawText(QRect(17,74,width()-34,18),m_service.getCategory());
     f.setPixelSize(10); p.setFont(f);
-    p.drawText(QRect(17,95,width()-34,16),QString("SRV-%1   ·   %2 min").arg(m_service.getId(),3,10,QChar('0')).arg(m_service.getDuration()));
+    p.drawText(QRect(17,95,width()-34,16),QString("%1   ·   %2 min").arg(m_service.getReference()).arg(m_service.getDuration()));
 
     Design::icon("calendar",QColor("#8B9EA5")).paint(&p,QRect(17,121,12,12));
     f.setPixelSize(11); p.setFont(f); p.setPen(QColor("#617F8A"));

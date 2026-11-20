@@ -45,6 +45,8 @@ public:
   QString getNewEmployeeNom() const { return newEmployeeNom; }
   QString getNewEmployeePrenom() const { return newEmployeePrenom; }
   QString getName() const { return name; }
+  QString getReference() const;
+  static bool referenceValide(const QString &reference);
   QString getDescription() const { return description; }
   QString getResponsible() const { return responsible; }
   QString getClientName() const { return clientName; }
@@ -88,6 +90,7 @@ public:
   bool modifier(QString *error) const;
   static bool supprimer(int id, QString *error);
   static QList<Service> afficherListe(QString *error);
+  static bool referenceDisponible(const QString &reference, int currentId, QString *error);
 
   // Planning des affectations : requetes et regles dans le modele Service.
 

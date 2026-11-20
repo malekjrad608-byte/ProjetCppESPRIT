@@ -61,3 +61,22 @@ HEADERS += \
 FORMS += $$PWD/src/mainwindow.ui
 RESOURCES += $$PWD/resources/resources.qrc $$PWD/resources/designer.qrc
 win32:LIBS += -lcrypt32
+
+SOURCES += $$PWD/src/ui/fieldvalidator.cpp
+HEADERS += $$PWD/src/ui/fieldvalidator.h $$PWD/src/ui/formvalidation.h
+
+HEADERS += $$PWD/src/dialogs/servicestatisticsdialog.h
+
+SOURCES += $$PWD/src/dialogs/servicestatisticsdialog.cpp
+
+HEADERS += $$PWD/src/widgets/servicetimetable.h
+
+SOURCES += $$PWD/src/widgets/servicetimetable.cpp
+
+HEADERS += $$PWD/src/widgets/servicecurve.h
+
+SOURCES += $$PWD/src/widgets/servicecurve.cpp
+
+HEADERS += $$PWD/src/models/modulesupplements.h
+
+SOURCES += $$PWD/src/models/modulesupplements.cpp

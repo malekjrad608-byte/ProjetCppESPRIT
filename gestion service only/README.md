@@ -13,7 +13,7 @@ La fenêtre propose uniquement Tableau de bord et Services. Aucun module de gest
 
 La copie utilise la même base Oracle et le même DSN que le projet intégré. Les paramètres sont dans `src/database/connection.h`. Les comptes application Services et Admin sont acceptés par cette copie. Aucune création/migration de table n'est exécutée.
 
-Les modifications de Services portent donc sur la base commune existante. Les propriétaires déjà enregistrés sont lus dans MEDICAL pour Réf. service ; les employés sont lus pour le planning. Ces lectures indispensables restent dans des classes de modèle, sans copier les CRUD ou les interfaces des autres gestions. Une suppression reste soumise aux clés étrangères Oracle.
+Les modifications de Services portent donc sur la base commune existante. Les propriétaires déjà enregistrés sont lus dans MEDICAL pour le champ Propriétaire ; les employés sont lus pour le planning. Ces lectures indispensables restent dans des classes de modèle, sans copier les CRUD ou les interfaces des autres gestions. Une suppression reste soumise aux clés étrangères Oracle.
 
 ## Fichiers principaux
 
@@ -28,3 +28,9 @@ Les modifications de Services portent donc sur la base commune existante. Les pr
 - `src/database/connection.h/.cpp` : connexion Oracle.
 
 `build/` et `build_tests/` sont des dossiers générés ; les sources ne dépendent d'aucun fichier du projet original. Les tests de lecture, navigation, formulaire/annulation et export PDF sont dans `tests/service_only_tests.pro`.
+
+La référence service se saisit sous la forme SRV- suivie de trois chiffres (ex. SRV-123), indépendamment du propriétaire. Elle est enregistrée dans SERVICE.REF_SERVICE ; le propriétaire dans SERVICE.PROPRIETAIRE. Les champs affichent une validation visuelle.
+
+## Mise à jour du 20 novembre 2026
+
+Courbes dynamiques (période, catégorie, mesure, actualisation automatique), planning hebdomadaire et liste détaillée. Les services non affectés restent visibles. Les tâches complémentaires des employés sont lues dans le même stockage local ANIWORLD que le projet intégré. Sur ce PC, les dix tâches Démo du 9 au 15 novembre sont donc visibles dans les deux versions. Aucun CRUD ni interface des quatre autres gestions n’est ajouté.

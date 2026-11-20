@@ -8,6 +8,7 @@
 #include "../ui/design.h"
 #include "../ui/motion.h"
 #include "../dialogs/serviceplanningdialog.h"
+#include "../dialogs/servicestatisticsdialog.h"
 #include "../ui/invoice.h"
 #include <QTextBrowser>
 #include <QSqlQueryModel>
@@ -46,7 +47,6 @@ QString folded(const QString &value) {
         if (ch.category() != QChar::Mark_NonSpacing) result += ch;
     return result;
 }
-QString reference(int id) { return QString("SRV-%1").arg(id,3,10,QChar('0')); }
 QString hours(int minutes) {
     return QString("%1 h %2").arg(minutes/60).arg(minutes%60,2,10,QChar('0'));
 }
@@ -127,11 +127,11 @@ ServiceWidget::ServiceWidget(QWidget *parent) : QWidget(parent) {
     m_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_table->horizontalHeader()->setHighlightSections(false);
     for (int col=0;col<15;++col) m_table->setColumnHidden(col,
-        OracleConnection::isOracle()? (col!=0 && col!=1 && col!=2 && col!=4 && col!=5 && col!=6 && col!=7 && col!=8)
+        OracleConnection::isOracle()? (col!=9 && col!=1 && col!=2 && col!=4 && col!=5 && col!=6 && col!=7 && col!=8)
                                     : (col!=1 && col!=5 && col!=6 && col!=8));
     if(OracleConnection::isOracle()) {
         auto *header=m_table->horizontalHeader();
-        const QList<int> order={0,1,4,6,5,7,8,2};
+        const QList<int> order={1,9,4,6,5,7,8,2};
         for(int i=0;i<order.size();++i)header->moveSection(header->visualIndex(order[i]),i);
         header->setSectionResizeMode(0,QHeaderView::ResizeToContents);
         header->setSectionResizeMode(7,QHeaderView::ResizeToContents);
@@ -173,7 +173,7 @@ void ServiceWidget::filter() {
     const QString text = folded(m_search->text().trimmed());
     const QDateTime now = QDateTime::currentDateTime();
     for (const auto &s : m_services) {
-        const bool matchesText = text.isEmpty() || folded(s.getName()+" "+s.getDescription()+" "+s.getResponsible()+" "+s.getClientName()+" "+s.getInvoiceNumber()+" "+s.getCategory()+" "+reference(s.getId())+" "+QString::number(s.getId())).contains(text);
+        const bool matchesText = text.isEmpty() || folded(s.getName()+" "+s.getDescription()+" "+s.getResponsible()+" "+s.getClientName()+" "+s.getInvoiceNumber()+" "+s.getCategory()+" "+s.getReference()+" "+QString::number(s.getId())).contains(text);
         bool matchesPeriod = true;
         if (m_period->currentIndex()==1) matchesPeriod = s.getDateTime().date()==now.date();
         if (m_period->currentIndex()==2) matchesPeriod = s.getDateTime().date()>=now.date() && s.getDateTime().date()<=now.date().addDays(6);
@@ -277,8 +277,8 @@ void ServiceWidget::updateDetail() {
     m_detailContent->setVisible(selected);
     m_emptyDetailSpacer->setVisible(!selected);
     for (auto *button : {m_edit,m_delete,m_view,m_invoice,m_advance}) button->setEnabled(selected);
-    m_detailName->setText(selected ? s.getName() : "Sélectionnez un service");
-    m_detailReference->setText(selected ? reference(s.getId()) : "Les informations apparaîtront ici.");
+    m_detailName->setText(selected ? (OracleConnection::isOracle() ? s.getClientName() : s.getName()) : "Sélectionnez un service");
+    m_detailReference->setText(selected ? s.getReference() : "Les informations apparaîtront ici.");
     m_invoice->setEnabled(selected && s.getStatus()!="Annulé");
     m_invoice->setToolTip(s.getStatus()=="Annulé"?"Un service annulé ne peut pas être facturé.":"Facture créée automatiquement avec les informations du service.");
     if (!selected) return;
@@ -459,44 +459,6 @@ void ServiceWidget::showPlanning() {
 }
 
 void ServiceWidget::showStatistics() {
-    const auto metrics=ServiceMetrics::from(m_filtered);
-    QDialog dialog(this); dialog.setObjectName("serviceStatisticsDialog");
-    dialog.setWindowTitle("ANIWORLD — Statistiques des services"); dialog.resize(780,620);
-    auto *layout=new QVBoxLayout(&dialog); layout->setContentsMargins(24,22,24,22); layout->setSpacing(14);
-    layout->addWidget(Design::label("Statistiques des services","title"));
-    auto *scope=Design::label("Répartition et tarifs · "+filterDescription(),"muted"); scope->setWordWrap(true); layout->addWidget(scope);
-    double total=0; for(const auto &s:m_filtered) total+=s.getPrice();
-    const QStringList captions={"Prestations","À réaliser","Services terminés","Tarif moyen"};
-    const QStringList values={QString::number(metrics.total),hours(metrics.scheduledMinutes),Design::money(metrics.completedAmount),Design::money(metrics.total?total/metrics.total:0)};
-    const QStringList notes={"dans la sélection","durée planifiée","montant des prestations","par prestation"};
-    const QStringList backgrounds={"#E4F0F4","#FFF2E0","#E6F4EB","#FBE9E8"};
-    auto *totals=new QHBoxLayout;
-    for(int i=0;i<4;++i) {
-        auto *card=Design::card(); card->setStyleSheet(QString("QFrame[role=card] { background:%1; border:none; border-radius:8px; }").arg(backgrounds[i]));
-        auto *box=new QVBoxLayout(card); box->setContentsMargins(14,12,14,12); box->setSpacing(5);
-        box->addWidget(Design::label(captions[i],"muted"));
-        auto *value=Design::label(values[i]); value->setStyleSheet("font-size:19px;font-weight:700;color:#306d7b;"); box->addWidget(value);
-        box->addWidget(Design::label(notes[i],"muted")); totals->addWidget(card);
-    }
-    layout->addLayout(totals); layout->addWidget(Design::label("Répartition par catégorie","section"));
-    auto *table=new QTableWidget; table->setObjectName("serviceStatisticsTable"); table->setMinimumHeight(240);
-    Design::setupTable(table,{"CATÉGORIE","PRESTATIONS","TARIF MOYEN","PART"}); table->setAlternatingRowColors(true);
-    table->setStyleSheet("QTableWidget { alternate-background-color:#f2f7f9; border:1px solid #dbe9ee; border-radius:6px; }");
-    table->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
-    for(int col=1;col<4;++col) { table->horizontalHeader()->setSectionResizeMode(col,QHeaderView::Fixed); table->setColumnWidth(col,135); }
-    table->setRowCount(metrics.categories.size()); int row=0;
-    for(auto it=metrics.categories.cbegin();it!=metrics.categories.cend();++it,++row) {
-        double amount=0; for(const auto &service:m_filtered) if(service.getCategory()==it.key()) amount+=service.getPrice();
-        table->setItem(row,0,new QTableWidgetItem(it.key())); table->setItem(row,1,new QTableWidgetItem(QString::number(it.value())));
-        table->setItem(row,2,new QTableWidgetItem(Design::money(amount/it.value())));
-        auto *part=new QWidget; auto *line=new QHBoxLayout(part); line->setContentsMargins(10,0,10,0);
-        auto *bar=new QProgressBar; bar->setRange(0,qMax(1,metrics.total)); bar->setValue(it.value()); bar->setTextVisible(false); line->addWidget(bar,1);
-        line->addWidget(Design::label(QString::number(qRound(100.0*it.value()/metrics.total))+"%","muted")); table->setCellWidget(row,3,part); table->setRowHeight(row,43);
-    }
-    layout->addWidget(table,1);
-    auto *summary=Design::label(QString("%1 planifiés · %2 en cours · %3 terminés · %4 annulés").arg(metrics.planned).arg(metrics.inProgress).arg(metrics.completed).arg(metrics.cancelled));
-    summary->setStyleSheet("background:#e4f0f4;color:#377888;padding:12px;border-radius:6px;"); layout->addWidget(summary);
-    layout->addWidget(Design::label("Les montants représentent les prestations, sans suivi des encaissements.","muted"));
-    auto *close=Design::button("Fermer",{},"primary"); close->setMinimumWidth(130); connect(close,&QPushButton::clicked,&dialog,&QDialog::accept); layout->addWidget(close,0,Qt::AlignRight);
+    ServiceStatisticsDialog dialog(this);
     dialog.exec();
 }

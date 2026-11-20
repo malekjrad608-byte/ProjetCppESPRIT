@@ -1,4 +1,11 @@
 #include <QtTest>
+#include <QTableWidget>
+#include <QLabel>
+#include <QTimer>
+#include "../src/dialogs/serviceplanningdialog.h"
+#include "../src/dialogs/servicestatisticsdialog.h"
+#include "../src/widgets/servicetimetable.h"
+#include "../src/widgets/servicecurve.h"
 #include <QComboBox>
 #include <QFontDatabase>
 #include <QLineEdit>
@@ -17,6 +24,23 @@
 class ServiceOnlyTests : public QObject {
  Q_OBJECT
 private slots:
+ void standalonePlanningAndCurves() {
+  qApp->setApplicationName("ANIWORLD");qApp->setOrganizationName("ANIWORLD");Design::applyTheme();
+  auto &db=DatabaseManager::instance();QVERIFY2(db.initializeOracle(),qPrintable(db.lastError()));
+  QString error;const auto entries=Service::appointments(&error);QVERIFY2(error.isEmpty(),qPrintable(error));
+  int expected=0;for(const auto &a:entries)if(a.start<QDateTime(QDate(2026,11,16),QTime(0,0)) && a.finish>QDateTime(QDate(2026,11,9),QTime(0,0)) && a.status!="Annulé")++expected;
+  ServicePlanningDialog planning(QDate(2026,11,9));planning.show();QTest::qWait(100);
+  QCOMPARE(planning.findChild<QTableWidget *>("servicePlanningTable")->rowCount(),expected);
+  QVERIFY(planning.findChild<ServiceTimetable *>());QVERIFY(!planning.findChild<QLabel *>("planningMessage")->text().contains("Chargement impossible"));
+  const auto folder=qEnvironmentVariable("SERVICE_CAPTURE_DIR");
+  if(!folder.isEmpty())QVERIFY(planning.grab().save(folder+"/planning.png"));
+  planning.hide();
+  ServiceStatisticsDialog stats;stats.show();QTest::qWait(200);
+  QVERIFY(stats.findChild<ServiceCurve *>());QVERIFY(stats.findChild<QTimer *>("statisticsLiveRefresh")->isActive());
+  QVERIFY(stats.findChild<QLabel *>("statisticsNotice")->text().contains("Mis à jour"));
+  if(!folder.isEmpty())QVERIFY(stats.grab().save(folder+"/statistics.png"));
+ }
+
  void standaloneOracleReadAndForms() {
   for(const auto &f:{"segoeui.ttf","seguisb.ttf","segoeuib.ttf"})QFontDatabase::addApplicationFont("C:/Windows/Fonts/"+QString(f));qApp->setFont(QFont("Segoe UI",10));
   qApp->setApplicationName("ANIWORLD");qApp->setOrganizationName("ANIWORLD");Design::applyTheme();Motion::instance().setEnabled(false);
@@ -31,12 +55,24 @@ private slots:
   QString error;auto owners=ServiceReferences::proprietaires(&error);QVERIFY2(error.isEmpty(),qPrintable(error));
   page->onAdd();auto *form=page->findChild<ServiceDialog *>();QVERIFY(form);QVERIFY(form->isVisible());
   auto *choice=form->findChild<QComboBox *>("serviceClientChoice");QVERIFY(choice);QVERIFY(!choice->isEditable());
+  QVERIFY(!form->findChild<QLineEdit *>("serviceId"));
+  auto *reference=form->findChild<QLineEdit *>("serviceReference");QVERIFY(reference);
+  reference->setFocus();QTest::keyClicks(reference,"12");QVERIFY(!reference->hasAcceptableInput());
+  QTest::keyClicks(reference,"3");QVERIFY(reference->hasAcceptableInput());
+  QCOMPARE(form->getService().getName(),QString("SRV-123"));
+  reference->selectAll();QTest::keyClicks(reference,"007");
+  QCOMPARE(form->getService().getName(),QString("SRV-007"));
+  if(!owners.isEmpty()){
+   choice->setCurrentIndex(choice->findText(owners.first().second));
+   QCOMPARE(form->getService().getClientName(),owners.first().second);
+   QCOMPARE(form->getService().getName(),QString("SRV-007"));
+  }
   for(const auto &owner:owners)QVERIFY(choice->findText(owner.second)>=0);
   form->findChild<QPushButton *>("cancelService")->click();QCOMPARE(stack->currentIndex(),1);QCOMPARE(db.getAllServices().size(),before.size());
   auto *search=page->findChild<QLineEdit *>("serviceSearch");
   QVERIFY(search);{search->setText("__no_matching_service__");QCOMPARE(page->findChild<QTableView *>("serviceTable")->model()->rowCount(),0);search->clear();}
   window.navigate(0);QCOMPARE(stack->currentIndex(),0);window.navigate(1);QTest::qWait(300);
-  if(!before.isEmpty()){bool shown=false;for(auto *card:page->findChildren<ServiceCard *>())shown|=card->isVisible();QVERIFY(shown);}
+  if(!before.isEmpty()){bool shown=false;for(auto *button:page->findChildren<QAbstractButton *>())if(auto *card=dynamic_cast<ServiceCard *>(button))shown|=card->isVisible();QVERIFY(shown);}
   const auto output=qEnvironmentVariable("SERVICE_CAPTURE");if(!output.isEmpty())QVERIFY(window.grab().save(output));
   for(const auto &s:before)if(s.getStatus()!="Annulé"){
    QTemporaryDir tmp;auto path=tmp.filePath("facture.pdf");QVERIFY2(Invoice::writePdf(path,s,false,&error),qPrintable(error));

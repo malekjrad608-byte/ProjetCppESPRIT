@@ -2,13 +2,14 @@
 #include <QDialog>
 #include <QMap>
 #include "../models/service.h"
-#include "../models/service.h"
 class QComboBox;
 class QDateEdit;
 class QCheckBox;
 class QLabel;
 class QTableWidget;
 class QPushButton;
+class ServiceTimetable;
+class QScrollArea;
 
 class ServicePlanningDialog : public QDialog {
     Q_OBJECT
@@ -28,6 +29,9 @@ private:
     QLabel *m_summary;
     QLabel *m_message;
     QTableWidget *m_table;
+    ServiceTimetable *m_timetable;
+    QScrollArea *m_calendarScroll;
+    QList<QLabel *> m_days;
     QPushButton *m_edit;
     QList<Service::Appointment> m_entries;
     bool m_readOnly=false;

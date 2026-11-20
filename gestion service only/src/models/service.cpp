@@ -1,11 +1,14 @@
 #include "service.h"
 #include "../database/oracleconnection.h"
-#include "../models/servicereferences.h"
+#include "servicereferences.h"
+#include "modulesupplements.h"
+#include <QJsonObject>
 #include <QScopedPointer>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlQueryModel>
 #include <QSqlRecord>
+#include <QRegularExpression>
 #include <cmath>
 namespace {
 QVariant nullableId(int id) {
@@ -26,12 +29,21 @@ Service::Service(int id, const QString &name, const QString &clientName,
   setPrice(price);
 }
 
+bool Service::referenceValide(const QString &reference) {
+  static const QRegularExpression format(QStringLiteral("^SRV-[0-9]{3}\\z"));
+  return format.match(reference).hasMatch();
+}
+
+QString Service::getReference() const {
+  return referenceValide(name) ? name : QString("SRV-%1").arg(id, 3, 10, QChar('0'));
+}
+
 bool Service::ajouter() {
   if (getMedicalRecordId() > 0) {
     const QString owner = ServiceReferences::proprietaire(getMedicalRecordId(), &m_error);
     if (!m_error.isEmpty()) return false;
     setClientName(owner);
-    setName(owner);
+    if (!OracleConnection::isOracle()) setName(owner);
   }
   int inserted = 0;
   // enregistrer() lit les attributs via les getters pour preparer l'INSERT.
@@ -97,6 +109,7 @@ QSqlQueryModel *Service::afficher(QObject *parent,
     model->setHeaderData(0,Qt::Horizontal,"ID service");
     model->setHeaderData(1,Qt::Horizontal,"Réf. service");
     model->setHeaderData(2,Qt::Horizontal,"Prestation");
+    model->setHeaderData(9,Qt::Horizontal,"Propriétaire");
   }
   return model;
 }
@@ -260,10 +273,32 @@ bool Service::supprimer(int id, QString *error) {
   return test;
 }
 
+bool Service::referenceDisponible(const QString &reference, int currentId, QString *error) {
+  QSqlQuery query(OracleConnection::database());
+  query.prepare("SELECT COUNT(*) FROM service WHERE ref_service=:ref AND id_serv<>:id");
+  query.bindValue(":ref", reference.trimmed());
+  query.bindValue(":id", currentId);
+  if (!query.exec() || !query.next()) {
+    *error = "Impossible de vérifier la référence dans Oracle.";
+    return false;
+  }
+  if (query.value(0).toInt() > 0) {
+    *error = "Cette référence est déjà utilisée. Choisissez une référence unique.";
+    return false;
+  }
+  error->clear();
+  return true;
+}
+
 bool Service::enregistrerOracle(bool update, int *insertedId, QString *error) const {
-  QString reference=getName().trimmed();
+  const QString reference=getName().trimmed();
+  if (!referenceValide(reference)) {
+    *error="La référence doit contenir SRV- suivi de trois chiffres.";
+    return false;
+  }
+  QString owner=getClientName().trimmed();
   if (getMedicalRecordId()>0) {
-    reference=ServiceReferences::proprietaire(getMedicalRecordId(),error);
+    owner=ServiceReferences::proprietaire(getMedicalRecordId(),error);
     if(!error->isEmpty())return false;
   } else if(!update) {
     *error="Choisissez un propriétaire enregistré dans Médical."; return false;
@@ -274,15 +309,16 @@ bool Service::enregistrerOracle(bool update, int *insertedId, QString *error) co
   if(key<=0){db.rollback();*error="Impossible de générer l'identifiant.";return false;}
   QSqlQuery q(db);
   q.prepare(update
-      ? "UPDATE service SET ref_service=:ref,categorie=:categorie,statut=:statut,date_heur=:date_heur,duree=:duree,tarif=:tarif,prestation=:prestation WHERE id_serv=:id"
-      : "INSERT INTO service(id_serv,ref_service,categorie,statut,date_heur,duree,tarif,prestation) VALUES(:id,:ref,:categorie,:statut,:date_heur,:duree,:tarif,:prestation)");
+      ? "UPDATE service SET ref_service=:ref,proprietaire=:owner,categorie=:categorie,statut=:statut,date_heur=:date_heur,duree=:duree,tarif=:tarif,prestation=:prestation WHERE id_serv=:id"
+      : "INSERT INTO service(id_serv,ref_service,proprietaire,categorie,statut,date_heur,duree,tarif,prestation) VALUES(:id,:ref,:owner,:categorie,:statut,:date_heur,:duree,:tarif,:prestation)");
+  q.bindValue(":owner",owner);
   q.bindValue(":id",key);q.bindValue(":ref",reference);
   q.bindValue(":categorie",getCategory());q.bindValue(":statut",getStatus());
   q.bindValue(":date_heur",getDateTime().toString(Qt::ISODate));q.bindValue(":duree",getDuration());
   q.bindValue(":tarif",getPrice());q.bindValue(":prestation",getDescription());
   if(!q.exec() || q.numRowsAffected()!=1) {
     const auto message=q.lastError().text();db.rollback();
-    *error=message.contains("UQ_SERVICE_REF")?"Ce propriétaire possède déjà un service. La référence doit être unique.":message;
+    *error=message.contains("UQ_SERVICE_REF")?"Cette référence est déjà utilisée. Choisissez une référence unique.":message;
     return false;
   }
   if(!db.commit()){*error=db.lastError().text();db.rollback();return false;}
@@ -298,7 +334,7 @@ QList<Service::Appointment> Service::appointments(QString *error) {
   if (!(q.prepare(OracleConnection::isOracle()
                       ? "SELECT "
                         "s.id,e.id,s.name,s.clientName,s.status,s.dateTime,s."
-                        "duration FROM services s JOIN employes e ON "
+                        "duration FROM services s LEFT JOIN employes e ON "
                         "e.id_service=s.id"
                       : "SELECT "
                         "id,id_employe,name,clientName,status,dateTime,"
@@ -311,8 +347,8 @@ QList<Service::Appointment> Service::appointments(QString *error) {
     Appointment a;
     a.serviceId = q.value(0).toInt();
     a.employeeId = q.value(1).toInt();
-    a.title = QString("SRV-%1 · ").arg(a.serviceId, 3, 10, QChar('0')) +
-              q.value(2).toString();
+    a.title = OracleConnection::isOracle() ? q.value(2).toString() + " · " + q.value(3).toString()
+              : QString("SRV-%1 · ").arg(a.serviceId, 3, 10, QChar('0')) + q.value(2).toString();
     a.client = q.value(3).toString();
     a.status = q.value(4).toString();
     a.start = QDateTime::fromString(q.value(5).toString(), Qt::ISODate);
@@ -348,6 +384,28 @@ QList<Service::Appointment> Service::appointments(QString *error) {
       }
       result << a;
     }
+  }
+  // Les tâches du module Employés sont persistées séparément, y compris
+  // lorsque la connexion principale utilise Oracle.
+  QString taskError;
+  const auto tasks = ModuleSupplements::read("planning", &taskError);
+  if (!taskError.isEmpty()) {
+    *error = taskError;
+    return {};
+  }
+  for (const auto &value : tasks) {
+    const auto task = value.toObject();
+    Appointment a;
+    a.employeeId = task["employee"].toInt();
+    a.title = task["title"].toString();
+    a.status = "Tâche";
+    a.start = QDateTime::fromString(task["start"].toString(), Qt::ISODate);
+    a.finish = QDateTime::fromString(task["end"].toString(), Qt::ISODate);
+    if (a.employeeId <= 0 || !a.start.isValid() || !a.finish.isValid() || a.finish <= a.start) {
+      *error = "Une tâche du module Employés possède un créneau invalide.";
+      return {};
+    }
+    result << a;
   }
   std::sort(result.begin(), result.end(),
             [](const Appointment &a, const Appointment &b) {

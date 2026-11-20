@@ -55,7 +55,7 @@ QString Invoice::html(const Service &s, bool demo) {
         </body></html>)")
         .arg(QString::fromLatin1(logo.toBase64()),escape(s.getInvoiceNumber()),s.getInvoiceDate().toString("dd/MM/yyyy"),
              demo?"<br/><b>DÉMONSTRATION - DONNÉES FICTIVES</b>":"",escape(s.getClientName()),
-             QString("SRV-%1").arg(s.getId(),3,10,QChar('0')),s.getDateTime().toString("dd/MM/yyyy à HH:mm"),
+             s.getReference(),s.getDateTime().toString("dd/MM/yyyy à HH:mm"),
              escape(s.getName()),escape(s.getCategory()),escape(s.getResponsible().isEmpty()?"Non attribué":s.getResponsible()),
              QString::number(s.getDuration()),escape(s.getDescription().isEmpty()?s.getName():s.getDescription()),Design::money(s.getPrice()));
 }
