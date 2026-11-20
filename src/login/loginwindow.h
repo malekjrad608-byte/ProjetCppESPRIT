@@ -2,6 +2,7 @@
 #define LOGINWINDOW_H
 
 #include <QWidget>
+#include "../auth/accounts.h"
 
 class QLineEdit;
 class QPushButton;
@@ -19,6 +20,7 @@ public:
     explicit LoginWindow(bool demoMode = false, bool useSettings = true, QWidget *parent = nullptr);
     void prepareForLogin();
     void showAfterLogout();
+    Accounts::Role authenticatedRole() const { return m_role; }
 
 signals:
     void loginSucceeded(const QString &username);
@@ -61,6 +63,7 @@ private:
     bool m_demoMode{false};
     bool m_useSettings{true};
     bool m_loginPending{false};
+    Accounts::Role m_role{Accounts::Role::None};
 
     QRadioButton *m_emailOption{nullptr};
     QRadioButton *m_phoneOption{nullptr};

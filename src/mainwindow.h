@@ -6,12 +6,16 @@
 #include <QPropertyAnimation>
 #include "widgets/dashboardwidget.h"
 #include "widgets/servicewidget.h"
+#include "auth/accounts.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
+    friend class ServiceTests;
 public:
     explicit MainWindow(bool demo=false,QWidget *parent=nullptr);
     void setSignedInUser(const QString &username);
+    void setSession(const QString &username,Accounts::Role role);
+    Accounts::Role sessionRole() const { return m_role; }
 signals:
     void logoutRequested();
 public slots:
@@ -30,4 +34,9 @@ private:
     QLabel *m_sessionUser;
     QPushButton *m_logoutButton;
     QLabel *m_headerDate = nullptr;
+    QLabel *m_storageBadge;
+    QPushButton *m_passwordButton;
+    Accounts::Role m_role=Accounts::Role::Admin;
+    QString m_username;
+    bool m_demo;
 };

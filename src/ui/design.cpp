@@ -1,6 +1,7 @@
 #include "design.h"
 #include "../widgets/animatedbutton.h"
 #include "../widgets/animatedpanel.h"
+#include "motion.h"
 #include <QApplication>
 #include <QFile>
 #include <QPainter>
@@ -10,6 +11,49 @@
 #include <QLocale>
 
 namespace Design {
+namespace {
+void paw(QPainter &p,QPointF center,qreal size,qreal angle,const QColor &color) {
+    p.save(); p.translate(center); p.rotate(angle); p.scale(size/48,size/48);
+    p.setPen(Qt::NoPen); p.setBrush(color);
+    QPainterPath pad; pad.moveTo(-13,13); pad.cubicTo(-18,5,-7,-7,0,-7);
+    pad.cubicTo(7,-7,18,5,13,13); pad.cubicTo(9,18,4,13,0,13); pad.cubicTo(-4,13,-9,18,-13,13);
+    p.drawPath(pad); p.drawEllipse(QRectF(-21,-10,9,13)); p.drawEllipse(QRectF(-12,-23,10,14));
+    p.drawEllipse(QRectF(2,-23,10,14)); p.drawEllipse(QRectF(12,-10,9,13)); p.restore();
+}
+}
+void paintWorkspace(QPainter &p,const QRect &bounds) {
+    p.save(); p.setRenderHint(QPainter::Antialiasing); p.setClipRect(bounds);
+    const qreal w=bounds.width(),h=bounds.height();
+    QLinearGradient base(0,0,w,h); base.setColorAt(0,QColor("#EDF6F8")); base.setColorAt(.55,QColor("#F6FAFB")); base.setColorAt(1,QColor("#E8F2F4"));
+    p.fillRect(bounds,base);
+    QRadialGradient light(QPointF(w*.82,30),w*.6); light.setColorAt(0,QColor(107,183,190,24)); light.setColorAt(1,Qt::transparent); p.fillRect(bounds,light);
+    p.setPen(Qt::NoPen);
+    QPainterPath wave; wave.moveTo(0,h-95); wave.cubicTo(w*.3,h-230,w*.65,h+90,w,h-135); wave.lineTo(w,h); wave.lineTo(0,h); wave.closeSubpath();
+    p.fillPath(wave,QColor(77,153,164,13));
+    p.setBrush(Qt::NoBrush); p.setPen(QPen(QColor(69,143,156,21),1));
+    for(int i=0;i<3;++i) p.drawEllipse(QRectF(w-270-i*38,-185-i*38,370+i*76,370+i*76));
+    p.setPen(QPen(QColor(237,165,73,34),1.3));
+    QPainterPath line; line.moveTo(w*.27,h); line.cubicTo(w*.42,h-145,w*.65,h-125,w*.82,h); p.drawPath(line);
+    p.setPen(Qt::NoPen); p.setBrush(QColor(51,126,141,27));
+    for(int x=0;x<7;++x) for(int y=0;y<4;++y) p.drawEllipse(QPointF(w-170+x*17,70+y*17),1.3,1.3);
+    paw(p,QPointF(w*.68,h-100),75,-22,QColor(51,126,141,17));
+    paw(p,QPointF(w*.76,h-175),44,15,QColor(51,126,141,14));
+    p.restore();
+}
+void paintSidebarArt(QPainter &p,const QRect &bounds) {
+    if(bounds.height()<70) return;
+    p.save(); p.setRenderHint(QPainter::Antialiasing); p.setClipRect(bounds);
+    const qreal x=bounds.x(),y=bounds.y(),w=bounds.width(),h=bounds.height();
+    QLinearGradient fade(0,y,0,y+h); fade.setColorAt(0,Qt::transparent); fade.setColorAt(1,QColor(104,175,184,17)); p.fillRect(bounds,fade);
+    p.setPen(QPen(QColor(94,157,168,32),1)); p.setBrush(Qt::NoBrush);
+    for(int i=0;i<3;++i) p.drawEllipse(QRectF(x-105-i*25,y+h-160-i*25,240+i*50,240+i*50));
+    const qreal scale=qMin(1.0,h/240);
+    paw(p,QPointF(x+w*.7,y+h*.77),46*scale,-22,QColor(55,133,148,39));
+    paw(p,QPointF(x+w*.42,y+h*.52),32*scale,18,QColor(55,133,148,28));
+    paw(p,QPointF(x+w*.7,y+h*.27),22*scale,-15,QColor(224,158,66,45));
+    p.restore();
+}
+
 QLabel *label(const QString &text, const char *role, QWidget *parent) {
     auto *result=new QLabel(text,parent); result->setTextFormat(Qt::PlainText);
     if(role) result->setProperty("role",role);
@@ -19,16 +63,24 @@ QPushButton *button(const QString &text, const QString &iconName, const char *ro
     QString displayText=text;
     displayText.replace("&","&&");
     auto *result=new AnimatedButton(displayText);
-    if(!iconName.isEmpty()) result->setIcon(icon(iconName,role && QString(role)=="primary"?QColor("white"):QColor("#58796A")));
+    const bool filled=role && (QString(role)=="primary" || QString(role)=="success" || QString(role)=="danger");
+    QColor color=filled?QColor("white"):QColor("#58796A");
+    if(role && QString(role)=="nav") color=iconName=="stock"?QColor("#D69335"):iconName=="services"?QColor("#8268AE"):QColor("#5299AB");
+    if(!iconName.isEmpty()) result->setIcon(icon(iconName,color));
     result->setIconSize(QSize(17,17)); if(role) result->setProperty("role",role);
     result->setCursor(Qt::PointingHandCursor); return result;
 }
-QFrame *card(const char *name) { QFrame *f=name?new QFrame:new AnimatedPanel; f->setProperty("role","card"); if(name) f->setObjectName(name); return f; }
+QFrame *card(const char *name) { auto *f=new AnimatedPanel; f->setProperty("role","card"); if(name) f->setObjectName(name); return f; }
 QIcon icon(const QString &name, const QColor &color) {
     QPixmap pix(48,48); pix.fill(Qt::transparent);
     QPainter p(&pix); p.setRenderHint(QPainter::Antialiasing); p.scale(2,2);
     p.setPen(QPen(color,1.6,Qt::SolidLine,Qt::RoundCap,Qt::RoundJoin)); p.setBrush(Qt::NoBrush);
     if(name=="grid") { for(int x:{4,14}) for(int y:{4,14}) p.drawRoundedRect(QRectF(x,y,6,6),1,1); }
+    else if(name=="stock") {
+        p.drawPolygon(QPolygonF{QPointF(3,6),QPointF(12,2),QPointF(21,6),QPointF(21,18),QPointF(12,22),QPointF(3,18)});
+        p.drawPolyline(QPolygonF{QPointF(3,6),QPointF(12,10),QPointF(21,6)}); p.drawLine(12,10,12,22);
+        p.drawLine(8,4,17,8);
+    }
     else if(name=="plus") { p.drawLine(12,5,12,19); p.drawLine(5,12,19,12); }
     else if(name=="search") { p.drawEllipse(QRectF(4,4,11,11)); p.drawLine(14,14,20,20); }
     else if(name=="arrow") { p.drawLine(4,12,20,12); p.drawLine(15,7,20,12); p.drawLine(15,17,20,12); }
@@ -74,7 +126,7 @@ QWidget *badge(const QString &status) {
     layout->addWidget(text,0,Qt::AlignVCenter); layout->addStretch(); wrapper->setAttribute(Qt::WA_TransparentForMouseEvents); return wrapper;
 }
 QString money(double amount) { return QLocale(QLocale::French,QLocale::Tunisia).toString(amount,'f',2)+" DT"; }
-QStringList categories() { return {"Soins & bien-être","Toilettage","Pension & garde","Éducation","Autre"}; }
+QStringList categories() { return {"Consultation vétérinaire","Vaccination","Analyses de laboratoire","Imagerie médicale","Chirurgie vétérinaire","Soins dentaires","Soins infirmiers","Suivi postopératoire"}; }
 QStringList statuses() { return {"Planifié","En cours","Terminé","Annulé"}; }
 void setupTable(QTableWidget *table,const QStringList &headers) {
     table->setColumnCount(headers.size()); table->setHorizontalHeaderLabels(headers);
@@ -86,6 +138,7 @@ void setupTable(QTableWidget *table,const QStringList &headers) {
     table->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel); table->setWordWrap(false);
 }
 void applyTheme() {
+    Motion::installHoverEffects();
     qApp->setStyle("Fusion"); QFile file(":/theme.qss");
     if(file.open(QIODevice::ReadOnly)) qApp->setStyleSheet(QString::fromUtf8(file.readAll()));
     QPalette p; p.setColor(QPalette::Window,QColor("#F3F7F8")); p.setColor(QPalette::Base,Qt::white);
