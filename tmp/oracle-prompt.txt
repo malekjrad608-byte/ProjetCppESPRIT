@@ -1,0 +1,114 @@
+Compiled from "ConnectionPrompt.java"
+class oracle.dbtools.raptor.dialogs.conn.ConnectionPrompt$DefaultPrompter extends oracle.dbtools.raptor.dialogs.conn.ConnectionPrompt$RaptorPrompter {
+  private oracle.dbtools.raptor.dialogs.conn.ConnectionPrompt$DefaultPrompter();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method oracle/dbtools/raptor/dialogs/conn/ConnectionPrompt$RaptorPrompter."<init>":()V
+       4: return
+
+  public java.sql.Connection promptForPassword(java.util.Properties, java.lang.String, oracle.dbtools.connections.db.ConnectionCreator) throws java.sql.SQLException;
+    Code:
+       0: aconst_null
+       1: astore        4
+       3: aload_1
+       4: ldc           #9                  // String password
+       6: invokevirtual #11                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       9: astore        5
+      11: aload         5
+      13: ifnonnull     102
+      16: aload_1
+      17: ldc           #19                 // String ConnName
+      19: invokevirtual #11                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      22: ifnonnull     37
+      25: aload_2
+      26: ifnull        37
+      29: aload_1
+      30: ldc           #19                 // String ConnName
+      32: aload_2
+      33: invokevirtual #21                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      36: pop
+      37: aload_0
+      38: aload_0
+      39: aload_1
+      40: invokevirtual #25                 // Method getKey:(Ljava/util/Properties;)Ljava/lang/String;
+      43: invokevirtual #31                 // Method getAuthentication:(Ljava/lang/String;)Loracle/dbtools/raptor/dialogs/conn/ConnectionPrompt$RaptorPrompter$AuthKey;
+      46: astore        6
+      48: aload_1
+      49: ldc           #35                 // String NoPasswordConnection
+      51: ldc           #37                 // String true
+      53: invokevirtual #39                 // Method java/util/Properties.getProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+      56: invokestatic  #42                 // Method java/lang/Boolean.parseBoolean:(Ljava/lang/String;)Z
+      59: istore        7
+      61: aload         6
+      63: ifnull        93
+      66: aload_1
+      67: ldc           #48                 // String user
+      69: aload         6
+      71: getfield      #50                 // Field oracle/dbtools/raptor/dialogs/conn/ConnectionPrompt$RaptorPrompter$AuthKey.m_user:Ljava/lang/String;
+      74: invokevirtual #21                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      77: pop
+      78: aload_1
+      79: ldc           #9                  // String password
+      81: aload         6
+      83: getfield      #56                 // Field oracle/dbtools/raptor/dialogs/conn/ConnectionPrompt$RaptorPrompter$AuthKey.m_pwd:Ljava/lang/String;
+      86: invokevirtual #21                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      89: pop
+      90: goto          102
+      93: iload         7
+      95: ifeq          102
+      98: aload_1
+      99: invokestatic  #59                 // Method oracle/dbtools/raptor/dialogs/conn/ConnectionInfoPanel.promptForConnection:(Ljava/util/Properties;)V
+     102: aload_3
+     103: aload_1
+     104: invokeinterface #65,  2           // InterfaceMethod oracle/dbtools/connections/db/ConnectionCreator.getConnection:(Ljava/util/Properties;)Ljava/sql/Connection;
+     109: astore        4
+     111: aload_0
+     112: aload_1
+     113: invokevirtual #71                 // Method cache:(Ljava/util/Properties;)V
+     116: aload         4
+     118: areturn
+
+  public void disconnect(oracle.dbtools.connections.db.DatabaseProvider);
+    Code:
+       0: aload_1
+       1: invokevirtual #74                 // Method oracle/dbtools/connections/db/DatabaseProvider.getProperties:()Ljava/util/Properties;
+       4: astore_2
+       5: aload_1
+       6: invokevirtual #78                 // Method oracle/dbtools/connections/db/DatabaseProvider.getName:()Ljava/lang/String;
+       9: astore_3
+      10: aload_2
+      11: ldc           #19                 // String ConnName
+      13: invokevirtual #11                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      16: ifnonnull     27
+      19: aload_2
+      20: ldc           #19                 // String ConnName
+      22: aload_3
+      23: invokevirtual #21                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      26: pop
+      27: aload_0
+      28: aload_2
+      29: invokevirtual #82                 // Method disconnect:(Ljava/util/Properties;)V
+      32: return
+
+  public void cache(oracle.dbtools.connections.db.DatabaseProvider);
+    Code:
+       0: aload_1
+       1: invokevirtual #74                 // Method oracle/dbtools/connections/db/DatabaseProvider.getProperties:()Ljava/util/Properties;
+       4: astore_2
+       5: aload_1
+       6: invokevirtual #78                 // Method oracle/dbtools/connections/db/DatabaseProvider.getName:()Ljava/lang/String;
+       9: astore_3
+      10: aload_2
+      11: ldc           #19                 // String ConnName
+      13: invokevirtual #11                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      16: ifnonnull     27
+      19: aload_2
+      20: ldc           #19                 // String ConnName
+      22: aload_3
+      23: invokevirtual #21                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+      26: pop
+      27: aload_0
+      28: aload_2
+      29: invokevirtual #71                 // Method cache:(Ljava/util/Properties;)V
+      32: return
+}

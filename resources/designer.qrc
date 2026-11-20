@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='utf-8'?>
+<RCC>
+  <qresource prefix="/designer">
+    <file alias="Employees_control_14.png">designer/Employees_control_14.png</file>
+    <file alias="Employees_control_18.png">designer/Employees_control_18.png</file>
+    <file alias="Employees_control_22.png">designer/Employees_control_22.png</file>
+    <file alias="Employees_control_7.png">designer/Employees_control_7.png</file>
+    <file alias="Locaux_control_13.png">designer/Locaux_control_13.png</file>
+    <file alias="Locaux_m_btnAdd.png">designer/Locaux_m_btnAdd.png</file>
+    <file alias="Locaux_m_btnAlerts.png">designer/Locaux_m_btnAlerts.png</file>
+    <file alias="Locaux_m_btnCards.png">designer/Locaux_m_btnCards.png</file>
+    <file alias="Locaux_m_btnList.png">designer/Locaux_m_btnList.png</file>
+    <file alias="Locaux_m_btnMap.png">designer/Locaux_m_btnMap.png</file>
+    <file alias="Locaux_m_btnPdf.png">designer/Locaux_m_btnPdf.png</file>
+    <file alias="Locaux_m_btnSmart.png">designer/Locaux_m_btnSmart.png</file>
+    <file alias="Locaux_m_btnStats.png">designer/Locaux_m_btnStats.png</file>
+    <file alias="Service_control_12.png">designer/Service_control_12.png</file>
+    <file alias="Service_control_98.png">designer/Service_control_98.png</file>
+    <file alias="Service_m_advance.png">designer/Service_m_advance.png</file>
+    <file alias="Service_m_delete.png">designer/Service_m_delete.png</file>
+    <file alias="Service_m_edit.png">designer/Service_m_edit.png</file>
+    <file alias="Service_m_invoice.png">designer/Service_m_invoice.png</file>
+    <file alias="Service_m_view.png">designer/Service_m_view.png</file>
+    <file alias="addEmployee.png">designer/addEmployee.png</file>
+    <file alias="addService.png">designer/addService.png</file>
+    <file alias="cardsView.png">designer/cardsView.png</file>
+    <file alias="deleteEmployee.png">designer/deleteEmployee.png</file>
+    <file alias="editEmployee.png">designer/editEmployee.png</file>
+    <file alias="employeeLeavePdf.png">designer/employeeLeavePdf.png</file>
+    <file alias="employeeStatistics.png">designer/employeeStatistics.png</file>
+    <file alias="serviceFirstAdd.png">designer/serviceFirstAdd.png</file>
+    <file alias="servicePlanning.png">designer/servicePlanning.png</file>
+    <file alias="serviceStatistics.png">designer/serviceStatistics.png</file>
+    <file alias="stockExportButton.png">designer/stockExportButton.png</file>
+    <file alias="tableView.png">designer/tableView.png</file>
+    <file alias="toggleEmployeeAvailability.png">designer/toggleEmployeeAvailability.png</file>
+  </qresource>
+</RCC>

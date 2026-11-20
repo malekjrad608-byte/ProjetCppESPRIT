@@ -1,0 +1,24 @@
+{
+  "connections": [
+    {
+      "name": "ANIWORLD - XEPDB1",
+      "type": "jdbc",
+      "info": {
+        "role": "",
+        "SavePassword": "false",
+        "OracleConnectionType": "BASIC",
+        "RaptorConnectionType": "Oracle",
+        "hostname": "localhost",
+        "port": "1521",
+        "serviceName": "XEPDB1",
+        "user": "ANIWORLD_APP",
+        "driver": "oracle.jdbc.OracleDriver",
+        "customUrl": "jdbc:oracle:thin:@//localhost:1521/XEPDB1",
+        "NoPasswordConnection": "TRUE",
+        "subtype": "oraJDBC",
+        "oraDriverType": "thin",
+        "ConnName": "ANIWORLD - XEPDB1"
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 SOURCES += $$PWD/src/mainwindow.cpp \
+    $$PWD/src/stock/stockwidget.cpp \
     $$PWD/src/appcontroller.cpp \
     $$PWD/src/login/loginwindow.cpp \
     $$PWD/src/login/loginvisuals.cpp \
@@ -16,6 +17,7 @@ SOURCES += $$PWD/src/mainwindow.cpp \
     $$PWD/src/ui/motion.cpp \
     $$PWD/src/widgets/animatedpanel.cpp
 HEADERS += $$PWD/src/mainwindow.h \
+    $$PWD/src/stock/stockwidget.h \
     $$PWD/src/appcontroller.h \
     $$PWD/src/login/loginwindow.h \
     $$PWD/src/login/loginvisuals.h \
@@ -33,3 +35,164 @@ HEADERS += $$PWD/src/mainwindow.h \
     $$PWD/src/ui/motion.h \
     $$PWD/src/widgets/animatedpanel.h
 RESOURCES += $$PWD/resources/resources.qrc
+
+SOURCES += $$PWD/src/ui/invoice.cpp
+
+
+SOURCES +=  $$PWD/src/dialogs/serviceplanningdialog.cpp
+HEADERS +=  $$PWD/src/dialogs/serviceplanningdialog.h
+HEADERS += $$PWD/src/ui/invoice.h
+QT += pdf network
+SOURCES += $$PWD/src/widgets/servicecurve.cpp \
+    $$PWD/src/widgets/servicetimetable.cpp \
+    $$PWD/src/dialogs/servicestatisticsdialog.cpp
+HEADERS += $$PWD/src/widgets/servicecurve.h \
+    $$PWD/src/widgets/servicetimetable.h \
+    $$PWD/src/dialogs/servicestatisticsdialog.h
+SOURCES += $$PWD/src/auth/accounts.cpp \
+    $$PWD/src/employees/employe.cpp \
+    $$PWD/src/employees/gestionemployes.cpp
+HEADERS += $$PWD/src/auth/accounts.h \
+    $$PWD/src/employees/employe.h \
+    $$PWD/src/employees/gestionemployes.h
+
+QT += svg
+
+SOURCES += $$PWD/src/locaux/alerts.cpp \
+    $$PWD/src/locaux/alertsdialog.cpp \
+    $$PWD/src/locaux/cardgrid.cpp \
+    $$PWD/src/locaux/clinicmap.cpp \
+    $$PWD/src/locaux/confirmdialog.cpp \
+    $$PWD/src/locaux/detailpanel.cpp \
+    $$PWD/src/locaux/hoverglow.cpp \
+    $$PWD/src/locaux/icons.cpp \
+    $$PWD/src/locaux/local.cpp \
+    $$PWD/src/locaux/localdialog.cpp \
+    $$PWD/src/locaux/localrepository.cpp \
+    $$PWD/src/locaux/pagelocaux.cpp \
+    $$PWD/src/locaux/pdfreport.cpp \
+    $$PWD/src/locaux/plandialog.cpp \
+    $$PWD/src/locaux/roomcard.cpp \
+    $$PWD/src/locaux/smartassign.cpp \
+    $$PWD/src/locaux/smartassigndialog.cpp \
+    $$PWD/src/locaux/smartsearch.cpp \
+    $$PWD/src/locaux/statsdialog.cpp \
+    $$PWD/src/locaux/toast.cpp
+
+HEADERS += $$PWD/src/locaux/alerts.h \
+    $$PWD/src/locaux/alertsdialog.h \
+    $$PWD/src/locaux/cardgrid.h \
+    $$PWD/src/locaux/clinicmap.h \
+    $$PWD/src/locaux/confirmdialog.h \
+    $$PWD/src/locaux/detailpanel.h \
+    $$PWD/src/locaux/hoverglow.h \
+    $$PWD/src/locaux/icons.h \
+    $$PWD/src/locaux/local.h \
+    $$PWD/src/locaux/localdialog.h \
+    $$PWD/src/locaux/localrepository.h \
+    $$PWD/src/locaux/pagelocaux.h \
+    $$PWD/src/locaux/pdfreport.h \
+    $$PWD/src/locaux/plandialog.h \
+    $$PWD/src/locaux/roomcard.h \
+    $$PWD/src/locaux/smartassign.h \
+    $$PWD/src/locaux/smartassigndialog.h \
+    $$PWD/src/locaux/smartsearch.h \
+    $$PWD/src/locaux/statsdialog.h \
+    $$PWD/src/locaux/theme.h \
+    $$PWD/src/locaux/toast.h
+
+SOURCES += $$PWD/src/medical/medicalrecord.cpp
+HEADERS += $$PWD/src/medical/medicalrecord.h
+SOURCES += $$PWD/src/medical/medicalrecorddialog.cpp
+HEADERS += $$PWD/src/medical/medicalrecorddialog.h
+SOURCES += $$PWD/src/medical/medicalrecorddetailsdialog.cpp
+HEADERS += $$PWD/src/medical/medicalrecorddetailsdialog.h
+SOURCES += $$PWD/src/medical/recordcard.cpp
+HEADERS += $$PWD/src/medical/recordcard.h
+
+
+SOURCES += $$PWD/src/medical/medicalwidget.cpp
+HEADERS += $$PWD/src/medical/medicalwidget.h
+SOURCES += $$PWD/src/medical/medicalexamples.cpp
+
+# === INTERFACE COMMUNE : les cinq gestions dans un seul fichier Designer ===
+FORMS += $$PWD/src/mainwindow.ui
+RESOURCES += $$PWD/resources/designer.qrc
+INCLUDEPATH += $$PWD $$OUT_PWD
+ui_pages.input = FORMS
+ui_pages.output = ui_integrated_pages.h
+ui_pages.commands = python $$shell_quote($$PWD/tools/generate_integrated_ui.py) --input ${QMAKE_FILE_IN} --output ${QMAKE_FILE_OUT} --uic $$shell_quote($$[QT_INSTALL_BINS]/uic.exe)
+ui_pages.depends = $$PWD/tools/generate_integrated_ui.py
+ui_pages.CONFIG += target_predeps no_link
+ui_pages.variable_out = GENERATED_FILES
+QMAKE_EXTRA_COMPILERS += ui_pages
+DISTFILES += $$PWD/tools/generate_integrated_ui.py
+
+SOURCES += $$PWD/src/database/oracleconnection.cpp
+SOURCES += $$PWD/src/database/connection.cpp
+HEADERS += $$PWD/src/database/connection.h
+
+HEADERS += $$PWD/src/database/oracleconnection.h
+
+HEADERS += $$PWD/src/ui/localchoice.h
+HEADERS += $$PWD/src/ui/relationchoices.h
+win32:LIBS += -lcrypt32
+
+SOURCES += $$PWD/src/models/employeequeries.cpp
+HEADERS += $$PWD/src/models/employeequeries.h $$PWD/src/models/modelrows.h
+
+SOURCES += $$PWD/src/models/relationmodel.cpp
+HEADERS += $$PWD/src/models/relationmodel.h
+
+SOURCES += $$PWD/src/models/invoicemodel.cpp $$PWD/src/stock/stockrecord.cpp
+HEADERS += $$PWD/src/models/invoicemodel.h $$PWD/src/stock/stockrecord.h
+
+# === MODULE STOCK : modele et fonctionnalites du module integre ===
+QT += printsupport
+SOURCES += $$PWD/src/stock/stock.cpp $$PWD/src/stock/stockjournal.cpp $$PWD/src/stock/inventoryfeatures.cpp
+HEADERS += $$PWD/src/stock/stock.h $$PWD/src/stock/stockjournal.h $$PWD/src/stock/inventoryfeatures.h
+
+# === MODULES MEDICAL / EMPLOYES / LOCAUX : integration de la version equipe ===
+SOURCES += $$PWD/src/medical/lookupdata.cpp
+HEADERS += $$PWD/src/medical/lookupdata.h
+SOURCES += $$PWD/src/medical/statscurvewidget.cpp
+HEADERS += $$PWD/src/medical/statscurvewidget.h
+SOURCES += $$PWD/src/medical/fieldvalidator.cpp
+HEADERS += $$PWD/src/medical/fieldvalidator.h
+HEADERS += $$PWD/src/ui/formvalidation.h
+SOURCES += $$PWD/src/medical/vaccination.cpp
+HEADERS += $$PWD/src/medical/vaccination.h
+SOURCES += $$PWD/src/medical/smsservice.cpp
+HEADERS += $$PWD/src/medical/smsservice.h
+SOURCES += $$PWD/src/medical/appointment.cpp
+HEADERS += $$PWD/src/medical/appointment.h
+SOURCES += $$PWD/src/medical/appointmentdialog.cpp
+HEADERS += $$PWD/src/medical/appointmentdialog.h
+SOURCES += $$PWD/src/medical/animalpdf.cpp
+HEADERS += $$PWD/src/medical/animalpdf.h
+SOURCES += $$PWD/src/medical/healthwatch.cpp
+HEADERS += $$PWD/src/medical/healthwatch.h
+SOURCES += $$PWD/src/medical/healthwatchdialog.cpp
+HEADERS += $$PWD/src/medical/healthwatchdialog.h
+SOURCES += $$PWD/src/medical/reminderdialog.cpp
+HEADERS += $$PWD/src/medical/reminderdialog.h
+SOURCES += $$PWD/src/medical/treatmentadvisor.cpp
+HEADERS += $$PWD/src/medical/treatmentadvisor.h
+SOURCES += $$PWD/src/medical/groomingcut.cpp
+HEADERS += $$PWD/src/medical/groomingcut.h
+SOURCES += $$PWD/src/medical/groomingdialog.cpp
+HEADERS += $$PWD/src/medical/groomingdialog.h
+RESOURCES += $$PWD/resources/team-medical.qrc
+
+SOURCES += $$PWD/src/models/modulesupplements.cpp
+HEADERS += $$PWD/src/models/modulesupplements.h
+SOURCES += $$PWD/src/locaux/flatmap.cpp
+HEADERS += $$PWD/src/locaux/flatmap.h
+SOURCES += $$PWD/src/locaux/localform.cpp
+HEADERS += $$PWD/src/locaux/localform.h
+
+SOURCES += $$PWD/src/employees/planning.cpp $$PWD/src/employees/employeeevaluation.cpp
+HEADERS += $$PWD/src/employees/planning.h $$PWD/src/employees/employeeevaluation.h
+
+# === MODULE MEDICAL : rappels dans les colonnes Oracle existantes ===
+HEADERS += $$PWD/src/medical/rappelsdb.h

@@ -1,0 +1,353 @@
+--- 
++++ 
+@@ -1,9 +1,12 @@
+ void GestionEmployes::ouvrirEvaluationEmployes()
+ {
+-    QDialog dlg(this);dlg.setObjectName("employeeEvaluationDialog");
++    QDialog dlg(this);
+     dlg.setWindowTitle("Performance & Évaluation des employés");
+-    dlg.resize(1080, 760);
+-    dlg.setMinimumSize(900, 650);
++    const QRect zoneEvaluation = QGuiApplication::primaryScreen()
++                                     ? QGuiApplication::primaryScreen()->availableGeometry()
++                                     : QRect(0, 0, 1280, 800);
++    dlg.resize(qMin(1080, zoneEvaluation.width() - 70), qMin(760, zoneEvaluation.height() - 70));
++    dlg.setMinimumSize(qMin(900, zoneEvaluation.width() - 30), qMin(620, zoneEvaluation.height() - 30));
+     dlg.setStyleSheet("QDialog { background-color: #F0F4F8; }");
+ 
+     QVBoxLayout *root = new QVBoxLayout(&dlg);
+@@ -32,8 +35,7 @@
+     // Reprendre les quatre indicateurs de la fenetre Statistiques et les garder
+     // au-dessus de la recherche, comme dans l'interface precedente.
+     const QList<Employe> employes = Employe::afficherTous();
+-    const QDate debutSemaine = Planning::semaineDebut();
+-    const QList<Employe::ChargeEmploye> charges = Employe::chargesSemaine(debutSemaine);
++    const QList<Employe::ChargeEmploye> charges = Employe::charges();
+     const Employe::StatsCharge stats = Employe::statistiques(charges);
+ 
+     QHBoxLayout *cardsLayout = new QHBoxLayout;
+@@ -97,7 +99,6 @@
+     listeLayout->addWidget(listeInfo);
+ 
+     QTableWidget *employeesTable = new QTableWidget;
+-    employeesTable->setObjectName("employeeEvaluationTable");
+     employeesTable->setColumnCount(3);
+     employeesTable->setHorizontalHeaderLabels({"Employé", "Poste", "Courriel"});
+     employeesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+@@ -301,7 +302,7 @@
+     QTextEdit *axesAmelioration = addTextField("Axes d'amélioration", "Ex. : améliorer le suivi des dossiers ou la communication...", 68);
+     QTextEdit *commentaires = addTextField("Commentaire général du responsable", "Écrire ici l'avis et les observations concernant cet employé...", 82);
+     QTextEdit *objectifs = addTextField("Objectifs / recommandations", "Ex. : suivre une formation, améliorer une compétence, respecter un objectif...", 68);
+-    commentsLayout->addWidget(new QLabel("Les commentaires sont saisis par le responsable et seront conservés dans l'historique local."));
++    commentsLayout->addWidget(new QLabel("Les notes et commentaires sont sauvegardés automatiquement et peuvent être modifiés à tout moment."));
+     formLayout->addWidget(commentsFrame);
+ 
+     QFrame *metaFrame = new QFrame;
+@@ -324,12 +325,6 @@
+     reviewStatus->setStyleSheet("QLabel { background: #E9F3F5; color: #315B65; border-radius: 8px; padding: 9px; }");
+     formLayout->addWidget(reviewStatus);
+ 
+-    QPushButton *btnSaveReview = new QPushButton("💾  Enregistrer l'évaluation localement");
+-    btnSaveReview->setObjectName("btnPrimary");
+-    btnSaveReview->setMinimumHeight(44);
+-    btnSaveReview->setCursor(Qt::PointingHandCursor);
+-    formLayout->addWidget(btnSaveReview, 0, Qt::AlignRight);
+-
+     scroll->setWidget(formContent);
+     ficheLayout->addWidget(scroll, 1);
+     pages->addWidget(pageFiche);
+@@ -338,6 +333,13 @@
+     QHBoxLayout *actionsLayout = new QHBoxLayout;
+     actionsLayout->setSpacing(10);
+     root->addLayout(actionsLayout);
++
++    QPushButton *btnSave = new QPushButton("💾  Enregistrer");
++    btnSave->setObjectName("btnPrimary");
++    btnSave->setMinimumHeight(42);
++    btnSave->setCursor(Qt::PointingHandCursor);
++    btnSave->setVisible(false);
++    actionsLayout->addWidget(btnSave);
+ 
+     QPushButton *btnPdf = new QPushButton("📄  Exporter PDF");
+     btnPdf->setObjectName("btnSecondary");
+@@ -364,8 +366,40 @@
+     Employe employeSelectionne;
+     bool hasEmployee = false;
+     bool loadingReview = false;
+-    bool reviewSaved = false;
+-    QString derniereDateReview;
++    bool reviewModified = false;
++
++    // Les evaluations restent dans un fichier local de l'application :
++    // on ne cree aucune table/colonne supplementaire dans Oracle.
++    auto cheminFichierEvaluations = []() {
++        QString dossier = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
++        if (dossier.isEmpty())
++            dossier = QDir::homePath() + QLatin1String("/.aniworld");
++        QDir().mkpath(dossier);
++        return dossier + QLatin1String("/evaluations_employes.json");
++    };
++
++    auto lireEvaluations = [&](QJsonObject &racine, QString *erreur) {
++        const QString chemin = cheminFichierEvaluations();
++        QFile fichier(chemin);
++        if (!fichier.exists()) {
++            racine = QJsonObject();
++            return true;
++        }
++        if (!fichier.open(QIODevice::ReadOnly)) {
++            if (erreur) *erreur = fichier.errorString();
++            return false;
++        }
++        const QByteArray contenu = fichier.readAll();
++        fichier.close();
++        QJsonParseError parseErreur;
++        const QJsonDocument document = QJsonDocument::fromJson(contenu, &parseErreur);
++        if (parseErreur.error != QJsonParseError::NoError || !document.isObject()) {
++            if (erreur) *erreur = QString("Fichier d'évaluations illisible : %1").arg(parseErreur.errorString());
++            return false;
++        }
++        racine = document.object();
++        return true;
++    };
+ 
+     auto calculerNote = [&]() -> double {
+         int total = 0;
+@@ -386,10 +420,7 @@
+             globalScore->setText(QString("%1 / 6 critères notés").arg(count));
+     };
+     auto rendreActionsDisponibles = [&]() {
+-        // Les actions sont utilisables dès qu'un employé est choisi. Elles
+-        // travaillent sur le contenu actuellement affiché, même avant la
+-        // sauvegarde locale ; la sauvegarde reste nécessaire pour conserver
+-        // l'historique dans la base.
++        btnSave->setEnabled(hasEmployee);
+         btnPdf->setEnabled(hasEmployee);
+         btnGmail->setEnabled(hasEmployee);
+         if (employeSelectionne.getCourriel().trimmed().isEmpty())
+@@ -397,12 +428,73 @@
+         else
+             btnGmail->setToolTip("Ouvre Gmail avec le destinataire et l'évaluation affichée préremplis.");
+     };
++
++    auto sauvegarderEvaluation = [&](bool afficherConfirmation) -> bool {
++        if (!hasEmployee || employeSelectionne.getId() <= 0)
++            return false;
++
++        QJsonObject racine;
++        QString erreurLecture;
++        if (!lireEvaluations(racine, &erreurLecture)) {
++            reviewStatus->setText("❌ Impossible de lire les évaluations : " + erreurLecture);
++            if (afficherConfirmation)
++                QMessageBox::critical(&dlg, "Erreur d'enregistrement", erreurLecture);
++            return false;
++        }
++
++        QJsonObject toutes = racine.value("evaluations").toObject();
++        QJsonObject fiche;
++        QJsonArray notes;
++        for (int valeur : ratingValues)
++            notes.append(valeur);
++        fiche.insert("notes", notes);
++        fiche.insert("pointsForts", pointsForts->toPlainText());
++        fiche.insert("axesAmelioration", axesAmelioration->toPlainText());
++        fiche.insert("commentaires", commentaires->toPlainText());
++        fiche.insert("objectifs", objectifs->toPlainText());
++        fiche.insert("dateEvaluation", dateEvaluation->date().toString(Qt::ISODate));
++        fiche.insert("evaluateur", evaluateur->text().trimmed());
++        fiche.insert("noteGlobale", calculerNote());
++        fiche.insert("updatedAt", QDateTime::currentDateTime().toString(Qt::ISODate));
++
++        // Une seule fiche par ID_EMP : chaque sauvegarde remplace la précédente.
++        toutes.insert(QString::number(employeSelectionne.getId()), fiche);
++        racine.insert("version", 1);
++        racine.insert("evaluations", toutes);
++
++        QSaveFile fichier(cheminFichierEvaluations());
++        if (!fichier.open(QIODevice::WriteOnly)) {
++            const QString erreur = fichier.errorString();
++            reviewStatus->setText("❌ Enregistrement impossible : " + erreur);
++            if (afficherConfirmation)
++                QMessageBox::critical(&dlg, "Erreur d'enregistrement", erreur);
++            return false;
++        }
++        const QByteArray donnees = QJsonDocument(racine).toJson(QJsonDocument::Indented);
++        if (fichier.write(donnees) != donnees.size() || !fichier.commit()) {
++            const QString erreur = fichier.errorString();
++            reviewStatus->setText("❌ Enregistrement impossible : " + erreur);
++            if (afficherConfirmation)
++                QMessageBox::critical(&dlg, "Erreur d'enregistrement", erreur);
++            return false;
++        }
++
++        reviewModified = false;
++        reviewStatus->setText("✅ Évaluation enregistrée. Les changements suivants remplaceront cette version.");
++        if (afficherConfirmation)
++            QMessageBox::information(&dlg, "Évaluation enregistrée",
++                                     "L'évaluation de " + employeSelectionne.getPrenom() + " " +
++                                     employeSelectionne.getNom() + " a été sauvegardée. Vous la retrouverez en rouvrant sa fiche.");
++        return true;
++    };
++
+     auto marquerModifie = [&]() {
+-        if (loadingReview) return;
+-        reviewSaved = false;
+-        rendreActionsDisponibles();
+-        reviewStatus->setText("Modifications non enregistrées. PDF et Gmail utilisent le contenu affiché ; cliquez sur Enregistrer pour conserver cette version dans l'historique local.");
++        if (loadingReview || !hasEmployee) return;
++        reviewModified = true;
+         actualiserNote();
++        // Sauvegarde automatique à chaque changement, en plus du bouton.
++        // Ainsi, fermer la fenêtre ou revenir à la liste ne fait pas perdre la note.
++        sauvegarderEvaluation(false);
+     };
+     for (int i = 0; i < ratingStarButtons.size(); ++i) {
+         for (int j = 0; j < ratingStarButtons.at(i).size(); ++j) {
+@@ -469,7 +561,7 @@
+         return html;
+     };
+ 
+-    auto chargerDerniereEvaluation = [&]() {
++    auto reinitialiserFiche = [&]() {
+         loadingReview = true;
+         for (int i = 0; i < ratingValues.size(); ++i) actualiserEtoiles(i, 0);
+         pointsForts->clear();
+@@ -478,30 +570,33 @@
+         objectifs->clear();
+         evaluateur->clear();
+         dateEvaluation->setDate(QDate::currentDate());
+-        reviewSaved = false;
+-        derniereDateReview.clear();
+-
+-        auto q=EmployeeEvaluation::latest(employeSelectionne.getId());
+-        if (q.next()) {
+-            derniereDateReview = q.value(0).toString();
+-            const QDate loadedDate = QDate::fromString(derniereDateReview, "yyyy-MM-dd");
+-            if (loadedDate.isValid()) dateEvaluation->setDate(loadedDate);
+-            evaluateur->setText(q.value(1).toString());
+-            for (int i = 0; i < ratingValues.size(); ++i) {
+-                const int value = q.value(2 + i).toInt();
+-                actualiserEtoiles(i, (value >= 1 && value <= 5) ? value : 0);
++        reviewModified = false;
++
++        QJsonObject racine;
++        QString erreurLecture;
++        if (!lireEvaluations(racine, &erreurLecture)) {
++            reviewStatus->setText("⚠ Impossible de charger l'évaluation sauvegardée : " + erreurLecture);
++        } else {
++            const QJsonObject toutes = racine.value("evaluations").toObject();
++            const QJsonObject fiche = toutes.value(QString::number(employeSelectionne.getId())).toObject();
++            if (!fiche.isEmpty()) {
++                const QJsonArray notes = fiche.value("notes").toArray();
++                for (int i = 0; i < ratingValues.size(); ++i) {
++                    const int valeur = i < notes.size() ? qBound(0, notes.at(i).toInt(), 5) : 0;
++                    actualiserEtoiles(i, valeur);
++                }
++                pointsForts->setPlainText(fiche.value("pointsForts").toString());
++                axesAmelioration->setPlainText(fiche.value("axesAmelioration").toString());
++                commentaires->setPlainText(fiche.value("commentaires").toString());
++                objectifs->setPlainText(fiche.value("objectifs").toString());
++                const QDate dateStockee = QDate::fromString(fiche.value("dateEvaluation").toString(), Qt::ISODate);
++                if (dateStockee.isValid()) dateEvaluation->setDate(dateStockee);
++                evaluateur->setText(fiche.value("evaluateur").toString());
++                reviewStatus->setText("✅ Évaluation précédente chargée. Toute modification remplacera automatiquement cette version.");
++            } else {
++                reviewStatus->setText("Nouvelle fiche : saisissez les notes et commentaires. Les changements seront enregistrés automatiquement.");
+             }
+-            pointsForts->setPlainText(q.value(8).toString());
+-            axesAmelioration->setPlainText(q.value(9).toString());
+-            commentaires->setPlainText(q.value(10).toString());
+-            objectifs->setPlainText(q.value(11).toString());
+-            reviewSaved = true;
+-            reviewStatus->setText("Dernière évaluation enregistrée le " + loadedDate.toString("dd/MM/yyyy") +
+-                                  ". Vous pouvez la consulter ou la modifier, puis enregistrer une nouvelle version.");
+-        } else {
+-            reviewStatus->setText("Aucune évaluation enregistrée pour cet employé. Le responsable peut remplir les critères ci-dessus.");
+-        }
+-
++        }
+         loadingReview = false;
+         actualiserNote();
+         rendreActionsDisponibles();
+@@ -529,8 +624,9 @@
+         else if (poste.contains("entretien"))
+             competenceHint = "Nettoyage, désinfection, organisation des espaces et respect des protocoles d'hygiène.";
+         criterionHints.at(2)->setText(competenceHint);
+-        chargerDerniereEvaluation();
++        reinitialiserFiche();
+         pages->setCurrentWidget(pageFiche);
++        btnSave->setVisible(true);
+         btnPdf->setVisible(true);
+         btnGmail->setVisible(true);
+         rendreActionsDisponibles();
+@@ -547,6 +643,7 @@
+             [&](int row, int) { choisirEmploye(row); });
+     connect(btnRetour, &QPushButton::clicked, &dlg, [&]() {
+         pages->setCurrentWidget(pageListe);
++        btnSave->setVisible(false);
+         btnPdf->setVisible(false);
+         btnGmail->setVisible(false);
+         btnPdf->setEnabled(false);
+@@ -555,38 +652,13 @@
+         searchEdit->setFocus();
+     });
+ 
+-    connect(btnSaveReview, &QPushButton::clicked, &dlg, [&]() {
+-        if (!hasEmployee) return;
+-        for (int i = 0; i < ratingValues.size(); ++i) {
+-            if (ratingValues.at(i) < 1) {
+-                QMessageBox::warning(&dlg, "Évaluation incomplète",
+-                                     "Veuillez attribuer une note aux six critères en cliquant sur les étoiles.");
+-                if (!ratingStarButtons.at(i).isEmpty()) ratingStarButtons.at(i).first()->setFocus();
+-                return;
+-            }
+-        }
+-        if (!dateEvaluation->date().isValid()) {
+-            QMessageBox::warning(&dlg, "Date invalide", "Veuillez choisir une date d'évaluation valide.");
+-            return;
+-        }
+-        const double note = calculerNote();
+-        QString issue;
+-        const QVariantList values={dateEvaluation->date().toString(Qt::ISODate),evaluateur->text().trimmed(),
+-           ratingValues.at(0),ratingValues.at(1),ratingValues.at(2),ratingValues.at(3),ratingValues.at(4),ratingValues.at(5),
+-           pointsForts->toPlainText().trimmed(),axesAmelioration->toPlainText().trimmed(),commentaires->toPlainText().trimmed(),objectifs->toPlainText().trimmed()};
+-        if(!EmployeeEvaluation::ajouter(employeSelectionne.getId(),values,&issue)) {
+-          QMessageBox::critical(&dlg,"Enregistrement impossible",issue);return;
+-        }
+-        reviewSaved = true;
+-        derniereDateReview = dateEvaluation->date().toString("yyyy-MM-dd");
+-        reviewStatus->setText(QString("✅ Évaluation enregistrée localement. Note globale : %1 / 5. Vous pouvez maintenant exporter le PDF ou préparer l'envoi Gmail.")
+-                              .arg(note, 0, 'f', 2));
+-        rendreActionsDisponibles();
+-        QMessageBox::information(&dlg, "Évaluation enregistrée", "L'évaluation de l'employé a bien été conservée localement.");
++    connect(btnSave, &QPushButton::clicked, &dlg, [&]() {
++        sauvegarderEvaluation(true);
+     });
+ 
+     connect(btnPdf, &QPushButton::clicked, &dlg, [&]() {
+         if (!hasEmployee) return;
++        if (reviewModified && !sauvegarderEvaluation(false)) return;
+         QString defaultName = "Evaluation_" + employeSelectionne.getPrenom() + "_" + employeSelectionne.getNom() + ".pdf";
+         defaultName.replace(QRegularExpression("[^A-Za-z0-9_.-]"), "_");
+         const QString defaultPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/" + defaultName;
+@@ -606,13 +678,12 @@
+             return;
+         }
+         QMessageBox::information(&dlg, "PDF créé",
+-                                 "Le rapport d'évaluation a été exporté :\n" + path +
+-                                 (reviewSaved ? "\n\nCette évaluation est également enregistrée localement."
+-                                              : "\n\nAttention : cette version n'est pas encore enregistrée dans l'historique local."));
++                                 "Le rapport d'évaluation a été exporté :\n" + path);
+     });
+ 
+     connect(btnGmail, &QPushButton::clicked, &dlg, [&]() {
+         if (!hasEmployee) return;
++        if (reviewModified && !sauvegarderEvaluation(false)) return;
+         const QString destinataire = employeSelectionne.getCourriel().trimmed();
+         if (destinataire.isEmpty()) {
+             QMessageBox::warning(&dlg, "Adresse manquante", "Aucune adresse courriel n'est enregistrée pour cet employé.");
+@@ -642,3 +713,4 @@
+     dlg.exec();
+ }
+ 
++// ==================== BARRE RECHERCHE ====================

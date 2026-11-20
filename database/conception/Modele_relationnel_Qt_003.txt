@@ -1,0 +1,169 @@
+ANIWORLD_APP / XEPDB1 - Modele relationnel effectivement utilise par Qt
+Mise a jour : 15 octobre 2026 - migration 003_common_links.sql
+PK : cle primaire ; FK : cle etrangere ; ? : valeur NULL autorisee.
+
+ACCOUNTS
+  USERNAME : VARCHAR2 PK
+  ROLE : VARCHAR2 
+  SALT : RAW 
+  PASSWORD_HASH : RAW 
+  ITERATIONS : NUMBER 
+
+CLIENTS
+  ID : NUMBER PK
+  NOM : VARCHAR2 
+  CREE_LE : TIMESTAMP(6) 
+
+COLLECTION_VERSIONS
+  NAME : VARCHAR2 PK
+  REVISION : NUMBER 
+
+EMPLOYES
+  ID : NUMBER PK
+  NOM : VARCHAR2 
+  PRENOM : VARCHAR2 
+  COURRIEL : VARCHAR2  ?
+  TELEPHONE : VARCHAR2  ?
+  POSTE : VARCHAR2  ?
+  DATE_EMBAUCHE : VARCHAR2  ?
+  DISPONIBLE : NUMBER  ?
+  CHARGE_HEBDO : NUMBER  ?
+  DISPO_HEBDO : NUMBER  ?
+  COMPETENCES : VARCHAR2  ?
+
+FACTURES
+  ID : NUMBER PK
+  ID_SERVICE : NUMBER UNIQUE FK ?
+  SERVICE_REFERENCE : NUMBER 
+  ID_CLIENT : NUMBER FK ?
+  NUMERO : VARCHAR2 UNIQUE
+  DATE_CREATION : VARCHAR2  ?
+  DATE_EMISSION : TIMESTAMP(6)  ?
+  STATUT : VARCHAR2 
+  NOM_CLIENT : VARCHAR2  ?
+  SERVICE_NOM : VARCHAR2 
+  CATEGORIE : VARCHAR2  ?
+  RESPONSABLE : VARCHAR2  ?
+  DATE_SERVICE : VARCHAR2  ?
+  DUREE : NUMBER  ?
+  TOTAL : NUMBER 
+
+INTEGRATION_MIGRATIONS
+  NAME : VARCHAR2 PK
+
+LIGNES_FACTURE
+  ID_FACTURE : NUMBER PK FK
+  NUMERO_LIGNE : NUMBER PK
+  DESIGNATION : VARCHAR2 
+  PRESTATIONS : CLOB  ?
+  QUANTITE : NUMBER 
+  PRIX_UNITAIRE : NUMBER 
+
+LOCAUX
+  ID : NUMBER PK
+  NAME : VARCHAR2 
+  TYPE : VARCHAR2 
+  FLOOR : NUMBER 
+  CAPACITY : NUMBER 
+  OCCUPANCY : NUMBER 
+  SPECIALTY : VARCHAR2  ?
+  OUT_OF_SERVICE : NUMBER 
+  CLEANING : NUMBER 
+  LAST_CLEANED : VARCHAR2  ?
+  DIRTY_SINCE : VARCHAR2  ?
+
+MEDICAL_RECORDS
+  ID : NUMBER PK
+  ANIMAL_ID : VARCHAR2 
+  NAME : VARCHAR2 
+  SPECIES : VARCHAR2 
+  BREED : VARCHAR2  ?
+  AGE : NUMBER 
+  SEX : VARCHAR2 
+  OWNER : VARCHAR2 
+  CONSULTATION_DATE : VARCHAR2 
+  REASON : CLOB  ?
+  DIAGNOSIS : CLOB  ?
+  TREATMENT : CLOB  ?
+  VACCINATIONS : CLOB  ?
+  ALLERGIES : CLOB  ?
+  WEIGHT : NUMBER 
+  OBSERVATIONS : CLOB  ?
+  VACCINATION_STATUS : VARCHAR2 
+  ID_LOCAL : NUMBER FK ?
+  ID_SERVICE : NUMBER FK ?
+
+PLANNING_AFFECTATIONS
+  ID : NUMBER PK
+  TITRE : VARCHAR2 
+  COMPETENCE_REQUISE : VARCHAR2 
+  DEBUT : VARCHAR2 
+  FIN : VARCHAR2 
+  CHARGE_HEURES : NUMBER 
+  RESPONSABLE_ID : NUMBER FK
+  CREATED_AT : VARCHAR2  ?
+
+SCHEMA_VERSION
+  ID : NUMBER PK
+  VERSION : NUMBER 
+
+SERVICES
+  ID : NUMBER PK
+  NAME : VARCHAR2 
+  DESCRIPTION : CLOB  ?
+  RESPONSIBLE : VARCHAR2  ?
+  CATEGORY : VARCHAR2 
+  DATETIME : VARCHAR2 
+  STATUS : VARCHAR2 
+  DURATION : NUMBER 
+  PRICE : NUMBER 
+  CLIENTNAME : VARCHAR2  ?
+  INVOICENUMBER : VARCHAR2 UNIQUE ?
+  INVOICEDATE : VARCHAR2  ?
+  ID_LOCAL : NUMBER FK ?
+  ID_EMPLOYE : NUMBER FK ?
+  ID_CLIENT : NUMBER FK ?
+
+STOCK_LOTS
+  LOT : VARCHAR2 PK
+  ARTICLE : VARCHAR2 
+  CATEGORY : VARCHAR2 
+  QUANTITY : NUMBER 
+  UNIT : VARCHAR2 
+  THRESHOLD : NUMBER 
+  EXPIRY : VARCHAR2 
+  ID_LOCAL : NUMBER FK ?
+
+STOCK_MOVEMENTS
+  ID : NUMBER PK
+  LOT : VARCHAR2 
+  ARTICLE : VARCHAR2 
+  QUANTITY_BEFORE : NUMBER 
+  QUANTITY_AFTER : NUMBER 
+  ACTION : VARCHAR2 
+  CHANGED_AT : TIMESTAMP(6) 
+  CHANGED_BY : VARCHAR2  ?
+
+RELATIONS (toutes actives et validees lors du controle)
+  FACTURES(ID_SERVICE) -> SERVICES(ID) ; suppression parent : SET NULL
+  FACTURES(ID_CLIENT) -> CLIENTS(ID) ; suppression parent : NO ACTION
+  LIGNES_FACTURE(ID_FACTURE) -> FACTURES(ID) ; suppression parent : NO ACTION
+  MEDICAL_RECORDS(ID_LOCAL) -> LOCAUX(ID) ; suppression parent : NO ACTION
+  MEDICAL_RECORDS(ID_SERVICE) -> SERVICES(ID) ; suppression parent : NO ACTION
+  PLANNING_AFFECTATIONS(RESPONSABLE_ID) -> EMPLOYES(ID) ; suppression parent : NO ACTION
+  SERVICES(ID_CLIENT) -> CLIENTS(ID) ; suppression parent : NO ACTION
+  SERVICES(ID_EMPLOYE) -> EMPLOYES(ID) ; suppression parent : NO ACTION
+  SERVICES(ID_LOCAL) -> LOCAUX(ID) ; suppression parent : NO ACTION
+  STOCK_LOTS(ID_LOCAL) -> LOCAUX(ID) ; suppression parent : NO ACTION
+
+REGLES
+Un service peut avoir un employe, un client et un local. Les liens historiques inconnus restent NULL.
+Une consultation medicale peut etre liee a un service. Un service peut avoir plusieurs consultations.
+Chaque service genere automatiquement une facture brouillon et une ligne de prestation.
+Exporter la facture PDF la marque EMISE. Les informations facturees sont alors figees.
+La facture garde ses instantanes apres suppression du service ; ID_SERVICE devient NULL.
+Supprimer un employe reference par un planning/service est refuse. Le rendre indisponible conserve son historique.
+Choisir un client existant reutilise son ID. Nouveau client cree une identite distincte, meme pour un nom identique.
+MEDICAL_RECORDS contient encore les informations animales par consultation ; le dossier normalise du schema cible reste distinct.
+Une affectation de local ne garantit pas une reservation horaire ni une mise a jour automatique de son occupation.
+Les anciennes pages Lucidchart de la migration 002 ne contiennent pas encore ces nouvelles relations.

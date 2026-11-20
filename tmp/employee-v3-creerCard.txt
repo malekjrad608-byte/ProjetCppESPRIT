@@ -1,0 +1,67 @@
+GestionEmployes::creerCard(const Employe &e)
+{
+    QFrame *card = new QFrame;
+    bool selectionne = (e.getId() == m_idSelectionne);
+    card->setObjectName(selectionne ? "cardEmployeSelected" : "cardEmploye");
+    card->setCursor(Qt::PointingHandCursor);
+    card->setMinimumHeight(170);
+    card->setProperty("employe_id", e.getId());
+    card->installEventFilter(this);
+
+    QVBoxLayout *layout = new QVBoxLayout(card);
+    layout->setContentsMargins(20, 18, 20, 18);
+    layout->setSpacing(10);
+
+    QHBoxLayout *topRow = new QHBoxLayout;
+    topRow->setSpacing(6);
+    topRow->addStretch();
+
+    QLabel *badge = new QLabel(e.isDisponible() ? "✅ Disponible" : "❌ Indisponible");
+    if (e.isDisponible())
+        badge->setStyleSheet("font-size: 10px; color: #2E7D32; background-color: #E6F4EA;"
+                             "padding: 5px 12px; border-radius: 12px; font-weight: bold;"
+                             "border: none;");
+    else
+        badge->setStyleSheet("font-size: 10px; color: #AE5751; background-color: #FBE9E7;"
+                             "padding: 5px 12px; border-radius: 12px; font-weight: bold;"
+                             "border: none;");
+    topRow->addWidget(badge);
+
+    layout->addLayout(topRow);
+
+    QLabel *nom = new QLabel(e.getPrenom() + " " + e.getNom());
+    nom->setStyleSheet("font-size: 18px; font-weight: bold; color: #225A64;"
+                       "background: transparent;");
+    layout->addWidget(nom);
+
+    QLabel *poste = new QLabel(e.getPoste());
+    poste->setStyleSheet("font-size: 12px; color: #7A8B8F; background: transparent;");
+    layout->addWidget(poste);
+
+    layout->addStretch();
+
+    QHBoxLayout *botRow = new QHBoxLayout;
+    botRow->setSpacing(10);
+
+    QLabel *charge = new QLabel(QString("⏱ %1 h").arg(e.getCharge(), 0, 'f', 0));
+    charge->setStyleSheet("font-size: 11px; color: #263B42; font-weight: 500;"
+                          "background: transparent;");
+    botRow->addWidget(charge);
+
+    botRow->addStretch();
+
+    if (!e.getCompetences().isEmpty()) {
+        QString comp = e.getCompetences();
+        if (comp.length() > 22) comp = comp.left(22) + "...";
+        QLabel *compLbl = new QLabel("🏷 " + comp);
+        compLbl->setStyleSheet("font-size: 10px; color: #7A8B8F; background: transparent;");
+        botRow->addWidget(compLbl);
+    }
+
+    layout->addLayout(botRow);
+
+    return card;
+}
+
+// ==================== DETAIL PANEL ====================
+QWidget *

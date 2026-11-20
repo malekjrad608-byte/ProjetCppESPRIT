@@ -4,18 +4,18 @@ ServiceMetrics ServiceMetrics::from(const QList<Service> &services, const QDateT
     ServiceMetrics metrics;
     metrics.total = services.size();
     for (const auto &service : services) {
-        ++metrics.categories[service.category];
-        if (service.status == "Planifié") {
+        ++metrics.categories[service.getCategory()];
+        if (service.getStatus() == "Planifié") {
             ++metrics.planned;
-            metrics.scheduledMinutes += service.duration;
-            if (service.dateTime < now) ++metrics.overdue;
-        } else if (service.status == "En cours") {
+            metrics.scheduledMinutes += service.getDuration();
+            if (service.getDateTime() < now) ++metrics.overdue;
+        } else if (service.getStatus() == "En cours") {
             ++metrics.inProgress;
-            metrics.scheduledMinutes += service.duration;
-        } else if (service.status == "Terminé") {
+            metrics.scheduledMinutes += service.getDuration();
+        } else if (service.getStatus() == "Terminé") {
             ++metrics.completed;
-            metrics.completedAmount += service.price;
-        } else if (service.status == "Annulé") {
+            metrics.completedAmount += service.getPrice();
+        } else if (service.getStatus() == "Annulé") {
             ++metrics.cancelled;
         }
     }

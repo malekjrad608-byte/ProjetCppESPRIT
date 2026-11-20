@@ -62,7 +62,7 @@ void AnimatedLogo::paintEvent(QPaintEvent *) {
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
     // Animate only the painted image, keeping the sidebar layout stationary.
-    const qreal size=62+9*m_progress-(isDown()?2:0);
+    const qreal size=qMin(width(),height())*(62.0/76.0+(9.0/76.0)*m_progress)-(isDown()?2:0);
     const QRectF target((width()-size)/2,(height()-size)/2,size,size);
     painter.drawPixmap(target,m_logo,QRectF(m_logo.rect()));
     if (m_progress>0 && !m_movie->currentPixmap().isNull()) {

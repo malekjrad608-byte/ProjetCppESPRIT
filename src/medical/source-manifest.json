@@ -1,0 +1,46 @@
+{
+  "source": "C:\\Users\\malek\\Downloads\\Dossier_Medical_ANIWORLD (2)\\Dossier_Medical_ANIWORLD",
+  "date": "2026-10-14",
+  "source_sha256": {
+    "CMakeLists.txt": "39e10fdc864526fb9d3f88268589e2dd6ae4b9662e71dc780005e6a8ba564fa5",
+    "dossier_medical.pro": "bbf0e5c2c349ffb37871b42839e816ec147358fcfaf0f07929c5688be83e220a",
+    "logindialog.cpp": "4c2b37d84fc50177f81ddb5a4e501fb10556c8979ba9dc8d178396b0869ba916",
+    "logindialog.h": "285e4584cd49cccc48d065df9c9b8a033bdde5eb0ce190b0c710016784b9fe7b",
+    "loginvisuals.cpp": "45d80c68347f299af9ee0b3baa4714512290c2045211314c6dc418934e440a96",
+    "loginvisuals.h": "c124217d67a2f7211c4471d2802b2b0f45d7fe2b7c891979924cfa57ba3942b9",
+    "main.cpp": "87e7289fc8b8db5e94a6a5b2a17ecad62b721e081b62c0956edca45f9e1c3c8e",
+    "mainwindow.cpp": "5b7c543eb86f4ea9ce5d16b8eb74b93fbd6ebd5e89eec6986ff8627462e77a8a",
+    "mainwindow.h": "7864776a4392d99f61cb67e8fe201265e218a48341a40924e8bab80b74137476",
+    "mainwindow.ui": "88e8782e0e995aae0498dff17789abe37f940f558f041bbeaaca65e24caf7715",
+    "medicalrecord.cpp": "72a5a61599aa0843f94070d82ecb6eacdccee5365761e7174c7b6dba16b66155",
+    "medicalrecord.h": "e8da727da62dcdfafaa96a6c5a54a1a3f5e95c0003e54d1116d0aab406ebe6b1",
+    "medicalrecorddetailsdialog.cpp": "69e8a1537dbc88168350e0bd25f5496ac688dd5f5c9d02b340031bbb3dd89105",
+    "medicalrecorddetailsdialog.h": "9ccb0da1c5fb8ac54ffff43da185541b4b2b0f12dfa05ce5045f0b79ab70a0ce",
+    "medicalrecorddialog.cpp": "6c1f1343032a91190a1ca128ab73ff28dd67999d618bdeca4a592e4291d5b135",
+    "medicalrecorddialog.h": "696dd4445fa75edcdb106907d4a1273493e5ca8935bacd0a5261c09466cee53b",
+    "motion.cpp": "4ac6c8c6be07fe12626f29dd5380f55a53c03a90f539bc432717d2aae53ada8e",
+    "motion.h": "888c61f0d4631417b2fdf5d2e3a52e05c6ebdc0c7e95c602294c01661f6d35a2",
+    "recordcard.cpp": "12e93fca9ccddd080e23d7fc257d5cea90db629dadaabcd49af90736d35d4d7f",
+    "recordcard.h": "78080a50edf6d8acb8a2fbe4b34142afd08ffdfc6a70d0c4914116f3e0650ce6",
+    "resources.qrc": "acba9cc716cdad8e63b1998d8899ce484a51bdd6a8cdc490c2836ab750e8b075"
+  },
+  "reimported_files": [
+    "medicalexamples.cpp",
+    "medicalrecord.cpp",
+    "medicalrecord.h",
+    "medicalrecorddetailsdialog.cpp",
+    "medicalrecorddetailsdialog.h",
+    "medicalrecorddialog.cpp",
+    "medicalrecorddialog.h",
+    "recordcard.cpp",
+    "recordcard.h"
+  ],
+  "integration": [
+    "Shared MedicalWidget and common design/hover effects",
+    "Existing SQLite records and account passwords preserved",
+    "Initial account medical / medical123, opens page 5",
+    "PDF-only export; demo examples only in demo mode; real consultation history"
+  ],
+  "screen_replacement": "mainwindow.cpp/.h/.ui imported as MedicalWidget, with original page layout and scoped source stylesheet",
+  "demo_import": "Eight supplied examples imported once only if persistent registry is empty; existing records preserved"
+}

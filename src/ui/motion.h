@@ -15,9 +15,11 @@ public:
     static void reveal(QWidget *widget, const QColor &background = Qt::white, int duration = 190);
     static void countTo(QLabel *label, int value, bool fromZero = false);
     static void progressTo(QProgressBar *bar, int value, bool fromZero = false);
+    static void installHoverEffects();
 signals:
     void changed(bool enabled);
 private:
+    bool eventFilter(QObject *object, QEvent *event) override;
     explicit Motion(QObject *parent);
     bool m_enabled;
 };

@@ -1,0 +1,3 @@
+from pathlib import Path
+p=Path('tests/service_tests.cpp'); s=p.read_text(encoding='utf-8').replace('const QString before=stock.inventoryCsv(); bool calculated=false;', '''auto snapshot=[source] { QStringList rows; for(int r=0;r<source->rowCount();++r) for(int c=0;c<source->columnCount();++c) rows<<source->index(r,c).data().toString(); return rows; };
+        const auto before=snapshot(); bool calculated=false;''').replace('QCOMPARE(stock.inventoryCsv(),before);','QCOMPARE(snapshot(),before);').replace('if(!output.isEmpty()) dialog->grab().save(output+"/facture-apercu.png"); dialog->reject();','if(!output.isEmpty()) dialog->grab().save(output+"/facture-apercu.png");\n            dialog->reject();'); p.write_text(s,encoding='utf-8')

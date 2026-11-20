@@ -12,6 +12,8 @@
 #include <QEvent>
 #include <algorithm>
 
+void DashboardWidget::paintEvent(QPaintEvent *) { QPainter p(this); Design::paintWorkspace(p,rect()); }
+
 namespace {
 class Mascot : public QWidget {
 public:
@@ -98,18 +100,18 @@ void DashboardWidget::refresh() {
     int planned=0,active=0,done=0; QList<Service> today;
     QMap<QString,int> counts;
     for(const auto &s:services) {
-        planned+=s.status=="Planifié"; active+=s.status=="En cours"; done+=s.status=="Terminé"; ++counts[s.category];
-        if(s.dateTime.date()==QDate::currentDate()) today.append(s);
+        planned+=s.getStatus()=="Planifié"; active+=s.getStatus()=="En cours"; done+=s.getStatus()=="Terminé"; ++counts[s.getCategory()];
+        if(s.getDateTime().date()==QDate::currentDate()) today.append(s);
     }
     const QList<int> values={int(services.size()),planned,active,done};
     for(int i=0;i<values.size();++i) Motion::countTo(m_values[i],values[i]);
     const auto categories=Design::categories();
     for(int i=0;i<categories.size();++i) { const int n=counts.value(categories[i]); m_categoryCounts[i]->setText(QString::number(n)); Motion::progressTo(m_bars[i],services.isEmpty()?0:100*n/services.size()); }
-    std::sort(today.begin(),today.end(),[](const Service &a,const Service &b){return a.dateTime<b.dateTime;});
+    std::sort(today.begin(),today.end(),[](const Service &a,const Service &b){return a.getDateTime()<b.getDateTime();});
     m_table->setRowCount(today.size());
     for(int i=0;i<today.size();++i) {
-        const auto &s=today[i]; auto *name=new QTableWidgetItem(s.name); name->setData(Qt::UserRole,s.id); name->setToolTip(s.name+"\n"+s.category+" · "+s.responsible+"\nDouble-cliquez pour consulter"); m_table->setItem(i,0,name);
-        m_table->setItem(i,1,new QTableWidgetItem(s.dateTime.toString("HH:mm"))); m_table->setItem(i,2,new QTableWidgetItem); m_table->setCellWidget(i,2,Design::badge(s.status)); m_table->setRowHeight(i,50);
+        const auto &s=today[i]; auto *name=new QTableWidgetItem(s.getName()); name->setData(Qt::UserRole,s.getId()); name->setToolTip(s.getName()+"\n"+s.getCategory()+" · "+s.getResponsible()+"\nDouble-cliquez pour consulter"); m_table->setItem(i,0,name);
+        m_table->setItem(i,1,new QTableWidgetItem(s.getDateTime().toString("HH:mm"))); m_table->setItem(i,2,new QTableWidgetItem); m_table->setCellWidget(i,2,Design::badge(s.getStatus())); m_table->setRowHeight(i,50);
     }
     m_table->setVisible(!today.isEmpty()); m_empty->setVisible(today.isEmpty());
     m_todayCount->setText(QString("%1 prestation%2 prévue%2 aujourd'hui").arg(today.size()).arg(today.size()==1?"":"s"));

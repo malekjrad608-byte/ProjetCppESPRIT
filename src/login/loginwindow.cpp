@@ -161,6 +161,7 @@ LoginWindow::LoginWindow(bool demoMode, bool useSettings, QWidget *parent)
 
 void LoginWindow::prepareForLogin()
 {
+    m_role=Accounts::Role::None;
     m_loginPending = false;
     m_loginBtn->setEnabled(true);
     m_password->clear();
@@ -348,15 +349,15 @@ QWidget *LoginWindow::createLoginPage()
     formLayout->addSpacing(10);
     formLayout->addWidget(m_loginBtn);
     formLayout->addSpacing(24);
-    auto *formNote = new QLabel("Prototype · admin / admin123\n" + QString(m_demoMode
-        ? "Demo services · changes are not saved."
-        : "Your services are saved on this computer."));
+    auto *formNote = new QLabel(m_demoMode
+        ? "Démonstration · modifications non enregistrées."
+        : "Votre compte ouvre directement votre espace de gestion.");
     formNote->setObjectName("formNote");
     formNote->setAlignment(Qt::AlignCenter);
     formNote->setWordWrap(true);
     formLayout->addWidget(formNote);
     formLayout->addStretch(3);
-    auto *footer = new QLabel("ANIWORLD  /  GESTION DES SERVICES");
+    auto *footer = new QLabel("ANIWORLD  /  GESTION DU CENTRE DE SOINS");
     footer->setObjectName("formFooter");
     footer->setAlignment(Qt::AlignCenter);
     footer->setWordWrap(true);
@@ -602,13 +603,14 @@ void LoginWindow::handleLogin()
         return;
     }
 
-    const bool demoAdmin = (user == "admin" && pass == "admin123");
+    m_role = Accounts::authenticate(user,pass);
     const bool recoveredAccount =
-        !m_recoveredAccount.isEmpty()
+        m_demoMode && !m_recoveredAccount.isEmpty()
         && user.compare(m_recoveredAccount, Qt::CaseInsensitive) == 0
         && pass == m_recoveredPassword;
 
-    if (demoAdmin || recoveredAccount) {
+    if (recoveredAccount) m_role=Accounts::Role::Services;
+    if (m_role!=Accounts::Role::None) {
         m_loginPending = true;
         m_loginBtn->setEnabled(false);
         if (m_useSettings) {
@@ -626,6 +628,10 @@ void LoginWindow::handleLogin()
 
 void LoginWindow::showResetPassword()
 {
+    if(!m_demoMode) {
+        showMessage("Pour réinitialiser votre compte, contactez le responsable du centre. Une fois connecté, utilisez « Mot de passe ».",true);
+        return;
+    }
     resetRecoveryState();
     m_pages->setCurrentIndex(1);
     animatePage();
@@ -641,6 +647,7 @@ void LoginWindow::showLoginForm()
 
 void LoginWindow::sendResetCode()
 {
+    if(!m_demoMode) return;
     const bool emailMode = m_emailOption->isChecked();
     const QString destination = m_contactInput->text().trimmed();
 
@@ -681,6 +688,7 @@ void LoginWindow::sendResetCode()
 
 void LoginWindow::resetPassword()
 {
+    if(!m_demoMode) return;
     if (m_resetCode.isEmpty()) {
         showResetMessage("Generate a demo code before resetting your password.", true);
         return;

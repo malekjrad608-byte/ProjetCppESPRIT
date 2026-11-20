@@ -1,0 +1,896 @@
+--- 
+
++++ 
+
+@@ -1,6 +1,5 @@
+
+-#include "../database/oracleconnection.h"
+-#include <QStatusBar>
+-#include "medicalwidget.h"
+-#include "../ui/motion.h"
+-#include "ui_integrated_pages.h"
++#include "mainwindow.h"
++#include "rappelsdb.h"
++#include "motion.h"
++#include "ui_mainwindow.h"
+ #include "recordcard.h"
+@@ -8,3 +7,3 @@
+
+ #include "medicalrecorddetailsdialog.h"
+-
++#include "Connection.h"
+ #include "medicalrecord.h"
+@@ -37,3 +36,3 @@
+
+ #include <QMap>
+-
++#include <QSqlQueryModel>
+ #include <QIcon>
+@@ -66,23 +65,30 @@
+
+ // Menu latéral (Navigation) : true = affiché, false = masqué.
+-const bool kShowSidebar = false;      // intégré : le menu latéral est celui de la fenêtre principale ANIWORLD
+-}
+-
+-MedicalWidget::MedicalWidget(bool demo,QWidget *parent)
+- : QMainWindow(parent),ui(new Ui::MedicalWidget),m_demo(demo) {
+- ui->setupUi(this);setWindowFlags(Qt::Widget);setMinimumSize(0,0);setObjectName("medicalPage");
+- m_db=OracleConnection::database().isOpen();actualiser();setupUI();
+- ui->filterSpecies->setObjectName("medicalSpecies");ui->filterVaccination->setObjectName("medicalVaccination");
+- ui->btnReset->setObjectName("medicalReset");m_scroll->setObjectName("medicalCardsScroll");
+- ui->btnEdit->setObjectName("medicalEdit");ui->btnDelete->setObjectName("medicalDelete");ui->btnView->setObjectName("medicalView");
+- ui->btnToggle->setObjectName("medicalToggle");ui->btnStatsTop->setObjectName("medicalStatistics");ui->btnFile->setObjectName("medicalExport");
+- m_btnReminders->setObjectName("medicalReminders");m_btnWatch->setObjectName("medicalWatch");
+- m_detailScroll=new QScrollArea(ui->detailPanel);m_detailScroll->setFrameShape(QFrame::NoFrame);
+- m_detailScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);m_detailScroll->setWidgetResizable(false);
+- m_detailScroll->setWidget(ui->selectedCard);
+- loadStylesheet();refreshView();
+- m_rdvTimer=new QTimer(this);connect(m_rdvTimer,&QTimer::timeout,this,&MedicalWidget::checkAppointments);
+- m_rdvTimer->start(15*60*1000);checkAppointments();checkHealthWatch(false);
+-}
+-
+-MedicalWidget::~MedicalWidget()
++const bool kShowSidebar = true;
++}
++
++MainWindow::MainWindow(QWidget *parent)
++    : QMainWindow(parent)
++    , ui(new Ui::MainWindow)
++{
++    ui->setupUi(this);      // builds everything described in mainwindow.ui
++
++    m_db = Connection::createInstance().isOpen();
++    if (m_db)
++        actualiser();        // Appel de la méthode afficher() via l'attribut Mtmp
++    else
++        loadStaticData();    // mode hors ligne
++    syncVaccinationStatus();
++    setupUI();              // wires the widgets from the .ui to the logic
++    loadStylesheet();
++    refreshView();
++    QTimer::singleShot(600, this, &MainWindow::showStartupReminders);   // alerte de rappels au démarrage
++    // Rendez-vous : vérification au démarrage puis toutes les 15 minutes (SMS automatiques)
++    QTimer::singleShot(1500, this, &MainWindow::checkAppointments);
++    QTimer::singleShot(3000, this, [this]() { checkHealthWatch(true); });   // veille sanitaire au démarrage
++    m_rdvTimer = new QTimer(this);
++    connect(m_rdvTimer, &QTimer::timeout, this, &MainWindow::checkAppointments);
++    m_rdvTimer->start(15 * 60 * 1000);
++}
++
++MainWindow::~MainWindow()
+ {
+@@ -93,3 +99,3 @@
+
+ 
+-void MedicalWidget::setupUI()
++void MainWindow::setupUI()
+ {
+@@ -126,3 +132,3 @@
+
+     // Logo: uses :/assets/logo.png when present, paw glyph otherwise
+-    QPixmap logoPix(":/med/images/logo.png");
++    QPixmap logoPix(":/images/logo.png");
+     if (!logoPix.isNull())
+@@ -130,3 +136,3 @@
+
+     else
+-        ui->logoIcon->setPixmap(QPixmap(":/med/icons/paw.svg").scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
++        ui->logoIcon->setPixmap(QPixmap(":/icons/paw.svg").scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+ 
+@@ -141,16 +147,11 @@
+
+     auto *menu = new QMenu(ui->btnFile);
+-    menu->addAction("Actualiser", this, &MedicalWidget::onRefreshClicked);
+-    menu->addAction("Exporter en CSV…", this, &MedicalWidget::onExportCsvClicked);
+-    menu->addAction("Fiche animal (PDF)…", this, &MedicalWidget::onExportPdfClicked);
+-    menu->addAction("Rendez-vous…", this, &MedicalWidget::onRdvClicked);
+-    menu->addAction("Veille sanitaire…", this, &MedicalWidget::onWatchClicked);
++    menu->addAction("Actualiser", this, &MainWindow::onRefreshClicked);
++    menu->addAction("Exporter en CSV…", this, &MainWindow::onExportCsvClicked);
++    menu->addAction("Fiche animal (PDF)…", this, &MainWindow::onExportPdfClicked);
++    menu->addAction("Rendez-vous…", this, &MainWindow::onRdvClicked);
++    menu->addAction("Veille sanitaire…", this, &MainWindow::onWatchClicked);
+     menu->addSeparator();
+     menu->addAction("Quitter", this, &QWidget::close);
+-    ui->btnFile->setText("Actions");
++    ui->btnFile->setText("Fichier");
+     ui->btnFile->setMenu(menu);
+-    // Intégré : la barre du haut de cette page est supprimée (la fenêtre principale a déjà la sienne).
+-    // Le menu d'actions (export CSV, fiche PDF, rendez-vous, veille) passe dans l'en-tête de la page.
+-    ui->btnFile->setParent(ui->recordsPage);
+-    ui->btnFile->show();
+-    ui->topBar->hide();
+ 
+@@ -165,5 +166,4 @@
+
+     m_btnLogout->setCursor(Qt::PointingHandCursor);
+-    connect(m_btnLogout, &QPushButton::clicked, this, &MedicalWidget::onLogoutClicked);
+-    m_btnLogout->hide();         // intégré : « Oracle connecté » et la déconnexion sont gérés par la fenêtre principale
+-    ui->roleLabel->hide();
++    connect(m_btnLogout, &QPushButton::clicked, this, &MainWindow::onLogoutClicked);
++    m_btnLogout->show();
+ 
+@@ -172,3 +172,3 @@
+
+     m_titleIcon->setObjectName("titleIcon");
+-    m_titleIcon->setPixmap(QPixmap(":/med/icons/stethoscope.svg").scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
++    m_titleIcon->setPixmap(QPixmap(":/icons/stethoscope.svg").scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+     m_titleIcon->show();
+@@ -179,4 +179,4 @@
+
+     // --- Records page: header & toolbar ----------------------------------
+-    connect(ui->btnAdd, &QPushButton::clicked, this, &MedicalWidget::onAddRecordClicked);
+-    connect(ui->btnStatsTop, &QPushButton::clicked, this, &MedicalWidget::onShowStatisticsClicked);
++    connect(ui->btnAdd, &QPushButton::clicked, this, &MainWindow::onAddRecordClicked);
++    connect(ui->btnStatsTop, &QPushButton::clicked, this, &MainWindow::onShowStatisticsClicked);
+     ui->btnStatsTop->setText(QString::fromUtf8("📊  Statistiques"));
+@@ -189,4 +189,3 @@
+
+     m_searchEdit = ui->searchEdit;
+-    m_searchEdit->setObjectName("medicalSearch");
+-    m_searchEdit->addAction(QIcon(":/med/icons/search_grey.svg"), QLineEdit::LeadingPosition);
++    m_searchEdit->addAction(QIcon(":/icons/search_grey.svg"), QLineEdit::LeadingPosition);
+     m_filterSpecies = ui->filterSpecies;
+@@ -195,6 +194,6 @@
+
+ 
+-    connect(m_searchEdit, &QLineEdit::textChanged, this, &MedicalWidget::onFilterChanged);
++    connect(m_searchEdit, &QLineEdit::textChanged, this, &MainWindow::onFilterChanged);
+     for (QComboBox *c : {m_filterSpecies, m_filterVaccination, m_sortCombo})
+-        connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MedicalWidget::onFilterChanged);
+-    connect(ui->btnReset, &QPushButton::clicked, this, &MedicalWidget::onResetFiltersClicked);
++        connect(c, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::onFilterChanged);
++    connect(ui->btnReset, &QPushButton::clicked, this, &MainWindow::onResetFiltersClicked);
+ 
+@@ -224,3 +223,3 @@
+
+     ui->statusPill->hide();
+-    for (QPushButton *b : {ui->btnView, ui->btnEdit, ui->btnToggle, ui->btnDelete}) {
++    for (QPushButton *b : {ui->btnEdit, ui->btnToggle, ui->btnDelete}) {
+         b->setParent(ui->selectedCard);     // sinon ils restent rognés par detailContent
+@@ -232,4 +231,4 @@
+
+     m_detailSep->setFixedHeight(1);
+-    const QStringList keys = { "Animal", "Espèce", "Âge", "Propriétaire",
+-                               "Dossier", "Consultation", "Motif", "Vaccins" };
++    const QStringList keys = { "Réf. animal", "Nom", "Espèce", "Âge", "Propriétaire",
++                               "Consultation", "Motif", "Vaccins" };
+     for (const QString &k : keys) {
+@@ -246,6 +245,6 @@
+
+ 
+-    connect(m_btnView, &QPushButton::clicked, this, &MedicalWidget::onViewRecordClicked);
+-    connect(m_btnToggle, &QPushButton::clicked, this, &MedicalWidget::onToggleVaccinationClicked);
+-    connect(m_btnEdit, &QPushButton::clicked, this, &MedicalWidget::onEditRecordClicked);
+-    connect(m_btnDelete, &QPushButton::clicked, this, &MedicalWidget::onDeleteRecordClicked);
++    connect(m_btnView, &QPushButton::clicked, this, &MainWindow::onViewRecordClicked);
++    connect(m_btnToggle, &QPushButton::clicked, this, &MainWindow::onToggleVaccinationClicked);
++    connect(m_btnEdit, &QPushButton::clicked, this, &MainWindow::onEditRecordClicked);
++    connect(m_btnDelete, &QPushButton::clicked, this, &MainWindow::onDeleteRecordClicked);
+ 
+@@ -261,6 +260,6 @@
+
+     m_btnWatch->setCursor(Qt::PointingHandCursor);
+-    connect(m_btnWatch, &QPushButton::clicked, this, &MedicalWidget::onWatchClicked);
++    connect(m_btnWatch, &QPushButton::clicked, this, &MainWindow::onWatchClicked);
+     m_btnWatch->show();
+     m_btnReminders->show();
+-    connect(m_btnReminders, &QPushButton::clicked, this, &MedicalWidget::onRemindersClicked);
++    connect(m_btnReminders, &QPushButton::clicked, this, &MainWindow::onRemindersClicked);
+     ui->btnStatsTop->show();
+@@ -287,16 +286,10 @@
+
+     m_globalText = ui->globalText;
+-    connect(ui->btnStatsPanel, &QPushButton::clicked, this, &MedicalWidget::onShowStatisticsClicked);
+-}
+-
+-void MedicalWidget::loadStylesheet()
+-{
+-    QFile file(":/med/styles/style.qss");
++    connect(ui->btnStatsPanel, &QPushButton::clicked, this, &MainWindow::onShowStatisticsClicked);
++}
++
++void MainWindow::loadStylesheet()
++{
++    QFile file(":/styles/style.qss");
+     if (file.open(QIODevice::ReadOnly))
+-        { QString css=QString::fromUtf8(file.readAll());
+-      for(const auto &p:QList<QPair<QString,QString>>{{"actionViewButton","medicalView"},{"actionEditButton","medicalEdit"},{"actionDeleteButton","medicalDelete"},{"actionToggleButton","medicalToggle"},{"btnReset","medicalReset"},{"topButton","medicalExport"}})css.replace("#"+p.first,"#"+p.second);
+-      css.replace("#btnStatsTop",":is(#medicalStatistics,#medicalReminders,#medicalWatch)");
+-      // Qt QSS has no :is selector; duplicate the identifier list instead.
+-      css.replace(":is(#medicalStatistics,#medicalReminders,#medicalWatch)","#medicalStatistics, #medicalReminders, #medicalWatch");
+-      setStyleSheet(css);
+-    }   // style limité à cette page (le style global reste celui d'ANIWORLD)
++        qApp->setStyleSheet(QString::fromUtf8(file.readAll()));
+ }
+@@ -305,14 +298,123 @@
+
+ 
+-void MedicalWidget::loadStaticData() { actualiser(); }
+-
+-// Refresh (Actualiser) : la lecture est exécutée dans Mtmp.afficher()
++void MainWindow::loadStaticData()
++{
++    auto add = [this](const QString &animalId, const QString &name, const QString &species,
++                      const QString &breed, int age, const QString &sex, const QString &owner,
++                      const QString &recordId, const QDate &date, const QString &reason,
++                      const QString &diagnosis, const QString &treatment,
++                      const QString &vaccinations, const QString &allergies, double weight,
++                      const QString &observations, const QString &vaccStatus) {
++        MedicalRecord M(recordId, date, reason, diagnosis, animalId, name,
++                        species, breed, age, weight, owner, QString());
++        M.setSexe(sex);
++        M.setTraitement(treatment);
++        M.setVaccinations(vaccinations);
++        M.setAllergies(allergies);
++        M.setObservations(observations);
++        M.setStatutVaccination(vaccStatus);
++        m_records.append(M);
++    };
++
++    add("ANI-001", "Max", "Chien", "Golden Retriever", 5, "Mâle", "Jean Dupont",
++        "MED-001", QDate(2026, 9, 12),
++        "Visite de routine", "Animal en bonne santé",
++        "Aucun traitement nécessaire",
++        "Rage, Parvovirose, Distemper", "Aucune connue", 32.5,
++        "Excellent état général. Poids stable.",
++        "À jour");
++    add("ANI-002", "Luna", "Chat", "Siamois", 3, "Femelle", "Marie Martin",
++        "MED-002", QDate(2026, 9, 10),
++        "Perte d'appétit", "Gastrite légère",
++        "Médicament anti-acide, régime alimentaire doux",
++        "Rage, Typhus, Coryza", "Poisson", 4.2,
++        "Amélioration observée après 48h de traitement.",
++        "À jour");
++    add("ANI-003", "Rocky", "Chien", "Bulldog", 7, "Mâle", "Pierre Bernard",
++        "MED-003", QDate(2026, 9, 8),
++        "Boiterie patte arrière", "Arthrose débutante",
++        "Anti-inflammatoires, suppléments articulaires",
++        "Rage, Parvovirose", "Aucune connue", 28.0,
++        "Surveillance recommandée. Exercice modéré.",
++        "À renouveler");
++    add("ANI-004", "Mimi", "Chat", "Européen", 2, "Femelle", "Sophie Petit",
++        "MED-004", QDate(2026, 9, 5),
++        "Vaccination annuelle", "Examen préventif",
++        "Vaccination Rage, Typhus, Coryza",
++        "Rage, Typhus, Coryza", "Aucune connue", 3.8,
++        "Vaccination effectuée sans réaction.",
++        "À jour");
++    add("ANI-005", "Bella", "Lapin", "Lop", 4, "Femelle", "Lucas Dubois",
++        "MED-005", QDate(2026, 9, 3),
++        "Problèmes dentaires", "Malocclusion dentaire",
++        "Lime dentaire, régime alimentaire riche en fibres",
++        "Myxomatose", "Aucune connue", 2.1,
++        "Suivi dentaire recommandé tous les 3 mois.",
++        "À renouveler");
++    add("ANI-006", "Simba", "Chat", "Maine Coon", 6, "Mâle", "Emma Laurent",
++        "MED-006", QDate(2026, 8, 28),
++        "Toux persistante", "Asthme félin",
++        "Corticoïdes inhalés, environnement sans poussière",
++        "Rage, Typhus, Coryza", "Acariens", 7.5,
++        "Condition stable sous traitement.",
++        "À jour");
++    add("ANI-007", "Toby", "Chien", "Labrador", 8, "Mâle", "Thomas Moreau",
++        "MED-007", QDate(2026, 8, 25),
++        "Examen de routine", "Surpoids modéré",
++        "Régime hypocalorique, exercice quotidien",
++        "Rage, Parvovirose, Distemper", "Aucune connue", 42.0,
++        "Perte de poids recommandée (objectif: 35kg).",
++        "À jour");
++    add("ANI-008", "Coco", "Oiseau", "Perroquet", 12, "Femelle", "Chloe Roux",
++        "MED-008", QDate(2026, 8, 20),
++        "Plumes anormales", "Carence en vitamines",
++        "Suppléments vitaminiques, alimentation variée",
++        "Aucune requise", "Aucune connue", 0.45,
++        "Plumes en amélioration après 2 semaines de traitement.",
++        "À jour");
++}
++
++// Refresh (Actualiser) : la requête SELECT est exécutée dans Mtmp.afficher()
+ // (classe MedicalRecord). Ici on lit seulement le modèle retourné pour
+ // remplir les cartes : aucune requête SQL dans la vue.
+-void MedicalWidget::actualiser() {
+- QString error;auto records=MedicalRecord::afficher(&error);
+- if(!error.isEmpty()){statusBar()->showMessage(error);return;}
+- m_records=records;syncVaccinationStatus();
+-}
+-
+-int MedicalWidget::indexOfRecord(const QString &recordId) const
++void MainWindow::actualiser()
++{
++    // Les champs sans colonne dans MEDICAL (vaccinations, allergies, ...) sont gardés en mémoire
++    QMap<QString, MedicalRecord> anciens;
++    for (const auto &r : m_records)
++        anciens.insert(r.getIdDossier(), r);
++
++    QSqlQueryModel *model = Mtmp.afficher();
++    m_records.clear();
++    for (int i = 0; i < model->rowCount(); ++i) {
++        auto val = [model, i](int col) { return model->data(model->index(i, col)); };
++        // ID_DOSSIER et REF_ANIMAL sont des NUMBER dans la base : affichés "MED-012" / "ANI-005"
++        MedicalRecord M(MedicalRecord::versTexte(val(0), "MED"), val(1).toDate(), val(2).toString(), val(3).toString(),
++                        MedicalRecord::versTexte(val(4), "ANI"), val(5).toString(), val(6).toString(), val(7).toString(),
++                        val(8).toInt(), val(9).toDouble(), val(10).toString(), val(11).toString());
++        // Colonnes facultatives (si elles existent dans MEDICAL : voir ajouter_colonnes_optionnelles.sql)
++        M.setSexe(val(12).toString());
++        M.setTraitement(val(13).toString());
++        M.setVaccinations(val(14).toString());
++        M.setAllergies(val(15).toString());
++        M.setObservations(val(16).toString());
++        M.setStatutVaccination(val(17).toString());
++        M.setTelephone(val(18).toString());
++        if (anciens.contains(M.getIdDossier())) {
++            // pas de colonne en base : on garde en mémoire la valeur saisie pendant cette session
++            const MedicalRecord &a = anciens[M.getIdDossier()];
++            if (M.getSexe().isEmpty())              M.setSexe(a.getSexe());
++            if (M.getTraitement().isEmpty())        M.setTraitement(a.getTraitement());
++            if (M.getVaccinations().isEmpty())      M.setVaccinations(a.getVaccinations());
++            if (M.getAllergies().isEmpty())         M.setAllergies(a.getAllergies());
++            if (M.getObservations().isEmpty())      M.setObservations(a.getObservations());
++            if (M.getStatutVaccination().isEmpty()) M.setStatutVaccination(a.getStatutVaccination());
++            if (M.getTelephone().isEmpty())         M.setTelephone(a.getTelephone());
++        }
++        m_records.append(M);
++    }
++    delete model;
++    syncVaccinationStatus();
++}
++
++int MainWindow::indexOfRecord(const QString &recordId) const
+ {
+@@ -324,3 +426,3 @@
+
+ 
+-void MedicalWidget::applyFiltersAndSort()
++void MainWindow::applyFiltersAndSort()
+ {
+@@ -373,3 +475,3 @@
+
+ 
+-void MedicalWidget::refreshView()
++void MainWindow::refreshView()
+ {
+@@ -392,3 +494,3 @@
+
+ 
+-void MedicalWidget::rebuildCards()
++void MainWindow::rebuildCards()
+ {
+@@ -398,5 +500,7 @@
+
+ 
++    const QList<HealthAlert> alertesSante = HealthWatch::analyser(m_records);   // une seule analyse pour tous les scores
+     for (const auto &r : m_filteredRecords) {
+         auto *card = new RecordCard(r, m_cardsContainer);
+-        connect(card, &RecordCard::clicked, this, &MedicalWidget::onCardClicked);
++        card->setRisk(RiskScore::calculer(r, alertesSante));
++        connect(card, &RecordCard::clicked, this, &MainWindow::onCardClicked);
+         connect(card, &RecordCard::doubleClicked, this, [this](const QString &id) { viewRecord(id); });
+@@ -410,3 +514,3 @@
+
+ // Cards are placed by hand (no layout): as many columns as fit in the viewport.
+-void MedicalWidget::relayoutCards()
++void MainWindow::relayoutCards()
+ {
+@@ -431,3 +535,3 @@
+
+ // Positions every block of the window by hand (the .ui has no layouts).
+-void MedicalWidget::layoutUi()
++void MainWindow::layoutUi()
+ {
+@@ -438,3 +542,3 @@
+
+     const int sidebarW = kShowSidebar ? qBound(200, qRound(W * 0.205), 270) : 0;
+-    const int topH = 0, footerH = 30;          // pas de barre supérieure propre : voir setupUI
++    const int topH = 60, footerH = 30;
+     const int mainW = qMax(500, W - sidebarW);
+@@ -460,2 +564,3 @@
+
+     barX -= barGap + 100;
++    ui->btnFile->setGeometry(barX, barY, 100, barBtnH);
+     barX -= barGap + 210;
+@@ -470,3 +575,3 @@
+
+ 
+-    const int pageTop = topH + 14;
++    const int pageTop = topH + 8;
+     const int pageW = qMax(460, mainW - 40);
+@@ -490,4 +595,2 @@
+
+     ui->btnAdd->setGeometry(pageW - addW, 0, addW, 46);
+-    ui->btnFile->setGeometry(pageW - addW - 10 - 110, 4, 110, 38);
+-    ui->btnFile->raise();
+ 
+@@ -515,7 +618,6 @@
+
+     const int gap = 10;
+-    const int resetW = 120;
+-    const int searchW = qRound(pageW * 0.31);
++    const int resetW = 130;
++    const int searchW = qRound(pageW * 0.405);
+     const int remaining = pageW - searchW - resetW - 4 * gap;
+     const int comboW = qMax(70, remaining / 3);
+-    for(auto *combo:{ui->filterSpecies,ui->filterVaccination,ui->sortCombo})combo->setMinimumWidth(0);
+     ui->searchEdit->setGeometry(0, toolbarY, searchW, toolbarH);
+@@ -541,3 +643,3 @@
+
+ 
+-void MedicalWidget::layoutDetailPanel()
++void MainWindow::layoutDetailPanel()
+ {
+@@ -546,3 +648,3 @@
+
+     const int innerX = 18;
+-    const int innerW = panelW - 2 * innerX - 14;
++    const int innerW = panelW - 2 * innerX;
+ 
+@@ -551,3 +653,3 @@
+
+     m_detailSep->setVisible(has);
+-    ui->btnView->setVisible(has);
++    ui->btnView->hide();
+     ui->detailContent->hide();
+@@ -582,16 +684,14 @@
+
+         const int actionY = rowsY + m_detailKeys.size() * rowH + 12;
+-        ui->btnView->setText("Consulter");
+-        ui->btnView->setGeometry(innerX, actionY, innerW, actionH);
+-        ui->btnEdit->setGeometry(innerX, actionY + actionH + actionGap, innerW, actionH);
+-        ui->btnToggle->setGeometry(innerX, actionY + 2 * (actionH + actionGap), innerW, actionH);
+-        ui->btnDelete->setGeometry(innerX, actionY + 3 * (actionH + actionGap), innerW, actionH);
+-        cardH = actionY + 4 * actionH + 3 * actionGap + 20;
+-    }
+-
+-    ui->selectedCard->setGeometry(0, 0, panelW - 14, cardH);
++        ui->btnEdit->setGeometry(innerX, actionY, innerW, actionH);
++        ui->btnToggle->setGeometry(innerX, actionY + actionH + actionGap, innerW, actionH);
++        ui->btnDelete->setGeometry(innerX, actionY + 2 * (actionH + actionGap), innerW, actionH);
++        cardH = actionY + 3 * actionH + 2 * actionGap + 20;
++    }
++
++    ui->selectedCard->setGeometry(0, 0, panelW, cardH);
+     ui->globalCard->hide();
+-    if(m_detailScroll){m_detailScroll->setGeometry(ui->detailPanel->rect());m_detailScroll->show();}
+-}
+-
+-void MedicalWidget::resizeEvent(QResizeEvent *event)
++    ui->detailPanel->resize(panelW, cardH);
++}
++
++void MainWindow::resizeEvent(QResizeEvent *event)
+ {
+@@ -601,3 +701,3 @@
+
+ 
+-bool MedicalWidget::eventFilter(QObject *watched, QEvent *event)
++bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+ {
+@@ -608,3 +708,3 @@
+
+ 
+-void MedicalWidget::updateChips()
++void MainWindow::updateChips()
+ {
+@@ -622,3 +722,3 @@
+
+ 
+-void MedicalWidget::updateDetailPanel()
++void MainWindow::updateDetailPanel()
+ {
+@@ -637,3 +737,4 @@
+
+     m_detailValues = QStringList {
+-        QString("%1 (%2)").arg(r.getNomAnimal(), r.getIdAnimal()),
++        r.getIdAnimal(),                      // réf. animal seule
++        r.getNomAnimal(),                     // nom seul
+         QString("%1 · %2").arg(r.getEspece(), r.getRace()),
+@@ -641,3 +742,2 @@
+
+         r.getProprietaire(),
+-        r.getIdDossier(),
+         r.getDateConsultation().toString("dd/MM/yyyy"),
+@@ -650,3 +750,3 @@
+
+ 
+-void MedicalWidget::updateGlobalPanel()
++void MainWindow::updateGlobalPanel()
+ {
+@@ -664,3 +764,3 @@
+
+ 
+-QString MedicalWidget::nextRecordNumber(const QVector<MedicalRecord> &records)
++QString MainWindow::nextRecordNumber(const QVector<MedicalRecord> &records)
+ {
+@@ -672,3 +772,3 @@
+
+ 
+-void MedicalWidget::viewRecord(const QString &recordId)
++void MainWindow::viewRecord(const QString &recordId)
+ {
+@@ -684,12 +784,78 @@
+
+ 
+-void MedicalWidget::editRecord(const QString &id) { saveDialog(id); }
+-
+-void MedicalWidget::deleteRecord(const QString &id) {
+- int i=indexOfRecord(id);if(i<0)return;
+- if(QMessageBox::question(this,"Supprimer le dossier","Supprimer le dossier de "+m_records[i].getNomAnimal()+" ?",QMessageBox::Yes|QMessageBox::No)!=QMessageBox::Yes)return;
+- QString error;if(!MedicalRecord::supprimer(m_records[i].storageId,&error)){QMessageBox::warning(this,"Suppression impossible",error);return;}
+- m_selectedId.clear();refresh();
+-}
+-
+-void MedicalWidget::onNavigationClicked(const QString &name)
++void MainWindow::editRecord(const QString &recordId)
++{
++    const int idx = indexOfRecord(recordId);
++    if (idx < 0)
++        return;
++    MedicalRecordDialog dialog(this);
++    dialog.setExistingRecords(m_records);
++    dialog.setMedicalRecord(m_records[idx]);
++    RendezVous currentRdv;
++    if (RdvManager::prochain(m_records[idx].getIdAnimal(), m_records, currentRdv))
++        dialog.setRendezVous(currentRdv);
++    if (dialog.exec() == QDialog::Accepted) {
++        MedicalRecord M = dialog.getMedicalRecord();
++        m_selectedId = M.getIdDossier();
++
++        if (!m_db) {            // mode hors ligne
++            m_records[idx] = M;
++            applyRdv(dialog, M);
++            applyVaccin(dialog, M);
++            QTimer::singleShot(400, this, [this]() { checkHealthWatch(true); });
++            refreshView();
++            return;
++        }
++
++        bool test = M.modifier();   // UPDATE dans la table MEDICAL
++        if (test) {
++            // Refresh (Actualiser)
++            m_records[idx] = M;     // garde les champs affichés seulement (sexe, traitement, ...)
++            applyRdv(dialog, M);
++            applyVaccin(dialog, M);
++            QTimer::singleShot(400, this, [this]() { checkHealthWatch(true); });
++            actualiser();
++            refreshView();
++            QMessageBox::information(nullptr, QObject::tr("OK"),
++                QObject::tr("Modification effectuée\n"
++                            "Click Cancel to exit."), QMessageBox::Cancel);
++        } else
++            QMessageBox::critical(nullptr, QObject::tr("Not OK"),
++                QObject::tr("Modification non effectuée.\n\n%1\n\n"
++                            "Click Cancel to exit.").arg(MedicalRecord::derniereErreur()), QMessageBox::Cancel);
++    }
++}
++
++void MainWindow::deleteRecord(const QString &recordId)
++{
++    const int idx = indexOfRecord(recordId);
++    if (idx < 0)
++        return;
++    const auto reply = QMessageBox::question(this, "Confirmation",
++        QString("Êtes-vous sûr de vouloir supprimer le dossier de %1 ?").arg(m_records[idx].getNomAnimal()),
++        QMessageBox::Yes | QMessageBox::No);
++    if (reply == QMessageBox::Yes) {
++        if (!m_db) {            // mode hors ligne
++            m_records.removeAt(idx);
++            m_selectedId.clear();
++            refreshView();
++            return;
++        }
++
++        bool test = Mtmp.supprimer(recordId);   // Appel de supprimer() via l'attribut Mtmp
++        if (test) {
++            // Refresh (Actualiser)
++            m_selectedId.clear();
++            actualiser();
++            refreshView();
++            QMessageBox::information(nullptr, QObject::tr("OK"),
++                QObject::tr("Suppression effectuée\n"
++                            "Click Cancel to exit."), QMessageBox::Cancel);
++        } else
++            QMessageBox::critical(nullptr, QObject::tr("Not OK"),
++                QObject::tr("Suppression non effectuée.\n\n%1\n\n"
++                            "Click Cancel to exit.").arg(MedicalRecord::derniereErreur()), QMessageBox::Cancel);
++    }
++}
++
++void MainWindow::onNavigationClicked(const QString &name)
+ {
+@@ -700,3 +866,3 @@
+
+ 
+-void MedicalWidget::onLogoutClicked()
++void MainWindow::onLogoutClicked()
+ {
+@@ -708,12 +874,59 @@
+
+ 
+-void MedicalWidget::onAddRecordClicked() { saveDialog({}); }
+-
+-void MedicalWidget::onViewRecordClicked()   { viewRecord(m_selectedId); }
+-void MedicalWidget::onEditRecordClicked()   { editRecord(m_selectedId); }
+-void MedicalWidget::onDeleteRecordClicked() { deleteRecord(m_selectedId); }
+-
+-void MedicalWidget::onToggleVaccinationClicked() {
+- int i=indexOfRecord(m_selectedId);if(i<0)return;
+- auto &r=m_records[i];r.setStatutVaccination(r.getStatutVaccination()=="À jour"?"À renouveler":"À jour");
+- QString error;if(!r.saveSupplement(&error))QMessageBox::warning(this,"Suivi local",error);refreshView();
++void MainWindow::onAddRecordClicked()
++{
++    MedicalRecordDialog dialog(this);
++    dialog.setExistingRecords(m_records);   // recherche d'animal par référence, diagnostics et traitements connus
++    if (dialog.exec() == QDialog::Accepted) {
++        // Objet MedicalRecord instancié avec les informations saisies dans le formulaire
++        MedicalRecord M = dialog.getMedicalRecord();
++        if (m_db) {             // en ligne : MAX(ID_DOSSIER)+1 lu dans la base (évite les doublons de clé primaire)
++            const qlonglong n = MedicalRecord::prochainIdDossier();
++            M.setIdDossier(n > 0 ? QString("MED-%1").arg(n, 3, 10, QChar('0')) : nextRecordNumber(m_records));
++        } else if (M.getIdDossier().isEmpty() || indexOfRecord(M.getIdDossier()) >= 0) {
++            M.setIdDossier(nextRecordNumber(m_records));
++        }
++
++        if (!m_db) {            // mode hors ligne
++            m_records.append(M);
++            applyRdv(dialog, M);
++            applyVaccin(dialog, M);
++            QTimer::singleShot(400, this, [this]() { checkHealthWatch(true); });
++            m_selectedId = M.getIdDossier();
++            refreshView();
++            return;
++        }
++
++        bool test = M.ajouter();   // Insérer l'objet dans la table MEDICAL et récupérer le retour de query.exec()
++        if (test) {                // Si requête exécutée --> QMessageBox::information
++            // Refresh (Actualiser)
++            m_records.append(M);   // garde les champs affichés seulement (sexe, traitement, ...)
++            applyRdv(dialog, M);
++            applyVaccin(dialog, M);
++            QTimer::singleShot(400, this, [this]() { checkHealthWatch(true); });
++            actualiser();
++            m_selectedId = M.getIdDossier();
++            refreshView();
++            QMessageBox::information(nullptr, QObject::tr("OK"),
++                QObject::tr("Ajout effectué\n"
++                            "Click Cancel to exit."), QMessageBox::Cancel);
++        } else                     // Si requête non exécutée ==> QMessageBox::critical
++            QMessageBox::critical(nullptr, QObject::tr("Not OK"),
++                QObject::tr("Ajout non effectué.\n\n%1\n\n"
++                            "Click Cancel to exit.").arg(MedicalRecord::derniereErreur()), QMessageBox::Cancel);
++    }
++}
++
++void MainWindow::onViewRecordClicked()   { viewRecord(m_selectedId); }
++void MainWindow::onEditRecordClicked()   { editRecord(m_selectedId); }
++void MainWindow::onDeleteRecordClicked() { deleteRecord(m_selectedId); }
++
++void MainWindow::onToggleVaccinationClicked()
++{
++    const int idx = indexOfRecord(m_selectedId);
++    if (idx < 0)
++        return;
++    // Le statut de vaccination n'a pas de colonne dans MEDICAL : il change en mémoire seulement.
++    const QString status = m_records[idx].getStatutVaccination();
++    m_records[idx].setStatutVaccination(status == "À jour" ? "À renouveler" : "À jour");
++    refreshView();
+ }
+@@ -721,3 +934,3 @@
+
+ // ---------------------------------------------------------------- DM-I1 : rappels vaccinaux
+-void MedicalWidget::syncVaccinationStatus()
++void MainWindow::syncVaccinationStatus()
+ {
+@@ -730,3 +943,3 @@
+
+ 
+-void MedicalWidget::updateReminderButton()
++void MainWindow::updateReminderButton()
+ {
+@@ -740,3 +953,3 @@
+
+ 
+-void MedicalWidget::showStartupReminders()
++void MainWindow::showStartupReminders()
+ {
+@@ -747,3 +960,3 @@
+
+ 
+-void MedicalWidget::onRemindersClicked()
++void MainWindow::onRemindersClicked()
+ {
+@@ -755,5 +968,3 @@
+
+ 
+-void MedicalWidget::onRefreshClicked() { refresh(); }
+-
+-void MedicalWidget::onFilterChanged()
++void MainWindow::onRefreshClicked()
+ {
+@@ -762,3 +973,8 @@
+
+ 
+-void MedicalWidget::onResetFiltersClicked()
++void MainWindow::onFilterChanged()
++{
++    refreshView();
++}
++
++void MainWindow::onResetFiltersClicked()
+ {
+@@ -772,3 +988,3 @@
+
+ 
+-void MedicalWidget::onCardClicked(const QString &recordId)
++void MainWindow::onCardClicked(const QString &recordId)
+ {
+@@ -781,3 +997,3 @@
+
+ 
+-void MedicalWidget::onShowStatisticsClicked()
++void MainWindow::onShowStatisticsClicked()
+ {
+@@ -802,3 +1018,3 @@
+
+     QDialog dialog(this);
+-    dialog.setObjectName("medicalStatisticsDialog");
++    dialog.setObjectName("statisticsDialog");
+     dialog.setWindowTitle("Statistiques des dossiers médicaux");
+@@ -823,3 +1039,3 @@
+
+     auto *logo = new QLabel;
+-    QPixmap logoPix(":/med/assets/logo.png");
++    QPixmap logoPix(":/assets/logo.png");
+     if (!logoPix.isNull())
+@@ -870,3 +1086,3 @@
+
+     auto *table = new QTableWidget;
+-    table->setObjectName("medicalStatsTable");
++    table->setObjectName("statisticsTable");
+     table->setColumnCount(5);
+@@ -1033,3 +1249,3 @@
+
+ 
+-void MedicalWidget::onExportCsvClicked()
++void MainWindow::onExportCsvClicked()
+ {
+@@ -1062,3 +1278,3 @@
+
+ // ---------------------------------------------------------------- Rendez-vous + SMS automatiques
+-void MedicalWidget::applyRdv(const MedicalRecordDialog &dialog, const MedicalRecord &record)
++void MainWindow::applyRdv(const MedicalRecordDialog &dialog, const MedicalRecord &record)
+ {
+@@ -1084,3 +1300,4 @@
+
+     r.dateRdv = dialog.rdvDate();
+-    RdvManager::planifier(r, m_records);
++    if (!RdvManager::planifier(r, m_records))
++        QMessageBox::warning(this, "Rendez-vous", "Le rendez-vous n'a pas pu être enregistré.\n\n" + RappelsDb::derniereErreur());
+     updateRdvButton(RdvManager::aEnvoyer(m_records).size());
+@@ -1088,3 +1305,28 @@
+
+ 
+-void MedicalWidget::updateRdvButton(int pending)
++// Rappel vaccinal saisi dans le dossier : enregistré tel quel dans les Rappels vaccinaux (pas besoin de "Nouveau vaccin")
++void MainWindow::applyVaccin(const MedicalRecordDialog &dialog, const MedicalRecord &record)
++{
++    if (!dialog.vaccinPlanifie())
++        return;
++    Vaccination v;
++    v.idAnimal = record.getIdAnimal();
++    v.nomAnimal = record.getNomAnimal();
++    v.espece = record.getEspece();
++    v.proprietaire = record.getProprietaire();
++    v.telephone = dialog.telephone();
++    v.nomVaccin = dialog.nomVaccin();
++    v.dateVaccin = dialog.dateVaccin();
++    v.dateRappel = dialog.dateRappelVaccin();
++    if (!VaccinationManager::ajouter(v)) {
++        QMessageBox::warning(this, "Rappel vaccinal", "Le rappel vaccinal n'a pas pu être enregistré.\n\n" + RappelsDb::derniereErreur());
++        return;
++    }
++    syncVaccinationStatus();
++    updateReminderButton();
++    QMessageBox::information(this, "Rappel vaccinal",
++        QString("Rappel enregistré pour %1 : %2, prochain rappel le %3.")
++            .arg(record.getNomAnimal(), v.nomVaccin, v.dateRappel.toString("dd/MM/yyyy")));
++}
++
++void MainWindow::updateRdvButton(int pending)
+ {
+@@ -1094,8 +1336,19 @@
+
+ 
+-void MedicalWidget::checkAppointments() {
+- // Les rappels sont calcules automatiquement. L'envoi reste une action explicite dans le dialogue.
+- updateRdvButton(RdvManager::aEnvoyer(m_records).size());
+-}
+-
+-void MedicalWidget::onRdvClicked()
++void MainWindow::checkAppointments()
++{
++    const QList<RdvSmsAction> actions = RdvManager::aEnvoyer(m_records);   // met aussi les statuts à jour
++    updateRdvButton(actions.size());
++    if (!m_sms->isConfigured())
++        return;      // simulation : rien n'est envoyé automatiquement (envoi manuel dans la fenêtre RDV)
++
++    for (const RdvSmsAction &a : actions) {
++        if (SmsService::normalizePhone(a.rdv.telephone).isEmpty())
++            continue;
++        m_sms->send(a.rdv.telephone,
++                    a.manque ? SmsService::composeRdvManque(a.rdv) : SmsService::composeRdvRappel(a.rdv),
++                    QString("RDV|%1|%2").arg(a.rdv.idRdv, a.manque ? "M" : "R"));
++    }
++}
++
++void MainWindow::onRdvClicked()
+ {
+@@ -1107,3 +1360,3 @@
+
+ // ---------------------------------------------------------------- Fiche PDF de l'animal
+-void MedicalWidget::onExportPdfClicked()
++void MainWindow::onExportPdfClicked()
+ {
+@@ -1117,3 +1370,3 @@
+
+ 
+-void MedicalWidget::exportAnimalPdf(const QString &idAnimal)
++void MainWindow::exportAnimalPdf(const QString &idAnimal)
+ {
+@@ -1133,3 +1386,3 @@
+
+ // ---------------------------------------------------------------- Veille sanitaire
+-void MedicalWidget::updateWatchButton()
++void MainWindow::updateWatchButton()
+ {
+@@ -1141,3 +1394,3 @@
+
+ 
+-void MedicalWidget::checkHealthWatch(bool popup)
++void MainWindow::checkHealthWatch(bool popup)
+ {
+@@ -1154,3 +1407,3 @@
+
+ 
+-void MedicalWidget::onWatchClicked()
++void MainWindow::onWatchClicked()
+ {
+@@ -1160,18 +1413 @@
+
+ }
+-
+-void MedicalWidget::refresh() { actualiser();refreshView();checkAppointments();checkHealthWatch(false); }
+-void MedicalWidget::focusSearch() { m_searchEdit->setFocus();m_searchEdit->selectAll(); }
+-QPushButton *MedicalWidget::fileMenuButton() const { return ui->btnFile; }
+-void MedicalWidget::saveDialog(const QString &id) {
+- const int i=indexOfRecord(id);const qint64 storageId=i<0?0:m_records[i].storageId;
+- MedicalRecordDialog dialog(this);dialog.setExistingRecords(m_records);
+- if(i>=0){dialog.setMedicalRecord(m_records[i]);RendezVous rdv;if(RdvManager::prochain(m_records[i].getIdAnimal(),m_records,rdv))dialog.setRendezVous(rdv);}
+- dialog.setSaveHandler([&](MedicalRecord &record,QString &error) {
+-  record.storageId=storageId;
+-  if(!(storageId>0?record.modifier(&error):record.ajouter(&error)))return false;
+-  QString supplementError;
+-  if(!record.saveSupplement(&supplementError, true))QMessageBox::warning(&dialog,"Dossier enregistré", "Le dossier Oracle est enregistré, mais le complément local n'a pas pu être sauvegardé : "+supplementError);
+-  m_selectedId=record.getIdDossier();applyRdv(dialog,record);return true;
+- });
+- if(dialog.exec()==QDialog::Accepted)refresh();
+-}

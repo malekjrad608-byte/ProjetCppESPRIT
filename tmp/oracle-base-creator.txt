@@ -1,0 +1,522 @@
+Compiled from "AbstractConnectionCreator.java"
+public abstract class oracle.dbtools.connections.db.AbstractConnectionCreator implements oracle.dbtools.connections.db.ConnectionCreator {
+  public oracle.dbtools.connections.db.AbstractConnectionCreator();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: return
+
+  protected java.util.ResourceBundle getBundle();
+    Code:
+       0: invokestatic  #2                  // Method oracle/dbtools/connections/db/DBAdapterBundle.getBundle:()Ljava/util/ResourceBundle;
+       3: areturn
+
+  protected java.util.logging.Logger getLogger();
+    Code:
+       0: invokestatic  #3                  // Method oracle/dbtools/connections/db/DatabaseProviderHelper.getLogger:()Ljava/util/logging/Logger;
+       3: areturn
+
+  public boolean shouldEncrypt(java.lang.String);
+    Code:
+       0: ldc           #5                  // String password
+       2: aload_1
+       3: invokevirtual #6                  // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+       6: ireturn
+
+  public boolean isPassword(java.lang.String);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #7                  // Method shouldEncrypt:(Ljava/lang/String;)Z
+       5: ireturn
+
+  public boolean shouldSave(java.lang.String, oracle.dbtools.connections.db.DatabaseProvider);
+    Code:
+       0: ldc           #5                  // String password
+       2: aload_1
+       3: invokevirtual #6                  // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+       6: ifeq          42
+       9: aload_2
+      10: ldc           #8                  // String SavePassword
+      12: invokevirtual #9                  // Method oracle/dbtools/connections/db/DatabaseProvider.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      15: astore        4
+      17: aload         4
+      19: ifnull        33
+      22: aload         4
+      24: invokestatic  #10                 // Method java/lang/Boolean.valueOf:(Ljava/lang/String;)Ljava/lang/Boolean;
+      27: invokevirtual #11                 // Method java/lang/Boolean.booleanValue:()Z
+      30: ifeq          37
+      33: iconst_1
+      34: goto          38
+      37: iconst_0
+      38: istore_3
+      39: goto          44
+      42: iconst_1
+      43: istore_3
+      44: iload_3
+      45: ireturn
+
+  public boolean shouldPromptForPassword(java.util.Properties);
+    Code:
+       0: iconst_0
+       1: istore_2
+       2: aload_0
+       3: invokevirtual #12                 // Method listAllowedProperties:()Ljava/util/Collection;
+       6: astore_3
+       7: aload_3
+       8: ldc           #5                  // String password
+      10: invokeinterface #13,  2           // InterfaceMethod java/util/Collection.contains:(Ljava/lang/Object;)Z
+      15: ifeq          57
+      18: aload_1
+      19: ldc           #5                  // String password
+      21: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      24: astore        4
+      26: aload         4
+      28: ifnonnull     57
+      31: aload_1
+      32: ldc           #8                  // String SavePassword
+      34: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      37: astore        5
+      39: aload         5
+      41: ifnull        57
+      44: aload         5
+      46: invokestatic  #10                 // Method java/lang/Boolean.valueOf:(Ljava/lang/String;)Ljava/lang/Boolean;
+      49: invokevirtual #11                 // Method java/lang/Boolean.booleanValue:()Z
+      52: ifne          57
+      55: iconst_1
+      56: istore_2
+      57: iload_2
+      58: ireturn
+
+  protected void setCustomProperties(java.util.Properties, java.util.Properties);
+    Code:
+       0: aload_1
+       1: ldc           #15                 // String parameters
+       3: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       6: astore_3
+       7: aload_3
+       8: aload_2
+       9: invokestatic  #16                 // Method oracle/dbtools/connections/db/JDBCParametersParser.parseParameterString:(Ljava/lang/String;Ljava/util/Properties;)V
+      12: return
+
+  public final java.util.Properties getJDBCProperties(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: ldc           #17                 // String user
+       4: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       7: invokevirtual #18                 // Method trimINN:(Ljava/lang/String;)Ljava/lang/String;
+      10: astore_2
+      11: aload_1
+      12: ldc           #5                  // String password
+      14: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      17: astore_3
+      18: aload_0
+      19: aload_2
+      20: invokevirtual #19                 // Method hasLength:(Ljava/lang/String;)Z
+      23: ifeq          56
+      26: aload_0
+      27: aload_3
+      28: invokevirtual #19                 // Method hasLength:(Ljava/lang/String;)Z
+      31: ifne          56
+      34: aload_0
+      35: invokevirtual #20                 // Method allowNullPassword:()Z
+      38: ifne          56
+      41: new           #21                 // class java/sql/SQLException
+      44: dup
+      45: ldc           #23                 // String ERROR_MISSING_PASS
+      47: invokestatic  #24                 // Method oracle/dbtools/connections/db/DBAdapterBundle.get:(Ljava/lang/String;)Ljava/lang/String;
+      50: ldc           #25                 // String
+      52: invokespecial #26                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;Ljava/lang/String;)V
+      55: athrow
+      56: new           #27                 // class java/util/Properties
+      59: dup
+      60: invokespecial #28                 // Method java/util/Properties."<init>":()V
+      63: astore        4
+      65: aload_0
+      66: aload_2
+      67: invokevirtual #19                 // Method hasLength:(Ljava/lang/String;)Z
+      70: ifeq          82
+      73: aload         4
+      75: ldc           #17                 // String user
+      77: aload_2
+      78: invokevirtual #29                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      81: pop
+      82: aload_0
+      83: aload_3
+      84: invokevirtual #19                 // Method hasLength:(Ljava/lang/String;)Z
+      87: ifeq          99
+      90: aload         4
+      92: ldc           #5                  // String password
+      94: aload_3
+      95: invokevirtual #29                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      98: pop
+      99: aload_0
+     100: aload_1
+     101: aload         4
+     103: invokevirtual #30                 // Method setCustomProperties:(Ljava/util/Properties;Ljava/util/Properties;)V
+     106: aload         4
+     108: areturn
+
+  public java.sql.Connection getConnection(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #31                 // Method getConnectionURL:(Ljava/util/Properties;)Ljava/lang/String;
+       5: astore_2
+       6: aload_0
+       7: aload_1
+       8: invokevirtual #32                 // Method getJDBCProperties:(Ljava/util/Properties;)Ljava/util/Properties;
+      11: astore_3
+      12: aload_0
+      13: aload_1
+      14: invokevirtual #33                 // Method getDriver:(Ljava/util/Properties;)Ljava/sql/Driver;
+      17: astore        4
+      19: aconst_null
+      20: astore        5
+      22: aload         4
+      24: aload_2
+      25: aload_3
+      26: invokeinterface #34,  3           // InterfaceMethod java/sql/Driver.connect:(Ljava/lang/String;Ljava/util/Properties;)Ljava/sql/Connection;
+      31: astore        5
+      33: goto          74
+      36: astore        6
+      38: new           #21                 // class java/sql/SQLException
+      41: dup
+      42: aload         6
+      44: invokevirtual #36                 // Method java/lang/UnsatisfiedLinkError.getMessage:()Ljava/lang/String;
+      47: invokespecial #37                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+      50: athrow
+      51: astore        6
+      53: aload         4
+      55: instanceof    #39                 // class oracle/jdbc/OracleDriver
+      58: ifeq          74
+      61: new           #21                 // class java/sql/SQLException
+      64: dup
+      65: ldc           #40                 // String ERROR_UNSUPPORTED_ORACLE_VERSION
+      67: invokestatic  #24                 // Method oracle/dbtools/connections/db/DBAdapterBundle.get:(Ljava/lang/String;)Ljava/lang/String;
+      70: invokespecial #37                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+      73: athrow
+      74: aload         5
+      76: ifnonnull     91
+      79: new           #21                 // class java/sql/SQLException
+      82: dup
+      83: aload_0
+      84: invokevirtual #41                 // Method getInvalidURLMessage:()Ljava/lang/String;
+      87: invokespecial #37                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+      90: athrow
+      91: aload         5
+      93: areturn
+    Exception table:
+       from    to  target type
+          22    33    36   Class java/lang/UnsatisfiedLinkError
+          22    33    51   Class java/lang/ArrayIndexOutOfBoundsException
+
+  protected java.lang.String getInvalidURLMessage();
+    Code:
+       0: ldc           #42                 // String ERROR_INVALID_URL
+       2: invokestatic  #24                 // Method oracle/dbtools/connections/db/DBAdapterBundle.get:(Ljava/lang/String;)Ljava/lang/String;
+       5: areturn
+
+  private java.lang.String trimINN(java.lang.String);
+    Code:
+       0: aload_1
+       1: ifnonnull     8
+       4: aload_1
+       5: goto          12
+       8: aload_1
+       9: invokevirtual #43                 // Method java/lang/String.trim:()Ljava/lang/String;
+      12: areturn
+
+  protected boolean allowNullPassword();
+    Code:
+       0: aload_0
+       1: invokevirtual #12                 // Method listAllowedProperties:()Ljava/util/Collection;
+       4: astore_1
+       5: aload_1
+       6: ldc           #5                  // String password
+       8: invokeinterface #13,  2           // InterfaceMethod java/util/Collection.contains:(Ljava/lang/Object;)Z
+      13: ifne          20
+      16: iconst_1
+      17: goto          21
+      20: iconst_0
+      21: ireturn
+
+  protected final boolean hasLength(java.lang.String);
+    Code:
+       0: aload_1
+       1: ifnull        15
+       4: aload_1
+       5: invokevirtual #44                 // Method java/lang/String.length:()I
+       8: ifle          15
+      11: iconst_1
+      12: goto          16
+      15: iconst_0
+      16: ireturn
+
+  protected final java.lang.String getPropertyOrThrow(java.util.Properties, java.lang.String) throws java.sql.SQLException;
+    Code:
+       0: aload_1
+       1: aload_2
+       2: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       5: astore_3
+       6: aload_0
+       7: aload_3
+       8: invokevirtual #18                 // Method trimINN:(Ljava/lang/String;)Ljava/lang/String;
+      11: astore_3
+      12: aload_0
+      13: aload_3
+      14: invokevirtual #19                 // Method hasLength:(Ljava/lang/String;)Z
+      17: ifne          25
+      20: aload_0
+      21: aload_2
+      22: invokevirtual #45                 // Method throwMissingPropertyException:(Ljava/lang/String;)V
+      25: aload_3
+      26: areturn
+
+  protected final void throwMissingPropertyException(java.lang.String) throws java.sql.SQLException;
+    Code:
+       0: new           #21                 // class java/sql/SQLException
+       3: dup
+       4: aload_1
+       5: invokedynamic #46,  0             // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+      10: invokespecial #37                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+      13: athrow
+
+  public java.lang.String getConnectionURL(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_1
+       1: ldc           #47                 // String customUrl
+       3: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       6: areturn
+
+  public java.lang.String getDriverClassName(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_1
+       1: ldc           #48                 // String driver
+       3: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+       6: areturn
+
+  protected java.sql.Driver getDriver(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #49                 // Method getDriverClassName:(Ljava/util/Properties;)Ljava/lang/String;
+       5: astore_2
+       6: aload_0
+       7: aload_2
+       8: invokevirtual #50                 // Method loadDriver:(Ljava/lang/String;)Ljava/sql/Driver;
+      11: areturn
+
+  protected java.lang.ClassLoader getClassLoader(java.lang.String);
+    Code:
+       0: aload_0
+       1: invokevirtual #51                 // Method java/lang/Object.getClass:()Ljava/lang/Class;
+       4: invokevirtual #52                 // Method java/lang/Class.getClassLoader:()Ljava/lang/ClassLoader;
+       7: areturn
+
+  protected java.sql.Driver loadDriver(java.lang.String) throws java.sql.SQLException;
+    Code:
+       0: aload_1
+       1: aconst_null
+       2: invokestatic  #53                 // Method oracle/dbtools/connections/db/DatabaseProvider.getClassLoader:(Ljava/lang/String;Ljava/lang/ClassLoader;)Ljava/lang/ClassLoader;
+       5: astore_2
+       6: aload_1
+       7: iconst_1
+       8: aload_2
+       9: invokestatic  #54                 // Method java/lang/Class.forName:(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;
+      12: astore_3
+      13: aload_3
+      14: invokevirtual #55                 // Method java/lang/Class.newInstance:()Ljava/lang/Object;
+      17: checkcast     #56                 // class java/sql/Driver
+      20: areturn
+      21: astore_2
+      22: aload_2
+      23: athrow
+      24: astore_2
+      25: new           #21                 // class java/sql/SQLException
+      28: dup
+      29: ldc           #59                 // String ERROR_DRIVER_CLASS_NOT_FOUND
+      31: invokestatic  #24                 // Method oracle/dbtools/connections/db/DBAdapterBundle.get:(Ljava/lang/String;)Ljava/lang/String;
+      34: invokespecial #37                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+      37: athrow
+      38: astore_2
+      39: new           #21                 // class java/sql/SQLException
+      42: dup
+      43: aload_2
+      44: invokevirtual #61                 // Method java/lang/Throwable.getLocalizedMessage:()Ljava/lang/String;
+      47: invokespecial #37                 // Method java/sql/SQLException."<init>":(Ljava/lang/String;)V
+      50: astore_3
+      51: aload_3
+      52: aload_2
+      53: invokevirtual #62                 // Method java/sql/SQLException.initCause:(Ljava/lang/Throwable;)Ljava/lang/Throwable;
+      56: pop
+      57: aload_3
+      58: athrow
+    Exception table:
+       from    to  target type
+           0    20    21   Class java/lang/ThreadDeath
+           0    20    24   Class java/lang/ClassNotFoundException
+           0    20    38   Class java/lang/Throwable
+
+  public java.util.Collection<java.lang.String> listAllowedProperties();
+    Code:
+       0: new           #63                 // class java/util/HashSet
+       3: dup
+       4: invokespecial #64                 // Method java/util/HashSet."<init>":()V
+       7: astore_1
+       8: aload_1
+       9: ldc           #17                 // String user
+      11: invokeinterface #65,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      16: pop
+      17: aload_1
+      18: ldc           #5                  // String password
+      20: invokeinterface #65,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      25: pop
+      26: aload_1
+      27: ldc           #47                 // String customUrl
+      29: invokeinterface #65,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      34: pop
+      35: aload_1
+      36: ldc           #48                 // String driver
+      38: invokeinterface #65,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      43: pop
+      44: aload_1
+      45: ldc           #15                 // String parameters
+      47: invokeinterface #65,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      52: pop
+      53: aload_1
+      54: ldc           #66                 // String subtype
+      56: invokeinterface #65,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      61: pop
+      62: aload_1
+      63: areturn
+
+  public java.util.Collection<java.lang.String> listRequiredProperties();
+    Code:
+       0: invokestatic  #67                 // Method java/util/Collections.emptySet:()Ljava/util/Set;
+       3: areturn
+
+  public java.util.Collection<oracle.dbtools.connections.db.JDBCParameterInfo> listJDBCParameterInfos(java.util.Properties) throws java.sql.SQLException;
+    Code:
+       0: new           #27                 // class java/util/Properties
+       3: dup
+       4: invokespecial #28                 // Method java/util/Properties."<init>":()V
+       7: astore_2
+       8: aload_1
+       9: invokevirtual #68                 // Method java/util/Properties.stringPropertyNames:()Ljava/util/Set;
+      12: invokeinterface #69,  1           // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+      17: astore_3
+      18: aload_3
+      19: invokeinterface #70,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      24: ifeq          54
+      27: aload_3
+      28: invokeinterface #71,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      33: checkcast     #72                 // class java/lang/String
+      36: astore        4
+      38: aload_2
+      39: aload         4
+      41: aload_1
+      42: aload         4
+      44: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      47: invokevirtual #29                 // Method java/util/Properties.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+      50: pop
+      51: goto          18
+      54: aload_0
+      55: invokevirtual #73                 // Method listRequiredProperties:()Ljava/util/Collection;
+      58: invokeinterface #74,  1           // InterfaceMethod java/util/Collection.iterator:()Ljava/util/Iterator;
+      63: astore_3
+      64: aload_3
+      65: invokeinterface #70,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
+      70: ifeq          109
+      73: aload_3
+      74: invokeinterface #71,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      79: checkcast     #72                 // class java/lang/String
+      82: astore        4
+      84: aload_0
+      85: aload_2
+      86: aload         4
+      88: invokevirtual #14                 // Method java/util/Properties.getProperty:(Ljava/lang/String;)Ljava/lang/String;
+      91: invokevirtual #19                 // Method hasLength:(Ljava/lang/String;)Z
+      94: ifne          106
+      97: aload_2
+      98: aload         4
+     100: ldc           #75                 // String testValue
+     102: invokevirtual #76                 // Method java/util/Properties.setProperty:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+     105: pop
+     106: goto          64
+     109: aload_0
+     110: aload_2
+     111: invokevirtual #31                 // Method getConnectionURL:(Ljava/util/Properties;)Ljava/lang/String;
+     114: astore_3
+     115: aload_0
+     116: aload_2
+     117: invokevirtual #33                 // Method getDriver:(Ljava/util/Properties;)Ljava/sql/Driver;
+     120: astore        4
+     122: aconst_null
+     123: astore        5
+     125: aload         4
+     127: aload_3
+     128: aload_1
+     129: invokeinterface #77,  3           // InterfaceMethod java/sql/Driver.getPropertyInfo:(Ljava/lang/String;Ljava/util/Properties;)[Ljava/sql/DriverPropertyInfo;
+     134: astore        5
+     136: goto          155
+     139: astore        6
+     141: aload_0
+     142: invokevirtual #79                 // Method getLogger:()Ljava/util/logging/Logger;
+     145: getstatic     #80                 // Field java/util/logging/Level.FINE:Ljava/util/logging/Level;
+     148: ldc           #81                 // String getPropertyInfo failed
+     150: aload         6
+     152: invokevirtual #82                 // Method java/util/logging/Logger.log:(Ljava/util/logging/Level;Ljava/lang/String;Ljava/lang/Throwable;)V
+     155: aload_0
+     156: aload         5
+     158: invokevirtual #83                 // Method convertToJDBCParameterInfos:([Ljava/sql/DriverPropertyInfo;)Ljava/util/Collection;
+     161: areturn
+    Exception table:
+       from    to  target type
+         125   136   139   Class java/lang/RuntimeException
+
+  protected java.util.Collection<oracle.dbtools.connections.db.JDBCParameterInfo> convertToJDBCParameterInfos(java.sql.DriverPropertyInfo[]);
+    Code:
+       0: new           #84                 // class java/util/ArrayList
+       3: dup
+       4: invokespecial #85                 // Method java/util/ArrayList."<init>":()V
+       7: astore_2
+       8: aload_1
+       9: ifnull        82
+      12: aload_1
+      13: astore_3
+      14: aload_3
+      15: arraylength
+      16: istore        4
+      18: iconst_0
+      19: istore        5
+      21: iload         5
+      23: iload         4
+      25: if_icmpge     82
+      28: aload_3
+      29: iload         5
+      31: aaload
+      32: astore        6
+      34: ldc           #17                 // String user
+      36: aload         6
+      38: getfield      #86                 // Field java/sql/DriverPropertyInfo.name:Ljava/lang/String;
+      41: invokevirtual #6                  // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      44: ifne          76
+      47: ldc           #5                  // String password
+      49: aload         6
+      51: getfield      #86                 // Field java/sql/DriverPropertyInfo.name:Ljava/lang/String;
+      54: invokevirtual #6                  // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+      57: ifne          76
+      60: aload_2
+      61: new           #87                 // class oracle/dbtools/connections/db/JDBCParameterInfo
+      64: dup
+      65: aload         6
+      67: invokespecial #88                 // Method oracle/dbtools/connections/db/JDBCParameterInfo."<init>":(Ljava/sql/DriverPropertyInfo;)V
+      70: invokeinterface #65,  2           // InterfaceMethod java/util/Collection.add:(Ljava/lang/Object;)Z
+      75: pop
+      76: iinc          5, 1
+      79: goto          21
+      82: aload_2
+      83: areturn
+}

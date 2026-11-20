@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include <QTableWidget>
+#include <QTableView>
 #include <QPushButton>
 #include <QLineEdit>
 #include <QComboBox>
@@ -13,20 +13,23 @@
 
 class ServiceWidget : public QWidget {
     Q_OBJECT
+    friend class ServiceTests;
 public:
     explicit ServiceWidget(QWidget *parent = nullptr);
     void refresh();
     void focusSearch();
     void viewService(int id);
-    static QString csvContent(const QList<Service> &services);
 public slots:
     void onAdd();
 signals:
     void servicesChanged();
 protected:
+    void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 private:
-    void setupDetailPanel(QHBoxLayout *body);
+    void openEditor(const Service &service, bool readOnly = false);
+    QStackedWidget *m_pages;
+    QWidget *m_listPage;
     void filter();
     void populate();
     void rebuildCards();
@@ -35,15 +38,15 @@ private:
     void updateSummary();
     void editSelected();
     void deleteSelected();
-    void duplicateSelected();
+    void showInvoice();
     void advanceStatus();
-    void exportCsv();
-    void exportPdf();
+    void showPlanning();
     void showStatistics();
     void notify(const QString &message, bool error = false);
     QString filterDescription() const;
     Service selectedService() const;
-    QTableWidget *m_table;
+    Service Stmp; // Objet du modele, comme Etmp dans l'atelier.
+    QTableView *m_table;
     QLineEdit *m_search;
     QComboBox *m_status;
     QComboBox *m_category;
@@ -52,8 +55,7 @@ private:
     QPushButton *m_edit;
     QPushButton *m_delete;
     QPushButton *m_view;
-    QPushButton *m_export;
-    QPushButton *m_duplicate;
+    QPushButton *m_invoice;
     QPushButton *m_advance;
     QLabel *m_count;
     QLabel *m_notice;

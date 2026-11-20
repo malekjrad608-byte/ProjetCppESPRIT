@@ -1,0 +1,25 @@
+# Qt Creator / local settings
+*.pro.user*
+*.user
+*.autosave
+.qtcreator/
+# Generated builds and binaries
+build*/
+debug/
+release/
+ANIWORLD/
+Makefile*
+*.o
+*.obj
+*.exe
+*.dll
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+# Local verification and backups
+artifacts/
+backups/
+*.log
+*.tmp
+*.bak
+__pycache__/
